@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from typing import Iterable
 
 from .entities import (
+    DashboardLayoutConfig,
     DashboardReadModelNotFoundError,
     MarketingDashboardReadModel,
     SalesDashboardReadModel,
@@ -181,6 +182,39 @@ class DashboardReadModelService:
     def get_support(self, tenant_id: str) -> SupportDashboardReadModel:
         return self._get_or_raise(self._support, tenant_id, "support")
 
+    def build_dashboard(
+        self,
+        *,
+        tenant_id: str,
+        dashboard_type: str,
+        layout: DashboardLayoutConfig,
+    ) -> dict[str, object]:
+        """Build a dashboard from read models using config-driven widget layout."""
+
+        read_model = self.serialize(self._get_dashboard_model(tenant_id, dashboard_type))
+        widgets: list[dict[str, object]] = []
+        for widget in layout.widgets:
+            raw_value = _metric_from_path(read_model, widget.metric_path)
+            widgets.append(
+                {
+                    "widget_id": widget.widget_id,
+                    "title": widget.title,
+                    "widget_type": widget.widget_type,
+                    "metric_path": widget.metric_path,
+                    "raw_value": raw_value,
+                    "display_value": _format_widget_value(raw_value, widget.format_as),
+                    "format_as": widget.format_as,
+                }
+            )
+
+        return {
+            "dashboard_type": layout.dashboard_type,
+            "title": layout.title,
+            "columns": layout.columns,
+            "widgets": widgets,
+            "read_model": read_model,
+        }
+
     @staticmethod
     def _get_or_raise(store: dict[str, object], tenant_id: str, dashboard: str) -> object:
         model = store.get(tenant_id)
@@ -193,6 +227,15 @@ class DashboardReadModelService:
     @staticmethod
     def serialize(read_model: object) -> dict[str, object]:
         return asdict(read_model)
+
+    def _get_dashboard_model(self, tenant_id: str, dashboard_type: str) -> object:
+        if dashboard_type == "sales":
+            return self.get_sales(tenant_id)
+        if dashboard_type == "marketing":
+            return self.get_marketing(tenant_id)
+        if dashboard_type == "support":
+            return self.get_support(tenant_id)
+        raise ValueError(f"Unsupported dashboard_type={dashboard_type}")
 
 
 def _stage_weight(stage: str) -> float:
@@ -233,3 +276,22 @@ def _average(values: list[float]) -> float:
 
 def _sorted_trend(trend: dict[str, dict[str, float]]) -> list[dict[str, float]]:
     return [{"period": month, **metrics} for month, metrics in sorted(trend.items())]
+
+
+def _metric_from_path(model: dict[str, object], path: str) -> object:
+    current: object = model
+    for part in path.split("."):
+        if not isinstance(current, dict) or part not in current:
+            raise KeyError(f"Metric path not found: {path}")
+        current = current[part]
+    return current
+
+
+def _format_widget_value(value: object, format_as: str) -> str:
+    if format_as == "currency":
+        return f"${float(value):,.2f}"
+    if format_as == "percent":
+        return f"{float(value) * 100:.2f}%"
+    if format_as == "integer":
+        return f"{int(value):,}"
+    return str(value)

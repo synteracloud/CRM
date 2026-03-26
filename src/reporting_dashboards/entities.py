@@ -56,3 +56,24 @@ class SupportDashboardReadModel:
 
 class DashboardReadModelNotFoundError(KeyError):
     """Raised when read models have not yet been built for a dashboard."""
+
+
+@dataclass(frozen=True)
+class WidgetDefinition:
+    """Config-driven widget mapped to a read-model metric path."""
+
+    widget_id: str
+    title: str
+    widget_type: str
+    metric_path: str
+    format_as: str = "raw"
+
+
+@dataclass(frozen=True)
+class DashboardLayoutConfig:
+    """Config-driven dashboard layout based strictly on read-model metrics."""
+
+    dashboard_type: str
+    title: str
+    columns: int
+    widgets: tuple[WidgetDefinition, ...]
