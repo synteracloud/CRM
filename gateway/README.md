@@ -62,12 +62,21 @@ Error envelope:
 }
 ```
 
-## Activities + Tasks APIs (B2-P04)
+## Forecasting APIs (B2-P06::FORECASTING)
 
-- `GET /api/v1/activities`
-- `POST /api/v1/activities`
-- `GET /api/v1/tasks`
-- `POST /api/v1/tasks`
-- `POST /api/v1/tasks/{task_id}/reschedule`
+### `POST /api/v1/forecasts/model`
+Builds an opportunity forecast model from caller-provided opportunity rows.
 
-All endpoints follow the same envelope, auth, and tenant-context rules as other v1 resources.
+- Required scope: `forecasts.read`
+- Request body fields:
+  - `opportunities` (array)
+
+### `POST /api/v1/forecasts/aggregate`
+Returns aggregate forecast totals and buckets from caller-provided opportunity rows.
+
+- Required scope: `forecasts.read`
+- Request body fields:
+  - `opportunities` (array)
+  - `group_by` (`stage` or `forecast_category`, optional; defaults to `stage`)
+
+Both endpoints validate opportunity rows using the domain-model shape (`opportunity_id`, `tenant_id`, `stage`, `amount`, `close_date`, `forecast_category`, `is_closed`, `is_won`) and reject invalid data with `422 validation_error`.
