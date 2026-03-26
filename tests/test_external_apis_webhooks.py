@@ -4,10 +4,16 @@ import unittest
 
 from src.external_apis_webhooks import (
     API_ENDPOINTS,
+    PUBLIC_API_ENDPOINTS,
     EventWebhookMapper,
     ExternalApiConnectorService,
+    ExternalDeveloperAuthService,
     InboundWebhook,
     IntegrationAuth,
+    PublicApiExposureService,
+    PublicApiLayer,
+    PublicApiSdk,
+    PublicApiSdkConfig,
     OutboundRequest,
     SecretStore,
     WebhookReceiverService,
@@ -85,6 +91,51 @@ class ExternalApisWebhooksTests(unittest.TestCase):
     def test_self_qc_returns_all_green(self) -> None:
         qc = run_self_qc()
         self.assertTrue(all(qc.values()), qc)
+
+
+    def test_public_api_requires_valid_bearer_token_and_scope(self) -> None:
+        public_api = PublicApiLayer(auth=ExternalDeveloperAuthService(), exposure=PublicApiExposureService())
+
+        create = public_api.create_developer_application(
+            {
+                "developer_id": "dev_1",
+                "app_name": "partner_portal",
+                "scopes": ["integrations:read"],
+                "created_at": "2026-03-26T12:00:00Z",
+            },
+            request_id="req_public_1",
+        )
+        self.assertIn("client_id", create["data"])
+
+        unauthorized = public_api.list_public_integrations(authorization_header=None, request_id="req_public_2")
+        self.assertEqual(unauthorized["error"]["code"], "unauthorized")
+
+        token_response = public_api.issue_access_token(
+            {
+                "client_id": create["data"]["client_id"],
+                "client_secret": create["data"]["client_secret"],
+                "scopes": ["integrations:read"],
+            },
+            request_id="req_public_3",
+        )
+        access_token = token_response["data"]["access_token"]
+
+        authorized = public_api.list_public_integrations(authorization_header=f"Bearer {access_token}", request_id="req_public_4")
+        self.assertIn("items", authorized["data"])
+        self.assertGreaterEqual(len(authorized["data"]["items"]), 1)
+
+    def test_sdk_scaffold_generates_standardized_requests(self) -> None:
+        sdk = PublicApiSdk(PublicApiSdkConfig(base_url="https://public.crm.example", client_id="cid_1", client_secret="sec_1"))
+
+        token_req = sdk.token_request(("integrations:read",))
+        self.assertEqual(token_req["method"], "POST")
+        self.assertTrue(token_req["url"].endswith(PUBLIC_API_ENDPOINTS["issue_access_token"]["path"]))
+        self.assertEqual(token_req["headers"]["Accept"], "application/json")
+
+        integrations_req = sdk.integrations_request(access_token="pat_example", page=1, page_size=25)
+        self.assertEqual(integrations_req["method"], "GET")
+        self.assertEqual(integrations_req["params"]["page_size"], 25)
+        self.assertIn("Bearer pat_example", integrations_req["headers"]["Authorization"])
 
 
 if __name__ == "__main__":
