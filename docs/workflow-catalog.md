@@ -403,3 +403,54 @@ This catalog defines the canonical business workflows and their explicit executi
   4. Audit & Compliance Service records reliability incident artifact.
   5. Platform Operations triages dead-letter queue item and performs remediation/replay decision.
 - **Outcome:** Failed event deliveries are surfaced, governed, and remediated through explicit reliability operations.
+
+## 17) Scheduler job lifecycle
+
+- **Name:** Scheduler job lifecycle
+- **Trigger events:**
+  - `job.enqueued.v1`
+  - `job.started.v1`
+  - `job.succeeded.v1`
+  - `job.retry.scheduled.v1`
+  - `job.failed.v1`
+  - `job.dead_lettered.v1`
+- **Services involved:**
+  - Job Scheduler
+  - Workflow Automation Service
+  - Analytics & Reporting Service
+  - Audit & Compliance Service
+  - Platform Operations
+- **Ordered steps:**
+  1. Scheduler API accepts job submission and enforces idempotency/deduplication.
+  2. Job Scheduler writes durable queue record and emits `job.enqueued.v1`.
+  3. Worker acquires lease atomically and emits `job.started.v1`.
+  4. If handler succeeds, Job Scheduler acknowledges completion and emits `job.succeeded.v1`.
+  5. If handler fails with attempts remaining, Job Scheduler computes backoff and emits `job.retry.scheduled.v1`.
+  6. If final attempt fails, Job Scheduler emits `job.failed.v1` and moves payload to dead-letter storage.
+  7. Job Scheduler emits `job.dead_lettered.v1` for operator remediation workflow.
+  8. Workflow Automation Service may trigger compensating actions from failure/dead-letter events.
+  9. Analytics & Reporting Service updates queue latency, retries, and failure SLO dashboards.
+  10. Audit & Compliance Service and Platform Operations retain incident trail and replay decisions.
+- **Outcome:** Background jobs execute with retry safety, lease-based single-run guarantees, and explicit dead-letter governance.
+
+## 18) Scheduler schedule lifecycle
+
+- **Name:** Scheduler schedule lifecycle
+- **Trigger events:**
+  - `schedule.created.v1`
+  - `schedule.updated.v1`
+  - `schedule.deleted.v1`
+- **Services involved:**
+  - Job Scheduler
+  - Analytics & Reporting Service
+  - Audit & Compliance Service
+  - Platform Operations
+- **Ordered steps:**
+  1. Operator/service creates recurring schedule through Scheduler API and Job Scheduler emits `schedule.created.v1`.
+  2. Scheduler computes next due run and stores recurrence cursor.
+  3. For each due slot, scheduler materializes at most one job using `(schedule_id, scheduled_for)` idempotency seed.
+  4. Schedule updates emit `schedule.updated.v1` and recompute next due run atomically.
+  5. Disabled schedules stop materialization but preserve audit/history.
+  6. Soft-delete emits `schedule.deleted.v1` and blocks new recurring runs.
+  7. Platform Operations can trigger run-now/replay without corrupting recurring cursor state.
+- **Outcome:** Recurring automation is deterministic, deduplicated per slot, and operationally controllable.

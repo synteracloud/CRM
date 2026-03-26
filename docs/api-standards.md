@@ -276,3 +276,21 @@ A service is compliant only if all answers are **Yes**:
 - Are Bearer tokens required for non-public endpoints?
 - Are `401` and `403` semantics correctly separated?
 
+
+
+## 9) Asynchronous Job API Requirements
+
+These rules are mandatory for background job/scheduler endpoints (for example `POST /api/v1/jobs` and `POST /api/v1/job-schedules`).
+
+### 9.1 Idempotency Header
+- Job and schedule creation endpoints MUST accept `Idempotency-Key` header.
+- Servers MUST scope idempotency by `(tenant_id, method, route, idempotency_key)`.
+- Replays with same key within dedupe window MUST return the original response (or a deterministic equivalent) and MUST NOT create duplicate runnable work.
+
+### 9.2 Accepted Response for Async Work
+- Endpoints that enqueue background work SHOULD return `202 Accepted` when execution is deferred.
+- Response `data` MUST include `job_id` and an initial `status`.
+
+### 9.3 Conflict Semantics
+- If a request is semantically conflicting with active work, API MUST return `409 conflict` and include conflicting `job_id` or `schedule_id` in `error.details`.
+
