@@ -1,9 +1,10 @@
-"""Self-QC checks for event bus implementation.
+"""Self-QC checks for event bus/event tracking implementation.
 
 Checks:
 1) All code-defined events match docs/event-catalog.md.
 2) Handlers are present for every catalog event.
 3) Idempotency guard prevents duplicate processing.
+4) Event store payload validation enforces required fields for every event.
 """
 
 from __future__ import annotations
@@ -16,7 +17,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.event_bus import EVENT_NAMES, DEFAULT_EVENT_HANDLERS, Event, InMemoryEventBus
+from src.event_bus import (
+    EVENT_NAMES,
+    DEFAULT_EVENT_HANDLERS,
+    Event,
+    EventStore,
+    EventValidationError,
+    InMemoryEventBus,
+    load_event_payload_requirements,
+)
 
 CATALOG_PATH = Path("docs/event-catalog.md")
 
@@ -60,7 +69,17 @@ def assert_idempotency() -> None:
         event_id="evt-123",
         occurred_at="2026-03-26T00:00:00Z",
         tenant_id="tenant-1",
-        payload={"lead_id": "lead-1"},
+        payload={
+            "lead_id": "lead-1",
+            "owner_user_id": "user-1",
+            "source": "web",
+            "status": "new",
+            "score": 10,
+            "email": "a@example.com",
+            "phone": "555",
+            "company_name": "Acme",
+            "created_at": "2026-03-26T00:00:00Z",
+        },
     )
 
     bus.publish(event)
@@ -70,10 +89,45 @@ def assert_idempotency() -> None:
         raise AssertionError(f"Expected one delivery, got: {seen}")
 
 
+def assert_payload_requirements() -> None:
+    reqs = load_event_payload_requirements()
+    if set(reqs) != set(EVENT_NAMES):
+        raise AssertionError("Catalog payload requirements did not load for all events.")
+
+    store = EventStore()
+    for idx, event_name in enumerate(EVENT_NAMES, start=1):
+        required_fields = reqs[event_name]
+        payload = {field: f"value-{field}" for field in required_fields}
+        event = Event(
+            event_name=event_name,
+            event_id=f"evt-ok-{idx}",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-1",
+            payload=payload,
+        )
+        store.append(event)
+
+        if required_fields:
+            missing_payload = {field: f"value-{field}" for field in required_fields[1:]}
+            bad_event = Event(
+                event_name=event_name,
+                event_id=f"evt-bad-{idx}",
+                occurred_at="2026-03-26T00:00:00Z",
+                tenant_id="tenant-1",
+                payload=missing_payload,
+            )
+            try:
+                store.append(bad_event)
+            except EventValidationError:
+                continue
+            raise AssertionError(f"Expected EventValidationError for event={event_name}")
+
+
 def main() -> None:
     assert_catalog_alignment()
     assert_handlers_coverage()
     assert_idempotency()
+    assert_payload_requirements()
     print("Self-QC score: 10/10")
 
 
