@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from src.predictive_models import OpportunityHistory, PredictiveModelApi, PredictiveModelService, SubscriptionHistory
+from src.predictive_models import OpportunityHistory, PredictiveModelApi, PredictiveModelService, SubscriptionValueHistory
 
 
 class PredictiveModelServiceTests(unittest.TestCase):
@@ -53,30 +53,34 @@ class PredictiveModelServiceTests(unittest.TestCase):
         self.assertGreater(response["data"]["probability"], 0.5)
         self.assertIn("tenant_historical_win_rate", response["data"]["drivers"][0])
 
-    def test_predict_churn_uses_historical_subscription_data(self) -> None:
+    def test_predict_churn_uses_billing_and_subscription_signals(self) -> None:
         self.service.ingest_subscription_history(
             [
-                SubscriptionHistory(
+                SubscriptionValueHistory(
                     subscription_id="sub-1",
                     tenant_id="tenant-1",
                     status="active",
-                    mrr=5000,
-                    started_at="2025-01-01",
-                    current_period_end="2025-12-31",
-                    last_payment_at="2025-12-15",
-                    late_payment_count=0,
-                    support_case_count_90d=1,
+                    start_date="2025-01-01",
+                    end_date=None,
+                    renewal_date="2026-01-01",
+                    invoice_amount_due_12m=5000,
+                    invoice_amount_paid_12m=5000,
+                    invoice_overdue_count_12m=0,
+                    payment_failed_count_90d=0,
+                    payment_success_count_90d=4,
                 ),
-                SubscriptionHistory(
+                SubscriptionValueHistory(
                     subscription_id="sub-2",
                     tenant_id="tenant-1",
                     status="canceled",
-                    mrr=2200,
-                    started_at="2025-02-01",
-                    current_period_end="2025-08-31",
-                    last_payment_at="2025-06-15",
-                    late_payment_count=3,
-                    support_case_count_90d=6,
+                    start_date="2025-02-01",
+                    end_date="2025-08-31",
+                    renewal_date=None,
+                    invoice_amount_due_12m=6000,
+                    invoice_amount_paid_12m=3000,
+                    invoice_overdue_count_12m=5,
+                    payment_failed_count_90d=3,
+                    payment_success_count_90d=1,
                 ),
             ]
         )
@@ -85,18 +89,58 @@ class PredictiveModelServiceTests(unittest.TestCase):
             tenant_id="tenant-1",
             subscription_id="sub-open-1",
             status="past_due",
-            mrr=1800,
-            started_at="2025-06-01",
-            current_period_end="2026-06-01",
-            last_payment_at="2026-03-01",
-            late_payment_count=4,
-            support_case_count_90d=7,
+            start_date="2025-06-01",
+            end_date=None,
+            renewal_date="2026-06-01",
+            invoice_amount_due_12m=7200,
+            invoice_amount_paid_12m=4200,
+            invoice_overdue_count_12m=4,
+            payment_failed_count_90d=3,
+            payment_success_count_90d=1,
             request_id="req-2",
         )
 
         self.assertIn("data", response)
         self.assertGreaterEqual(response["data"]["churn_probability"], 0.7)
         self.assertEqual(response["data"]["risk_level"], "high")
+
+    def test_predict_clv_uses_subscription_and_churn_logic(self) -> None:
+        self.service.ingest_subscription_history(
+            [
+                SubscriptionValueHistory(
+                    subscription_id="sub-1",
+                    tenant_id="tenant-1",
+                    status="active",
+                    start_date="2024-01-01",
+                    end_date=None,
+                    renewal_date="2026-01-01",
+                    invoice_amount_due_12m=12000,
+                    invoice_amount_paid_12m=11800,
+                    invoice_overdue_count_12m=0,
+                    payment_failed_count_90d=0,
+                    payment_success_count_90d=5,
+                )
+            ]
+        )
+
+        response = self.api.predict_customer_lifetime_value(
+            tenant_id="tenant-1",
+            subscription_id="sub-1",
+            status="active",
+            start_date="2024-01-01",
+            end_date=None,
+            renewal_date="2026-01-01",
+            invoice_amount_due_12m=12000,
+            invoice_amount_paid_12m=11800,
+            invoice_overdue_count_12m=0,
+            payment_failed_count_90d=0,
+            payment_success_count_90d=5,
+            request_id="req-4",
+        )
+
+        self.assertIn("data", response)
+        self.assertGreater(response["data"]["estimated_clv"], 11800)
+        self.assertIn("expected_retention_years", " ".join(response["data"]["drivers"]))
 
     def test_rejects_invalid_historical_data(self) -> None:
         response = self.api.ingest_opportunity_history(

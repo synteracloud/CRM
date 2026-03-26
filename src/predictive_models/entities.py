@@ -17,16 +17,18 @@ OPPORTUNITY_HISTORY_FIELDS: tuple[str, ...] = (
     "close_date",
 )
 
-SUBSCRIPTION_HISTORY_FIELDS: tuple[str, ...] = (
+SUBSCRIPTION_VALUE_FIELDS: tuple[str, ...] = (
     "subscription_id",
     "tenant_id",
     "status",
-    "mrr",
-    "started_at",
-    "current_period_end",
-    "last_payment_at",
-    "late_payment_count",
-    "support_case_count_90d",
+    "start_date",
+    "end_date",
+    "renewal_date",
+    "invoice_amount_due_12m",
+    "invoice_amount_paid_12m",
+    "invoice_overdue_count_12m",
+    "payment_failed_count_90d",
+    "payment_success_count_90d",
 )
 
 
@@ -46,18 +48,20 @@ class OpportunityHistory:
 
 
 @dataclass(frozen=True)
-class SubscriptionHistory:
-    """Historical subscription/account state used for churn risk scoring."""
+class SubscriptionValueHistory:
+    """Subscription + billing derived signals from Subscription/InvoiceSummary/PaymentEvent."""
 
     subscription_id: str
     tenant_id: str
     status: str
-    mrr: float
-    started_at: str
-    current_period_end: str
-    last_payment_at: str
-    late_payment_count: int
-    support_case_count_90d: int
+    start_date: str
+    end_date: str | None
+    renewal_date: str | None
+    invoice_amount_due_12m: float
+    invoice_amount_paid_12m: float
+    invoice_overdue_count_12m: int
+    payment_failed_count_90d: int
+    payment_success_count_90d: int
 
 
 @dataclass(frozen=True)
@@ -79,6 +83,17 @@ class ChurnPrediction:
     tenant_id: str
     churn_probability: float
     risk_level: str
+    drivers: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class CustomerLifetimeValuePrediction:
+    """Prediction output for estimated remaining customer lifetime value."""
+
+    subscription_id: str
+    tenant_id: str
+    estimated_clv: float
+    confidence: str
     drivers: tuple[str, ...]
 
 

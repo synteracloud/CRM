@@ -14,6 +14,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "ingest_subscription_history": {"method": "POST", "path": "/api/v1/predictive-models/history/subscriptions"},
     "predict_win_probability": {"method": "POST", "path": "/api/v1/predictive-models/win-probability:predict"},
     "predict_churn": {"method": "POST", "path": "/api/v1/predictive-models/churn:predict"},
+    "predict_customer_lifetime_value": {"method": "POST", "path": "/api/v1/predictive-models/clv:predict"},
 }
 
 
@@ -76,12 +77,14 @@ class PredictiveModelApi:
         tenant_id: str,
         subscription_id: str,
         status: str,
-        mrr: float,
-        started_at: str,
-        current_period_end: str,
-        last_payment_at: str,
-        late_payment_count: int,
-        support_case_count_90d: int,
+        start_date: str,
+        end_date: str | None,
+        renewal_date: str | None,
+        invoice_amount_due_12m: float,
+        invoice_amount_paid_12m: float,
+        invoice_overdue_count_12m: int,
+        payment_failed_count_90d: int,
+        payment_success_count_90d: int,
         request_id: str,
     ) -> dict[str, Any]:
         try:
@@ -89,12 +92,47 @@ class PredictiveModelApi:
                 tenant_id=tenant_id,
                 subscription_id=subscription_id,
                 status=status,
-                mrr=mrr,
-                started_at=started_at,
-                current_period_end=current_period_end,
-                last_payment_at=last_payment_at,
-                late_payment_count=late_payment_count,
-                support_case_count_90d=support_case_count_90d,
+                start_date=start_date,
+                end_date=end_date,
+                renewal_date=renewal_date,
+                invoice_amount_due_12m=invoice_amount_due_12m,
+                invoice_amount_paid_12m=invoice_amount_paid_12m,
+                invoice_overdue_count_12m=invoice_overdue_count_12m,
+                payment_failed_count_90d=payment_failed_count_90d,
+                payment_success_count_90d=payment_success_count_90d,
+            )
+            return success(asdict(prediction), request_id)
+        except PredictionValidationError as exc:
+            return error("validation_error", str(exc), request_id)
+
+    def predict_customer_lifetime_value(
+        self,
+        tenant_id: str,
+        subscription_id: str,
+        status: str,
+        start_date: str,
+        end_date: str | None,
+        renewal_date: str | None,
+        invoice_amount_due_12m: float,
+        invoice_amount_paid_12m: float,
+        invoice_overdue_count_12m: int,
+        payment_failed_count_90d: int,
+        payment_success_count_90d: int,
+        request_id: str,
+    ) -> dict[str, Any]:
+        try:
+            prediction = self._service.predict_customer_lifetime_value(
+                tenant_id=tenant_id,
+                subscription_id=subscription_id,
+                status=status,
+                start_date=start_date,
+                end_date=end_date,
+                renewal_date=renewal_date,
+                invoice_amount_due_12m=invoice_amount_due_12m,
+                invoice_amount_paid_12m=invoice_amount_paid_12m,
+                invoice_overdue_count_12m=invoice_overdue_count_12m,
+                payment_failed_count_90d=payment_failed_count_90d,
+                payment_success_count_90d=payment_success_count_90d,
             )
             return success(asdict(prediction), request_id)
         except PredictionValidationError as exc:
