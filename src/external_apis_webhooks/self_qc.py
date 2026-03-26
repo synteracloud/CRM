@@ -7,6 +7,7 @@ from src.event_bus.catalog_events import EVENT_NAME_SET
 from .entities import ALLOWED_PROVIDERS, INBOUND_WEBHOOK_ENDPOINTS, OUTBOUND_API_CONTRACTS
 from .mapping import EventWebhookMapper
 from .public_api_sdk import ExternalDeveloperAuthService, PUBLIC_API_ENDPOINTS, PublicApiExposureService, PublicApiLayer, PublicApiSdk, PublicApiSdkConfig
+from .services import WebhookDeliveryService, WebhookSubscriptionService
 
 
 
@@ -66,7 +67,7 @@ def run_self_qc() -> dict[str, bool]:
         "all_integrations_defined": all_integrations_defined,
         "no_undefined_endpoints": no_undefined_endpoints,
         "auth_correctly_enforced": auth_enforced,
-        "events_correctly_mapped": events_mapped_to_webhooks,
+        "events_correctly_mapped": mapped_events_are_valid,
         "public_api_standards_compliant": api_paths_follow_standard,
         "public_api_secure_access_only": secure_access_only,
         "sdk_scaffolding_available": sdk_scaffold_valid,
