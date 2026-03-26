@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from src.event_bus.catalog_events import EVENT_NAME_SET
+
 from .entities import ALLOWED_PROVIDERS, INBOUND_WEBHOOK_ENDPOINTS, OUTBOUND_API_CONTRACTS
 from .mapping import EventWebhookMapper
+from .services import WebhookDeliveryService, WebhookSubscriptionService
 
 
 def run_self_qc() -> dict[str, bool]:
@@ -19,11 +22,19 @@ def run_self_qc() -> dict[str, bool]:
 
     auth_enforced = all(contract.get("auth") in {"bearer", "basic"} for contract in OUTBOUND_API_CONTRACTS.values())
 
-    events_mapped_to_webhooks = len(mapper.map_event("notification.dispatched.v1", {"notification_id": "n-1"})) > 0
+    mapped_events_are_valid = all(event_name in EVENT_NAME_SET for event_name in mapper._mapping)  # noqa: SLF001
+
+    # Gap check: every subscription for an event gets one delivery record.
+    subscriptions = WebhookSubscriptionService()
+    subscriptions.subscribe("https://example.com/a", ["notification.dispatched.v1", "notification.failed.v1"])
+    subscriptions.subscribe("https://example.com/b", ["notification.dispatched.v1"])
+    deliveries = WebhookDeliveryService(subscriptions).deliver_event("notification.dispatched.v1", {"notification_id": "n-1"})
+    no_delivery_gaps = len(deliveries) == 2 and all(delivery.event_name == "notification.dispatched.v1" for delivery in deliveries)
 
     return {
         "all_integrations_defined": all_integrations_defined,
         "no_undefined_endpoints": no_undefined_endpoints,
         "auth_correctly_enforced": auth_enforced,
-        "events_correctly_mapped": events_mapped_to_webhooks,
+        "all_events_valid": mapped_events_are_valid,
+        "no_delivery_gaps": no_delivery_gaps,
     }

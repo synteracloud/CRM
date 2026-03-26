@@ -10,8 +10,10 @@ from src.external_apis_webhooks import (
     IntegrationAuth,
     OutboundRequest,
     SecretStore,
+    WebhookDeliveryService,
     WebhookReceiverService,
     WebhookSenderService,
+    WebhookSubscriptionService,
     run_self_qc,
 )
 
@@ -81,6 +83,33 @@ class ExternalApisWebhooksTests(unittest.TestCase):
         providers = sorted(response.provider for response in responses)
 
         self.assertEqual(providers, ["sendgrid", "twilio"])
+
+    def test_webhook_subscription_and_delivery_no_gaps(self) -> None:
+        subscriptions = WebhookSubscriptionService()
+        subscriptions.subscribe("https://a.example.com/hooks", ["notification.dispatched.v1"])
+        subscriptions.subscribe("https://b.example.com/hooks", ["notification.dispatched.v1", "notification.failed.v1"])
+
+        deliveries = WebhookDeliveryService(subscriptions).deliver_event(
+            "notification.dispatched.v1", {"notification_id": "noti_2"}
+        )
+
+        self.assertEqual(len(deliveries), 2)
+        self.assertTrue(all(delivery.status == "delivered" for delivery in deliveries))
+
+    def test_delivery_retry_and_dead_letter_after_max_attempts(self) -> None:
+        subscriptions = WebhookSubscriptionService()
+        sub = subscriptions.subscribe("https://retry.example.com/hooks", ["notification.failed.v1"], max_attempts=3)
+        delivery_service = WebhookDeliveryService(subscriptions)
+
+        [delivery] = delivery_service.deliver_event("notification.failed.v1", {"force_fail": True, "subscription": sub.subscription_id})
+        self.assertEqual(delivery.status, "failed")
+
+        retry_2 = delivery_service.retry_delivery(delivery.delivery_id)
+        retry_3 = delivery_service.retry_delivery(delivery.delivery_id)
+
+        self.assertEqual(retry_2.status, "failed")
+        self.assertEqual(retry_3.status, "dead_lettered")
+        self.assertEqual(retry_3.attempt_count, 3)
 
     def test_self_qc_returns_all_green(self) -> None:
         qc = run_self_qc()
