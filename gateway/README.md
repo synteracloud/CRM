@@ -9,6 +9,9 @@ gateway/
   routes/
     index.js
     v1-users.routes.js
+    v1-price-books.routes.js
+    v1-subscriptions.routes.js
+    v1-invoice-summaries.routes.js
   middleware/
     request-id.js
     request-validation.js
