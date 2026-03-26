@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.event_bus.catalog_events import EVENT_NAME_SET
+
 from .entities import ALLOWED_PROVIDERS, INBOUND_WEBHOOK_ENDPOINTS, OUTBOUND_API_CONTRACTS
 from .mapping import EventWebhookMapper
 from .public_api_sdk import ExternalDeveloperAuthService, PUBLIC_API_ENDPOINTS, PublicApiExposureService, PublicApiLayer, PublicApiSdk, PublicApiSdkConfig
@@ -21,7 +23,14 @@ def run_self_qc() -> dict[str, bool]:
 
     auth_enforced = all(contract.get("auth") in {"bearer", "basic"} for contract in OUTBOUND_API_CONTRACTS.values())
 
-    events_mapped_to_webhooks = len(mapper.map_event("notification.dispatched.v1", {"notification_id": "n-1"})) > 0
+    mapped_events_are_valid = all(event_name in EVENT_NAME_SET for event_name in mapper._mapping)  # noqa: SLF001
+
+    # Gap check: every subscription for an event gets one delivery record.
+    subscriptions = WebhookSubscriptionService()
+    subscriptions.subscribe("https://example.com/a", ["notification.dispatched.v1", "notification.failed.v1"])
+    subscriptions.subscribe("https://example.com/b", ["notification.dispatched.v1"])
+    deliveries = WebhookDeliveryService(subscriptions).deliver_event("notification.dispatched.v1", {"notification_id": "n-1"})
+    no_delivery_gaps = len(deliveries) == 2 and all(delivery.event_name == "notification.dispatched.v1" for delivery in deliveries)
 
     api_paths_follow_standard = all(endpoint["path"].startswith("/api/v1/") for endpoint in PUBLIC_API_ENDPOINTS.values())
 

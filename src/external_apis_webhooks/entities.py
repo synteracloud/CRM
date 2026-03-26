@@ -68,3 +68,28 @@ class InboundWebhook:
     provider: ProviderName
     headers: dict[str, str]
     payload: dict[str, Any] | list[dict[str, Any]]
+
+
+DeliveryStatus = Literal["pending", "failed", "delivered", "dead_lettered"]
+
+
+@dataclass(frozen=True)
+class WebhookSubscription:
+    subscription_id: str
+    target_url: str
+    event_names: tuple[str, ...]
+    is_active: bool = True
+    max_attempts: int = 10
+
+
+@dataclass(frozen=True)
+class WebhookDelivery:
+    delivery_id: str
+    subscription_id: str
+    event_name: str
+    target_url: str
+    payload: dict[str, Any]
+    max_attempts: int
+    attempt_count: int = 0
+    status: DeliveryStatus = "pending"
+    last_error: str | None = None

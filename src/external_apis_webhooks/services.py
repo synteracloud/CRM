@@ -4,9 +4,21 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from typing import Any
+from uuid import uuid4
+
+from src.event_bus.catalog_events import EVENT_NAME_SET
 
 from .auth import IntegrationAuth, IntegrationAuthError
-from .entities import ALLOWED_PROVIDERS, INBOUND_WEBHOOK_ENDPOINTS, OUTBOUND_API_CONTRACTS, InboundWebhook, OutboundRequest, OutboundResponse
+from .entities import (
+    ALLOWED_PROVIDERS,
+    INBOUND_WEBHOOK_ENDPOINTS,
+    OUTBOUND_API_CONTRACTS,
+    InboundWebhook,
+    OutboundRequest,
+    OutboundResponse,
+    WebhookDelivery,
+    WebhookSubscription,
+)
 from .mapping import EventWebhookMapper, OutboundWebhookEvent
 
 
@@ -33,6 +45,110 @@ class ExternalApiConnectorService:
 
         # Network I/O is intentionally abstracted; response below mirrors expected contract shape.
         return OutboundResponse(provider=request.provider, status_code=202, body={"request": asdict(request), "auth_headers": headers})
+
+
+class WebhookSubscriptionService:
+    """Manages outbound webhook subscribers for internal CRM events."""
+
+    def __init__(self) -> None:
+        self._subscriptions: dict[str, WebhookSubscription] = {}
+
+    def subscribe(self, target_url: str, event_names: list[str], max_attempts: int = 10) -> WebhookSubscription:
+        if not target_url.startswith("https://"):
+            raise IntegrationContractError("Webhook subscription target_url must use https")
+
+        unknown = sorted(set(event_names) - EVENT_NAME_SET)
+        if unknown:
+            raise IntegrationContractError(f"Unknown event(s) in subscription: {', '.join(unknown)}")
+
+        subscription = WebhookSubscription(
+            subscription_id=f"whsub_{uuid4().hex[:12]}",
+            target_url=target_url,
+            event_names=tuple(dict.fromkeys(event_names)),
+            max_attempts=max_attempts,
+        )
+        self._subscriptions[subscription.subscription_id] = subscription
+        return subscription
+
+    def list_subscriptions(self) -> list[WebhookSubscription]:
+        return list(self._subscriptions.values())
+
+    def subscriptions_for_event(self, event_name: str) -> list[WebhookSubscription]:
+        if event_name not in EVENT_NAME_SET:
+            raise IntegrationContractError(f"Unknown event for delivery: {event_name}")
+
+        return [
+            sub for sub in self._subscriptions.values() if sub.is_active and event_name in sub.event_names
+        ]
+
+
+class WebhookDeliveryService:
+    """Delivers internal events to external webhook subscriptions with retry/failure handling."""
+
+    def __init__(self, subscription_service: WebhookSubscriptionService) -> None:
+        self._subscription_service = subscription_service
+        self._deliveries: dict[str, WebhookDelivery] = {}
+
+    def deliver_event(self, event_name: str, payload: dict[str, Any]) -> list[WebhookDelivery]:
+        deliveries: list[WebhookDelivery] = []
+        for subscription in self._subscription_service.subscriptions_for_event(event_name):
+            delivery = WebhookDelivery(
+                delivery_id=f"whdel_{uuid4().hex[:12]}",
+                subscription_id=subscription.subscription_id,
+                event_name=event_name,
+                target_url=subscription.target_url,
+                payload=payload,
+                max_attempts=subscription.max_attempts,
+            )
+            self._deliveries[delivery.delivery_id] = delivery
+            deliveries.append(self._attempt_delivery(delivery.delivery_id))
+        return deliveries
+
+    def retry_delivery(self, delivery_id: str) -> WebhookDelivery:
+        delivery = self._deliveries.get(delivery_id)
+        if not delivery:
+            raise IntegrationContractError(f"Unknown delivery id: {delivery_id}")
+        if delivery.status in {"delivered", "dead_lettered"}:
+            return delivery
+        return self._attempt_delivery(delivery_id)
+
+    def get_delivery(self, delivery_id: str) -> WebhookDelivery:
+        delivery = self._deliveries.get(delivery_id)
+        if not delivery:
+            raise IntegrationContractError(f"Unknown delivery id: {delivery_id}")
+        return delivery
+
+    def _attempt_delivery(self, delivery_id: str) -> WebhookDelivery:
+        delivery = self._deliveries[delivery_id]
+        attempt = delivery.attempt_count + 1
+        should_fail = self._should_fail_delivery(delivery.payload, attempt)
+
+        if should_fail and attempt >= delivery.max_attempts:
+            updated = WebhookDelivery(
+                **{**asdict(delivery), "attempt_count": attempt, "status": "dead_lettered", "last_error": "delivery failed after max retries"}
+            )
+        elif should_fail:
+            updated = WebhookDelivery(
+                **{**asdict(delivery), "attempt_count": attempt, "status": "failed", "last_error": f"attempt {attempt} failed"}
+            )
+        else:
+            updated = WebhookDelivery(
+                **{**asdict(delivery), "attempt_count": attempt, "status": "delivered", "last_error": None}
+            )
+
+        self._deliveries[delivery_id] = updated
+        return updated
+
+    @staticmethod
+    def _should_fail_delivery(payload: dict[str, Any], attempt: int) -> bool:
+        force_fail = payload.get("force_fail")
+        force_fail_attempts = payload.get("force_fail_attempts")
+
+        if force_fail is True:
+            return True
+        if isinstance(force_fail_attempts, int) and attempt <= force_fail_attempts:
+            return True
+        return False
 
 
 class WebhookReceiverService:
