@@ -1,0 +1,45 @@
+"""Canonical event names defined by docs/event-catalog.md."""
+
+from __future__ import annotations
+
+EVENT_NAMES: tuple[str, ...] = (
+    "tenant.provisioned.v1",
+    "tenant.entitlement.updated.v1",
+    "identity.user.provisioned.v1",
+    "identity.user.role.assigned.v1",
+    "lead.created.v1",
+    "lead.assignment.updated.v1",
+    "lead.converted.v1",
+    "contact.created.v1",
+    "contact.merged.v1",
+    "account.created.v1",
+    "account.hierarchy.updated.v1",
+    "opportunity.created.v1",
+    "opportunity.stage.changed.v1",
+    "opportunity.closed.v1",
+    "quote.created.v1",
+    "quote.submitted_for_approval.v1",
+    "approval.requested.v1",
+    "approval.decided.v1",
+    "quote.accepted.v1",
+    "subscription.created.v1",
+    "subscription.status.changed.v1",
+    "invoice.summary.updated.v1",
+    "payment.event.recorded.v1",
+    "case.created.v1",
+    "case.sla.breached.v1",
+    "case.resolved.v1",
+    "communication.message.sent.v1",
+    "communication.message.engagement.updated.v1",
+    "notification.dispatched.v1",
+    "notification.failed.v1",
+    "knowledge.article.published.v1",
+    "workflow.execution.completed.v1",
+    "workflow.execution.failed.v1",
+    "search.document.upserted.v1",
+    "feature_flag.updated.v1",
+    "audit.log.recorded.v1",
+    "eventbus.dead_lettered.v1",
+)
+
+EVENT_NAME_SET: frozenset[str] = frozenset(EVENT_NAMES)
