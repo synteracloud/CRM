@@ -29,6 +29,7 @@
 | OpportunityLineItem | Opportunity Service | Product line details on opportunity. |
 | Quote | Quote Service | Commercial quote and approval state. |
 | QuoteLineItem | Quote Service | Product line details on quote. |
+| Order | Order Service | Commercial order created from accepted quote. |
 | Product | Product Catalog Service | Sellable product/SKU metadata. |
 | PriceBook | Product Catalog Service | Named pricing context/book. |
 | PriceBookEntry | Product Catalog Service | Product price in a given price book. |
@@ -184,6 +185,14 @@
 - **Owner service:** Quote Service
 - **Fields:** `quote_line_item_id (PK)`, `tenant_id (FK->Tenant)`, `quote_id (FK->Quote)`, `product_id (FK->Product)`, `quantity`, `list_price`, `discount_percent`, `net_price`
 - **Relationships:** `Quote` 1-N `QuoteLineItem`, `Product` 1-N `QuoteLineItem`
+- **Tenant isolation fields:** `tenant_id`
+
+### Order
+- **Owner service:** Order Service
+- **Fields:** `order_id (PK)`, `tenant_id (FK->Tenant)`, `quote_id (FK->Quote)`, `opportunity_id (FK->Opportunity)`, `status`, `currency`, `subtotal`, `discount_total`, `tax_total`, `grand_total`, `ordered_at`, `created_at`
+- **Relationships:**
+  - `Quote` 0..1-1 `Order`
+  - `Opportunity` 1-N `Order`
 - **Tenant isolation fields:** `tenant_id`
 
 ### Product
