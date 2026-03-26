@@ -12,16 +12,18 @@ from .entities import (
     WorkflowStep,
     WorkflowValidationError,
 )
-from .services import ALLOWED_ACTION_TYPES, WorkflowEngine
+from .services import ALLOWED_ACTION_TYPES, ActionExecutionEngine, TriggerHandlingSystem, WorkflowEngine
 
 __all__ = [
     "ALLOWED_ACTION_TYPES",
     "API_ENDPOINTS",
+    "ActionExecutionEngine",
     "ActionDefinition",
     "ConditionDefinition",
     "ConditionRule",
     "SequencingDefinition",
     "TriggerDefinition",
+    "TriggerHandlingSystem",
     "WorkflowApi",
     "WorkflowDefinition",
     "WorkflowEngine",
