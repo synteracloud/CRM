@@ -22,6 +22,7 @@ EVENT_NAMES: tuple[str, ...] = (
     "approval.requested.v1",
     "approval.decided.v1",
     "quote.accepted.v1",
+    "order.created.v1",
     "subscription.created.v1",
     "subscription.status.changed.v1",
     "invoice.summary.updated.v1",
