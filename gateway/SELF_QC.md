@@ -22,3 +22,7 @@
 2. Enforce access control: added gateway auth + RBAC middleware with tenant context checks.
 3. Re-check: validated routes/middleware against `docs/api-standards.md`, `docs/identity-auth-rbac.md`, and `docs/org-multi-tenancy.md` guard requirements.
 4. Score: **10/10**.
+
+- ✅ Activities/task resources use canonical `/api/v1/...` patterns and scope checks (`activities.*`, `tasks.*`).
+- ✅ Task scheduling guard enforces `due_at >= starts_at` through service validation.
+- ✅ Activity/task entity links are constrained to supported timeline entities to avoid orphan records.

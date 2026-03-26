@@ -9,6 +9,8 @@ gateway/
   routes/
     index.js
     v1-users.routes.js
+    v1-activities.routes.js
+    v1-tasks.routes.js
   middleware/
     request-id.js
     request-validation.js
@@ -59,3 +61,13 @@ Error envelope:
   }
 }
 ```
+
+## Activities + Tasks APIs (B2-P04)
+
+- `GET /api/v1/activities`
+- `POST /api/v1/activities`
+- `GET /api/v1/tasks`
+- `POST /api/v1/tasks`
+- `POST /api/v1/tasks/{task_id}/reschedule`
+
+All endpoints follow the same envelope, auth, and tenant-context rules as other v1 resources.
