@@ -8,6 +8,12 @@ from src.workflow_engine import (
     WorkflowApi,
     ActionDefinition,
     SequencingDefinition,
+    TriggerDefinition,
+    ConditionDefinition,
+    WorkflowBuilderGraph,
+    WorkflowGraphEdge,
+    WorkflowGraphNode,
+    WorkflowGraphValidationError,
     WorkflowDefinition,
     WorkflowEngine,
     WorkflowStep,
@@ -145,6 +151,113 @@ class WorkflowCatalogCoverageTests(unittest.TestCase):
             )
             execution = engine.start_workflow(workflow.workflow_key, event=event)
             self.assertIn(execution.status, {"completed", "waiting"})
+
+
+class WorkflowBuilderTests(unittest.TestCase):
+    def test_graph_definition_maps_to_dsl_and_executes(self) -> None:
+        engine = WorkflowEngine()
+        graph = WorkflowBuilderGraph(
+            workflow_key="builder_graph_example",
+            version="v1",
+            metadata={"name": "Builder graph example", "domain": "sales"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(match="all", rules=()),
+            nodes=(
+                WorkflowGraphNode(
+                    id="validate_lead",
+                    action_type="call_service",
+                    service="Data Quality Service",
+                    operation="validate",
+                    input={"lead_id": "${context.entity.id}"},
+                ),
+                WorkflowGraphNode(
+                    id="notify_owner",
+                    action_type="notify",
+                    service="Notification Orchestrator",
+                    operation="notify_assigned_owner",
+                ),
+            ),
+            edges=(WorkflowGraphEdge(source="validate_lead", target="notify_owner"),),
+            start_node_id="validate_lead",
+        )
+        definition = engine.create_workflow_from_graph(graph)
+        self.assertEqual(definition.workflow_key, "builder_graph_example")
+        self.assertEqual(definition.sequencing.steps[0].id, "validate_lead")
+        self.assertEqual(definition.sequencing.steps[1].id, "notify_owner")
+
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-builder-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-builder",
+            payload={"id": "lead-10"},
+        )
+        run = engine.start_workflow("builder_graph_example", event=event)
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.step_log), 2)
+
+    def test_graph_validation_rejects_unreachable_step(self) -> None:
+        engine = WorkflowEngine()
+        graph = WorkflowBuilderGraph(
+            workflow_key="builder_graph_invalid",
+            version="v1",
+            metadata={"name": "Builder graph invalid"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(),
+            nodes=(
+                WorkflowGraphNode("step_a", "call_service", "A", "op_a"),
+                WorkflowGraphNode("step_b", "call_service", "B", "op_b"),
+            ),
+            edges=(),
+            start_node_id="step_a",
+        )
+        with self.assertRaises(WorkflowGraphValidationError):
+            engine.create_workflow_from_graph(graph)
+
+    def test_builder_api_create_and_edit_workflow(self) -> None:
+        engine = WorkflowEngine()
+        api = WorkflowApi(engine)
+        create_payload = {
+            "workflow_key": "api_builder_workflow",
+            "version": "v1",
+            "metadata": {"name": "API Builder Workflow"},
+            "triggers": {"mode": "any", "events": ["lead.created.v1"], "manual": False},
+            "conditions": {"match": "all", "rules": []},
+            "nodes": [
+                {
+                    "id": "first",
+                    "action_type": "call_service",
+                    "service": "Workflow Automation Service",
+                    "operation": "do_first",
+                }
+            ],
+            "edges": [],
+            "start_node_id": "first",
+        }
+        created = api.create_workflow(create_payload, request_id="req-builder-1")
+        self.assertIn("data", created)
+
+        edit_payload = {
+            **create_payload,
+            "nodes": [
+                {
+                    "id": "first",
+                    "action_type": "call_service",
+                    "service": "Workflow Automation Service",
+                    "operation": "do_first",
+                },
+                {
+                    "id": "second",
+                    "action_type": "notify",
+                    "service": "Notification Orchestrator",
+                    "operation": "send_done",
+                },
+            ],
+            "edges": [{"source": "first", "target": "second"}],
+        }
+        edited = api.edit_workflow("api_builder_workflow", edit_payload, request_id="req-builder-2")
+        self.assertIn("data", edited)
+        self.assertEqual(len(edited["data"]["sequencing"]["steps"]), 2)
 
 
 if __name__ == "__main__":

@@ -23,6 +23,10 @@ class WorkflowNotFoundError(LookupError):
     """Raised when a workflow key is unknown."""
 
 
+class WorkflowGraphValidationError(WorkflowValidationError):
+    """Raised when a graph-based builder payload is invalid."""
+
+
 @dataclass(frozen=True)
 class TriggerDefinition:
     mode: TriggerMode
@@ -96,3 +100,35 @@ class WorkflowExecution:
     state: dict[str, Any] = field(default_factory=dict)
     step_log: list[dict[str, Any]] = field(default_factory=list)
     error_message: str | None = None
+
+
+@dataclass(frozen=True)
+class WorkflowGraphNode:
+    id: str
+    action_type: ActionType
+    service: str
+    operation: str
+    input: dict[str, Any] = field(default_factory=dict)
+    emits: tuple[str, ...] = ()
+    when: str | None = None
+    timeout: str | None = None
+    retries: int = 0
+
+
+@dataclass(frozen=True)
+class WorkflowGraphEdge:
+    source: str
+    target: str
+    label: str | None = None
+
+
+@dataclass(frozen=True)
+class WorkflowBuilderGraph:
+    workflow_key: str
+    version: str
+    metadata: dict[str, Any]
+    triggers: TriggerDefinition
+    conditions: ConditionDefinition
+    nodes: tuple[WorkflowGraphNode, ...]
+    edges: tuple[WorkflowGraphEdge, ...]
+    start_node_id: str
