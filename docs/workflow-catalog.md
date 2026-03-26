@@ -165,6 +165,7 @@ This catalog defines the canonical business workflows and their explicit executi
   - `approval.requested.v1`
   - `approval.decided.v1`
   - `quote.accepted.v1`
+  - `order.created.v1`
 - **Services involved:**
   - Quote Service
   - Approval Service
@@ -175,6 +176,7 @@ This catalog defines the canonical business workflows and their explicit executi
   - Audit & Compliance Service
   - Billing & Subscription Service
   - Opportunity Service
+  - Order Service
 - **Ordered steps:**
   1. Quote Service creates quote and emits `quote.created.v1`.
   2. Activity Timeline Service records quote creation.
@@ -188,9 +190,10 @@ This catalog defines the canonical business workflows and their explicit executi
   10. Notification Orchestrator sends requester decision notification.
   11. Audit & Compliance Service records final decision.
   12. On customer acceptance, Quote Service emits `quote.accepted.v1`.
-  13. Billing & Subscription Service and Opportunity Service consume acceptance for downstream fulfillment/closure.
-  14. Analytics & Reporting Service updates quote-to-close metrics.
-- **Outcome:** Commercial quote progresses through policy-controlled approvals and customer acceptance to downstream monetization.
+  13. Order Service validates acceptance state and converts quote to order, then emits `order.created.v1`.
+  14. Billing & Subscription Service and Opportunity Service consume acceptance/order events for downstream fulfillment/closure.
+  15. Analytics & Reporting Service updates quote-to-close and quote-to-order conversion metrics.
+- **Outcome:** Commercial quote progresses through policy-controlled approvals, customer acceptance, and deterministic conversion into an order for downstream monetization.
 
 ## 7) Subscription, invoicing, payments
 
