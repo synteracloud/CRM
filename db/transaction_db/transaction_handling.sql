@@ -136,3 +136,115 @@ as $$
   )
   select count(*)::integer from updated;
 $$;
+
+-- Payment creation with initial history + outbox append.
+create or replace function transaction_db.create_payment(
+  p_tenant_id uuid,
+  p_subscription_id uuid,
+  p_invoice_summary_id uuid,
+  p_external_payment_ref text,
+  p_payment_method_type text,
+  p_amount numeric,
+  p_currency char(3),
+  p_trace_id text,
+  p_correlation_id text,
+  p_changed_by_user_id uuid default null
+)
+returns uuid
+language plpgsql
+as $$
+declare
+  v_payment_id uuid;
+begin
+  insert into payment (
+    tenant_id,
+    subscription_id,
+    invoice_summary_id,
+    external_payment_ref,
+    payment_method_type,
+    amount,
+    currency,
+    status,
+    initiated_at
+  ) values (
+    p_tenant_id,
+    p_subscription_id,
+    p_invoice_summary_id,
+    p_external_payment_ref,
+    p_payment_method_type,
+    p_amount,
+    p_currency,
+    'initiated',
+    now()
+  )
+  returning payment_id into v_payment_id;
+
+  insert into payment_status_history (
+    tenant_id,
+    payment_id,
+    from_status,
+    to_status,
+    reason,
+    changed_at,
+    changed_by_user_id
+  ) values (
+    p_tenant_id,
+    v_payment_id,
+    null,
+    'initiated',
+    'payment_created',
+    now(),
+    p_changed_by_user_id
+  );
+
+  insert into outbox_event (
+    tenant_id,
+    aggregate_type,
+    aggregate_id,
+    event_type,
+    payload_json,
+    trace_id,
+    correlation_id,
+    occurred_at
+  ) values (
+    p_tenant_id,
+    'Payment',
+    v_payment_id,
+    'payment.created.v1',
+    jsonb_build_object(
+      'payment_id', v_payment_id,
+      'subscription_id', p_subscription_id,
+      'invoice_summary_id', p_invoice_summary_id,
+      'status', 'initiated',
+      'amount', p_amount,
+      'currency', p_currency,
+      'payment_method_type', p_payment_method_type
+    ),
+    p_trace_id,
+    p_correlation_id,
+    now()
+  );
+
+  return v_payment_id;
+end;
+$$;
+
+create or replace function transaction_db.get_revenue_summary(
+  p_tenant_id uuid,
+  p_from timestamptz,
+  p_to timestamptz
+)
+returns table(currency char(3), recognized_revenue numeric(18,2))
+language sql
+stable
+as $$
+  select
+    rl.currency,
+    coalesce(sum(rl.amount_delta), 0)::numeric(18,2) as recognized_revenue
+  from revenue_ledger rl
+  where rl.tenant_id = p_tenant_id
+    and rl.recognized_at >= p_from
+    and rl.recognized_at < p_to
+  group by rl.currency
+  order by rl.currency;
+$$;
