@@ -9,6 +9,7 @@ Coverage rules applied:
 | Feature | Owning / Participating Services | Dependencies |
 |---|---|---|
 | Tenant provisioning & entitlement | Organization & Tenant Service; Feature Flag Service; Identity & Access Service; Workflow Automation Service; Analytics & Reporting Service; Audit & Compliance Service; Search Index Service | Billing & Subscription Service; Event Bus; Job Scheduler |
+| Feature flag governance & config management | Feature Flag Service; Organization & Tenant Service; Identity & Access Service; Audit & Compliance Service; Analytics & Reporting Service | Event Bus; Job Scheduler |
 | Identity & access lifecycle | Identity & Access Service; Notification Orchestrator; Feature Flag Service; Analytics & Reporting Service; Audit & Compliance Service | Template Service; Email Delivery Provider; SMS Delivery Provider |
 | Lead intake, assignment, conversion | Lead Management Service; Territory & Assignment Service; Data Quality Service; Activity Timeline Service; Notification Orchestrator; Contact Service; Account Service; Opportunity Service; Workflow Automation Service; Analytics & Reporting Service; Search Index Service | Contact Service; Account Service; Opportunity Service; Event Bus; Job Scheduler; Email Delivery Provider; SMS Delivery Provider |
 | Contact management & deduplication | Contact Service; Data Quality Service; Activity Timeline Service; Search Index Service; Analytics & Reporting Service; Audit & Compliance Service | Data Quality Service; Activity Timeline Service; Event Bus; Job Scheduler |
