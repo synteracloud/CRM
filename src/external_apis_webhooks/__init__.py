@@ -2,6 +2,15 @@ from .api import API_ENDPOINTS, ExternalIntegrationsApi
 from .auth import IntegrationAuth, IntegrationAuthError, SecretStore
 from .entities import ALLOWED_PROVIDERS, INBOUND_WEBHOOK_ENDPOINTS, OUTBOUND_API_CONTRACTS, InboundWebhook, OutboundRequest, OutboundResponse
 from .mapping import EVENT_TO_WEBHOOK_MAP, EventWebhookMapper, EventWebhookMappingError, OutboundWebhookEvent
+from .public_api_sdk import (
+    PUBLIC_API_ENDPOINTS,
+    ExternalDeveloperAuthError,
+    ExternalDeveloperAuthService,
+    PublicApiExposureService,
+    PublicApiLayer,
+    PublicApiSdk,
+    PublicApiSdkConfig,
+)
 from .self_qc import run_self_qc
 from .services import ExternalApiConnectorService, IntegrationContractError, WebhookReceiverService, WebhookSenderService
 
@@ -11,6 +20,13 @@ __all__ = [
     "EVENT_TO_WEBHOOK_MAP",
     "INBOUND_WEBHOOK_ENDPOINTS",
     "OUTBOUND_API_CONTRACTS",
+    "PUBLIC_API_ENDPOINTS",
+    "ExternalDeveloperAuthError",
+    "ExternalDeveloperAuthService",
+    "PublicApiExposureService",
+    "PublicApiLayer",
+    "PublicApiSdk",
+    "PublicApiSdkConfig",
     "EventWebhookMapper",
     "EventWebhookMappingError",
     "ExternalApiConnectorService",
