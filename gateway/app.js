@@ -3,11 +3,13 @@ const routes = require('./routes');
 const { requestIdMiddleware } = require('./middleware/request-id');
 const { rateLimitHook } = require('./middleware/rate-limit-hook');
 const { respondError } = require('./middleware/response-wrapper');
+const { authMiddleware } = require('./middleware/auth-rbac');
 
 const app = express();
 
 app.use(express.json());
 app.use(requestIdMiddleware);
+app.use(authMiddleware());
 
 app.use(
   rateLimitHook({

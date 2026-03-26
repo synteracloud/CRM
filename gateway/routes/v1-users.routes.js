@@ -1,10 +1,11 @@
 const express = require('express');
 const { requestValidationMiddleware } = require('../middleware/request-validation');
 const { respondSuccess } = require('../middleware/response-wrapper');
+const { requireScopes } = require('../middleware/auth-rbac');
 
 const router = express.Router();
 
-router.get('/', requestValidationMiddleware(), (req, res) => {
+router.get('/', requestValidationMiddleware(), requireScopes(['users.read']), (req, res) => {
   return respondSuccess(
     res,
     [
@@ -31,6 +32,7 @@ router.get('/', requestValidationMiddleware(), (req, res) => {
 router.post(
   '/',
   requestValidationMiddleware(['email', 'display_name', 'status']),
+  requireScopes(['users.create']),
   (req, res) => {
     const now = '2026-03-26T12:00:00Z';
 
