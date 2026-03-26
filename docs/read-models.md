@@ -1,41 +1,41 @@
 # CRM Read / Query Models
 
-Read/query models are denormalized, query-optimized projections built from canonical domain entities and events. They are designed for low-latency dashboard rendering and stable API response contracts, without coupling consumers to write-model schemas.
+Read/query models are denormalized, query-optimized projections used by reporting dashboards and reporting APIs. They are built from canonical source entities and derived event streams, and are optimized for low-latency reads without coupling consumers to write-model schemas.
 
 ## Read Model Catalog
 
 | Name | Source entities | Transformations | Usage (dashboard/API) |
 |---|---|---|---|
-| TenantEntitlementOverviewRM | `Tenant`, `TenantEntitlement`, `FeatureFlag` | Flatten active plan + effective entitlements by tenant; compute enabled feature count and limits utilization snapshots. | Tenant admin dashboard; `GET /reporting/tenants/{tenant_id}/entitlements` |
-| IdentityAccessPostureRM | `User`, `Role`, `Permission`, `UserRole`, `RolePermission`, `SessionToken` | Join user-role-permission graph; compute active users, privileged-user ratio, dormant users, active sessions by tenant. | Security posture dashboard; `GET /reporting/identity/posture` |
-| LeadFunnelPerformanceRM | `Lead`, `LeadAssignment`, `Contact`, `Account`, `Opportunity` | Derive funnel stages (new, assigned, qualified, converted); compute assignment latency, conversion rate, source performance. | Sales development dashboard; `GET /reporting/leads/funnel` |
-| CustomerMasterHealthRM | `Contact`, `Account`, `AccountHierarchy` | Normalize contact/account counts; compute duplicate/merge-adjusted survivorship metrics and hierarchy depth rollups. | Data quality dashboard; `GET /reporting/customers/master-health` |
-| OpportunityPipelineSnapshotRM | `Opportunity`, `OpportunityLineItem`, `Account`, `Contact` | Build stage-based pipeline snapshots; calculate weighted pipeline, forecast totals, stage velocity, aging buckets. | Pipeline dashboard; `GET /reporting/opportunities/pipeline` |
-| QuoteApprovalCycleRM | `Quote`, `QuoteLineItem`, `ApprovalRequest`, `Opportunity` | Join quote lifecycle with approval outcomes; calculate approval turnaround, discount bands, approve/reject ratio, quote acceptance rate. | Revenue operations dashboard; `GET /reporting/quotes/approval-cycle` |
-| SubscriptionRevenueRetentionRM | `Subscription`, `InvoiceSummary`, `PaymentEvent`, `Account` | Compute MRR/ARR snapshots, renewal cohort status, churn/expansion flags, delinquency and collection effectiveness. | Subscription analytics dashboard; `GET /reporting/subscriptions/revenue-retention` |
-| CaseSLAOperationalRM | `Case`, `CaseComment`, `Contact`, `Account` | Aggregate open/resolved queues; compute first-response time, resolution time, SLA breach rate by priority/owner/channel. | Support operations dashboard; `GET /reporting/cases/sla` |
-| CommunicationEngagementRM | `MessageThread`, `Message`, `Notification` | Normalize message + notification delivery states; derive delivery/open/click/reply rates and engagement trend windows. | Engagement dashboard; `GET /reporting/communications/engagement` |
-| KnowledgeEffectivenessRM | `KnowledgeArticle`, `Case` | Relate published knowledge coverage to case deflection and assisted-resolution indicators; compute article freshness/adoption metrics. | Support knowledge dashboard; `GET /reporting/knowledge/effectiveness` |
-| WorkflowAutomationOutcomeRM | `WorkflowDefinition`, `WorkflowExecution` | Aggregate execution success/failure, runtime percentiles, retry/escalation counts by workflow and trigger domain. | Automation reliability dashboard; `GET /reporting/workflows/outcomes` |
-| SearchObservabilityRM | `SearchDocument` | Compute index freshness lag, entity-type coverage, upsert volume, stale-document ratios. | Search health dashboard; `GET /reporting/search/observability` |
-| PlatformReliabilityAuditRM | `AuditLog` | Build governance and reliability slices: sensitive-action volume, actor/resource heatmaps, policy result distributions, anomaly buckets. | Compliance dashboard; `GET /reporting/platform/audit` |
+| TenantEntitlementOverviewRM | `Tenant`, `TenantEntitlement`, `FeatureFlag` | Flatten tenant plan and effective entitlements; compute enabled feature counts, utilization against limits, and entitlement timeline snapshots. | Tenant administration dashboard; `GET /reporting/tenants/{tenant_id}/entitlements` |
+| IdentityAccessPostureRM | `User`, `Role`, `Permission`, `UserRole`, `RolePermission`, `SessionToken` | Join RBAC graph and session lifecycle; derive active-user counts, privileged-access distribution, dormant accounts, and active-session risk indicators. | Identity and security dashboard; `GET /reporting/identity/posture` |
+| LeadFunnelPerformanceRM | `Lead`, `LeadAssignment`, `Contact`, `Account`, `Opportunity` | Normalize lead lifecycle stages (new, assigned, qualified, converted); compute assignment latency, stage conversion rates, and source/channel performance. | Sales development dashboard; `GET /reporting/leads/funnel` |
+| CustomerMasterHealthRM | `Contact`, `Account`, `AccountHierarchy` | Build customer master projection across people/companies; calculate duplicate/merge survivorship, completeness scores, and hierarchy rollups. | Data quality dashboard; `GET /reporting/customers/master-health` |
+| OpportunityPipelineSnapshotRM | `Opportunity`, `OpportunityLineItem`, `Account`, `Contact` | Snapshot pipeline by stage and period; compute weighted pipeline, forecast totals, stage velocity, cycle time, and aging buckets. | Pipeline and forecasting dashboard; `GET /reporting/opportunities/pipeline` |
+| QuoteApprovalCycleRM | `Quote`, `QuoteLineItem`, `ApprovalRequest`, `Opportunity` | Correlate quote lifecycle with approval decisions; compute approval turnaround, discount-band behavior, reject/approve ratios, and quote acceptance performance. | Revenue operations dashboard; `GET /reporting/quotes/approval-cycle` |
+| SubscriptionRevenueRetentionRM | `Subscription`, `InvoiceSummary`, `PaymentEvent`, `Account` | Build recurring-revenue time series; compute MRR/ARR, renewal cohorts, churn/expansion flags, delinquency rates, and collections performance. | Subscription and finance dashboard; `GET /reporting/subscriptions/revenue-retention` |
+| CaseSLAOperationalRM | `Case`, `CaseComment`, `Contact`, `Account` | Aggregate support workload and SLA outcomes; compute first-response time, resolution time, backlog, SLA breach rates, and channel/priority performance. | Support operations dashboard; `GET /reporting/cases/sla` |
+| CommunicationEngagementRM | `MessageThread`, `Message`, `Notification` | Unify conversation and notification delivery state; derive delivery/open/click/reply rates, campaign engagement, and trend windows by channel. | Engagement dashboard; `GET /reporting/communications/engagement` |
+| KnowledgeEffectivenessRM | `KnowledgeArticle`, `Case` | Relate knowledge publication and freshness to support outcomes; compute article adoption, case deflection indicators, and assisted-resolution impact. | Knowledge effectiveness dashboard; `GET /reporting/knowledge/effectiveness` |
+| WorkflowAutomationOutcomeRM | `WorkflowDefinition`, `WorkflowExecution` | Aggregate automation runtime outcomes; compute execution volume, success/failure rates, duration percentiles, retry behavior, and escalation counts. | Automation reliability dashboard; `GET /reporting/workflows/outcomes` |
+| SearchObservabilityRM | `SearchDocument` | Track search index health; compute freshness lag, entity coverage, indexing throughput, and stale-document ratios over time. | Search operations dashboard; `GET /reporting/search/observability` |
+| PlatformReliabilityAuditRM | `AuditLog` | Produce governance and platform slices; compute sensitive-action volume, actor/resource heatmaps, policy result distributions, and anomaly buckets. | Compliance and reliability dashboard; `GET /reporting/platform/audit` |
 
-## Reporting Coverage Matrix
+## Reporting Coverage (No Duplicates)
 
-| Reporting need | Read model(s) |
+| Reporting need | Model |
 |---|---|
-| Tenant plan and entitlement visibility | `TenantEntitlementOverviewRM` |
-| Identity, RBAC, and session risk posture | `IdentityAccessPostureRM` |
+| Tenant provisioning and entitlement visibility | `TenantEntitlementOverviewRM` |
+| Identity, RBAC, and session posture | `IdentityAccessPostureRM` |
 | Lead intake-to-conversion performance | `LeadFunnelPerformanceRM` |
-| Customer/contact/account data quality and hierarchy reporting | `CustomerMasterHealthRM` |
-| Opportunity pipeline, forecasting, and stage progression | `OpportunityPipelineSnapshotRM` |
-| Quote approvals and quote-to-acceptance performance | `QuoteApprovalCycleRM` |
-| Subscription lifecycle, revenue, collections, and retention | `SubscriptionRevenueRetentionRM` |
-| Case SLA compliance and support throughput | `CaseSLAOperationalRM` |
-| Cross-channel engagement and notification outcomes | `CommunicationEngagementRM` |
-| Knowledge publication impact and deflection signals | `KnowledgeEffectivenessRM` |
-| Workflow automation runtime reliability | `WorkflowAutomationOutcomeRM` |
-| Search index freshness and coverage | `SearchObservabilityRM` |
-| Audit/compliance and operational reliability governance | `PlatformReliabilityAuditRM` |
+| Contact/account master-data quality and hierarchy health | `CustomerMasterHealthRM` |
+| Opportunity pipeline, forecast, and close progression | `OpportunityPipelineSnapshotRM` |
+| Quote pricing, approval, and acceptance cycle | `QuoteApprovalCycleRM` |
+| Subscription lifecycle, recurring revenue, invoicing, and payments | `SubscriptionRevenueRetentionRM` |
+| Case throughput and SLA compliance | `CaseSLAOperationalRM` |
+| Message/notification engagement outcomes | `CommunicationEngagementRM` |
+| Knowledge publication and case-deflection impact | `KnowledgeEffectivenessRM` |
+| Workflow runtime reliability and automation outcomes | `WorkflowAutomationOutcomeRM` |
+| Search indexing freshness and coverage | `SearchObservabilityRM` |
+| Audit, governance, and platform reliability insights | `PlatformReliabilityAuditRM` |
 
-This catalog is intentionally non-duplicative: each read model owns a distinct analytical concern, while related domains are linked through the coverage matrix rather than duplicate projections.
+Each reporting need maps to exactly one read model, ensuring full reporting coverage with no duplicate models.
