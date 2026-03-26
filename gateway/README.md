@@ -11,8 +11,8 @@ gateway/
     v1-orders.routes.js
     v1-quotes.routes.js
     v1-users.routes.js
-  data/
-    cpq-store.js
+    v1-activities.routes.js
+    v1-tasks.routes.js
   middleware/
     request-id.js
     request-validation.js
@@ -79,3 +79,22 @@ Error envelope:
   }
 }
 ```
+
+## Forecasting APIs (B2-P06::FORECASTING)
+
+### `POST /api/v1/forecasts/model`
+Builds an opportunity forecast model from caller-provided opportunity rows.
+
+- Required scope: `forecasts.read`
+- Request body fields:
+  - `opportunities` (array)
+
+### `POST /api/v1/forecasts/aggregate`
+Returns aggregate forecast totals and buckets from caller-provided opportunity rows.
+
+- Required scope: `forecasts.read`
+- Request body fields:
+  - `opportunities` (array)
+  - `group_by` (`stage` or `forecast_category`, optional; defaults to `stage`)
+
+Both endpoints validate opportunity rows using the domain-model shape (`opportunity_id`, `tenant_id`, `stage`, `amount`, `close_date`, `forecast_category`, `is_closed`, `is_won`) and reject invalid data with `422 validation_error`.
