@@ -176,12 +176,12 @@ If any conflict is detected:
 - Maintain full audit history for compliance.
 
 ## 8) Minimal API Contract (Illustrative)
-- `POST /custom-objects` — create object.
-- `POST /custom-objects/{objectKey}/fields` — create field.
-- `POST /custom-objects/{objectKey}/rules` — create validation rule.
-- `POST /custom-objects/{objectKey}/relationships` — define relationship.
-- `POST /custom-objects/{objectKey}/records` — create record.
-- `PATCH /custom-objects/{objectKey}/records/{id}` — update record.
+- `POST /api/v1/custom-objects` — create object.
+- `POST /api/v1/custom-objects/{objectKey}/fields` — create field.
+- `POST /api/v1/custom-objects/{objectKey}/rules` — create validation rule.
+- `POST /api/v1/custom-objects/{objectKey}/relationships` — define relationship.
+- `POST /api/v1/custom-objects/{objectKey}/records` — create record.
+- `PATCH /api/v1/custom-objects/{objectKey}/records/{id}` — update record.
 
 ## 9) Acceptance Criteria
 - Custom objects can be created and managed without redeployments.
