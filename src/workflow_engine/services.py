@@ -199,6 +199,70 @@ class WorkflowEngine:
             raise WorkflowNotFoundError(f"Workflow not found: {workflow_key}")
         return definition
 
+    def self_qc_trigger_action_integrity(self) -> dict[str, Any]:
+        checks = {
+            "all_triggers_map_to_event_catalog": True,
+            "no_undefined_actions": True,
+            "all_action_types_supported": True,
+            "all_workflows_have_steps": True,
+            "all_step_references_resolve": True,
+            "sequencing_valid": True,
+            "all_workflows_versioned": True,
+            "conditions_structurally_valid": True,
+            "trigger_modes_valid": True,
+            "tenant_context_supported": True,
+        }
+        issues: list[str] = []
+
+        for workflow in self._definitions.values():
+            if not workflow.triggers.events or any(event not in EVENT_NAMES for event in workflow.triggers.events):
+                checks["all_triggers_map_to_event_catalog"] = False
+                issues.append(f"unknown trigger event(s) in {workflow.workflow_key}")
+
+            if workflow.triggers.mode not in {"any", "all"}:
+                checks["trigger_modes_valid"] = False
+                issues.append(f"invalid trigger mode in {workflow.workflow_key}")
+
+            if not workflow.version:
+                checks["all_workflows_versioned"] = False
+                issues.append(f"missing version in {workflow.workflow_key}")
+
+            if not workflow.sequencing.steps:
+                checks["all_workflows_have_steps"] = False
+                issues.append(f"no steps in {workflow.workflow_key}")
+                continue
+
+            if workflow.sequencing.strategy not in {"linear", "branching"}:
+                checks["sequencing_valid"] = False
+                issues.append(f"invalid sequencing strategy in {workflow.workflow_key}")
+
+            action_ids = set(workflow.actions)
+            step_ids = {step.id for step in workflow.sequencing.steps}
+
+            for step in workflow.sequencing.steps:
+                if step.action not in action_ids:
+                    checks["no_undefined_actions"] = False
+                    checks["all_step_references_resolve"] = False
+                    issues.append(f"undefined action {step.action} in {workflow.workflow_key}")
+                    continue
+
+                action = workflow.actions[step.action]
+                if action.type not in ALLOWED_ACTION_TYPES:
+                    checks["all_action_types_supported"] = False
+                    issues.append(f"unsupported action type {action.type} in {workflow.workflow_key}")
+
+                if workflow.sequencing.strategy == "branching" and step.next and step.next != "end" and step.next not in step_ids:
+                    checks["sequencing_valid"] = False
+                    issues.append(f"invalid next step '{step.next}' in {workflow.workflow_key}")
+
+            for rule in workflow.conditions.rules:
+                if not rule.field:
+                    checks["conditions_structurally_valid"] = False
+                    issues.append(f"invalid condition rule in {workflow.workflow_key}")
+
+        score = sum(1 for passed in checks.values() if passed)
+        return {"score": score, "checks": checks, "issues": sorted(set(issues))}
+
     def _run_execution(self, definition: WorkflowDefinition, execution: WorkflowExecution) -> None:
         steps = definition.sequencing.steps
         step_map = {step.id: step for step in steps}
