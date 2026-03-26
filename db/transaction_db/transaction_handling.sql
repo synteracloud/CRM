@@ -1,0 +1,138 @@
+set search_path to transaction_db, public;
+
+-- Atomic payment ingestion with outbox append.
+-- Ensures idempotent processing for provider webhook/event keys.
+create or replace function transaction_db.record_payment_event(
+  p_tenant_id uuid,
+  p_operation_name text,
+  p_idempotency_key text,
+  p_request_hash text,
+  p_subscription_id uuid,
+  p_invoice_summary_id uuid,
+  p_external_payment_ref text,
+  p_event_type text,
+  p_amount numeric,
+  p_currency char(3),
+  p_event_time timestamptz,
+  p_status text,
+  p_trace_id text,
+  p_correlation_id text
+)
+returns uuid
+language plpgsql
+as $$
+declare
+  v_payment_event_id uuid;
+  v_existing_response jsonb;
+begin
+  -- 1) Idempotency gate (single transaction).
+  insert into idempotency_key (
+    tenant_id,
+    operation_name,
+    idempotency_key,
+    request_hash,
+    expires_at
+  ) values (
+    p_tenant_id,
+    p_operation_name,
+    p_idempotency_key,
+    p_request_hash,
+    now() + interval '7 days'
+  )
+  on conflict (tenant_id, operation_name, idempotency_key)
+  do update set request_hash = excluded.request_hash
+  returning response_json into v_existing_response;
+
+  if v_existing_response is not null then
+    return (v_existing_response ->> 'payment_event_id')::uuid;
+  end if;
+
+  -- 2) Domain state write.
+  insert into payment_event (
+    tenant_id,
+    subscription_id,
+    invoice_summary_id,
+    external_payment_ref,
+    event_type,
+    amount,
+    currency,
+    event_time,
+    status
+  ) values (
+    p_tenant_id,
+    p_subscription_id,
+    p_invoice_summary_id,
+    p_external_payment_ref,
+    p_event_type,
+    p_amount,
+    p_currency,
+    p_event_time,
+    p_status
+  )
+  returning payment_event_id into v_payment_event_id;
+
+  -- 3) Optional invoice balance update.
+  if p_invoice_summary_id is not null and p_status = 'succeeded' then
+    update invoice_summary
+    set amount_paid = least(amount_due, amount_paid + p_amount)
+    where tenant_id = p_tenant_id
+      and invoice_summary_id = p_invoice_summary_id;
+  end if;
+
+  -- 4) Transactional outbox event.
+  insert into outbox_event (
+    tenant_id,
+    aggregate_type,
+    aggregate_id,
+    event_type,
+    payload_json,
+    trace_id,
+    correlation_id,
+    occurred_at
+  ) values (
+    p_tenant_id,
+    'PaymentEvent',
+    v_payment_event_id,
+    'PaymentEventRecorded',
+    jsonb_build_object(
+      'payment_event_id', v_payment_event_id,
+      'subscription_id', p_subscription_id,
+      'invoice_summary_id', p_invoice_summary_id,
+      'status', p_status,
+      'amount', p_amount,
+      'currency', p_currency,
+      'event_type', p_event_type,
+      'event_time', p_event_time
+    ),
+    p_trace_id,
+    p_correlation_id,
+    p_event_time
+  );
+
+  -- 5) Store deterministic idempotency response.
+  update idempotency_key
+  set response_json = jsonb_build_object('payment_event_id', v_payment_event_id)
+  where tenant_id = p_tenant_id
+    and operation_name = p_operation_name
+    and idempotency_key = p_idempotency_key;
+
+  return v_payment_event_id;
+end;
+$$;
+
+-- Mark outbox messages as published by relay workers.
+create or replace function transaction_db.mark_outbox_published(
+  p_outbox_event_ids uuid[]
+)
+returns integer
+language sql
+as $$
+  with updated as (
+    update outbox_event
+    set published_at = now()
+    where outbox_event_id = any(p_outbox_event_ids)
+      and published_at is null
+    returning 1
+  )
+  select count(*)::integer from updated;
+$$;
