@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 
 from src.communication_integrations import (
+    API_ENDPOINTS,
     CommunicationContractError,
     CommunicationIntegrationService,
     CommunicationMessage,
@@ -161,6 +162,13 @@ class CommunicationIntegrationServiceTests(unittest.TestCase):
         self.assertEqual(len(self.service.list_messages("thr-email")), 1)
         self.assertEqual(len(self.service.list_messages("thr-sms")), 1)
         self.assertEqual(len(self.service.list_messages("thr-wa")), 1)
+
+
+    def test_communication_api_paths_use_noun_based_resources(self) -> None:
+        self.assertEqual(API_ENDPOINTS["send_email"]["path"], "/api/v1/communications/email-messages")
+        self.assertEqual(API_ENDPOINTS["send_sms"]["path"], "/api/v1/communications/sms-messages")
+        self.assertEqual(API_ENDPOINTS["send_whatsapp"]["path"], "/api/v1/communications/whatsapp-messages")
+        self.assertEqual(API_ENDPOINTS["receive_message"]["path"], "/api/v1/communications/inbound-messages")
 
     def test_orphan_or_invalid_linkage_is_rejected(self) -> None:
         thread = CommunicationThread(
