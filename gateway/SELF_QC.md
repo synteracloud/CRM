@@ -24,3 +24,7 @@
 2. Re-check: verified model fields and relationship semantics against `docs/domain-model.md`; re-validated route and envelope rules against `docs/api-standards.md`.
 3. Re-check: executed syntax checks for all new/updated gateway modules.
 4. Score: **10/10**.
+
+- ✅ Activities/task resources use canonical `/api/v1/...` patterns and scope checks (`activities.*`, `tasks.*`).
+- ✅ Task scheduling guard enforces `due_at >= starts_at` through service validation.
+- ✅ Activity/task entity links are constrained to supported timeline entities to avoid orphan records.

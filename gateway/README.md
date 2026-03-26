@@ -9,6 +9,8 @@ gateway/
   routes/
     index.js
     v1-users.routes.js
+    v1-activities.routes.js
+    v1-tasks.routes.js
   middleware/
     request-id.js
     request-validation.js
