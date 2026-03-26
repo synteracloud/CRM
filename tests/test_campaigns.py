@@ -10,6 +10,7 @@ from src.campaigns import (
     SegmentDefinition,
     SegmentRule,
     SegmentValidationError,
+    assert_campaign_workflow_events_are_catalog_backed,
 )
 
 
@@ -91,6 +92,9 @@ class CampaignServiceTests(unittest.TestCase):
                     updated_at="2026-03-26T00:00:00Z",
                 )
             )
+
+    def test_campaign_workflow_catalog_events_exist(self) -> None:
+        assert_campaign_workflow_events_are_catalog_backed()
 
 
 if __name__ == "__main__":

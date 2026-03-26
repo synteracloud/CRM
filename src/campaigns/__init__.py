@@ -16,7 +16,11 @@ from .entities import (
 )
 from .segmentation import CONTACT_SEGMENT_FIELDS, LEAD_SEGMENT_FIELDS, VALID_SEGMENT_ENTITIES, SegmentEvaluator
 from .services import CampaignService
-from .workflow_mapping import CAMPAIGN_SEGMENTATION_WORKFLOW, WORKFLOW_NAME
+from .workflow_mapping import (
+    CAMPAIGN_SEGMENTATION_WORKFLOW,
+    WORKFLOW_NAME,
+    assert_campaign_workflow_events_are_catalog_backed,
+)
 
 __all__ = [
     "API_ENDPOINTS",
@@ -41,4 +45,5 @@ __all__ = [
     "SegmentValidationError",
     "VALID_SEGMENT_ENTITIES",
     "WORKFLOW_NAME",
+    "assert_campaign_workflow_events_are_catalog_backed",
 ]

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from src.event_bus.catalog_events import EVENT_NAME_SET
+
 WORKFLOW_NAME = "Campaign segmentation lifecycle"
 
 CAMPAIGN_SEGMENTATION_WORKFLOW: tuple[dict[str, str], ...] = (
@@ -27,3 +29,15 @@ CAMPAIGN_SEGMENTATION_WORKFLOW: tuple[dict[str, str], ...] = (
         "catalog_event": "campaign.completed.v1",
     },
 )
+
+
+def assert_campaign_workflow_events_are_catalog_backed() -> None:
+    missing = sorted(
+        {
+            row["catalog_event"]
+            for row in CAMPAIGN_SEGMENTATION_WORKFLOW
+            if row["catalog_event"] not in EVENT_NAME_SET
+        }
+    )
+    if missing:
+        raise ValueError(f"Campaign workflow references unknown catalog events: {missing}")
