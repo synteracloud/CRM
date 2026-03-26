@@ -13,10 +13,10 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "list_threads": {"method": "GET", "path": "/api/v1/communications/threads"},
     "create_or_get_thread": {"method": "POST", "path": "/api/v1/communications/threads"},
     "list_messages": {"method": "GET", "path": "/api/v1/communications/threads/{message_thread_id}/messages"},
-    "send_email": {"method": "POST", "path": "/api/v1/communications/email/send"},
-    "send_sms": {"method": "POST", "path": "/api/v1/communications/sms/send"},
-    "send_whatsapp": {"method": "POST", "path": "/api/v1/communications/whatsapp/send"},
-    "receive_message": {"method": "POST", "path": "/api/v1/communications/receive"},
+    "send_email": {"method": "POST", "path": "/api/v1/communications/email-messages"},
+    "send_sms": {"method": "POST", "path": "/api/v1/communications/sms-messages"},
+    "send_whatsapp": {"method": "POST", "path": "/api/v1/communications/whatsapp-messages"},
+    "receive_message": {"method": "POST", "path": "/api/v1/communications/inbound-messages"},
 }
 
 
