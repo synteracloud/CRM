@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -12,8 +11,13 @@ from .entities import (
     ActionDefinition,
     ConditionDefinition,
     ConditionRule,
+    SequencingDefinition,
+    WorkflowBuilderGraph,
     WorkflowDefinition,
     WorkflowExecution,
+    WorkflowGraphEdge,
+    WorkflowGraphNode,
+    WorkflowGraphValidationError,
     WorkflowNotFoundError,
     WorkflowStep,
     WorkflowValidationError,
@@ -36,6 +40,54 @@ class WorkflowEngine:
         for event_name in definition.triggers.events:
             self._event_bindings.setdefault(event_name, set()).add(definition.workflow_key)
         return definition
+
+    def create_workflow_from_graph(self, graph: WorkflowBuilderGraph, overwrite: bool = False) -> WorkflowDefinition:
+        if not overwrite and graph.workflow_key in self._definitions:
+            raise WorkflowValidationError(f"Workflow already exists: {graph.workflow_key}")
+        definition = self._graph_to_definition(graph)
+        return self.register_workflow(definition)
+
+    def update_workflow_from_graph(self, workflow_key: str, graph: WorkflowBuilderGraph) -> WorkflowDefinition:
+        if workflow_key not in self._definitions:
+            raise WorkflowNotFoundError(f"Workflow not found: {workflow_key}")
+        if workflow_key != graph.workflow_key:
+            raise WorkflowValidationError("workflow_key mismatch between path and graph payload")
+        return self.create_workflow_from_graph(graph, overwrite=True)
+
+    def export_workflow_graph(self, workflow_key: str) -> WorkflowBuilderGraph:
+        definition = self.get_workflow(workflow_key)
+        nodes = tuple(
+            WorkflowGraphNode(
+                id=step.id,
+                action_type=definition.actions[step.action].type,
+                service=definition.actions[step.action].service,
+                operation=definition.actions[step.action].operation,
+                input=definition.actions[step.action].input,
+                emits=definition.actions[step.action].emits,
+                when=step.when,
+                timeout=step.timeout,
+                retries=step.retries,
+            )
+            for step in definition.sequencing.steps
+        )
+        edges: list[WorkflowGraphEdge] = []
+        for index, step in enumerate(definition.sequencing.steps):
+            if definition.sequencing.strategy == "branching":
+                if step.next and step.next != "end":
+                    edges.append(WorkflowGraphEdge(source=step.id, target=step.next))
+            elif index + 1 < len(definition.sequencing.steps):
+                edges.append(WorkflowGraphEdge(source=step.id, target=definition.sequencing.steps[index + 1].id))
+
+        return WorkflowBuilderGraph(
+            workflow_key=definition.workflow_key,
+            version=definition.version,
+            metadata=definition.metadata,
+            triggers=definition.triggers,
+            conditions=definition.conditions,
+            nodes=nodes,
+            edges=tuple(edges),
+            start_node_id=definition.sequencing.steps[0].id,
+        )
 
     def start_workflow(self, workflow_key: str, event: Event | None = None, context: dict[str, Any] | None = None) -> WorkflowExecution:
         definition = self.get_workflow(workflow_key)
@@ -236,6 +288,96 @@ class WorkflowEngine:
         self._execution_counter += 1
         return f"wfexec::{workflow_key}::{self._execution_counter}"
 
+    def _graph_to_definition(self, graph: WorkflowBuilderGraph) -> WorkflowDefinition:
+        self._validate_graph(graph)
+        node_map = {node.id: node for node in graph.nodes}
+        outgoing: dict[str, list[str]] = {}
+        incoming: dict[str, int] = {node.id: 0 for node in graph.nodes}
+        for edge in graph.edges:
+            outgoing.setdefault(edge.source, []).append(edge.target)
+            incoming[edge.target] += 1
+
+        strategy = "branching" if any(len(targets) > 1 for targets in outgoing.values()) else "linear"
+        ordered_ids = _topological_order(graph.start_node_id, outgoing, incoming)
+        steps: list[WorkflowStep] = []
+        actions: dict[str, ActionDefinition] = {}
+        for index, node_id in enumerate(ordered_ids):
+            node = node_map[node_id]
+            action_ref = f"action_{node.id}"
+            next_pointer: str | None = None
+            if strategy == "branching":
+                targets = outgoing.get(node.id, [])
+                next_pointer = targets[0] if targets else "end"
+            step = WorkflowStep(
+                id=node.id,
+                action=action_ref,
+                when=node.when,
+                timeout=node.timeout,
+                retries=node.retries,
+                next=next_pointer,
+            )
+            if strategy == "linear" and index + 1 < len(ordered_ids):
+                step = WorkflowStep(
+                    id=node.id,
+                    action=action_ref,
+                    when=node.when,
+                    timeout=node.timeout,
+                    retries=node.retries,
+                )
+            steps.append(step)
+            actions[action_ref] = ActionDefinition(
+                type=node.action_type,
+                service=node.service,
+                operation=node.operation,
+                input=node.input,
+                emits=node.emits,
+            )
+
+        return WorkflowDefinition(
+            workflow_key=graph.workflow_key,
+            version=graph.version,
+            metadata=graph.metadata,
+            triggers=graph.triggers,
+            conditions=graph.conditions,
+            sequencing=asdict_to_sequence(strategy, tuple(steps)),
+            actions=actions,
+        )
+
+    @staticmethod
+    def _validate_graph(graph: WorkflowBuilderGraph) -> None:
+        if not graph.nodes:
+            raise WorkflowGraphValidationError("Graph must include at least one node")
+        node_ids = [node.id for node in graph.nodes]
+        if len(node_ids) != len(set(node_ids)):
+            raise WorkflowGraphValidationError("Graph nodes must have unique ids")
+        if graph.start_node_id not in set(node_ids):
+            raise WorkflowGraphValidationError("start_node_id must reference an existing node")
+
+        node_set = set(node_ids)
+        incoming: dict[str, int] = {node_id: 0 for node_id in node_ids}
+        outgoing: dict[str, int] = {node_id: 0 for node_id in node_ids}
+        edge_pairs: set[tuple[str, str]] = set()
+        for edge in graph.edges:
+            if edge.source not in node_set or edge.target not in node_set:
+                raise WorkflowGraphValidationError("Graph edges must reference valid node ids")
+            if edge.source == edge.target:
+                raise WorkflowGraphValidationError("Self-loop edges are not allowed")
+            pair = (edge.source, edge.target)
+            if pair in edge_pairs:
+                raise WorkflowGraphValidationError("Duplicate graph edge found")
+            edge_pairs.add(pair)
+            outgoing[edge.source] += 1
+            incoming[edge.target] += 1
+
+        end_nodes = [node_id for node_id, degree in outgoing.items() if degree == 0]
+        if not end_nodes:
+            raise WorkflowGraphValidationError("Graph must have at least one terminal step")
+        if incoming[graph.start_node_id] > 0:
+            raise WorkflowGraphValidationError("start_node_id cannot have inbound edges")
+        unreachable = _collect_unreachable(graph.start_node_id, graph.edges, node_set)
+        if unreachable:
+            raise WorkflowGraphValidationError(f"Graph contains unreachable steps: {sorted(unreachable)}")
+
 
 
 def _evaluate_rule(rule: ConditionRule, context: dict[str, Any]) -> bool:
@@ -314,3 +456,40 @@ def _to_iso(value: datetime) -> str:
 
 def _parse_iso(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def asdict_to_sequence(strategy: str, steps: tuple[WorkflowStep, ...]) -> SequencingDefinition:
+    return SequencingDefinition(strategy=strategy, on_error="fail_fast", steps=steps)
+
+
+def _collect_unreachable(start_node_id: str, edges: tuple[WorkflowGraphEdge, ...], node_set: set[str]) -> set[str]:
+    adjacency: dict[str, list[str]] = {node_id: [] for node_id in node_set}
+    for edge in edges:
+        adjacency[edge.source].append(edge.target)
+    visited: set[str] = set()
+    stack = [start_node_id]
+    while stack:
+        node_id = stack.pop()
+        if node_id in visited:
+            continue
+        visited.add(node_id)
+        stack.extend(adjacency[node_id])
+    return node_set - visited
+
+
+def _topological_order(start_node_id: str, outgoing: dict[str, list[str]], incoming: dict[str, int]) -> list[str]:
+    in_degree = incoming.copy()
+    order: list[str] = []
+    queue = [start_node_id]
+    while queue:
+        node_id = queue.pop(0)
+        if node_id in order:
+            continue
+        order.append(node_id)
+        for target in outgoing.get(node_id, []):
+            in_degree[target] -= 1
+            if in_degree[target] == 0:
+                queue.append(target)
+    if len(order) != len(in_degree):
+        raise WorkflowGraphValidationError("Graph must be acyclic and connected from start node")
+    return order
