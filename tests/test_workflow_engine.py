@@ -5,6 +5,9 @@ import unittest
 from src.event_bus import Event
 from src.workflow_engine import (
     API_ENDPOINTS,
+    ActionExecutionEngine,
+    TriggerHandlingSystem,
+    TriggerDefinition,
     WorkflowApi,
     ActionDefinition,
     SequencingDefinition,
@@ -109,6 +112,67 @@ class WorkflowEngineTests(unittest.TestCase):
         )
         with self.assertRaises(WorkflowValidationError):
             engine.register_workflow(broken)
+
+    def test_self_qc_reports_10_of_10_for_valid_registered_workflows(self) -> None:
+        engine = WorkflowEngine()
+        for workflow in build_canonical_workflows():
+            engine.register_workflow(workflow)
+
+        report = engine.self_qc_trigger_action_integrity()
+        self.assertEqual(report["score"], 10)
+        self.assertEqual(report["issues"], [])
+        self.assertTrue(report["checks"]["all_triggers_map_to_event_catalog"])
+        self.assertTrue(report["checks"]["no_undefined_actions"])
+
+
+class TriggerAndActionEngineTests(unittest.TestCase):
+    def test_trigger_system_respects_any_and_all_modes(self) -> None:
+        workflows = build_canonical_workflows()
+        trigger_system = TriggerHandlingSystem()
+        for workflow in workflows:
+            trigger_system.register(workflow)
+
+        all_mode = WorkflowDefinition(
+            workflow_key="all_mode_workflow",
+            version="v1",
+            metadata={"name": "All mode"},
+            triggers=TriggerDefinition(mode="all", events=("lead.created.v1", "lead.converted.v1")),
+            conditions=workflows[0].conditions,
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("s1", "a1"),),
+            ),
+            actions={"a1": ActionDefinition("call_service", "Service", "op")},
+        )
+        trigger_system.register(all_mode)
+
+        first = Event(
+            event_name="lead.created.v1",
+            event_id="evt-a",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-a",
+            payload={},
+        )
+        second = Event(
+            event_name="lead.converted.v1",
+            event_id="evt-b",
+            occurred_at="2026-03-26T00:00:01Z",
+            tenant_id="tenant-a",
+            payload={},
+        )
+        self.assertFalse(trigger_system.trigger_matches(all_mode, first))
+        self.assertTrue(trigger_system.trigger_matches(all_mode, second))
+
+    def test_action_engine_executes_supported_action_types(self) -> None:
+        engine = ActionExecutionEngine()
+        context = {"tenant_id": "tenant-1", "entity": {"id": "lead-1"}}
+        state = {"prior": {"output": "ok"}}
+
+        notify = ActionDefinition("notify", "Notification Orchestrator", "send", {"lead_id": "${context.entity.id}"})
+        result = engine.execute(notify, context, state)
+        self.assertEqual(result["channel"], "notification")
+        self.assertEqual(result["input"]["lead_id"], "lead-1")
 
 
 class WorkflowApiTests(unittest.TestCase):

@@ -1,4 +1,4 @@
-"""Workflow execution engine with event triggers, state tracking, and step execution."""
+"""Workflow execution engine with trigger handling and action execution primitives."""
 
 from __future__ import annotations
 
@@ -26,19 +26,60 @@ from .entities import (
 ALLOWED_ACTION_TYPES: frozenset[str] = frozenset({"emit_event", "call_service", "notify", "mutate_state", "wait"})
 
 
+class TriggerHandlingSystem:
+    """Tracks event/workflow bindings and evaluates trigger mode semantics."""
+
+    def __init__(self) -> None:
+        self._event_bindings: dict[str, set[str]] = {}
+        self._seen_trigger_events: dict[tuple[str, str], set[str]] = {}
+
+    def register(self, definition: WorkflowDefinition) -> None:
+        for event_name in definition.triggers.events:
+            self._event_bindings.setdefault(event_name, set()).add(definition.workflow_key)
+
+    def workflows_for_event(self, event_name: str) -> tuple[str, ...]:
+        return tuple(sorted(self._event_bindings.get(event_name, set())))
+
+    def trigger_matches(self, definition: WorkflowDefinition, event: Event) -> bool:
+        if event.event_name not in definition.triggers.events:
+            return False
+        tenant_key = (definition.workflow_key, event.tenant_id)
+        seen = self._seen_trigger_events.setdefault(tenant_key, set())
+        seen.add(event.event_name)
+        if definition.triggers.mode == "any":
+            return True
+        return set(definition.triggers.events).issubset(seen)
+
+
+class ActionExecutionEngine:
+    """Executes workflow actions using deterministic in-memory adapters."""
+
+    @staticmethod
+    def execute(action: ActionDefinition, context: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
+        rendered_input = _render_payload(action.input, context, state)
+        if action.type == "emit_event":
+            return {"emitted": list(action.emits), "payload": rendered_input}
+        if action.type == "call_service":
+            return {"service": action.service, "operation": action.operation, "input": rendered_input, "ok": True}
+        if action.type == "notify":
+            return {"channel": "notification", "service": action.service, "input": rendered_input}
+        if action.type == "mutate_state":
+            return {"mutation": action.operation, "input": rendered_input}
+        raise WorkflowValidationError(f"Unsupported action type: {action.type}")
+
+
 class WorkflowEngine:
     def __init__(self) -> None:
         self._definitions: dict[str, WorkflowDefinition] = {}
-        self._event_bindings: dict[str, set[str]] = {}
         self._executions: dict[str, WorkflowExecution] = {}
         self._execution_counter = 0
-        self._seen_trigger_events: dict[tuple[str, str], set[str]] = {}
+        self._trigger_handler = TriggerHandlingSystem()
+        self._action_engine = ActionExecutionEngine()
 
     def register_workflow(self, definition: WorkflowDefinition) -> WorkflowDefinition:
         self._validate_workflow(definition)
         self._definitions[definition.workflow_key] = definition
-        for event_name in definition.triggers.events:
-            self._event_bindings.setdefault(event_name, set()).add(definition.workflow_key)
+        self._trigger_handler.register(definition)
         return definition
 
     def create_workflow_from_graph(self, graph: WorkflowBuilderGraph, overwrite: bool = False) -> WorkflowDefinition:
@@ -124,10 +165,9 @@ class WorkflowEngine:
 
     def handle_event(self, event: Event) -> list[WorkflowExecution]:
         started: list[WorkflowExecution] = []
-        bound = sorted(self._event_bindings.get(event.event_name, set()))
-        for workflow_key in bound:
+        for workflow_key in self._trigger_handler.workflows_for_event(event.event_name):
             definition = self._definitions[workflow_key]
-            if not self._trigger_matches(definition, event):
+            if not self._trigger_handler.trigger_matches(definition, event):
                 continue
             started.append(self.start_workflow(workflow_key, event=event))
         return started
@@ -175,7 +215,7 @@ class WorkflowEngine:
                 self._apply_wait_step(step, action, execution)
                 return
 
-            result = self._execute_action(action, execution.context, execution.state)
+            result = self._action_engine.execute(action, execution.context, execution.state)
             execution.state[step.action] = result
             execution.step_log.append(
                 {"step_id": step.id, "action": step.action, "result": result, "at": _now_iso()}
@@ -194,18 +234,6 @@ class WorkflowEngine:
         steps = definition.sequencing.steps
         idx = next(index for index, item in enumerate(steps) if item.id == step.id)
         return steps[idx + 1].id if idx + 1 < len(steps) else None
-
-    def _execute_action(self, action: ActionDefinition, context: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
-        rendered_input = _render_payload(action.input, context, state)
-        if action.type == "emit_event":
-            return {"emitted": list(action.emits), "payload": rendered_input}
-        if action.type == "call_service":
-            return {"service": action.service, "operation": action.operation, "input": rendered_input, "ok": True}
-        if action.type == "notify":
-            return {"channel": "notification", "service": action.service, "input": rendered_input}
-        if action.type == "mutate_state":
-            return {"mutation": action.operation, "input": rendered_input}
-        raise WorkflowValidationError(f"Unsupported action type: {action.type}")
 
     def _apply_wait_step(self, step: WorkflowStep, action: ActionDefinition, execution: WorkflowExecution) -> None:
         seconds = int(action.input.get("duration_seconds", 0))
@@ -234,16 +262,6 @@ class WorkflowEngine:
         if "tenant_id" not in provided:
             raise WorkflowValidationError("Execution context must provide tenant_id")
         return provided
-
-    def _trigger_matches(self, definition: WorkflowDefinition, event: Event) -> bool:
-        if event.event_name not in definition.triggers.events:
-            return False
-        tenant_key = (definition.workflow_key, event.tenant_id)
-        seen = self._seen_trigger_events.setdefault(tenant_key, set())
-        seen.add(event.event_name)
-        if definition.triggers.mode == "any":
-            return True
-        return set(definition.triggers.events).issubset(seen)
 
     @staticmethod
     def _evaluate_conditions(conditions: ConditionDefinition, context: dict[str, Any]) -> bool:
