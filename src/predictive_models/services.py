@@ -1,4 +1,4 @@
-"""Deterministic predictive models for opportunity win probability and churn risk."""
+"""Deterministic predictive models for opportunity win probability, churn risk, and CLV."""
 
 from __future__ import annotations
 
@@ -6,9 +6,10 @@ from datetime import date
 
 from .entities import (
     ChurnPrediction,
+    CustomerLifetimeValuePrediction,
     OpportunityHistory,
     PredictionValidationError,
-    SubscriptionHistory,
+    SubscriptionValueHistory,
     WinProbabilityPrediction,
 )
 
@@ -26,11 +27,11 @@ _ALLOWED_SUBSCRIPTION_STATUSES = {"trialing", "active", "past_due", "canceled"}
 
 
 class PredictiveModelService:
-    """Simple scoring models built only from documented historical entity fields."""
+    """Scoring models built only from documented domain entities and derived aggregates."""
 
     def __init__(self) -> None:
         self._opportunity_history: list[OpportunityHistory] = []
-        self._subscription_history: list[SubscriptionHistory] = []
+        self._subscription_history: list[SubscriptionValueHistory] = []
 
     def ingest_opportunity_history(self, rows: list[OpportunityHistory]) -> int:
         for row in rows:
@@ -38,7 +39,7 @@ class PredictiveModelService:
         self._opportunity_history.extend(rows)
         return len(rows)
 
-    def ingest_subscription_history(self, rows: list[SubscriptionHistory]) -> int:
+    def ingest_subscription_history(self, rows: list[SubscriptionValueHistory]) -> int:
         for row in rows:
             self._validate_subscription_row(row)
         self._subscription_history.extend(rows)
@@ -114,27 +115,29 @@ class PredictiveModelService:
         tenant_id: str,
         subscription_id: str,
         status: str,
-        mrr: float,
-        started_at: str,
-        current_period_end: str,
-        last_payment_at: str,
-        late_payment_count: int,
-        support_case_count_90d: int,
+        start_date: str,
+        end_date: str | None,
+        renewal_date: str | None,
+        invoice_amount_due_12m: float,
+        invoice_amount_paid_12m: float,
+        invoice_overdue_count_12m: int,
+        payment_failed_count_90d: int,
+        payment_success_count_90d: int,
     ) -> ChurnPrediction:
-        if status not in _ALLOWED_SUBSCRIPTION_STATUSES:
-            raise PredictionValidationError(f"Unknown subscription status: {status}")
-        if mrr < 0:
-            raise PredictionValidationError("MRR cannot be negative.")
-        if late_payment_count < 0 or support_case_count_90d < 0:
-            raise PredictionValidationError("Historical count fields cannot be negative.")
-
-        started = _parse_iso_date(started_at, "started_at")
-        period_end = _parse_iso_date(current_period_end, "current_period_end")
-        last_payment = _parse_iso_date(last_payment_at, "last_payment_at")
-        if period_end < started:
-            raise PredictionValidationError("current_period_end cannot be earlier than started_at.")
-        if last_payment < started:
-            raise PredictionValidationError("last_payment_at cannot be earlier than started_at.")
+        row = SubscriptionValueHistory(
+            subscription_id=subscription_id,
+            tenant_id=tenant_id,
+            status=status,
+            start_date=start_date,
+            end_date=end_date,
+            renewal_date=renewal_date,
+            invoice_amount_due_12m=invoice_amount_due_12m,
+            invoice_amount_paid_12m=invoice_amount_paid_12m,
+            invoice_overdue_count_12m=invoice_overdue_count_12m,
+            payment_failed_count_90d=payment_failed_count_90d,
+            payment_success_count_90d=payment_success_count_90d,
+        )
+        self._validate_subscription_row(row)
 
         tenant_rows = [r for r in self._subscription_history if r.tenant_id == tenant_id]
         churned = [r for r in tenant_rows if r.status == "canceled"]
@@ -147,25 +150,30 @@ class PredictiveModelService:
         score += status_lift
         drivers.append(f"status_adjustment={status_lift:+.2f}")
 
-        if late_payment_count >= 3:
+        if invoice_amount_due_12m > 0:
+            collection_ratio = invoice_amount_paid_12m / invoice_amount_due_12m
+            if collection_ratio < 0.7:
+                score += 0.16
+                drivers.append("collection_ratio_adjustment=+0.16(low_collection_ratio)")
+            elif collection_ratio >= 0.98:
+                score -= 0.06
+                drivers.append("collection_ratio_adjustment=-0.06(strong_collection_ratio)")
+
+        if invoice_overdue_count_12m >= 3:
+            score += 0.14
+            drivers.append("overdue_invoice_adjustment=+0.14(repeat_overdue)")
+
+        if payment_failed_count_90d >= 2:
             score += 0.18
-            drivers.append("late_payment_adjustment=+0.18(repeat_late_payment)")
-        elif late_payment_count == 0:
+            drivers.append("failed_payment_adjustment=+0.18(recent_failures)")
+        elif payment_success_count_90d >= 3:
             score -= 0.05
-            drivers.append("late_payment_adjustment=-0.05(no_late_payment)")
+            drivers.append("payment_success_adjustment=-0.05(recent_successes)")
 
-        if support_case_count_90d >= 5:
-            score += 0.10
-            drivers.append("support_case_adjustment=+0.10(high_volume)")
-
-        tenure_days = (period_end - started).days
+        tenure_days = _tenure_days(start_date=start_date, end_date=end_date, renewal_date=renewal_date)
         if tenure_days >= 365:
             score -= 0.08
             drivers.append("tenure_adjustment=-0.08(long_tenure)")
-
-        if (period_end - last_payment).days > 35:
-            score += 0.14
-            drivers.append("payment_recency_adjustment=+0.14(stale_payment)")
 
         churn_probability = _clamp(score)
         return ChurnPrediction(
@@ -173,6 +181,50 @@ class PredictiveModelService:
             tenant_id=tenant_id,
             churn_probability=churn_probability,
             risk_level=_risk_label(churn_probability),
+            drivers=tuple(drivers),
+        )
+
+    def predict_customer_lifetime_value(
+        self,
+        tenant_id: str,
+        subscription_id: str,
+        status: str,
+        start_date: str,
+        end_date: str | None,
+        renewal_date: str | None,
+        invoice_amount_due_12m: float,
+        invoice_amount_paid_12m: float,
+        invoice_overdue_count_12m: int,
+        payment_failed_count_90d: int,
+        payment_success_count_90d: int,
+    ) -> CustomerLifetimeValuePrediction:
+        churn = self.predict_churn(
+            tenant_id=tenant_id,
+            subscription_id=subscription_id,
+            status=status,
+            start_date=start_date,
+            end_date=end_date,
+            renewal_date=renewal_date,
+            invoice_amount_due_12m=invoice_amount_due_12m,
+            invoice_amount_paid_12m=invoice_amount_paid_12m,
+            invoice_overdue_count_12m=invoice_overdue_count_12m,
+            payment_failed_count_90d=payment_failed_count_90d,
+            payment_success_count_90d=payment_success_count_90d,
+        )
+
+        annualized_value = max(invoice_amount_paid_12m, 0.0)
+        expected_retention_years = 1.0 + (1.0 - churn.churn_probability) * 2.0
+        clv = round(annualized_value * expected_retention_years, 2)
+        drivers = list(churn.drivers)
+        drivers.append(f"annualized_paid_value_12m={annualized_value:.2f}")
+        drivers.append(f"expected_retention_years={expected_retention_years:.2f}")
+
+        tenant_rows = [r for r in self._subscription_history if r.tenant_id == tenant_id]
+        return CustomerLifetimeValuePrediction(
+            subscription_id=subscription_id,
+            tenant_id=tenant_id,
+            estimated_clv=clv,
+            confidence=_confidence_label(len(tenant_rows)),
             drivers=tuple(drivers),
         )
 
@@ -188,17 +240,23 @@ class PredictiveModelService:
         if close < created:
             raise PredictionValidationError("Historical close_date cannot be earlier than created_at.")
 
-    def _validate_subscription_row(self, row: SubscriptionHistory) -> None:
+    def _validate_subscription_row(self, row: SubscriptionValueHistory) -> None:
         if row.status not in _ALLOWED_SUBSCRIPTION_STATUSES:
             raise PredictionValidationError(f"Unknown historical subscription status: {row.status}")
-        if row.mrr < 0:
-            raise PredictionValidationError("Historical MRR cannot be negative.")
-        if row.late_payment_count < 0 or row.support_case_count_90d < 0:
-            raise PredictionValidationError("Historical count fields cannot be negative.")
-        started = _parse_iso_date(row.started_at, "started_at")
-        period_end = _parse_iso_date(row.current_period_end, "current_period_end")
-        if period_end < started:
-            raise PredictionValidationError("Historical current_period_end cannot be earlier than started_at.")
+        start = _parse_iso_date(row.start_date, "start_date")
+        end = _parse_optional_iso_date(row.end_date, "end_date")
+        renewal = _parse_optional_iso_date(row.renewal_date, "renewal_date")
+
+        if end and end < start:
+            raise PredictionValidationError("Historical end_date cannot be earlier than start_date.")
+        if renewal and renewal < start:
+            raise PredictionValidationError("Historical renewal_date cannot be earlier than start_date.")
+        if row.invoice_amount_due_12m < 0 or row.invoice_amount_paid_12m < 0:
+            raise PredictionValidationError("Invoice amount fields cannot be negative.")
+        if row.invoice_amount_paid_12m > row.invoice_amount_due_12m:
+            raise PredictionValidationError("invoice_amount_paid_12m cannot exceed invoice_amount_due_12m.")
+        if row.invoice_overdue_count_12m < 0 or row.payment_failed_count_90d < 0 or row.payment_success_count_90d < 0:
+            raise PredictionValidationError("Count fields cannot be negative.")
 
 
 def _parse_iso_date(value: str, field_name: str) -> date:
@@ -206,6 +264,20 @@ def _parse_iso_date(value: str, field_name: str) -> date:
         return date.fromisoformat(value)
     except ValueError as exc:
         raise PredictionValidationError(f"Invalid ISO date for {field_name}: {value}") from exc
+
+
+def _parse_optional_iso_date(value: str | None, field_name: str) -> date | None:
+    if value is None:
+        return None
+    return _parse_iso_date(value, field_name)
+
+
+def _tenure_days(start_date: str, end_date: str | None, renewal_date: str | None) -> int:
+    start = _parse_iso_date(start_date, "start_date")
+    end = _parse_optional_iso_date(end_date, "end_date")
+    renewal = _parse_optional_iso_date(renewal_date, "renewal_date")
+    anchor = end or renewal or date.today()
+    return max((anchor - start).days, 0)
 
 
 def _clamp(value: float) -> float:

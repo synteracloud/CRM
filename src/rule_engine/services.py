@@ -7,6 +7,8 @@ from typing import Any
 
 from .entities import (
     ActionDefinition,
+    ConditionClause,
+    ConditionGroup,
     ConditionRule,
     RuleDefinition,
     RuleEvaluation,
@@ -17,6 +19,23 @@ from .entities import (
 
 ALLOWED_OPERATORS: frozenset[str] = frozenset({"eq", "ne", "gt", "gte", "lt", "lte", "in", "contains", "exists"})
 ALLOWED_MATCH_MODES: frozenset[str] = frozenset({"all", "any"})
+ALLOWED_LOGICAL_OPERATORS: frozenset[str] = frozenset({"and", "or"})
+
+
+class RuleConditionBuilder:
+    """Composable builder for deterministic rule condition trees."""
+
+    @staticmethod
+    def condition(field: str, op: str, value: Any) -> ConditionRule:
+        return ConditionRule(field=field, op=op, value=value)
+
+    @staticmethod
+    def all(*clauses: ConditionClause) -> ConditionGroup:
+        return ConditionGroup(operator="and", clauses=tuple(clauses))
+
+    @staticmethod
+    def any(*clauses: ConditionClause) -> ConditionGroup:
+        return ConditionGroup(operator="or", clauses=tuple(clauses))
 
 
 class RuleEngineService:
@@ -59,7 +78,7 @@ class RuleEngineService:
             if not rule.is_active or rule.tenant_id != tenant_id:
                 continue
 
-            matched = self._evaluate_conditions(rule.conditions, rule.match, context)
+            matched = self._evaluate_conditions(rule, context)
             actions: tuple[dict[str, Any], ...] = ()
             if matched:
                 actions = tuple(self._trigger_action(action, context) for action in rule.actions)
@@ -75,13 +94,16 @@ class RuleEngineService:
     def _validate_definition(self, definition: RuleDefinition) -> None:
         if definition.match not in ALLOWED_MATCH_MODES:
             raise RuleValidationError(f"Unsupported condition match mode: {definition.match}")
-        if not definition.conditions:
+        if not definition.conditions and definition.condition_root is None:
             raise RuleValidationError("Rule must define at least one condition")
         if not definition.actions:
             raise RuleValidationError("Rule must define at least one action")
 
-        for condition in definition.conditions:
-            self._validate_condition(condition)
+        if definition.condition_root is not None:
+            self._validate_condition_clause(definition.condition_root)
+        else:
+            for condition in definition.conditions:
+                self._validate_condition(condition)
         for action in definition.actions:
             self._validate_action(action)
 
@@ -111,10 +133,20 @@ class RuleEngineService:
 
     @staticmethod
     def _conditions_signature(rule: RuleDefinition) -> tuple[tuple[str, str, str], ...]:
+        if rule.condition_root is not None:
+            return (("tree", "root", RuleEngineService._clause_signature(rule.condition_root)),)
+
         payload = []
         for condition in rule.conditions:
             payload.append((condition.field, condition.op, repr(condition.value)))
         return tuple(sorted(payload))
+
+    @staticmethod
+    def _clause_signature(clause: ConditionClause) -> str:
+        if isinstance(clause, ConditionRule):
+            return f"rule({clause.field}|{clause.op}|{repr(clause.value)})"
+        children = ",".join(RuleEngineService._clause_signature(child) for child in clause.clauses)
+        return f"group({clause.operator}|{children})"
 
     @staticmethod
     def _validate_condition(condition: ConditionRule) -> None:
@@ -123,6 +155,18 @@ class RuleEngineService:
         if not condition.field:
             raise RuleValidationError("Condition field path must be non-empty")
 
+    def _validate_condition_clause(self, clause: ConditionClause) -> None:
+        if isinstance(clause, ConditionRule):
+            self._validate_condition(clause)
+            return
+
+        if clause.operator not in ALLOWED_LOGICAL_OPERATORS:
+            raise RuleValidationError(f"Unsupported logical operator: {clause.operator}")
+        if not clause.clauses:
+            raise RuleValidationError("Condition groups must contain at least one clause")
+        for nested in clause.clauses:
+            self._validate_condition_clause(nested)
+
     @staticmethod
     def _validate_action(action: ActionDefinition) -> None:
         if not action.action_id:
@@ -130,11 +174,28 @@ class RuleEngineService:
         if not action.target:
             raise RuleValidationError("Action target must be non-empty")
 
-    def _evaluate_conditions(self, rules: tuple[ConditionRule, ...], match: str, context: dict[str, Any]) -> bool:
-        outcomes = [self._evaluate_condition(rule, context) for rule in rules]
-        if match == "all":
+    def _evaluate_conditions(self, definition: RuleDefinition, context: dict[str, Any]) -> bool:
+        if definition.condition_root is not None:
+            return self._evaluate_clause(definition.condition_root, context)
+        outcomes = [self._evaluate_condition(rule, context) for rule in definition.conditions]
+        if definition.match == "all":
             return all(outcomes)
         return any(outcomes)
+
+    def _evaluate_clause(self, clause: ConditionClause, context: dict[str, Any]) -> bool:
+        if isinstance(clause, ConditionRule):
+            return self._evaluate_condition(clause, context)
+
+        if clause.operator == "and":
+            for nested in clause.clauses:
+                if not self._evaluate_clause(nested, context):
+                    return False
+            return True
+
+        for nested in clause.clauses:
+            if self._evaluate_clause(nested, context):
+                return True
+        return False
 
     def _evaluate_condition(self, rule: ConditionRule, context: dict[str, Any]) -> bool:
         actual = _resolve_field_path(context, rule.field)

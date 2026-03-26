@@ -5,9 +5,18 @@ import unittest
 from src.event_bus import Event
 from src.workflow_engine import (
     API_ENDPOINTS,
+    ActionExecutionEngine,
+    TriggerHandlingSystem,
+    TriggerDefinition,
     WorkflowApi,
     ActionDefinition,
     SequencingDefinition,
+    TriggerDefinition,
+    ConditionDefinition,
+    WorkflowBuilderGraph,
+    WorkflowGraphEdge,
+    WorkflowGraphNode,
+    WorkflowGraphValidationError,
     WorkflowDefinition,
     WorkflowEngine,
     WorkflowStep,
@@ -104,6 +113,67 @@ class WorkflowEngineTests(unittest.TestCase):
         with self.assertRaises(WorkflowValidationError):
             engine.register_workflow(broken)
 
+    def test_self_qc_reports_10_of_10_for_valid_registered_workflows(self) -> None:
+        engine = WorkflowEngine()
+        for workflow in build_canonical_workflows():
+            engine.register_workflow(workflow)
+
+        report = engine.self_qc_trigger_action_integrity()
+        self.assertEqual(report["score"], 10)
+        self.assertEqual(report["issues"], [])
+        self.assertTrue(report["checks"]["all_triggers_map_to_event_catalog"])
+        self.assertTrue(report["checks"]["no_undefined_actions"])
+
+
+class TriggerAndActionEngineTests(unittest.TestCase):
+    def test_trigger_system_respects_any_and_all_modes(self) -> None:
+        workflows = build_canonical_workflows()
+        trigger_system = TriggerHandlingSystem()
+        for workflow in workflows:
+            trigger_system.register(workflow)
+
+        all_mode = WorkflowDefinition(
+            workflow_key="all_mode_workflow",
+            version="v1",
+            metadata={"name": "All mode"},
+            triggers=TriggerDefinition(mode="all", events=("lead.created.v1", "lead.converted.v1")),
+            conditions=workflows[0].conditions,
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("s1", "a1"),),
+            ),
+            actions={"a1": ActionDefinition("call_service", "Service", "op")},
+        )
+        trigger_system.register(all_mode)
+
+        first = Event(
+            event_name="lead.created.v1",
+            event_id="evt-a",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-a",
+            payload={},
+        )
+        second = Event(
+            event_name="lead.converted.v1",
+            event_id="evt-b",
+            occurred_at="2026-03-26T00:00:01Z",
+            tenant_id="tenant-a",
+            payload={},
+        )
+        self.assertFalse(trigger_system.trigger_matches(all_mode, first))
+        self.assertTrue(trigger_system.trigger_matches(all_mode, second))
+
+    def test_action_engine_executes_supported_action_types(self) -> None:
+        engine = ActionExecutionEngine()
+        context = {"tenant_id": "tenant-1", "entity": {"id": "lead-1"}}
+        state = {"prior": {"output": "ok"}}
+
+        notify = ActionDefinition("notify", "Notification Orchestrator", "send", {"lead_id": "${context.entity.id}"})
+        result = engine.execute(notify, context, state)
+        self.assertEqual(result["channel"], "notification")
+        self.assertEqual(result["input"]["lead_id"], "lead-1")
+
 
 class WorkflowApiTests(unittest.TestCase):
     def test_start_and_stop_api(self) -> None:
@@ -145,6 +215,113 @@ class WorkflowCatalogCoverageTests(unittest.TestCase):
             )
             execution = engine.start_workflow(workflow.workflow_key, event=event)
             self.assertIn(execution.status, {"completed", "waiting"})
+
+
+class WorkflowBuilderTests(unittest.TestCase):
+    def test_graph_definition_maps_to_dsl_and_executes(self) -> None:
+        engine = WorkflowEngine()
+        graph = WorkflowBuilderGraph(
+            workflow_key="builder_graph_example",
+            version="v1",
+            metadata={"name": "Builder graph example", "domain": "sales"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(match="all", rules=()),
+            nodes=(
+                WorkflowGraphNode(
+                    id="validate_lead",
+                    action_type="call_service",
+                    service="Data Quality Service",
+                    operation="validate",
+                    input={"lead_id": "${context.entity.id}"},
+                ),
+                WorkflowGraphNode(
+                    id="notify_owner",
+                    action_type="notify",
+                    service="Notification Orchestrator",
+                    operation="notify_assigned_owner",
+                ),
+            ),
+            edges=(WorkflowGraphEdge(source="validate_lead", target="notify_owner"),),
+            start_node_id="validate_lead",
+        )
+        definition = engine.create_workflow_from_graph(graph)
+        self.assertEqual(definition.workflow_key, "builder_graph_example")
+        self.assertEqual(definition.sequencing.steps[0].id, "validate_lead")
+        self.assertEqual(definition.sequencing.steps[1].id, "notify_owner")
+
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-builder-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-builder",
+            payload={"id": "lead-10"},
+        )
+        run = engine.start_workflow("builder_graph_example", event=event)
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.step_log), 2)
+
+    def test_graph_validation_rejects_unreachable_step(self) -> None:
+        engine = WorkflowEngine()
+        graph = WorkflowBuilderGraph(
+            workflow_key="builder_graph_invalid",
+            version="v1",
+            metadata={"name": "Builder graph invalid"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(),
+            nodes=(
+                WorkflowGraphNode("step_a", "call_service", "A", "op_a"),
+                WorkflowGraphNode("step_b", "call_service", "B", "op_b"),
+            ),
+            edges=(),
+            start_node_id="step_a",
+        )
+        with self.assertRaises(WorkflowGraphValidationError):
+            engine.create_workflow_from_graph(graph)
+
+    def test_builder_api_create_and_edit_workflow(self) -> None:
+        engine = WorkflowEngine()
+        api = WorkflowApi(engine)
+        create_payload = {
+            "workflow_key": "api_builder_workflow",
+            "version": "v1",
+            "metadata": {"name": "API Builder Workflow"},
+            "triggers": {"mode": "any", "events": ["lead.created.v1"], "manual": False},
+            "conditions": {"match": "all", "rules": []},
+            "nodes": [
+                {
+                    "id": "first",
+                    "action_type": "call_service",
+                    "service": "Workflow Automation Service",
+                    "operation": "do_first",
+                }
+            ],
+            "edges": [],
+            "start_node_id": "first",
+        }
+        created = api.create_workflow(create_payload, request_id="req-builder-1")
+        self.assertIn("data", created)
+
+        edit_payload = {
+            **create_payload,
+            "nodes": [
+                {
+                    "id": "first",
+                    "action_type": "call_service",
+                    "service": "Workflow Automation Service",
+                    "operation": "do_first",
+                },
+                {
+                    "id": "second",
+                    "action_type": "notify",
+                    "service": "Notification Orchestrator",
+                    "operation": "send_done",
+                },
+            ],
+            "edges": [{"source": "first", "target": "second"}],
+        }
+        edited = api.edit_workflow("api_builder_workflow", edit_payload, request_id="req-builder-2")
+        self.assertIn("data", edited)
+        self.assertEqual(len(edited["data"]["sequencing"]["steps"]), 2)
 
 
 if __name__ == "__main__":

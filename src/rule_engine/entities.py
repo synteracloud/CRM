@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 ConditionMatchMode = Literal["all", "any"]
+LogicalOperator = Literal["and", "or"]
 RuleOperator = Literal["eq", "ne", "gt", "gte", "lt", "lte", "in", "contains", "exists"]
 ActionType = Literal["emit_event", "call_service", "notify", "mutate_state", "wait"]
 
@@ -15,6 +16,15 @@ class ConditionRule:
     field: str
     op: RuleOperator
     value: Any
+
+
+@dataclass(frozen=True)
+class ConditionGroup:
+    operator: LogicalOperator
+    clauses: tuple["ConditionClause", ...]
+
+
+ConditionClause = ConditionRule | ConditionGroup
 
 
 @dataclass(frozen=True)
@@ -35,6 +45,7 @@ class RuleDefinition:
     match: ConditionMatchMode
     conditions: tuple[ConditionRule, ...]
     actions: tuple[ActionDefinition, ...]
+    condition_root: ConditionGroup | None = None
     is_active: bool = True
 
 

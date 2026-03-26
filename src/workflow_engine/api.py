@@ -13,6 +13,9 @@ from .services import WorkflowEngine
 API_ENDPOINTS: dict[str, dict[str, str]] = {
     "start_workflow": {"method": "POST", "path": "/api/v1/workflows/{workflow_key}/start"},
     "stop_workflow": {"method": "POST", "path": "/api/v1/workflows/executions/{execution_id}/stop"},
+    "create_workflow": {"method": "POST", "path": "/api/v1/workflows"},
+    "edit_workflow": {"method": "PUT", "path": "/api/v1/workflows/{workflow_key}"},
+    "get_workflow_graph": {"method": "GET", "path": "/api/v1/workflows/{workflow_key}/graph"},
 }
 
 
@@ -36,6 +39,29 @@ class WorkflowApi:
         except WorkflowNotFoundError as exc:
             return _error("not_found", str(exc), request_id)
 
+    def create_workflow(self, graph: dict[str, Any], request_id: str) -> dict[str, Any]:
+        try:
+            definition = self._engine.create_workflow_from_graph(_graph_from_dict(graph))
+            return _success(asdict(definition), request_id)
+        except (WorkflowValidationError, WorkflowNotFoundError) as exc:
+            return _error("conflict", str(exc), request_id)
+
+    def edit_workflow(self, workflow_key: str, graph: dict[str, Any], request_id: str) -> dict[str, Any]:
+        try:
+            definition = self._engine.update_workflow_from_graph(workflow_key, _graph_from_dict(graph))
+            return _success(asdict(definition), request_id)
+        except WorkflowNotFoundError as exc:
+            return _error("not_found", str(exc), request_id)
+        except WorkflowValidationError as exc:
+            return _error("conflict", str(exc), request_id)
+
+    def get_workflow_graph(self, workflow_key: str, request_id: str) -> dict[str, Any]:
+        try:
+            graph = self._engine.export_workflow_graph(workflow_key)
+            return _success(asdict(graph), request_id)
+        except WorkflowNotFoundError as exc:
+            return _error("not_found", str(exc), request_id)
+
 
 def _success(data: Any, request_id: str) -> dict[str, Any]:
     return {"data": data, "meta": {"request_id": request_id}}
@@ -44,3 +70,21 @@ def _success(data: Any, request_id: str) -> dict[str, Any]:
 
 def _error(code: str, message: str, request_id: str) -> dict[str, Any]:
     return {"error": {"code": code, "message": message, "details": []}, "meta": {"request_id": request_id}}
+
+
+def _graph_from_dict(payload: dict[str, Any]) -> Any:
+    from .entities import ConditionDefinition, ConditionRule, TriggerDefinition, WorkflowBuilderGraph, WorkflowGraphEdge, WorkflowGraphNode
+
+    return WorkflowBuilderGraph(
+        workflow_key=payload["workflow_key"],
+        version=payload.get("version", "v1"),
+        metadata=payload.get("metadata", {}),
+        triggers=TriggerDefinition(**payload["triggers"]),
+        conditions=ConditionDefinition(
+            match=payload.get("conditions", {}).get("match", "all"),
+            rules=tuple(ConditionRule(**rule) for rule in payload.get("conditions", {}).get("rules", [])),
+        ),
+        nodes=tuple(WorkflowGraphNode(**node) for node in payload.get("nodes", [])),
+        edges=tuple(WorkflowGraphEdge(**edge) for edge in payload.get("edges", [])),
+        start_node_id=payload["start_node_id"],
+    )
