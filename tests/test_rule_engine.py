@@ -4,15 +4,80 @@ import unittest
 
 from src.rule_engine import (
     ActionDefinition,
+    ConditionGroup,
     ConditionRule,
     RuleDefinition,
     RuleEngineApi,
+    RuleConditionBuilder,
     RuleEngineService,
     RuleValidationError,
 )
 
 
 class RuleEngineServiceTests(unittest.TestCase):
+    def test_rule_builder_supports_nested_and_or_groups(self) -> None:
+        service = RuleEngineService()
+        service.register_rule(
+            RuleDefinition(
+                rule_id="rule-nested",
+                tenant_id="tenant-1",
+                workflow_key="lead_intake_assignment_conversion",
+                trigger_event="lead.created.v1",
+                priority=5,
+                match="all",
+                conditions=(),
+                condition_root=RuleConditionBuilder.all(
+                    RuleConditionBuilder.condition("context.tenant_id", "exists", True),
+                    RuleConditionBuilder.any(
+                        RuleConditionBuilder.condition("context.entity.lead_status", "eq", "qualified"),
+                        RuleConditionBuilder.condition("context.entity.score", "gte", 90),
+                    ),
+                ),
+                actions=(
+                    ActionDefinition(
+                        action_id="notify_owner",
+                        type="notify",
+                        target="Notification Orchestrator",
+                        payload={"lead_id": "${context.entity.id}"},
+                    ),
+                ),
+            )
+        )
+
+        context = {
+            "context": {
+                "tenant_id": "tenant-1",
+                "entity": {"id": "lead-5", "lead_status": "new", "score": 95},
+            }
+        }
+        result = service.evaluate(trigger_event="lead.created.v1", tenant_id="tenant-1", context=context)
+        self.assertEqual(result.matched_rule_ids, ("rule-nested",))
+        self.assertEqual(result.evaluations[0].actions[0]["payload"]["lead_id"], "lead-5")
+
+    def test_rejects_ambiguous_condition_groups(self) -> None:
+        service = RuleEngineService()
+        with self.assertRaises(RuleValidationError):
+            service.register_rule(
+                RuleDefinition(
+                    rule_id="bad-group",
+                    tenant_id="tenant-1",
+                    workflow_key="lead_intake_assignment_conversion",
+                    trigger_event="lead.created.v1",
+                    priority=1,
+                    match="all",
+                    conditions=(),
+                    condition_root=ConditionGroup(operator="and", clauses=()),
+                    actions=(
+                        ActionDefinition(
+                            action_id="a1",
+                            type="notify",
+                            target="Notification Orchestrator",
+                            payload={"template": "x"},
+                        ),
+                    ),
+                )
+            )
+
     def test_evaluate_deterministic_conditions_and_trigger_actions(self) -> None:
         service = RuleEngineService()
         service.register_rule(
