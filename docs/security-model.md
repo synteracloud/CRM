@@ -89,6 +89,11 @@ This document defines the authentication model, RBAC roles, permissions, tenant 
 | Error handling | Safe error responses | Never expose stack traces, policy internals, or cross-tenant object identifiers. |
 | Auditability | Immutable security events | Log authn/authz decisions, admin actions, token events, and policy changes with actor + tenant context. |
 
+
+## Observability & Audit Implementation Baseline
+
+Operational requirements for logging, request tracing, audit trail APIs, and observability hooks are defined in `docs/observability-audit.md`.
+
 ## Security Invariants (Must Always Hold)
 
 | Invariant | Assertion |
