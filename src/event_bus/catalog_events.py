@@ -40,6 +40,15 @@ EVENT_NAMES: tuple[str, ...] = (
     "feature_flag.updated.v1",
     "audit.log.recorded.v1",
     "eventbus.dead_lettered.v1",
+    "job.enqueued.v1",
+    "job.started.v1",
+    "job.succeeded.v1",
+    "job.retry.scheduled.v1",
+    "job.failed.v1",
+    "job.dead_lettered.v1",
+    "schedule.created.v1",
+    "schedule.updated.v1",
+    "schedule.deleted.v1",
 )
 
 EVENT_NAME_SET: frozenset[str] = frozenset(EVENT_NAMES)

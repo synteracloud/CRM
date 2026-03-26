@@ -93,7 +93,7 @@ begin
     p_tenant_id,
     'PaymentEvent',
     v_payment_event_id,
-    'PaymentEventRecorded',
+    'payment.event.recorded.v1',
     jsonb_build_object(
       'payment_event_id', v_payment_event_id,
       'subscription_id', p_subscription_id,
