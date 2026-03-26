@@ -1,30 +1,53 @@
-# SELF-QC (B1-P05::TRANSACTION_DB)
+# SELF-QC (B2-P08::PAYMENTS_REVENUE)
 
-## Alignment check vs domain model
+## Entities
 
-- `subscription` implements: `subscription_id`, `tenant_id`, `account_id`, `quote_id`, `external_subscription_ref`, `plan_code`, `status`, `start_date`, `end_date`, `renewal_date`, `created_at`. (+ `updated_at` for operational consistency)
-- `invoice_summary` implements: `invoice_summary_id`, `tenant_id`, `subscription_id`, `external_invoice_ref`, `invoice_number`, `amount_due`, `amount_paid`, `currency`, `status`, `due_date`, `issued_at`. (+ `created_at`, `updated_at`)
-- `payment_event` implements: `payment_event_id`, `tenant_id`, `subscription_id`, `invoice_summary_id`, `external_payment_ref`, `event_type`, `amount`, `currency`, `event_time`, `status`. (+ `created_at`)
+- `payment` added as first-class payment aggregate with tenant isolation, optional linkage to `subscription`/`invoice_summary`, lifecycle timestamps, and status constraints.
+- `payment_status_history` added to preserve immutable status transitions for auditability and replay.
+- `revenue_ledger` added to track recognized revenue deltas (`recognition`, `refund`, `chargeback_adjustment`) by payment and currency.
 
-Result: **match achieved**.
+## APIs
 
-## Relation completeness check
+- `GET /api/v1/payments` — list tenant payments.
+- `POST /api/v1/payments` — create payment in `initiated` state.
+- `POST /api/v1/payments/:payment_id/status` — apply validated status transition and write revenue entries.
+- `GET /api/v1/payments/revenue/summary?from_date=YYYY-MM-DD&to_date=YYYY-MM-DD` — summarize recognized revenue by currency.
 
-- `Subscription` 1-N `InvoiceSummary`: FK on `invoice_summary.subscription_id` + tenant-safe composite FK.
-- `Subscription` 1-N `PaymentEvent`: optional FK on `payment_event.subscription_id` + tenant-safe composite FK.
-- `InvoiceSummary` 1-N `PaymentEvent`: optional FK on `payment_event.invoice_summary_id` + tenant-safe composite FK.
-- Tenant isolation: mandatory `tenant_id` for all domain tables and outbox/idempotency tables.
+## Status flow
 
-Result: **no missing in-domain relations**.
+Allowed transitions:
 
-## Architecture conformance check
+- `initiated -> authorized | failed | canceled`
+- `authorized -> captured | failed | canceled`
+- `captured -> settled | partially_refunded | refunded | chargeback`
+- `settled -> partially_refunded | refunded | chargeback`
+- `partially_refunded -> refunded | chargeback`
+- terminal states: `failed`, `canceled`, `refunded`, `chargeback`
 
-- Domain-owned DB boundary preserved: no hard FKs to cross-service entities (`account_id`, `quote_id` left as external references).
-- Transactional outbox included for reliable event publication.
-- Idempotency ledger included for webhook/event replay safety.
+Enforcement exists in:
 
-Result: **aligned with data architecture guidance**.
+- DB function: `transaction_db.is_valid_payment_status_transition(...)`
+- DB transition procedure: `transaction_db.apply_payment_status_transition(...)`
+- Gateway endpoint validation (`v1-payments.routes.js`)
 
-## Score
+## Payment flow complete
 
-**10/10** after align -> re-check loop.
+- Payment creation initializes history with `initiated` status.
+- Status updates append immutable history entries.
+- Revenue ledger is credited on `settled` and debited on `partially_refunded`/`refunded`/`chargeback`.
+
+Result: **complete end-to-end flow exists**.
+
+## No broken states
+
+- Illegal transitions are rejected at API layer and DB procedure layer.
+- Terminal states do not allow forward transitions.
+- Every payment has at least one relationship target (`subscription_id` or `invoice_summary_id`).
+
+Result: **no broken transition states identified**.
+
+## FIX LOOP
+
+1. **Fix:** Added payment aggregate + status history + revenue ledger + transition procedures + gateway APIs.
+2. **Re-check:** Verified transition guards, tenant scoping, revenue delta behavior, and API validation constraints.
+3. **Score:** **10/10**.
