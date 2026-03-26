@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .entities import DashboardReadModelNotFoundError
+from .entities import DashboardLayoutConfig, DashboardReadModelNotFoundError
 from .services import DashboardReadModelService
 
 
@@ -12,6 +12,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "get_sales_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/sales"},
     "get_marketing_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/marketing"},
     "get_support_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/support"},
+    "get_dynamic_dashboard": {"method": "POST", "path": "/api/v1/reporting/dashboards/render"},
 }
 
 
@@ -46,3 +47,22 @@ class DashboardApi:
             return success(self._service.serialize(self._service.get_support(tenant_id)), request_id)
         except DashboardReadModelNotFoundError as exc:
             return error("not_found", str(exc), request_id)
+
+    def get_dynamic_dashboard(
+        self,
+        tenant_id: str,
+        request_id: str,
+        *,
+        layout: DashboardLayoutConfig,
+    ) -> dict[str, Any]:
+        try:
+            payload = self._service.build_dashboard(
+                tenant_id=tenant_id,
+                dashboard_type=layout.dashboard_type,
+                layout=layout,
+            )
+            return success(payload, request_id)
+        except DashboardReadModelNotFoundError as exc:
+            return error("not_found", str(exc), request_id)
+        except (ValueError, KeyError) as exc:
+            return error("invalid_dashboard_config", str(exc), request_id)
