@@ -1,8 +1,10 @@
 const { respondError } = require('./response-wrapper');
 
-function decodeTokenPayload(token) {
+function decodeJwtPayload(token) {
   try {
-    const normalized = token.replace(/-/g, '+').replace(/_/g, '/');
+    const parts = token.split('.');
+    const payloadPart = parts.length === 3 ? parts[1] : token;
+    const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
     const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
     const raw = Buffer.from(padded, 'base64').toString('utf8');
     const payload = JSON.parse(raw);
@@ -20,7 +22,7 @@ function authMiddleware() {
     }
 
     const token = authHeader.slice('Bearer '.length).trim();
-    const claims = decodeTokenPayload(token);
+    const claims = decodeJwtPayload(token);
 
     if (!claims || typeof claims !== 'object') {
       return respondError(res, 'unauthorized', 'Invalid bearer token.', [{ field: 'authorization', reason: 'invalid_token' }], 401);
@@ -31,6 +33,10 @@ function authMiddleware() {
       return respondError(res, 'unauthorized', 'Token is expired or missing exp claim.', [{ field: 'authorization', reason: 'expired_or_missing_exp' }], 401);
     }
 
+    if (typeof claims.nbf === 'number' && claims.nbf > nowEpoch) {
+      return respondError(res, 'unauthorized', 'Token is not yet valid.', [{ field: 'authorization', reason: 'token_not_yet_valid' }], 401);
+    }
+
     if (typeof claims.sub !== 'string' || !claims.sub || typeof claims.tenant_id !== 'string' || !claims.tenant_id) {
       return respondError(res, 'unauthorized', 'Token is missing required claims.', [{ field: 'authorization', reason: 'missing_required_claims' }], 401);
     }
@@ -38,15 +44,18 @@ function authMiddleware() {
     req.auth = {
       sub: claims.sub,
       tenant_id: claims.tenant_id,
-      scopes: Array.isArray(claims.scopes) ? claims.scopes : [],
-      role_ids: Array.isArray(claims.role_ids) ? claims.role_ids : [],
+      scopes: Array.isArray(claims.scopes) ? claims.scopes.filter((s) => typeof s === 'string' && s) : [],
+      role_ids: Array.isArray(claims.role_ids) ? claims.role_ids.filter((r) => typeof r === 'string' && r) : [],
+      jti: typeof claims.jti === 'string' ? claims.jti : null,
     };
 
     return next();
   };
 }
 
-function requireScopes(requiredScopes = []) {
+function requireScopes(requiredScopes = [], options = {}) {
+  const requiredRoles = Array.isArray(options.requiredRoles) ? options.requiredRoles : [];
+
   return function authorize(req, res, next) {
     const tenantHeader = req.headers['x-tenant-id'];
     if (typeof tenantHeader !== 'string' || !tenantHeader.trim()) {
@@ -58,16 +67,29 @@ function requireScopes(requiredScopes = []) {
     }
 
     const principalScopes = new Set(req.auth?.scopes || []);
-    const missing = requiredScopes.filter((scope) => !principalScopes.has(scope));
-
-    if (missing.length > 0) {
+    const missingScopes = requiredScopes.filter((scope) => !principalScopes.has(scope));
+    if (missingScopes.length > 0) {
       return respondError(
         res,
         'forbidden',
         'Missing required scope for this operation.',
-        missing.map((scope) => ({ field: 'scopes', reason: `missing_${scope}` })),
+        missingScopes.map((scope) => ({ field: 'scopes', reason: `missing_${scope}` })),
         403,
       );
+    }
+
+    if (requiredRoles.length > 0) {
+      const principalRoles = new Set(req.auth?.role_ids || []);
+      const roleMatch = requiredRoles.some((role) => principalRoles.has(role));
+      if (!roleMatch) {
+        return respondError(
+          res,
+          'forbidden',
+          'Missing required role for this operation.',
+          requiredRoles.map((role) => ({ field: 'roles', reason: `requires_${role}` })),
+          403,
+        );
+      }
     }
 
     return next();
