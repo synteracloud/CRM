@@ -13,6 +13,7 @@ from src.workflow_engine import (
     SequencingDefinition,
     TriggerDefinition,
     ConditionDefinition,
+    RetryPolicy,
     WorkflowBuilderGraph,
     WorkflowGraphEdge,
     WorkflowGraphNode,
@@ -119,10 +120,82 @@ class WorkflowEngineTests(unittest.TestCase):
             engine.register_workflow(workflow)
 
         report = engine.self_qc_trigger_action_integrity()
-        self.assertEqual(report["score"], 10)
+        self.assertEqual(report["score"], 13)
         self.assertEqual(report["issues"], [])
         self.assertTrue(report["checks"]["all_triggers_map_to_event_catalog"])
         self.assertTrue(report["checks"]["no_undefined_actions"])
+
+    def test_retry_engine_retries_then_fails_without_infinite_loop(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="retry_engine_test",
+            version="v1",
+            metadata={"name": "Retry test"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",)),
+            conditions=ConditionDefinition(),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("step_1", "always_fails", retries=2),),
+            ),
+            actions={"always_fails": ActionDefinition("call_service", "Service", "fail:timeout")},
+            retry_policy=RetryPolicy(max_attempts=3, backoff_seconds=1, max_backoff_seconds=8),
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-retry-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-retry",
+            payload={},
+        )
+        execution = engine.start_workflow("retry_engine_test", event=event)
+        self.assertEqual(execution.status, "failed")
+        attempts = [log for log in execution.step_log if log.get("step_id") == "step_1" and "disposition" in log]
+        self.assertEqual(len(attempts), 3)
+        self.assertTrue(any(log.get("action") == "retry.scheduled" for log in execution.step_log))
+
+    def test_compensation_runs_in_reverse_for_multi_step_flow(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="compensation_test",
+            version="v1",
+            metadata={"name": "Compensation test"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",)),
+            conditions=ConditionDefinition(),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="compensate",
+                steps=(
+                    WorkflowStep("reserve_inventory", "reserve"),
+                    WorkflowStep("create_order", "create"),
+                    WorkflowStep("collect_payment", "payment"),
+                ),
+            ),
+            actions={
+                "reserve": ActionDefinition("call_service", "Inventory", "reserve"),
+                "create": ActionDefinition("call_service", "Orders", "create"),
+                "payment": ActionDefinition("call_service", "Payments", "fail:validation_error"),
+            },
+            compensations={
+                "reserve": ActionDefinition("call_service", "Inventory", "release"),
+                "create": ActionDefinition("call_service", "Orders", "cancel"),
+            },
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-comp-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-comp",
+            payload={},
+        )
+        execution = engine.start_workflow("compensation_test", event=event)
+        self.assertEqual(execution.status, "failed")
+        compensations = [log for log in execution.step_log if log.get("action") == "compensation.executed"]
+        self.assertEqual(len(compensations), 2)
+        self.assertEqual(compensations[0]["for_action"], "create")
+        self.assertEqual(compensations[1]["for_action"], "reserve")
 
 
 class TriggerAndActionEngineTests(unittest.TestCase):

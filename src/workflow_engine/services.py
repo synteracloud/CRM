@@ -11,6 +11,8 @@ from .entities import (
     ActionDefinition,
     ConditionDefinition,
     ConditionRule,
+    FailureDisposition,
+    RetryPolicy,
     SequencingDefinition,
     WorkflowBuilderGraph,
     WorkflowDefinition,
@@ -60,6 +62,9 @@ class ActionExecutionEngine:
         if action.type == "emit_event":
             return {"emitted": list(action.emits), "payload": rendered_input}
         if action.type == "call_service":
+            if action.operation.startswith("fail:"):
+                error_code = action.operation.split(":", 1)[1].strip() or "service_unavailable"
+                return {"service": action.service, "operation": action.operation, "input": rendered_input, "ok": False, "error_code": error_code}
             return {"service": action.service, "operation": action.operation, "input": rendered_input, "ok": True}
         if action.type == "notify":
             return {"channel": "notification", "service": action.service, "input": rendered_input}
@@ -211,6 +216,9 @@ class WorkflowEngine:
             "conditions_structurally_valid": True,
             "trigger_modes_valid": True,
             "tenant_context_supported": True,
+            "retry_rules_deterministic": True,
+            "no_infinite_retries": True,
+            "compensation_defined_for_critical_flows": True,
         }
         issues: list[str] = []
 
@@ -254,11 +262,29 @@ class WorkflowEngine:
                 if workflow.sequencing.strategy == "branching" and step.next and step.next != "end" and step.next not in step_ids:
                     checks["sequencing_valid"] = False
                     issues.append(f"invalid next step '{step.next}' in {workflow.workflow_key}")
+                attempts_cap = max(step.retries + 1, workflow.retry_policy.max_attempts)
+                if attempts_cap <= 0:
+                    checks["no_infinite_retries"] = False
+                    issues.append(f"invalid retries policy for step={step.id} in {workflow.workflow_key}")
 
             for rule in workflow.conditions.rules:
                 if not rule.field:
                     checks["conditions_structurally_valid"] = False
                     issues.append(f"invalid condition rule in {workflow.workflow_key}")
+            if workflow.retry_policy.backoff_seconds <= 0 or workflow.retry_policy.max_backoff_seconds <= 0:
+                checks["retry_rules_deterministic"] = False
+                issues.append(f"invalid backoff configuration in {workflow.workflow_key}")
+            if workflow.retry_policy.max_attempts <= 0:
+                checks["no_infinite_retries"] = False
+                issues.append(f"invalid max_attempts in {workflow.workflow_key}")
+            if workflow.sequencing.on_error == "compensate":
+                critical_steps = [
+                    step for step in workflow.sequencing.steps if definition_action_is_critical(workflow.actions[step.action])
+                ]
+                missing = [step.id for step in critical_steps if step.action not in workflow.compensations]
+                if missing:
+                    checks["compensation_defined_for_critical_flows"] = False
+                    issues.append(f"missing compensations in {workflow.workflow_key} for steps={missing}")
 
         score = sum(1 for passed in checks.values() if passed)
         return {"score": score, "checks": checks, "issues": sorted(set(issues))}
@@ -278,16 +304,87 @@ class WorkflowEngine:
             if action.type == "wait":
                 self._apply_wait_step(step, action, execution)
                 return
-
-            result = self._action_engine.execute(action, execution.context, execution.state)
-            execution.state[step.action] = result
-            execution.step_log.append(
-                {"step_id": step.id, "action": step.action, "result": result, "at": _now_iso()}
-            )
-            execution.current_step_id = self._resolve_next_step(definition, step)
+            if not self._execute_step_with_retry(definition, step, action, execution):
+                return
 
         execution.status = "completed"
         execution.completed_at = _now_iso()
+
+    def _execute_step_with_retry(
+        self, definition: WorkflowDefinition, step: WorkflowStep, action: ActionDefinition, execution: WorkflowExecution
+    ) -> bool:
+        max_attempts = min(max(step.retries + 1, definition.retry_policy.max_attempts), 25)
+        for attempt in range(1, max_attempts + 1):
+            result = self._action_engine.execute(action, execution.context, execution.state)
+            if result.get("ok", True):
+                execution.state[step.action] = result
+                execution.step_log.append(
+                    {"step_id": step.id, "action": step.action, "result": result, "attempt": attempt, "at": _now_iso()}
+                )
+                execution.current_step_id = self._resolve_next_step(definition, step)
+                return True
+
+            error_code = str(result.get("error_code", "service_unavailable"))
+            disposition = _classify_failure(error_code, definition.retry_policy)
+            execution.step_log.append(
+                {
+                    "step_id": step.id,
+                    "action": step.action,
+                    "attempt": attempt,
+                    "error_code": error_code,
+                    "disposition": disposition,
+                    "at": _now_iso(),
+                }
+            )
+            if disposition == "retryable" and attempt < max_attempts:
+                backoff = _compute_backoff_seconds(attempt, definition.retry_policy)
+                execution.step_log.append(
+                    {
+                        "step_id": step.id,
+                        "action": "retry.scheduled",
+                        "attempt": attempt + 1,
+                        "backoff_seconds": backoff,
+                        "at": _now_iso(),
+                    }
+                )
+                continue
+            self._handle_terminal_failure(definition, step, error_code, execution)
+            return False
+        self._handle_terminal_failure(definition, step, "retries_exhausted", execution)
+        return False
+
+    def _handle_terminal_failure(
+        self, definition: WorkflowDefinition, step: WorkflowStep, error_code: str, execution: WorkflowExecution
+    ) -> None:
+        execution.status = "failed"
+        execution.error_message = f"Step failed: {step.id} error_code={error_code}"
+        execution.step_log.append({"step_id": step.id, "action": "step.failed", "error_code": error_code, "at": _now_iso()})
+        if definition.sequencing.on_error == "compensate":
+            self._run_compensations(definition, execution)
+        execution.completed_at = _now_iso()
+
+    def _run_compensations(self, definition: WorkflowDefinition, execution: WorkflowExecution) -> None:
+        completed_actions = [
+            entry["action"]
+            for entry in execution.step_log
+            if entry.get("result") and isinstance(entry.get("action"), str) and entry["action"] in definition.actions
+        ]
+        for action_ref in reversed(completed_actions):
+            compensation = definition.compensations.get(action_ref)
+            if not compensation:
+                continue
+            result = self._action_engine.execute(compensation, execution.context, execution.state)
+            if result.get("ok", True):
+                execution.step_log.append(
+                    {"action": "compensation.executed", "for_action": action_ref, "result": result, "at": _now_iso()}
+                )
+            else:
+                execution.step_log.append(
+                    {"action": "compensation.failed", "for_action": action_ref, "result": result, "at": _now_iso()}
+                )
+                execution.error_message = (
+                    f"{execution.error_message}; compensation_failed_for={action_ref}:{result.get('error_code')}"
+                )
 
     def _resolve_next_step(self, definition: WorkflowDefinition, step: WorkflowStep) -> str | None:
         if definition.sequencing.strategy == "branching":
@@ -365,6 +462,15 @@ class WorkflowEngine:
                 unknown = [event for event in action.emits if event not in events]
                 if unknown:
                     raise WorkflowValidationError(f"Action emits unknown events: {action_ref}:{unknown}")
+        if definition.retry_policy.max_attempts <= 0:
+            raise WorkflowValidationError("retry_policy.max_attempts must be positive")
+        if definition.retry_policy.backoff_seconds <= 0 or definition.retry_policy.max_backoff_seconds <= 0:
+            raise WorkflowValidationError("retry_policy backoff values must be positive")
+        if definition.retry_policy.backoff_seconds > definition.retry_policy.max_backoff_seconds:
+            raise WorkflowValidationError("retry_policy.backoff_seconds cannot exceed max_backoff_seconds")
+        unknown_compensation_refs = sorted(set(definition.compensations) - set(definition.actions))
+        if unknown_compensation_refs:
+            raise WorkflowValidationError(f"Compensation references unknown actions: {unknown_compensation_refs}")
 
     def _next_execution_id(self, workflow_key: str) -> str:
         self._execution_counter += 1
@@ -542,6 +648,23 @@ def _parse_iso(value: str) -> datetime:
 
 def asdict_to_sequence(strategy: str, steps: tuple[WorkflowStep, ...]) -> SequencingDefinition:
     return SequencingDefinition(strategy=strategy, on_error="fail_fast", steps=steps)
+
+
+def definition_action_is_critical(action: ActionDefinition) -> bool:
+    return action.type in {"call_service", "mutate_state", "emit_event"}
+
+
+def _classify_failure(error_code: str, policy: RetryPolicy) -> FailureDisposition:
+    if error_code in policy.terminal_error_codes:
+        return "terminal"
+    if error_code in policy.retryable_error_codes:
+        return "retryable"
+    return "terminal"
+
+
+def _compute_backoff_seconds(attempt: int, policy: RetryPolicy) -> int:
+    exponent = max(attempt - 1, 0)
+    return min(policy.backoff_seconds * (2**exponent), policy.max_backoff_seconds)
 
 
 def _collect_unreachable(start_node_id: str, edges: tuple[WorkflowGraphEdge, ...], node_set: set[str]) -> set[str]:
