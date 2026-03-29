@@ -7,6 +7,8 @@ This catalog defines the canonical system events exchanged across services.
 - Every workflow in the CRM service map is represented by one or more events.
 - Every event has at least one producer and at least one consumer (no orphan events).
 - Event payload fields align with the domain model entities in `docs/domain-model.md`.
+- Every event MUST carry a producer-stable `event_id` that is preserved across retries and replay.
+- Consumers MUST dedupe processing by `(tenant_id, event_name, event_id)` before side effects.
 
 ## System Events
 
@@ -62,6 +64,14 @@ This catalog defines the canonical system events exchanged across services.
 | Scheduler schedule lifecycle | `schedule.created.v1` | New recurring schedule is created. | `{ event_id, occurred_at, schedule_id, tenant_id, name, job_type, cron, timezone, concurrency_policy, misfire_policy, enabled }` | Job Scheduler | Analytics & Reporting Service; Audit & Compliance Service |
 | Scheduler schedule lifecycle | `schedule.updated.v1` | Existing schedule is modified or enabled/disabled. | `{ event_id, occurred_at, schedule_id, tenant_id, name, cron, timezone, concurrency_policy, misfire_policy, enabled, updated_fields[] }` | Job Scheduler | Analytics & Reporting Service; Audit & Compliance Service |
 | Scheduler schedule lifecycle | `schedule.deleted.v1` | Schedule is soft-deleted and no further automatic runs are materialized. | `{ event_id, occurred_at, schedule_id, tenant_id, name, deleted_at, deleted_by_user_id }` | Job Scheduler | Analytics & Reporting Service; Audit & Compliance Service |
+
+## Global Idempotency Processing Rules
+
+- Producer retries MUST reuse the same `event_id` for the same logical event.
+- Consumer handlers MUST persist inbox dedupe records before acking delivery.
+- Duplicate delivery of the same `(tenant_id, event_name, event_id)` MUST be treated as no-op.
+- Side effects (notifications, workflow execution triggers, provider calls) MUST use deterministic idempotency keys derived from source `event_id`.
+- Replay jobs and dead-letter reprocessing MUST retain original `event_id` and remain side-effect safe.
 
 ## Workflow-to-Event Coverage Check
 

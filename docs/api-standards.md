@@ -294,3 +294,19 @@ These rules are mandatory for background job/scheduler endpoints (for example `P
 ### 9.3 Conflict Semantics
 - If a request is semantically conflicting with active work, API MUST return `409 conflict` and include conflicting `job_id` or `schedule_id` in `error.details`.
 
+## 10) Global Idempotency Integration
+
+These requirements apply to all critical write mutations beyond scheduler-specific APIs.
+
+### 10.1 Required Spec Binding
+- Services MUST implement `docs/global-idempotency.md` for API writes and event consumers.
+- Write endpoints handling critical mutations MUST require `Idempotency-Key`.
+
+### 10.2 Error and Metadata Contract
+- Missing required key MUST return `400 bad_request`.
+- Idempotency key reuse with mismatched payload MUST return `409 conflict`.
+- Replayed success responses SHOULD include `meta.idempotency.replayed = true`.
+
+### 10.3 Event Consumer Binding
+- Consumers MUST deduplicate by `(tenant_id, event_name, event_id)` before executing side effects.
+- Replay and dead-letter reprocessing MUST preserve original `event_id`.
