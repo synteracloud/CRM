@@ -1,4 +1,12 @@
 from .api import API_ENDPOINTS, RuleEngineApi
+from .cpq_api import CPQ_API_ENDPOINTS, CPQRulesApi
+from .cpq_rules import (
+    CPQLineItemInput,
+    CPQQuoteEvaluation,
+    CPQQuoteInput,
+    CPQRulesEngine,
+    QuoteApprovalTransitionResult,
+)
 from .entities import (
     ActionDefinition,
     ConditionClause,
@@ -18,6 +26,12 @@ __all__ = [
     "ALLOWED_MATCH_MODES",
     "ALLOWED_OPERATORS",
     "API_ENDPOINTS",
+    "CPQ_API_ENDPOINTS",
+    "CPQLineItemInput",
+    "CPQQuoteEvaluation",
+    "CPQQuoteInput",
+    "CPQRulesApi",
+    "CPQRulesEngine",
     "ActionDefinition",
     "ConditionClause",
     "ConditionGroup",
@@ -25,6 +39,7 @@ __all__ = [
     "LogicalOperator",
     "RuleDefinition",
     "RuleEngineApi",
+    "QuoteApprovalTransitionResult",
     "RuleConditionBuilder",
     "RuleEngineService",
     "RuleEvaluation",
