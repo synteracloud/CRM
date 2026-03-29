@@ -1,4 +1,4 @@
-"""Aggregation logic for sales, marketing, and support reporting dashboards."""
+"""Aggregation logic for role-based reporting dashboards backed by read models."""
 
 from __future__ import annotations
 
@@ -8,12 +8,47 @@ from datetime import datetime, timezone
 from typing import Iterable
 
 from .entities import (
+    AdminDashboardReadModel,
     DashboardLayoutConfig,
     DashboardReadModelNotFoundError,
     MarketingDashboardReadModel,
+    RoleDashboardMapping,
     SalesDashboardReadModel,
     SupportDashboardReadModel,
 )
+
+ROLE_DASHBOARD_MAPPINGS: dict[str, RoleDashboardMapping] = {
+    "tenant_owner": RoleDashboardMapping(
+        role_id="tenant_owner",
+        dashboard_types=("admin", "sales", "marketing", "support"),
+        default_dashboard_type="admin",
+    ),
+    "tenant_admin": RoleDashboardMapping(
+        role_id="tenant_admin",
+        dashboard_types=("admin", "sales", "marketing", "support"),
+        default_dashboard_type="admin",
+    ),
+    "manager": RoleDashboardMapping(
+        role_id="manager",
+        dashboard_types=("sales", "marketing", "support"),
+        default_dashboard_type="sales",
+    ),
+    "analyst": RoleDashboardMapping(
+        role_id="analyst",
+        dashboard_types=("sales", "marketing", "support"),
+        default_dashboard_type="sales",
+    ),
+    "agent": RoleDashboardMapping(
+        role_id="agent",
+        dashboard_types=("sales", "support"),
+        default_dashboard_type="support",
+    ),
+    "auditor": RoleDashboardMapping(
+        role_id="auditor",
+        dashboard_types=("admin",),
+        default_dashboard_type="admin",
+    ),
+}
 
 
 class DashboardReadModelService:
@@ -23,6 +58,7 @@ class DashboardReadModelService:
         self._sales: dict[str, SalesDashboardReadModel] = {}
         self._marketing: dict[str, MarketingDashboardReadModel] = {}
         self._support: dict[str, SupportDashboardReadModel] = {}
+        self._admin: dict[str, AdminDashboardReadModel] = {}
 
     def refresh_sales(
         self,
@@ -173,6 +209,54 @@ class DashboardReadModelService:
         self._support[tenant_id] = read_model
         return read_model
 
+    def refresh_admin(
+        self,
+        *,
+        tenant_id: str,
+        as_of: str,
+        users: Iterable[dict[str, object]],
+        sessions: Iterable[dict[str, object]],
+        entitlements: Iterable[dict[str, object]],
+        audit_logs: Iterable[dict[str, object]],
+    ) -> AdminDashboardReadModel:
+        user_rows = [row for row in users if row.get("tenant_id") == tenant_id]
+        session_rows = [row for row in sessions if row.get("tenant_id") == tenant_id and bool(row.get("is_active"))]
+        entitlement_rows = [row for row in entitlements if row.get("tenant_id") == tenant_id and bool(row.get("enabled"))]
+        audit_rows = [
+            row for row in audit_logs if row.get("tenant_id") == tenant_id and str(row.get("sensitivity", "low")) == "high"
+        ]
+
+        privileged = [row for row in user_rows if str(row.get("role", "")).startswith("tenant_")]
+        dormant = [row for row in user_rows if bool(row.get("is_dormant"))]
+        risky_sessions = [row for row in session_rows if bool(row.get("risk_flag"))]
+
+        trend: dict[str, dict[str, float]] = defaultdict(lambda: {"sensitive_action_count": 0.0})
+        for row in audit_rows:
+            month = _year_month(str(row.get("occurred_at", as_of)))
+            trend[month]["sensitive_action_count"] += 1
+
+        read_model = AdminDashboardReadModel(
+            tenant_id=tenant_id,
+            as_of=as_of,
+            active_user_count=len([row for row in user_rows if bool(row.get("is_active", True))]),
+            privileged_user_count=len(privileged),
+            dormant_user_count=len(dormant),
+            active_session_risk_count=len(risky_sessions),
+            entitlement_feature_count=len(entitlement_rows),
+            audit_sensitive_action_count=len(audit_rows),
+            monthly_audit_trend=tuple(_sorted_trend(trend)),
+        )
+        self._admin[tenant_id] = read_model
+        return read_model
+
+    def resolve_dashboards_for_roles(self, role_ids: tuple[str, ...]) -> tuple[str, ...]:
+        dashboards: list[str] = []
+        for role_id in role_ids:
+            mapping = ROLE_DASHBOARD_MAPPINGS.get(role_id)
+            if mapping:
+                dashboards.extend(mapping.dashboard_types)
+        return tuple(sorted(set(dashboards)))
+
     def get_sales(self, tenant_id: str) -> SalesDashboardReadModel:
         return self._get_or_raise(self._sales, tenant_id, "sales")
 
@@ -182,18 +266,33 @@ class DashboardReadModelService:
     def get_support(self, tenant_id: str) -> SupportDashboardReadModel:
         return self._get_or_raise(self._support, tenant_id, "support")
 
+    def get_admin(self, tenant_id: str) -> AdminDashboardReadModel:
+        return self._get_or_raise(self._admin, tenant_id, "admin")
+
     def build_dashboard(
         self,
         *,
         tenant_id: str,
         dashboard_type: str,
         layout: DashboardLayoutConfig,
+        role_ids: tuple[str, ...] = (),
+        permissions: tuple[str, ...] = (),
+        route_context: dict[str, str] | None = None,
     ) -> dict[str, object]:
         """Build a dashboard from read models using config-driven widget layout."""
 
+        allowed_dashboards = self.resolve_dashboards_for_roles(role_ids)
+        if allowed_dashboards and dashboard_type not in allowed_dashboards:
+            raise PermissionError(f"Role set cannot access dashboard_type={dashboard_type}")
+
         read_model = self.serialize(self._get_dashboard_model(tenant_id, dashboard_type))
         widgets: list[dict[str, object]] = []
+        permission_set = set(permissions)
+        route_context = route_context or {}
         for widget in layout.widgets:
+            if widget.required_permissions and not set(widget.required_permissions).issubset(permission_set):
+                continue
+
             raw_value = _metric_from_path(read_model, widget.metric_path)
             widgets.append(
                 {
@@ -204,6 +303,8 @@ class DashboardReadModelService:
                     "raw_value": raw_value,
                     "display_value": _format_widget_value(raw_value, widget.format_as),
                     "format_as": widget.format_as,
+                    "required_permissions": widget.required_permissions,
+                    "drilldown_route": _resolve_route(widget.drilldown_route, route_context),
                 }
             )
 
@@ -213,6 +314,7 @@ class DashboardReadModelService:
             "columns": layout.columns,
             "widgets": widgets,
             "read_model": read_model,
+            "allowed_dashboards": allowed_dashboards,
         }
 
     @staticmethod
@@ -235,6 +337,8 @@ class DashboardReadModelService:
             return self.get_marketing(tenant_id)
         if dashboard_type == "support":
             return self.get_support(tenant_id)
+        if dashboard_type == "admin":
+            return self.get_admin(tenant_id)
         raise ValueError(f"Unsupported dashboard_type={dashboard_type}")
 
 
@@ -295,3 +399,13 @@ def _format_widget_value(value: object, format_as: str) -> str:
     if format_as == "integer":
         return f"{int(value):,}"
     return str(value)
+
+
+def _resolve_route(route_template: str | None, route_context: dict[str, str]) -> str | None:
+    if not route_template:
+        return None
+
+    resolved = route_template
+    for key, value in route_context.items():
+        resolved = resolved.replace("{" + key + "}", value)
+    return resolved

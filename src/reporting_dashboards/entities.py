@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
-DASHBOARD_TYPE = ("sales", "marketing", "support")
+DASHBOARD_TYPE = ("sales", "marketing", "support", "admin")
 
 
 @dataclass(frozen=True)
@@ -54,6 +54,21 @@ class SupportDashboardReadModel:
     monthly_trend: tuple[dict[str, float], ...]
 
 
+@dataclass(frozen=True)
+class AdminDashboardReadModel:
+    """Read model for tenant administration, identity posture, and audit risk."""
+
+    tenant_id: str
+    as_of: str
+    active_user_count: int
+    privileged_user_count: int
+    dormant_user_count: int
+    active_session_risk_count: int
+    entitlement_feature_count: int
+    audit_sensitive_action_count: int
+    monthly_audit_trend: tuple[dict[str, float], ...]
+
+
 class DashboardReadModelNotFoundError(KeyError):
     """Raised when read models have not yet been built for a dashboard."""
 
@@ -67,6 +82,8 @@ class WidgetDefinition:
     widget_type: str
     metric_path: str
     format_as: str = "raw"
+    required_permissions: tuple[str, ...] = field(default_factory=tuple)
+    drilldown_route: str | None = None
 
 
 @dataclass(frozen=True)
@@ -77,3 +94,12 @@ class DashboardLayoutConfig:
     title: str
     columns: int
     widgets: tuple[WidgetDefinition, ...]
+
+
+@dataclass(frozen=True)
+class RoleDashboardMapping:
+    """Role-level dashboard eligibility and default dashboard selection order."""
+
+    role_id: str
+    dashboard_types: tuple[str, ...]
+    default_dashboard_type: str
