@@ -1,21 +1,24 @@
 const express = require('express');
 const routes = require('./routes');
 const { requestIdMiddleware } = require('./middleware/request-id');
+const { observabilityMiddleware } = require('./middleware/observability');
 const { rateLimitHook } = require('./middleware/rate-limit-hook');
 const { respondError } = require('./middleware/response-wrapper');
 const { authMiddleware } = require('./middleware/auth-rbac');
+const { auditMiddleware } = require('./middleware/audit-log');
+const { idempotencyMiddleware } = require('./middleware/idempotency');
 
 const app = express();
 
 app.use(express.json());
 app.use(requestIdMiddleware);
+app.use(observabilityMiddleware());
 app.use(authMiddleware());
-
 app.use(
-  rateLimitHook({
-    evaluate: async () => ({ allowed: true }),
-  }),
+  rateLimitHook({}),
 );
+app.use(idempotencyMiddleware());
+app.use(auditMiddleware({ strict: true }));
 
 app.use(routes);
 
