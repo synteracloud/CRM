@@ -12,8 +12,8 @@ from .services import JourneyService
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
     "create_journey": {"method": "POST", "path": "/api/v1/journeys"},
-    "start_journey": {"method": "POST", "path": "/api/v1/journeys/{journey_id}/start"},
-    "stop_journey": {"method": "POST", "path": "/api/v1/journeys/{journey_id}/stop"},
+    "start_journey": {"method": "POST", "path": "/api/v1/journeys/{journey_id}/activations"},
+    "stop_journey": {"method": "POST", "path": "/api/v1/journeys/{journey_id}/deactivations"},
 }
 
 

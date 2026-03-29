@@ -12,9 +12,9 @@ from .services import PredictiveModelService
 API_ENDPOINTS: dict[str, dict[str, str]] = {
     "ingest_opportunity_history": {"method": "POST", "path": "/api/v1/predictive-models/history/opportunities"},
     "ingest_subscription_history": {"method": "POST", "path": "/api/v1/predictive-models/history/subscriptions"},
-    "predict_win_probability": {"method": "POST", "path": "/api/v1/predictive-models/win-probability:predict"},
-    "predict_churn": {"method": "POST", "path": "/api/v1/predictive-models/churn:predict"},
-    "predict_customer_lifetime_value": {"method": "POST", "path": "/api/v1/predictive-models/clv:predict"},
+    "predict_win_probability": {"method": "POST", "path": "/api/v1/win-probability-predictions"},
+    "predict_churn": {"method": "POST", "path": "/api/v1/churn-predictions"},
+    "predict_customer_lifetime_value": {"method": "POST", "path": "/api/v1/customer-lifetime-value-predictions"},
 }
 
 

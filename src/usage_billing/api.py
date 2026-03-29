@@ -17,9 +17,9 @@ from .services import UsageBillingError, UsageBillingService
 
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
-    "collect_usage": {"method": "POST", "path": "/api/v1/usage/collect"},
-    "aggregate_usage": {"method": "POST", "path": "/api/v1/usage/aggregate"},
-    "rate_usage": {"method": "POST", "path": "/api/v1/usage/rate"},
+    "collect_usage": {"method": "POST", "path": "/api/v1/usage-collections"},
+    "aggregate_usage": {"method": "POST", "path": "/api/v1/usage-aggregations"},
+    "rate_usage": {"method": "POST", "path": "/api/v1/usage-ratings"},
     "generate_invoice_input": {"method": "POST", "path": "/api/v1/usage/invoice-inputs"},
     "usage_processing_rules": {"method": "GET", "path": "/api/v1/usage/processing-rules"},
 }

@@ -93,7 +93,7 @@ class PluginFrameworkTests(unittest.TestCase):
         self.assertEqual(framework.trigger_hook("missing.hook", {"lead_id": "x"}), [])
 
     def test_api_endpoints_and_self_qc(self) -> None:
-        self.assertEqual(API_ENDPOINTS["install_plugin"]["path"], "/api/v1/plugins/install")
+        self.assertEqual(API_ENDPOINTS["install_plugin"]["path"], "/api/v1/plugins/installations")
         self.assertEqual(API_ENDPOINTS["trigger_hook"]["method"], "POST")
         qc = run_self_qc()
         self.assertTrue(all(qc.values()), qc)

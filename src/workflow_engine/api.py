@@ -11,12 +11,12 @@ from .entities import WorkflowNotFoundError, WorkflowValidationError
 from .services import WorkflowEngine
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
-    "start_workflow": {"method": "POST", "path": "/api/v1/workflows/{workflow_key}/start"},
-    "stop_workflow": {"method": "POST", "path": "/api/v1/workflows/executions/{execution_id}/stop"},
+    "start_workflow": {"method": "POST", "path": "/api/v1/workflow-activations"},
+    "stop_workflow": {"method": "POST", "path": "/api/v1/workflows/executions/{execution_id}/stops"},
     "create_workflow": {"method": "POST", "path": "/api/v1/workflows"},
     "edit_workflow": {"method": "PUT", "path": "/api/v1/workflows/{workflow_key}"},
-    "get_workflow_graph": {"method": "GET", "path": "/api/v1/workflows/{workflow_key}/graph"},
-    "recover_execution": {"method": "POST", "path": "/api/v1/workflows/executions/{execution_id}/recover"},
+    "get_workflow_graph": {"method": "GET", "path": "/api/v1/workflows/{workflow_key}/graphs/current"},
+    "recover_execution": {"method": "POST", "path": "/api/v1/workflow-execution-recoveries"},
     "get_recovery_audit": {"method": "GET", "path": "/api/v1/workflows/executions/{execution_id}/recovery-audit"},
     "get_recovery_dashboard": {"method": "GET", "path": "/api/v1/workflows/recovery/dashboard"},
 }

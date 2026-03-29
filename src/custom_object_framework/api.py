@@ -10,9 +10,9 @@ from .services import FieldBuilderService
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
     "create_object": {"method": "POST", "path": "/api/v1/custom-objects"},
-    "create_field": {"method": "POST", "path": "/api/v1/custom-objects/{objectKey}/fields"},
-    "create_rule": {"method": "POST", "path": "/api/v1/custom-objects/{objectKey}/rules"},
-    "validate_record": {"method": "POST", "path": "/api/v1/custom-objects/{objectKey}/records/validate"},
+    "create_field": {"method": "POST", "path": "/api/v1/custom-objects/{object_key}/fields"},
+    "create_rule": {"method": "POST", "path": "/api/v1/custom-objects/{object_key}/rules"},
+    "validate_record": {"method": "POST", "path": "/api/v1/custom-objects/{object_key}/record-validations"},
 }
 
 

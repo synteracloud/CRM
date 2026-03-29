@@ -14,7 +14,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "get_article": {"method": "GET", "path": "/api/v1/knowledge-articles/{knowledge_article_id}"},
     "update_article": {"method": "PATCH", "path": "/api/v1/knowledge-articles/{knowledge_article_id}"},
     "delete_article": {"method": "DELETE", "path": "/api/v1/knowledge-articles/{knowledge_article_id}"},
-    "search_articles": {"method": "GET", "path": "/api/v1/knowledge-articles:search"},
+    "search_articles": {"method": "GET", "path": "/api/v1/knowledge-article-searches"},
 }
 
 
