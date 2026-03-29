@@ -13,6 +13,7 @@ OnError = Literal["fail_fast", "continue", "compensate"]
 ActionType = Literal["emit_event", "call_service", "notify", "mutate_state", "wait"]
 InstanceStatus = Literal["running", "waiting", "recovering", "completed", "failed", "stopped"]
 ConditionOp = Literal["exists", "eq", "neq", "in", "not_in", "gt", "gte", "lt", "lte"]
+FailureDisposition = Literal["retryable", "terminal"]
 
 
 class WorkflowValidationError(ValueError):
@@ -76,6 +77,27 @@ class ActionDefinition:
 
 
 @dataclass(frozen=True)
+class RetryPolicy:
+    max_attempts: int = 3
+    backoff_seconds: int = 2
+    max_backoff_seconds: int = 60
+    retryable_error_codes: tuple[str, ...] = (
+        "timeout",
+        "rate_limited",
+        "service_unavailable",
+        "deadlock",
+        "conflict_retryable",
+    )
+    terminal_error_codes: tuple[str, ...] = (
+        "validation_error",
+        "not_found",
+        "authorization_error",
+        "bad_request",
+        "compensation_failed",
+    )
+
+
+@dataclass(frozen=True)
 class WorkflowDefinition:
     workflow_key: str
     version: str
@@ -84,6 +106,8 @@ class WorkflowDefinition:
     conditions: ConditionDefinition
     sequencing: SequencingDefinition
     actions: dict[str, ActionDefinition]
+    retry_policy: RetryPolicy = field(default_factory=RetryPolicy)
+    compensations: dict[str, ActionDefinition] = field(default_factory=dict)
 
 
 @dataclass
