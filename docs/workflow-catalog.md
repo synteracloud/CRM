@@ -457,3 +457,39 @@ This catalog defines the canonical business workflows and their explicit executi
   6. Soft-delete emits `schedule.deleted.v1` and blocks new recurring runs.
   7. Platform Operations can trigger run-now/replay without corrupting recurring cursor state.
 - **Outcome:** Recurring automation is deterministic, deduplicated per slot, and operationally controllable.
+
+## 19) Partner channel management
+
+- **Name:** Partner channel management
+- **Trigger events:**
+  - `partner.created.v1`
+  - `partner.relationship.activated.v1`
+  - `partner.deal.registered.v1`
+  - `partner.attribution.locked.v1`
+  - `partner.commission.calculated.v1`
+  - `partner.commission.approved.v1`
+- **Services involved:**
+  - Partner Management Service
+  - Lead Management Service
+  - Opportunity Service
+  - Order Service
+  - Workflow Automation Service
+  - Notification Orchestrator
+  - Analytics & Reporting Service
+  - Audit & Compliance Service
+  - Activity Timeline Service
+  - Search Index Service
+- **Ordered steps:**
+  1. Partner Management Service onboards partner and emits `partner.created.v1`.
+  2. Activity Timeline Service records partner onboarding and Search Index Service indexes partner profile.
+  3. Channel manager activates account/opportunity scope relationship and Partner Management Service emits `partner.relationship.activated.v1`.
+  4. Partner submits referral/sourced deal registration; Partner Management Service validates conflict windows and emits `partner.deal.registered.v1`.
+  5. Lead Management Service links referral lead (when present) and preserves source provenance.
+  6. Opportunity Service creates or updates opportunity with direct sales owner unchanged while attaching partner attribution candidate.
+  7. Partner Management Service evaluates attribution policy, locks winning attribution record, and emits `partner.attribution.locked.v1`.
+  8. Workflow Automation Service executes partner-attribution hooks (tasks, approver routing, exception escalations).
+  9. On closed-won revenue confirmation from Opportunity/Order flows, Partner Management Service calculates commission and emits `partner.commission.calculated.v1`.
+  10. Finance/channel approver confirms payable amount; Partner Management Service emits `partner.commission.approved.v1`.
+  11. Notification Orchestrator distributes registration, attribution, and payout notifications to internal owners and partner contacts.
+  12. Audit & Compliance Service records all attribution/commission decisions and Analytics & Reporting Service updates partner-sourced pipeline and payout metrics.
+- **Outcome:** Partner-sourced and partner-influenced deals move from registration through locked attribution and commission approval without changing direct seller ownership.
