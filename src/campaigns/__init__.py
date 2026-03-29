@@ -16,6 +16,7 @@ from .entities import (
 )
 from .segmentation import CONTACT_SEGMENT_FIELDS, LEAD_SEGMENT_FIELDS, VALID_SEGMENT_ENTITIES, SegmentEvaluator
 from .services import CampaignService
+from .workspace import MARKETING_WORKSPACE, MARKETING_WORKSPACE_ID, CampaignWorkspaceModel, build_marketing_workspace
 from .workflow_mapping import (
     CAMPAIGN_SEGMENTATION_WORKFLOW,
     WORKFLOW_NAME,
@@ -44,6 +45,10 @@ __all__ = [
     "SegmentRule",
     "SegmentValidationError",
     "VALID_SEGMENT_ENTITIES",
+    "CampaignWorkspaceModel",
+    "MARKETING_WORKSPACE",
+    "MARKETING_WORKSPACE_ID",
+    "build_marketing_workspace",
     "WORKFLOW_NAME",
     "assert_campaign_workflow_events_are_catalog_backed",
 ]
