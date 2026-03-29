@@ -17,6 +17,7 @@ from .entities import (
 )
 from .segmentation import serialize_segment
 from .services import CampaignService
+from .workspace import build_marketing_workspace
 
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
@@ -34,6 +35,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "delete_segment": {"method": "DELETE", "path": "/api/v1/segments/{segment_id}"},
     "link_campaign_lead": {"method": "POST", "path": "/api/v1/campaigns/{campaign_id}/leads"},
     "link_campaign_contact": {"method": "POST", "path": "/api/v1/campaigns/{campaign_id}/contacts"},
+    "get_marketing_workspace": {"method": "GET", "path": "/api/v1/marketing/workspace"},
 }
 
 
@@ -135,6 +137,45 @@ class CampaignApi:
             return success(asdict(self._service.link_lead(link)), request_id)
         except (CampaignNotFoundError, CampaignStateError) as exc:
             return error("validation_error", str(exc), request_id)
+
+    def get_marketing_workspace(self, request_id: str) -> dict[str, Any]:
+        workspace = build_marketing_workspace()
+        return success(
+            {
+                "workspace_id": workspace.workspace_id,
+                "title": workspace.title,
+                "workflow_name": workspace.workflow_name,
+                "campaign_flow": list(workspace.campaign_flow),
+                "views": [
+                    {
+                        "view_id": view.view_id,
+                        "title": view.title,
+                        "route": view.route,
+                        "purpose": view.purpose,
+                        "metric_bindings": [
+                            {
+                                "metric_id": binding.metric_id,
+                                "label": binding.label,
+                                "read_model": binding.read_model,
+                                "field": binding.field,
+                            }
+                            for binding in view.metric_bindings
+                        ],
+                    }
+                    for view in workspace.views
+                ],
+                "interaction_patterns": [
+                    {
+                        "pattern_id": pattern.pattern_id,
+                        "name": pattern.name,
+                        "trigger": pattern.trigger,
+                        "response": pattern.response,
+                    }
+                    for pattern in workspace.interaction_patterns
+                ],
+            },
+            request_id,
+        )
 
     def link_campaign_contact(self, link: CampaignContactLink, request_id: str) -> dict[str, Any]:
         try:
