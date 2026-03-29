@@ -9,9 +9,9 @@ from .entities import RevenueRecognitionValidationError
 from .services import RevenueRecognitionService
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
-    "build_schedules": {"method": "POST", "path": "/api/v1/revenue-recognition/schedules:build"},
-    "build_positions": {"method": "POST", "path": "/api/v1/revenue-recognition/positions:build"},
-    "build_reporting_inputs": {"method": "POST", "path": "/api/v1/revenue-recognition/reporting-inputs:build"},
+    "build_schedules": {"method": "POST", "path": "/api/v1/revenue-recognition-schedule-builds"},
+    "build_positions": {"method": "POST", "path": "/api/v1/revenue-recognition-position-builds"},
+    "build_reporting_inputs": {"method": "POST", "path": "/api/v1/revenue-recognition-reporting-input-builds"},
 }
 
 

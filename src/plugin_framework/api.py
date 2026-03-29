@@ -7,9 +7,9 @@ from typing import Any
 from .services import PluginFramework, PluginRegistrationError
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
-    "install_plugin": {"method": "POST", "path": "/api/v1/plugins/install"},
-    "uninstall_plugin": {"method": "POST", "path": "/api/v1/plugins/uninstall"},
-    "trigger_hook": {"method": "POST", "path": "/api/v1/plugins/hooks/trigger"},
+    "install_plugin": {"method": "POST", "path": "/api/v1/plugins/installations"},
+    "uninstall_plugin": {"method": "POST", "path": "/api/v1/plugins/uninstallations"},
+    "trigger_hook": {"method": "POST", "path": "/api/v1/plugin-hook-executions"},
 }
 
 

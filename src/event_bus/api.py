@@ -10,7 +10,7 @@ from .store import EventStore, EventValidationError, event_to_dict
 API_ENDPOINTS: dict[str, dict[str, str]] = {
     "record_event": {"method": "POST", "path": "/api/v1/events"},
     "get_event": {"method": "GET", "path": "/api/v1/events/{event_id}"},
-    "query_events": {"method": "GET", "path": "/api/v1/events/query"},
+    "query_events": {"method": "GET", "path": "/api/v1/event-queries"},
 }
 
 

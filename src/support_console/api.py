@@ -13,7 +13,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "add_message": {"method": "POST", "path": "/api/v1/support/console/tickets/{ticket_id}/messages"},
     "set_customer_context": {"method": "PUT", "path": "/api/v1/support/console/tickets/{ticket_id}/context"},
     "build_workspace": {"method": "GET", "path": "/api/v1/support/console/workspace"},
-    "escalate": {"method": "POST", "path": "/api/v1/support/console/tickets/{ticket_id}/escalate"},
+    "escalate": {"method": "POST", "path": "/api/v1/support/console/tickets/{ticket_id}/escalations"},
 }
 
 

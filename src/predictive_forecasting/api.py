@@ -10,7 +10,7 @@ from .services import ForecastEngineService
 
 
 API_ENDPOINTS: dict[str, dict[str, str]] = {
-    "build_forecast": {"method": "POST", "path": "/api/v1/forecasting/engine:build"},
+    "build_forecast": {"method": "POST", "path": "/api/v1/forecast-builds"},
 }
 
 
