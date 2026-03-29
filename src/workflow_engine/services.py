@@ -443,7 +443,10 @@ class WorkflowEngine:
     ) -> bool:
         max_attempts = min(max(step.retries + 1, definition.retry_policy.max_attempts), 25)
         for attempt in range(1, max_attempts + 1):
-            result = self._action_engine.execute(action, execution.context, execution.state)
+            try:
+                result = self._action_engine.execute(action, execution.context, execution.state)
+            except Exception as exc:
+                result = {"ok": False, "error_code": "action_execution_exception", "error_message": str(exc)}
             if result.get("ok", True):
                 execution.state[step.action] = result
                 execution.step_log.append(
@@ -484,9 +487,11 @@ class WorkflowEngine:
     def _handle_terminal_failure(
         self, definition: WorkflowDefinition, step: WorkflowStep, error_code: str, execution: WorkflowExecution
     ) -> None:
+        failure_at = _now_iso()
         execution.status = "failed"
         execution.error_message = f"Step failed: {step.id} error_code={error_code}"
-        execution.step_log.append({"step_id": step.id, "action": "step.failed", "error_code": error_code, "at": _now_iso()})
+        execution.recovery_state.update({"last_failure_at": failure_at, "failed_step_id": step.id})
+        execution.step_log.append({"step_id": step.id, "action": "step.failed", "error_code": error_code, "at": failure_at})
         if definition.sequencing.on_error == "compensate":
             self._run_compensations(definition, execution)
         execution.completed_at = _now_iso()
