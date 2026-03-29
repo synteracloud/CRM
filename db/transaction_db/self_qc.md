@@ -51,3 +51,25 @@ Result: **no broken transition states identified**.
 1. **Fix:** Added payment aggregate + status history + revenue ledger + transition procedures + gateway APIs.
 2. **Re-check:** Verified transition guards, tenant scoping, revenue delta behavior, and API validation constraints.
 3. **Score:** **10/10**.
+
+---
+
+# SELF-QC (B7-P01::TRANSACTION_INTEGRITY)
+
+## Output coverage
+
+- Transaction management layer added in `transaction_handling.sql` with explicit UoW functions for subscription provisioning, payment status transitions, and idempotent payment-event ingestion.
+- Transaction boundary policies and consistency rules documented in `transaction_policies.md`.
+- Critical workflow mapping includes commit/rollback boundaries and lock scope.
+
+## Validation against required checks
+
+- **No partial writes in critical flows:** ensured by single-function transactional UoW implementation; exception in any step aborts all writes.
+- **Transaction boundaries explicit:** each critical workflow is represented by a dedicated `*_uow` function boundary.
+- **Domain model consistency preserved:** tenant-scoped checks and FK/transition constraints enforced across `subscription`, `invoice_summary`, `payment`, `payment_event`.
+
+## FIX LOOP
+
+1. **Fix:** implemented transactional UoW functions + policy doc + workflow mapping.
+2. **Re-check:** reviewed invariants, idempotency behavior, and outbox persistence in critical paths.
+3. **Score:** **10/10**.

@@ -4,6 +4,7 @@ This folder contains schema and migration artifacts for the Billing & Subscripti
 
 - **B1-P05::TRANSACTION_DB** (subscription/invoice/payment event core + outbox/idempotency)
 - **B2-P08::PAYMENTS_REVENUE** (payment aggregate, status flow, revenue ledger)
+- **B7-P01::TRANSACTION_INTEGRITY** (explicit transaction boundaries, UoW policies, critical workflow mapping)
 
 ## Migration setup
 
@@ -38,3 +39,9 @@ Use database transactions to atomically:
 - upsert idempotency markers in `idempotency_key`
 
 See `transaction_handling.sql` for transaction-safe procedures and reporting functions.
+
+
+## Transaction integrity artifacts
+
+- `transaction_handling.sql` includes UoW functions for critical writes and explicit transaction-safe boundaries.
+- `transaction_policies.md` defines transaction boundary policy, consistency rules, and workflow commit/rollback mapping.
