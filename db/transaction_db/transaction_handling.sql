@@ -24,6 +24,7 @@ as $$
 declare
   v_payment_event_id uuid;
   v_existing_response jsonb;
+  v_existing_request_hash text;
 begin
   -- 1) Idempotency gate (single transaction).
   insert into idempotency_key (
@@ -40,8 +41,12 @@ begin
     now() + interval '7 days'
   )
   on conflict (tenant_id, operation_name, idempotency_key)
-  do update set request_hash = excluded.request_hash
-  returning response_json into v_existing_response;
+  do update set request_hash = idempotency_key.request_hash
+  returning request_hash, response_json into v_existing_request_hash, v_existing_response;
+
+  if v_existing_request_hash <> p_request_hash then
+    raise exception 'idempotency_key_reused_with_different_payload';
+  end if;
 
   if v_existing_response is not null then
     return (v_existing_response ->> 'payment_event_id')::uuid;
