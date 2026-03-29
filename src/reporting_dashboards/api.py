@@ -12,6 +12,7 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "get_sales_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/sales"},
     "get_marketing_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/marketing"},
     "get_support_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/support"},
+    "get_admin_dashboard": {"method": "GET", "path": "/api/v1/reporting/dashboards/admin"},
     "get_dynamic_dashboard": {"method": "POST", "path": "/api/v1/reporting/dashboards/render"},
 }
 
@@ -48,21 +49,35 @@ class DashboardApi:
         except DashboardReadModelNotFoundError as exc:
             return error("not_found", str(exc), request_id)
 
+    def get_admin_dashboard(self, tenant_id: str, request_id: str) -> dict[str, Any]:
+        try:
+            return success(self._service.serialize(self._service.get_admin(tenant_id)), request_id)
+        except DashboardReadModelNotFoundError as exc:
+            return error("not_found", str(exc), request_id)
+
     def get_dynamic_dashboard(
         self,
         tenant_id: str,
         request_id: str,
         *,
         layout: DashboardLayoutConfig,
+        role_ids: tuple[str, ...] = (),
+        permissions: tuple[str, ...] = (),
+        route_context: dict[str, str] | None = None,
     ) -> dict[str, Any]:
         try:
             payload = self._service.build_dashboard(
                 tenant_id=tenant_id,
                 dashboard_type=layout.dashboard_type,
                 layout=layout,
+                role_ids=role_ids,
+                permissions=permissions,
+                route_context=route_context,
             )
             return success(payload, request_id)
         except DashboardReadModelNotFoundError as exc:
             return error("not_found", str(exc), request_id)
+        except PermissionError as exc:
+            return error("forbidden", str(exc), request_id)
         except (ValueError, KeyError) as exc:
             return error("invalid_dashboard_config", str(exc), request_id)
