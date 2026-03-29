@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 
@@ -49,6 +49,48 @@ class Ticket:
 
     def patch(self, **changes: Any) -> "Ticket":
         return replace(self, **changes)
+
+
+@dataclass(frozen=True)
+class EscalationRule:
+    """Deterministic escalation rule with time and condition triggers."""
+
+    rule_id: str
+    tenant_id: str
+    level: int
+    name: str
+    route_to: str
+    trigger: str
+    threshold_minutes: int
+    condition_field: str | None = None
+    condition_op: str | None = None
+    condition_value: str | None = None
+    active: bool = True
+
+
+@dataclass(frozen=True)
+class EscalationAction:
+    """Escalation outcome chosen by SLA escalation engine."""
+
+    ticket_id: str
+    tenant_id: str
+    rule_id: str
+    level: int
+    route_to: str
+    reason: str
+    escalated_at: str
+
+
+@dataclass(frozen=True)
+class EscalationAuditRecord:
+    """Immutable audit record for escalation decisions and predictions."""
+
+    audit_id: str
+    ticket_id: str
+    tenant_id: str
+    event_type: str
+    details: dict[str, Any] = field(default_factory=dict)
+    created_at: str = ""
 
 
 class TicketNotFoundError(KeyError):
