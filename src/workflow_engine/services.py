@@ -57,6 +57,8 @@ class ActionExecutionEngine:
     @staticmethod
     def execute(action: ActionDefinition, context: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]:
         rendered_input = _render_payload(action.input, context, state)
+        if rendered_input.get("__raise_error__") is True:
+            raise RuntimeError(f"Injected failure for action {action.operation}")
         if action.type == "emit_event":
             return {"emitted": list(action.emits), "payload": rendered_input}
         if action.type == "call_service":
@@ -75,6 +77,7 @@ class WorkflowEngine:
         self._execution_counter = 0
         self._trigger_handler = TriggerHandlingSystem()
         self._action_engine = ActionExecutionEngine()
+        self._recovery_audit_log: dict[str, list[dict[str, Any]]] = {}
 
     def register_workflow(self, definition: WorkflowDefinition) -> WorkflowDefinition:
         self._validate_workflow(definition)
@@ -147,8 +150,17 @@ class WorkflowEngine:
             context=execution_context,
             current_step_id=definition.sequencing.steps[0].id,
             started_at=_now_iso(),
+            updated_at=_now_iso(),
+            recovery_state={
+                "mode": "none",
+                "attempt_count": 0,
+                "last_attempt_at": None,
+                "last_failure_at": None,
+                "failed_step_id": None,
+            },
         )
         self._executions[execution.execution_id] = execution
+        self._recovery_audit_log[execution.execution_id] = []
         self._run_execution(definition, execution)
         return execution
 
@@ -161,6 +173,7 @@ class WorkflowEngine:
         execution.status = "stopped"
         execution.completed_at = _now_iso()
         execution.step_log.append({"action": "workflow.stopped", "at": execution.completed_at})
+        self._touch_execution(execution)
         return execution
 
     def handle_event(self, event: Event) -> list[WorkflowExecution]:
@@ -183,9 +196,123 @@ class WorkflowEngine:
                 execution.status = "running"
                 execution.waiting_until = None
                 execution.step_log.append({"action": "wait.resumed", "at": _to_iso(now)})
+                self._touch_execution(execution, _to_iso(now))
                 self._run_execution(definition, execution)
                 resumed.append(execution)
         return resumed
+
+    def recover_execution(
+        self,
+        execution_id: str,
+        strategy: str = "resume",
+        reason: str = "manual_recovery",
+        actor: str = "platform_operations",
+    ) -> WorkflowExecution:
+        execution = self._executions.get(execution_id)
+        if execution is None:
+            raise WorkflowNotFoundError(f"Execution not found: {execution_id}")
+        if strategy not in {"resume", "replay_full", "replay_from_last_success"}:
+            raise WorkflowValidationError(f"Unsupported recovery strategy: {strategy}")
+        if execution.status not in {"failed", "waiting", "running", "completed"}:
+            raise WorkflowValidationError(f"Execution not recoverable from status: {execution.status}")
+
+        definition = self._definitions[execution.workflow_key]
+        from_step = execution.current_step_id
+        if strategy == "resume":
+            if execution.current_step_id is None:
+                execution.current_step_id = self._step_after(definition, execution.last_successful_step_id)
+            execution.status = "running"
+        elif strategy == "replay_full":
+            execution.state = {}
+            execution.current_step_id = definition.sequencing.steps[0].id
+            execution.status = "running"
+        else:
+            execution.state = {}
+            execution.current_step_id = self._step_after(definition, execution.last_successful_step_id)
+            if execution.current_step_id is None:
+                execution.current_step_id = definition.sequencing.steps[0].id
+            execution.status = "running"
+
+        now = _now_iso()
+        execution.completed_at = None
+        execution.error_message = None
+        execution.waiting_until = None
+        execution.recovery_state.update(
+            {
+                "mode": strategy,
+                "attempt_count": int(execution.recovery_state.get("attempt_count", 0)) + 1,
+                "last_attempt_at": now,
+                "recovered_by": actor,
+                "failed_step_id": None,
+            }
+        )
+        execution.step_log.append({"action": "workflow.recovery.started", "strategy": strategy, "at": now})
+        self._touch_execution(execution, now)
+        self._record_recovery_audit(
+            execution_id,
+            {"action": "recovery.requested", "strategy": strategy, "reason": reason, "actor": actor, "from_step": from_step, "to_step": execution.current_step_id, "at": now},
+        )
+        self._run_execution(definition, execution)
+        self._record_recovery_audit(
+            execution_id,
+            {
+                "action": "recovery.completed",
+                "strategy": strategy,
+                "reason": reason,
+                "actor": actor,
+                "status": execution.status,
+                "at": _now_iso(),
+            },
+        )
+        return execution
+
+    def recover_stuck_workflows(
+        self, stale_before_iso: str, now_iso: str | None = None, strategy: str = "resume"
+    ) -> list[WorkflowExecution]:
+        threshold = _parse_iso(stale_before_iso)
+        recovered: list[WorkflowExecution] = []
+        now = now_iso or _now_iso()
+        for execution in self._executions.values():
+            if execution.status not in {"running", "waiting"}:
+                continue
+            if _parse_iso(execution.updated_at) > threshold:
+                continue
+            if execution.status == "waiting" and execution.waiting_until and _parse_iso(execution.waiting_until) > _parse_iso(now):
+                continue
+            recovered.append(
+                self.recover_execution(
+                    execution.execution_id,
+                    strategy=strategy,
+                    reason="stuck_workflow_recovery",
+                    actor="stuck_workflow_monitor",
+                )
+            )
+        return recovered
+
+    def recovery_audit_trail(self, execution_id: str) -> list[dict[str, Any]]:
+        if execution_id not in self._executions:
+            raise WorkflowNotFoundError(f"Execution not found: {execution_id}")
+        return list(self._recovery_audit_log.get(execution_id, []))
+
+    def recovery_dashboard(self) -> dict[str, Any]:
+        status_counts: dict[str, int] = {"running": 0, "waiting": 0, "recovering": 0, "completed": 0, "failed": 0, "stopped": 0}
+        recoverable_failures = 0
+        stuck_candidates: list[str] = []
+        now = datetime.now(timezone.utc)
+        for execution in self._executions.values():
+            status_counts[execution.status] += 1
+            if execution.status == "failed":
+                recoverable_failures += 1
+            if execution.status in {"running", "waiting"}:
+                updated_at = _parse_iso(execution.updated_at)
+                if (now - updated_at).total_seconds() > 900:
+                    stuck_candidates.append(execution.execution_id)
+        return {
+            "totals": status_counts,
+            "recoverable_failures": recoverable_failures,
+            "stuck_candidates": sorted(stuck_candidates),
+            "recovery_attempts": sum(len(item) for item in self._recovery_audit_log.values()),
+        }
 
     def list_executions(self, workflow_key: str | None = None) -> list[WorkflowExecution]:
         executions = list(self._executions.values())
@@ -272,6 +399,7 @@ class WorkflowEngine:
             if step.when and not _safe_eval_when(step.when, execution.context):
                 execution.step_log.append({"step_id": step.id, "action": "step.skipped", "at": _now_iso()})
                 execution.current_step_id = self._resolve_next_step(definition, step)
+                self._touch_execution(execution)
                 continue
 
             action = definition.actions[step.action]
@@ -279,15 +407,40 @@ class WorkflowEngine:
                 self._apply_wait_step(step, action, execution)
                 return
 
-            result = self._action_engine.execute(action, execution.context, execution.state)
+            try:
+                result = self._action_engine.execute(action, execution.context, execution.state)
+            except Exception as exc:  # deterministic runtime faults are captured explicitly
+                failed_at = _now_iso()
+                execution.status = "failed"
+                execution.error_message = f"{type(exc).__name__}: {exc}"
+                execution.completed_at = failed_at
+                execution.recovery_state.update(
+                    {"mode": "failed", "last_failure_at": failed_at, "failed_step_id": step.id}
+                )
+                execution.step_log.append(
+                    {
+                        "step_id": step.id,
+                        "action": step.action,
+                        "result": "failed",
+                        "error_message": execution.error_message,
+                        "at": failed_at,
+                    }
+                )
+                self._touch_execution(execution, failed_at)
+                self._record_recovery_audit(
+                    execution.execution_id,
+                    {"action": "execution.failed", "step_id": step.id, "error_message": execution.error_message, "at": failed_at},
+                )
+                return
             execution.state[step.action] = result
-            execution.step_log.append(
-                {"step_id": step.id, "action": step.action, "result": result, "at": _now_iso()}
-            )
+            execution.last_successful_step_id = step.id
+            execution.step_log.append({"step_id": step.id, "action": step.action, "result": result, "at": _now_iso()})
             execution.current_step_id = self._resolve_next_step(definition, step)
+            self._touch_execution(execution)
 
         execution.status = "completed"
         execution.completed_at = _now_iso()
+        self._touch_execution(execution, execution.completed_at)
 
     def _resolve_next_step(self, definition: WorkflowDefinition, step: WorkflowStep) -> str | None:
         if definition.sequencing.strategy == "branching":
@@ -312,6 +465,22 @@ class WorkflowEngine:
         execution.waiting_until = _to_iso(wait_until)
         execution.step_log.append({"step_id": step.id, "action": "wait.started", "seconds": seconds, "at": _now_iso()})
         execution.current_step_id = self._resolve_next_step(self._definitions[execution.workflow_key], step)
+        execution.last_successful_step_id = step.id
+        self._touch_execution(execution)
+
+    def _touch_execution(self, execution: WorkflowExecution, at: str | None = None) -> None:
+        execution.updated_at = at or _now_iso()
+
+    def _record_recovery_audit(self, execution_id: str, payload: dict[str, Any]) -> None:
+        self._recovery_audit_log.setdefault(execution_id, []).append(payload)
+
+    def _step_after(self, definition: WorkflowDefinition, step_id: str | None) -> str | None:
+        if step_id is None:
+            return definition.sequencing.steps[0].id if definition.sequencing.steps else None
+        for index, step in enumerate(definition.sequencing.steps):
+            if step.id == step_id:
+                return definition.sequencing.steps[index + 1].id if index + 1 < len(definition.sequencing.steps) else None
+        return definition.sequencing.steps[0].id if definition.sequencing.steps else None
 
     def _build_context(
         self, definition: WorkflowDefinition, event: Event | None, context: dict[str, Any] | None

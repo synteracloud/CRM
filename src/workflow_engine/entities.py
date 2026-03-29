@@ -11,7 +11,7 @@ ConditionMatch = Literal["all", "any"]
 SequencingStrategy = Literal["linear", "branching"]
 OnError = Literal["fail_fast", "continue", "compensate"]
 ActionType = Literal["emit_event", "call_service", "notify", "mutate_state", "wait"]
-InstanceStatus = Literal["running", "waiting", "completed", "failed", "stopped"]
+InstanceStatus = Literal["running", "waiting", "recovering", "completed", "failed", "stopped"]
 ConditionOp = Literal["exists", "eq", "neq", "in", "not_in", "gt", "gte", "lt", "lte"]
 
 
@@ -95,11 +95,14 @@ class WorkflowExecution:
     context: dict[str, Any]
     current_step_id: str | None
     started_at: str
+    updated_at: str
     completed_at: str | None = None
     waiting_until: str | None = None
     state: dict[str, Any] = field(default_factory=dict)
     step_log: list[dict[str, Any]] = field(default_factory=list)
     error_message: str | None = None
+    last_successful_step_id: str | None = None
+    recovery_state: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

@@ -124,6 +124,128 @@ class WorkflowEngineTests(unittest.TestCase):
         self.assertTrue(report["checks"]["all_triggers_map_to_event_catalog"])
         self.assertTrue(report["checks"]["no_undefined_actions"])
 
+    def test_failure_recovery_resume_recovers_failed_execution(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="failure_recovery_resume",
+            version="v1",
+            metadata={"name": "Failure recovery resume"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(match="all", rules=()),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(
+                    WorkflowStep("s1", "first"),
+                    WorkflowStep("s2", "fails_once"),
+                    WorkflowStep("s3", "last"),
+                ),
+            ),
+            actions={
+                "first": ActionDefinition("call_service", "Service A", "first"),
+                "fails_once": ActionDefinition("call_service", "Service B", "fails_once", {"__raise_error__": True}),
+                "last": ActionDefinition("call_service", "Service C", "last"),
+            },
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-recovery-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-recovery",
+            payload={"id": "lead-recovery"},
+        )
+
+        execution = engine.start_workflow("failure_recovery_resume", event=event)
+        self.assertEqual(execution.status, "failed")
+        self.assertEqual(execution.recovery_state["failed_step_id"], "s2")
+        self.assertIn("RuntimeError", execution.error_message or "")
+
+        # clear the injected failure and resume from the failed step
+        workflow.actions["fails_once"].input["__raise_error__"] = False
+        recovered = engine.recover_execution(execution.execution_id, strategy="resume", reason="operator_resume", actor="ops")
+        self.assertEqual(recovered.status, "completed")
+        self.assertEqual(recovered.recovery_state["mode"], "resume")
+        self.assertEqual(recovered.recovery_state["attempt_count"], 1)
+        audit = engine.recovery_audit_trail(execution.execution_id)
+        self.assertTrue(any(item["action"] == "execution.failed" for item in audit))
+        self.assertTrue(any(item["action"] == "recovery.completed" for item in audit))
+
+    def test_replay_full_resets_state_and_audit_visible(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="failure_replay_full",
+            version="v1",
+            metadata={"name": "Failure replay full"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(match="all", rules=()),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("s1", "first"), WorkflowStep("s2", "last")),
+            ),
+            actions={
+                "first": ActionDefinition("call_service", "Service A", "first"),
+                "last": ActionDefinition("call_service", "Service B", "last"),
+            },
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-recovery-2",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-recovery",
+            payload={"id": "lead-recovery-2"},
+        )
+        execution = engine.start_workflow("failure_replay_full", event=event)
+        self.assertEqual(execution.status, "completed")
+        self.assertIn("first", execution.state)
+
+        replayed = engine.recover_execution(execution.execution_id, strategy="replay_full", reason="force_replay", actor="ops")
+        self.assertEqual(replayed.status, "completed")
+        self.assertIn("first", replayed.state)
+        dashboard = engine.recovery_dashboard()
+        self.assertGreaterEqual(dashboard["recovery_attempts"], 2)
+
+    def test_stuck_workflow_recovery_and_visibility_hooks(self) -> None:
+        engine = WorkflowEngine()
+        branch = WorkflowDefinition(
+            workflow_key="stuck_waiting_workflow",
+            version="v1",
+            metadata={"name": "Stuck waiting workflow"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=False),
+            conditions=ConditionDefinition(match="all", rules=()),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("s1", "first"), WorkflowStep("wait", "wait"), WorkflowStep("s2", "last")),
+            ),
+            actions={
+                "first": ActionDefinition("call_service", "Service A", "first"),
+                "wait": ActionDefinition("wait", "Workflow Automation Service", "pause", {"duration_seconds": 3600}),
+                "last": ActionDefinition("call_service", "Service B", "last"),
+            },
+        )
+        engine.register_workflow(branch)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-stuck-1",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-stuck",
+            payload={"id": "stuck-entity"},
+        )
+        execution = engine.start_workflow("stuck_waiting_workflow", event=event)
+        self.assertEqual(execution.status, "waiting")
+        execution.updated_at = "2026-03-01T00:00:00Z"
+        execution.waiting_until = "2026-03-01T00:10:00Z"
+
+        recovered = engine.recover_stuck_workflows(stale_before_iso="2026-03-15T00:00:00Z", now_iso="2026-03-29T00:00:00Z")
+        self.assertEqual(len(recovered), 1)
+        self.assertIn(recovered[0].status, {"waiting", "completed"})
+        dashboard = engine.recovery_dashboard()
+        self.assertGreaterEqual(dashboard["recovery_attempts"], 2)
+        self.assertIn("recoverable_failures", dashboard)
+
 
 class TriggerAndActionEngineTests(unittest.TestCase):
     def test_trigger_system_respects_any_and_all_modes(self) -> None:

@@ -16,6 +16,9 @@ API_ENDPOINTS: dict[str, dict[str, str]] = {
     "create_workflow": {"method": "POST", "path": "/api/v1/workflows"},
     "edit_workflow": {"method": "PUT", "path": "/api/v1/workflows/{workflow_key}"},
     "get_workflow_graph": {"method": "GET", "path": "/api/v1/workflows/{workflow_key}/graph"},
+    "recover_execution": {"method": "POST", "path": "/api/v1/workflows/executions/{execution_id}/recover"},
+    "get_recovery_audit": {"method": "GET", "path": "/api/v1/workflows/executions/{execution_id}/recovery-audit"},
+    "get_recovery_dashboard": {"method": "GET", "path": "/api/v1/workflows/recovery/dashboard"},
 }
 
 
@@ -61,6 +64,29 @@ class WorkflowApi:
             return _success(asdict(graph), request_id)
         except WorkflowNotFoundError as exc:
             return _error("not_found", str(exc), request_id)
+
+    def recover_execution(
+        self, execution_id: str, strategy: str, reason: str, actor: str, request_id: str
+    ) -> dict[str, Any]:
+        try:
+            execution = self._engine.recover_execution(
+                execution_id=execution_id,
+                strategy=strategy,
+                reason=reason,
+                actor=actor,
+            )
+            return _success(asdict(execution), request_id)
+        except (WorkflowValidationError, WorkflowNotFoundError) as exc:
+            return _error("conflict", str(exc), request_id)
+
+    def get_recovery_audit(self, execution_id: str, request_id: str) -> dict[str, Any]:
+        try:
+            return _success(self._engine.recovery_audit_trail(execution_id), request_id)
+        except WorkflowNotFoundError as exc:
+            return _error("not_found", str(exc), request_id)
+
+    def get_recovery_dashboard(self, request_id: str) -> dict[str, Any]:
+        return _success(self._engine.recovery_dashboard(), request_id)
 
 
 def _success(data: Any, request_id: str) -> dict[str, Any]:
