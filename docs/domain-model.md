@@ -25,6 +25,10 @@
 | Contact | Contact Service | Person-level customer record. |
 | Account | Account Service | Company/customer account record. |
 | AccountHierarchy | Account Service | Parent-child account linkage. |
+| Partner | Partner Management Service | External organization participating in referral/resell/channel motions. |
+| PartnerRelationship | Partner Management Service | Linkage between partner and account/opportunity with attribution scope. |
+| PartnerAttribution | Partner Management Service | Time-bounded source-of-truth attribution for referred/sourced deals. |
+| PartnerCommission | Partner Management Service | Commission ledger entry tied to closed-won attributed revenue. |
 | Opportunity | Opportunity Service | Revenue opportunity in pipeline. |
 | OpportunityLineItem | Opportunity Service | Product line details on opportunity. |
 | Quote | Quote Service | Commercial quote and approval state. |
@@ -153,6 +157,45 @@
 - **Owner service:** Account Service
 - **Fields:** `account_hierarchy_id (PK)`, `tenant_id (FK->Tenant)`, `parent_account_id (FK->Account)`, `child_account_id (FK->Account)`, `relationship_type`, `created_at`
 - **Relationships:** bridge for `Account` N-N `Account` hierarchy
+- **Tenant isolation fields:** `tenant_id`
+
+### Partner
+- **Owner service:** Partner Management Service
+- **Fields:** `partner_id (PK)`, `tenant_id (FK->Tenant)`, `partner_account_id (FK->Account, nullable)`, `partner_code`, `name`, `partner_type`, `status`, `tier`, `payout_terms`, `default_commission_plan_code`, `owner_user_id (FK->User)`, `created_at`, `updated_at`
+- **Relationships:**
+  - `Partner` 0..1-1 `Account` (partner has optional account master record)
+  - `Partner` 1-N `PartnerRelationship`
+  - `Partner` 1-N `PartnerAttribution`
+  - `Partner` 1-N `PartnerCommission`
+- **Tenant isolation fields:** `tenant_id`
+
+### PartnerRelationship
+- **Owner service:** Partner Management Service
+- **Fields:** `partner_relationship_id (PK)`, `tenant_id (FK->Tenant)`, `partner_id (FK->Partner)`, `account_id (FK->Account, nullable)`, `opportunity_id (FK->Opportunity, nullable)`, `relationship_type`, `source_channel`, `effective_from`, `effective_to`, `status`, `created_by_user_id (FK->User)`, `created_at`, `updated_at`
+- **Relationships:**
+  - `Partner` 1-N `PartnerRelationship`
+  - `Account` 0..N-1 `PartnerRelationship`
+  - `Opportunity` 0..N-1 `PartnerRelationship`
+- **Tenant isolation fields:** `tenant_id`
+
+### PartnerAttribution
+- **Owner service:** Partner Management Service
+- **Fields:** `partner_attribution_id (PK)`, `tenant_id (FK->Tenant)`, `partner_id (FK->Partner)`, `opportunity_id (FK->Opportunity)`, `account_id (FK->Account)`, `attribution_type`, `attribution_model`, `attribution_weight`, `attribution_status`, `originated_lead_id (FK->Lead, nullable)`, `attributed_amount`, `currency`, `locked_at`, `created_at`, `updated_at`
+- **Relationships:**
+  - `Partner` 1-N `PartnerAttribution`
+  - `Opportunity` 1-N `PartnerAttribution`
+  - `Account` 1-N `PartnerAttribution`
+  - `Lead` 0..N-1 `PartnerAttribution`
+- **Tenant isolation fields:** `tenant_id`
+
+### PartnerCommission
+- **Owner service:** Partner Management Service
+- **Fields:** `partner_commission_id (PK)`, `tenant_id (FK->Tenant)`, `partner_id (FK->Partner)`, `partner_attribution_id (FK->PartnerAttribution)`, `opportunity_id (FK->Opportunity)`, `order_id (FK->Order, nullable)`, `commission_plan_code`, `commission_rate`, `commission_base_amount`, `commission_amount`, `currency`, `status`, `eligible_at`, `approved_at`, `paid_at`, `created_at`, `updated_at`
+- **Relationships:**
+  - `Partner` 1-N `PartnerCommission`
+  - `PartnerAttribution` 1-N `PartnerCommission` (adjustments/reversals preserve history)
+  - `Opportunity` 1-N `PartnerCommission`
+  - `Order` 0..N-1 `PartnerCommission`
 - **Tenant isolation fields:** `tenant_id`
 
 ### Opportunity
@@ -352,6 +395,10 @@
 | Lead -> LeadAssignment | 1-1 | `LeadAssignment.lead_id UNIQUE` |
 | Account -> Contact | 1-N | `Contact.account_id` |
 | Account -> Opportunity | 1-N | `Opportunity.account_id` |
+| Partner -> PartnerRelationship | 1-N | `PartnerRelationship.partner_id` |
+| Opportunity -> PartnerRelationship | 1-N (optional) | `PartnerRelationship.opportunity_id` |
+| Opportunity -> PartnerAttribution | 1-N (optional) | `PartnerAttribution.opportunity_id` |
+| Partner -> PartnerCommission | 1-N | `PartnerCommission.partner_id` |
 | Opportunity -> OpportunityLineItem | 1-N | `OpportunityLineItem.opportunity_id` |
 | Opportunity -> Quote | 1-N | `Quote.opportunity_id` |
 | Quote -> QuoteLineItem | 1-N | `QuoteLineItem.quote_id` |
