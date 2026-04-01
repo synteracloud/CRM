@@ -151,7 +151,7 @@ class WorkflowEngine:
             execution_id=self._next_execution_id(workflow_key),
             workflow_key=workflow_key,
             tenant_id=execution_context["tenant_id"],
-            status="running",
+            status="pending",
             context=execution_context,
             current_step_id=definition.sequencing.steps[0].id,
             started_at=_now_iso(),
@@ -166,6 +166,7 @@ class WorkflowEngine:
         )
         self._executions[execution.execution_id] = execution
         self._recovery_audit_log[execution.execution_id] = []
+        execution.status = "in_progress"
         self._run_execution(definition, execution)
         return execution
 
@@ -198,7 +199,7 @@ class WorkflowEngine:
                 continue
             if _parse_iso(execution.waiting_until) <= now:
                 definition = self._definitions[execution.workflow_key]
-                execution.status = "running"
+                execution.status = "in_progress"
                 execution.waiting_until = None
                 execution.step_log.append({"action": "wait.resumed", "at": _to_iso(now)})
                 self._touch_execution(execution, _to_iso(now))
@@ -218,7 +219,7 @@ class WorkflowEngine:
             raise WorkflowNotFoundError(f"Execution not found: {execution_id}")
         if strategy not in {"resume", "replay_full", "replay_from_last_success"}:
             raise WorkflowValidationError(f"Unsupported recovery strategy: {strategy}")
-        if execution.status not in {"failed", "waiting", "running", "completed"}:
+        if execution.status not in {"failed", "failed_retryable", "dead_lettered", "waiting", "running", "in_progress", "completed"}:
             raise WorkflowValidationError(f"Execution not recoverable from status: {execution.status}")
 
         definition = self._definitions[execution.workflow_key]
@@ -226,17 +227,17 @@ class WorkflowEngine:
         if strategy == "resume":
             if execution.current_step_id is None:
                 execution.current_step_id = self._step_after(definition, execution.last_successful_step_id)
-            execution.status = "running"
+            execution.status = "recovering"
         elif strategy == "replay_full":
             execution.state = {}
             execution.current_step_id = definition.sequencing.steps[0].id
-            execution.status = "running"
+            execution.status = "recovering"
         else:
             execution.state = {}
             execution.current_step_id = self._step_after(definition, execution.last_successful_step_id)
             if execution.current_step_id is None:
                 execution.current_step_id = definition.sequencing.steps[0].id
-            execution.status = "running"
+            execution.status = "recovering"
 
         now = _now_iso()
         execution.completed_at = None
@@ -278,7 +279,7 @@ class WorkflowEngine:
         recovered: list[WorkflowExecution] = []
         now = now_iso or _now_iso()
         for execution in self._executions.values():
-            if execution.status not in {"running", "waiting"}:
+            if execution.status not in {"running", "in_progress", "recovering", "waiting", "failed_retryable"}:
                 continue
             if _parse_iso(execution.updated_at) > threshold:
                 continue
@@ -300,15 +301,26 @@ class WorkflowEngine:
         return list(self._recovery_audit_log.get(execution_id, []))
 
     def recovery_dashboard(self) -> dict[str, Any]:
-        status_counts: dict[str, int] = {"running": 0, "waiting": 0, "recovering": 0, "completed": 0, "failed": 0, "stopped": 0}
+        status_counts: dict[str, int] = {
+            "pending": 0,
+            "in_progress": 0,
+            "running": 0,
+            "waiting": 0,
+            "recovering": 0,
+            "completed": 0,
+            "failed": 0,
+            "failed_retryable": 0,
+            "dead_lettered": 0,
+            "stopped": 0,
+        }
         recoverable_failures = 0
         stuck_candidates: list[str] = []
         now = datetime.now(timezone.utc)
         for execution in self._executions.values():
             status_counts[execution.status] += 1
-            if execution.status == "failed":
+            if execution.status in {"failed", "failed_retryable", "dead_lettered"}:
                 recoverable_failures += 1
-            if execution.status in {"running", "waiting"}:
+            if execution.status in {"running", "in_progress", "recovering", "waiting"}:
                 updated_at = _parse_iso(execution.updated_at)
                 if (now - updated_at).total_seconds() > 900:
                     stuck_candidates.append(execution.execution_id)
@@ -417,6 +429,7 @@ class WorkflowEngine:
         return {"score": score, "checks": checks, "issues": sorted(set(issues))}
 
     def _run_execution(self, definition: WorkflowDefinition, execution: WorkflowExecution) -> None:
+        execution.status = "in_progress"
         steps = definition.sequencing.steps
         step_map = {step.id: step for step in steps}
 
@@ -469,29 +482,53 @@ class WorkflowEngine:
             )
             if disposition == "retryable" and attempt < max_attempts:
                 backoff = _compute_backoff_seconds(attempt, definition.retry_policy)
+                jitter = _deterministic_jitter_seconds(execution.execution_id, step.id, attempt)
                 execution.step_log.append(
                     {
                         "step_id": step.id,
                         "action": "retry.scheduled",
                         "attempt": attempt + 1,
                         "backoff_seconds": backoff,
+                        "jitter_seconds": jitter,
+                        "retry_after_seconds": backoff + jitter,
                         "at": _now_iso(),
                     }
                 )
                 continue
-            self._handle_terminal_failure(definition, step, error_code, execution)
+            self._handle_terminal_failure(definition, step, error_code, execution, disposition=disposition, attempts=attempt)
             return False
-        self._handle_terminal_failure(definition, step, "retries_exhausted", execution)
+        self._handle_terminal_failure(definition, step, "retries_exhausted", execution, disposition="retryable", attempts=max_attempts)
         return False
 
     def _handle_terminal_failure(
-        self, definition: WorkflowDefinition, step: WorkflowStep, error_code: str, execution: WorkflowExecution
+        self,
+        definition: WorkflowDefinition,
+        step: WorkflowStep,
+        error_code: str,
+        execution: WorkflowExecution,
+        disposition: FailureDisposition = "terminal",
+        attempts: int = 0,
     ) -> None:
         failure_at = _now_iso()
-        execution.status = "failed"
+        dead_letter_limit = max(1, int(definition.retry_policy.dead_letter_after_attempts))
+        if disposition == "retryable" and attempts >= dead_letter_limit:
+            execution.status = "dead_lettered"
+        elif disposition == "retryable":
+            execution.status = "failed_retryable"
+        else:
+            execution.status = "failed"
         execution.error_message = f"Step failed: {step.id} error_code={error_code}"
         execution.recovery_state.update({"last_failure_at": failure_at, "failed_step_id": step.id})
-        execution.step_log.append({"step_id": step.id, "action": "step.failed", "error_code": error_code, "at": failure_at})
+        execution.step_log.append(
+            {
+                "step_id": step.id,
+                "action": "step.failed",
+                "error_code": error_code,
+                "disposition": disposition,
+                "attempts": attempts,
+                "at": failure_at,
+            }
+        )
         if definition.sequencing.on_error == "compensate":
             self._run_compensations(definition, execution)
         execution.completed_at = _now_iso()
@@ -614,6 +651,8 @@ class WorkflowEngine:
                     raise WorkflowValidationError(f"Action emits unknown events: {action_ref}:{unknown}")
         if definition.retry_policy.max_attempts <= 0:
             raise WorkflowValidationError("retry_policy.max_attempts must be positive")
+        if definition.retry_policy.dead_letter_after_attempts <= 0:
+            raise WorkflowValidationError("retry_policy.dead_letter_after_attempts must be positive")
         if definition.retry_policy.backoff_seconds <= 0 or definition.retry_policy.max_backoff_seconds <= 0:
             raise WorkflowValidationError("retry_policy backoff values must be positive")
         if definition.retry_policy.backoff_seconds > definition.retry_policy.max_backoff_seconds:
@@ -815,6 +854,12 @@ def _classify_failure(error_code: str, policy: RetryPolicy) -> FailureDispositio
 def _compute_backoff_seconds(attempt: int, policy: RetryPolicy) -> int:
     exponent = max(attempt - 1, 0)
     return min(policy.backoff_seconds * (2**exponent), policy.max_backoff_seconds)
+
+
+def _deterministic_jitter_seconds(execution_id: str, step_id: str, attempt: int) -> int:
+    seed = f"{execution_id}:{step_id}:{attempt}"
+    checksum = sum(ord(ch) for ch in seed)
+    return checksum % 3
 
 
 def _collect_unreachable(start_node_id: str, edges: tuple[WorkflowGraphEdge, ...], node_set: set[str]) -> set[str]:

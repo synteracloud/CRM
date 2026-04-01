@@ -11,7 +11,18 @@ ConditionMatch = Literal["all", "any"]
 SequencingStrategy = Literal["linear", "branching"]
 OnError = Literal["fail_fast", "continue", "compensate"]
 ActionType = Literal["emit_event", "call_service", "notify", "mutate_state", "wait"]
-InstanceStatus = Literal["running", "waiting", "recovering", "completed", "failed", "stopped"]
+InstanceStatus = Literal[
+    "pending",
+    "in_progress",
+    "running",
+    "waiting",
+    "recovering",
+    "completed",
+    "failed",
+    "failed_retryable",
+    "dead_lettered",
+    "stopped",
+]
 ConditionOp = Literal["exists", "eq", "neq", "in", "not_in", "gt", "gte", "lt", "lte"]
 FailureDisposition = Literal["retryable", "terminal"]
 
@@ -95,6 +106,7 @@ class RetryPolicy:
         "bad_request",
         "compensation_failed",
     )
+    dead_letter_after_attempts: int = 10
 
 
 @dataclass(frozen=True)

@@ -150,10 +150,69 @@ class WorkflowEngineTests(unittest.TestCase):
             payload={},
         )
         execution = engine.start_workflow("retry_engine_test", event=event)
-        self.assertEqual(execution.status, "failed")
-        attempts = [log for log in execution.step_log if log.get("step_id") == "step_1" and "disposition" in log]
+        self.assertEqual(execution.status, "failed_retryable")
+        attempts = [log for log in execution.step_log if log.get("step_id") == "step_1" and log.get("action") == "always_fails"]
         self.assertEqual(len(attempts), 3)
         self.assertTrue(any(log.get("action") == "retry.scheduled" for log in execution.step_log))
+        self.assertEqual(execution.status, "failed_retryable")
+
+    def test_retry_schedule_is_deterministic_for_same_execution_and_attempt(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="retry_deterministic_test",
+            version="v1",
+            metadata={"name": "Retry deterministic test"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",)),
+            conditions=ConditionDefinition(),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("step_1", "always_fails", retries=1),),
+            ),
+            actions={"always_fails": ActionDefinition("call_service", "Service", "fail:timeout")},
+            retry_policy=RetryPolicy(max_attempts=2, backoff_seconds=2, max_backoff_seconds=8),
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-retry-deterministic",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-retry",
+            payload={},
+        )
+        execution = engine.start_workflow("retry_deterministic_test", event=event)
+        scheduled = [log for log in execution.step_log if log.get("action") == "retry.scheduled"]
+        self.assertEqual(len(scheduled), 1)
+        expected_retry_after = scheduled[0]["backoff_seconds"] + scheduled[0]["jitter_seconds"]
+        self.assertEqual(scheduled[0]["retry_after_seconds"], expected_retry_after)
+
+    def test_retryable_failure_dead_letters_at_policy_threshold(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="retry_dead_letter_test",
+            version="v1",
+            metadata={"name": "Retry dead letter test"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",)),
+            conditions=ConditionDefinition(),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("step_1", "always_fails", retries=2),),
+            ),
+            actions={"always_fails": ActionDefinition("call_service", "Service", "fail:timeout")},
+            retry_policy=RetryPolicy(max_attempts=3, backoff_seconds=1, max_backoff_seconds=8, dead_letter_after_attempts=3),
+        )
+        engine.register_workflow(workflow)
+        event = Event(
+            event_name="lead.created.v1",
+            event_id="evt-retry-dead-letter",
+            occurred_at="2026-03-26T00:00:00Z",
+            tenant_id="tenant-retry",
+            payload={},
+        )
+        execution = engine.start_workflow("retry_dead_letter_test", event=event)
+        self.assertEqual(execution.status, "dead_lettered")
+        self.assertTrue(any(log.get("action") == "step.failed" and log.get("disposition") == "retryable" for log in execution.step_log))
 
     def test_compensation_runs_in_reverse_for_multi_step_flow(self) -> None:
         engine = WorkflowEngine()
@@ -196,6 +255,29 @@ class WorkflowEngineTests(unittest.TestCase):
         self.assertEqual(len(compensations), 2)
         self.assertEqual(compensations[0]["for_action"], "create")
         self.assertEqual(compensations[1]["for_action"], "reserve")
+
+    def test_recover_stuck_workflow_recovers_failed_retryable(self) -> None:
+        engine = WorkflowEngine()
+        workflow = WorkflowDefinition(
+            workflow_key="recover_stuck_retryable_test",
+            version="v1",
+            metadata={"name": "Recover stuck workflow"},
+            triggers=TriggerDefinition(mode="any", events=("lead.created.v1",), manual=True),
+            conditions=ConditionDefinition(),
+            sequencing=SequencingDefinition(
+                strategy="linear",
+                on_error="fail_fast",
+                steps=(WorkflowStep("step_1", "always_fails", retries=1),),
+            ),
+            actions={"always_fails": ActionDefinition("call_service", "Service", "fail:timeout")},
+            retry_policy=RetryPolicy(max_attempts=2, backoff_seconds=1, max_backoff_seconds=8, dead_letter_after_attempts=10),
+        )
+        engine.register_workflow(workflow)
+        execution = engine.start_workflow("recover_stuck_retryable_test", context={"tenant_id": "tenant-1"})
+        self.assertEqual(execution.status, "failed_retryable")
+        execution.updated_at = "2026-03-01T00:00:00Z"
+        recovered = engine.recover_stuck_workflows("2026-03-15T00:00:00Z")
+        self.assertEqual(len(recovered), 1)
 
 
 class TriggerAndActionEngineTests(unittest.TestCase):
