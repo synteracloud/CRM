@@ -9,6 +9,10 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 VisibilityMode = Literal["all", "any"]
+AdaptationState = Literal["expanded", "condensed", "essential"]
+NavigationMode = Literal["bottom_nav", "top_bar_with_rail", "left_sidebar"]
+DensityMode = Literal["comfortable", "compact"]
+ElementPriority = Literal["P0", "P1", "P2", "P3"]
 
 
 class UiConfigValidationError(ValueError):
@@ -38,3 +42,37 @@ class UiConfig:
     visible_sections: tuple[UiSectionRule, ...]
     hidden_section_ids: tuple[str, ...]
     policy_version: str
+
+
+@dataclass(frozen=True)
+class ResponsiveElement:
+    """Single layout element with a responsive priority classification."""
+
+    element_id: str
+    priority: ElementPriority
+
+
+@dataclass(frozen=True)
+class ResponsiveLayout:
+    """Resolved responsive contract for a requested viewport."""
+
+    viewport_width: int
+    breakpoint_label: str
+    adaptation_state: AdaptationState
+    columns: int
+    navigation_mode: NavigationMode
+    density_mode: DensityMode
+    visible_priorities: tuple[ElementPriority, ...]
+    collapsible_priorities: tuple[ElementPriority, ...]
+    sticky_top_bar: bool
+    sticky_bottom_actions: bool
+    layout_guards: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ResponsiveQcScore:
+    """Self-QC scoring for responsive/mobile guarantees."""
+
+    workflow_usability: int
+    layout_integrity: int
+    priority_preservation: int
