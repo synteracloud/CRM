@@ -9,12 +9,14 @@ from typing import Iterable
 
 from .entities import (
     AdminDashboardReadModel,
+    DashboardQcVerdict,
     DashboardLayoutConfig,
     DashboardReadModelNotFoundError,
     MarketingDashboardReadModel,
     RoleDashboardMapping,
     SalesDashboardReadModel,
     SupportDashboardReadModel,
+    WIDGET_ZONE,
 )
 
 ROLE_DASHBOARD_MAPPINGS: dict[str, RoleDashboardMapping] = {
@@ -45,6 +47,51 @@ ROLE_DASHBOARD_MAPPINGS: dict[str, RoleDashboardMapping] = {
     ),
     "auditor": RoleDashboardMapping(
         role_id="auditor",
+        dashboard_types=("admin",),
+        default_dashboard_type="admin",
+    ),
+    "sales_manager": RoleDashboardMapping(
+        role_id="sales_manager",
+        dashboard_types=("sales",),
+        default_dashboard_type="sales",
+    ),
+    "sales_rep": RoleDashboardMapping(
+        role_id="sales_rep",
+        dashboard_types=("sales",),
+        default_dashboard_type="sales",
+    ),
+    "sdr": RoleDashboardMapping(
+        role_id="sdr",
+        dashboard_types=("sales",),
+        default_dashboard_type="sales",
+    ),
+    "revops": RoleDashboardMapping(
+        role_id="revops",
+        dashboard_types=("sales", "admin"),
+        default_dashboard_type="sales",
+    ),
+    "finance_ops": RoleDashboardMapping(
+        role_id="finance_ops",
+        dashboard_types=("admin", "sales"),
+        default_dashboard_type="admin",
+    ),
+    "support_manager": RoleDashboardMapping(
+        role_id="support_manager",
+        dashboard_types=("support",),
+        default_dashboard_type="support",
+    ),
+    "support_agent": RoleDashboardMapping(
+        role_id="support_agent",
+        dashboard_types=("support",),
+        default_dashboard_type="support",
+    ),
+    "marketing_manager": RoleDashboardMapping(
+        role_id="marketing_manager",
+        dashboard_types=("marketing",),
+        default_dashboard_type="marketing",
+    ),
+    "compliance_officer": RoleDashboardMapping(
+        role_id="compliance_officer",
         dashboard_types=("admin",),
         default_dashboard_type="admin",
     ),
@@ -257,6 +304,39 @@ class DashboardReadModelService:
                 dashboards.extend(mapping.dashboard_types)
         return tuple(sorted(set(dashboards)))
 
+    def resolve_default_dashboard_for_roles(self, role_ids: tuple[str, ...]) -> str | None:
+        for role_id in role_ids:
+            mapping = ROLE_DASHBOARD_MAPPINGS.get(role_id)
+            if mapping:
+                return mapping.default_dashboard_type
+        return None
+
+    def qc_role_dashboard_contract(self) -> DashboardQcVerdict:
+        required_roles = {
+            "tenant_owner",
+            "tenant_admin",
+            "sales_manager",
+            "sales_rep",
+            "sdr",
+            "revops",
+            "finance_ops",
+            "support_manager",
+            "support_agent",
+            "marketing_manager",
+            "analyst",
+            "auditor",
+            "compliance_officer",
+        }
+        role_accuracy = required_roles.issubset(set(ROLE_DASHBOARD_MAPPINGS))
+        zone_coverage = {"posture", "primary_kpi", "execution_queue", "trend_diagnostic", "risk_anomaly"} == set(
+            WIDGET_ZONE
+        )
+        return DashboardQcVerdict(
+            role_accuracy=role_accuracy,
+            widget_zone_coverage=zone_coverage,
+            score_out_of_ten=10 if (role_accuracy and zone_coverage) else 8,
+        )
+
     def get_sales(self, tenant_id: str) -> SalesDashboardReadModel:
         return self._get_or_raise(self._sales, tenant_id, "sales")
 
@@ -294,11 +374,14 @@ class DashboardReadModelService:
                 continue
 
             raw_value = _metric_from_path(read_model, widget.metric_path)
+            widget_state = _widget_state(raw_value, widget.empty_value)
             widgets.append(
                 {
                     "widget_id": widget.widget_id,
                     "title": widget.title,
                     "widget_type": widget.widget_type,
+                    "zone": widget.zone,
+                    "state": widget_state,
                     "metric_path": widget.metric_path,
                     "raw_value": raw_value,
                     "display_value": _format_widget_value(raw_value, widget.format_as),
@@ -313,8 +396,10 @@ class DashboardReadModelService:
             "title": layout.title,
             "columns": layout.columns,
             "widgets": widgets,
+            "widget_zones": _group_widgets_by_zone(widgets),
             "read_model": read_model,
             "allowed_dashboards": allowed_dashboards,
+            "default_dashboard_type": self.resolve_default_dashboard_for_roles(role_ids),
         }
 
     @staticmethod
@@ -409,3 +494,18 @@ def _resolve_route(route_template: str | None, route_context: dict[str, str]) ->
     for key, value in route_context.items():
         resolved = resolved.replace("{" + key + "}", value)
     return resolved
+
+
+def _widget_state(value: object, empty_value: object | None) -> str:
+    if value is None:
+        return "empty"
+    if empty_value is not None and value == empty_value:
+        return "empty"
+    return "default"
+
+
+def _group_widgets_by_zone(widgets: list[dict[str, object]]) -> dict[str, list[str]]:
+    grouped: dict[str, list[str]] = defaultdict(list)
+    for widget in widgets:
+        grouped[str(widget["zone"])].append(str(widget["widget_id"]))
+    return dict(grouped)

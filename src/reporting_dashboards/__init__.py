@@ -1,7 +1,10 @@
 from .api import API_ENDPOINTS, DashboardApi
 from .entities import (
     DASHBOARD_TYPE,
+    WIDGET_STATE,
+    WIDGET_ZONE,
     AdminDashboardReadModel,
+    DashboardQcVerdict,
     DashboardLayoutConfig,
     DashboardReadModelNotFoundError,
     MarketingDashboardReadModel,
@@ -15,7 +18,10 @@ from .services import DashboardReadModelService, ROLE_DASHBOARD_MAPPINGS
 __all__ = [
     "API_ENDPOINTS",
     "DASHBOARD_TYPE",
+    "WIDGET_STATE",
+    "WIDGET_ZONE",
     "AdminDashboardReadModel",
+    "DashboardQcVerdict",
     "DashboardApi",
     "DashboardLayoutConfig",
     "DashboardReadModelNotFoundError",

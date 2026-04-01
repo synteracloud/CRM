@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 
 DASHBOARD_TYPE = ("sales", "marketing", "support", "admin")
+WIDGET_ZONE = ("posture", "primary_kpi", "execution_queue", "trend_diagnostic", "risk_anomaly")
+WIDGET_STATE = ("default", "loading", "empty", "error", "restricted")
 
 
 @dataclass(frozen=True)
@@ -81,9 +84,11 @@ class WidgetDefinition:
     title: str
     widget_type: str
     metric_path: str
+    zone: Literal["posture", "primary_kpi", "execution_queue", "trend_diagnostic", "risk_anomaly"] = "primary_kpi"
     format_as: str = "raw"
     required_permissions: tuple[str, ...] = field(default_factory=tuple)
     drilldown_route: str | None = None
+    empty_value: object | None = None
 
 
 @dataclass(frozen=True)
@@ -103,3 +108,12 @@ class RoleDashboardMapping:
     role_id: str
     dashboard_types: tuple[str, ...]
     default_dashboard_type: str
+
+
+@dataclass(frozen=True)
+class DashboardQcVerdict:
+    """Quality-control verdict for role dashboard and widget contracts."""
+
+    role_accuracy: bool
+    widget_zone_coverage: bool
+    score_out_of_ten: int
