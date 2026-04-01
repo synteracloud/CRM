@@ -4,6 +4,12 @@ const { respondError } = require('./response-wrapper');
 const recordStore = new Map();
 const inFlightStore = new Map();
 const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+const IN_FLIGHT_TTL_MS = 5 * 60 * 1000;
+const ROUTE_TOKEN_PATTERN = /\/[A-Za-z0-9_-]{6,}/g;
+
+function canonicalRoute(path = '') {
+  return path.replace(ROUTE_TOKEN_PATTERN, '/:id');
+}
 
 function fingerprintRequest(req) {
   return crypto
@@ -19,6 +25,7 @@ function idempotencyMiddleware() {
   return function idempotency(req, res, next) {
     if (!WRITE_METHODS.has(req.method.toUpperCase())) return next();
 
+    const now = Date.now();
     const key = req.headers['idempotency-key'];
     if (typeof key !== 'string' || !key.trim()) {
       return respondError(
@@ -30,7 +37,7 @@ function idempotencyMiddleware() {
       );
     }
 
-    const routeKey = `${req.auth?.tenant_id || 'unknown'}:${req.method.toUpperCase()}:${req.path}:${key.trim()}`;
+    const routeKey = `${req.auth?.tenant_id || 'unknown'}:${req.method.toUpperCase()}:${canonicalRoute(req.path)}:${key.trim()}`;
     const fingerprint = fingerprintRequest(req);
     const existing = recordStore.get(routeKey);
 
@@ -40,7 +47,7 @@ function idempotencyMiddleware() {
           res,
           'conflict',
           'Idempotency key was already used with a different payload.',
-          [{ field: 'idempotency_key', reason: 'idempotency_key_payload_mismatch' }],
+          [{ field: 'idempotency_key', reason: 'idempotency_key_reused_with_different_payload' }],
           409,
         );
       }
@@ -58,7 +65,8 @@ function idempotencyMiddleware() {
       return;
     }
 
-    if (inFlightStore.has(routeKey)) {
+    const inFlightEntry = inFlightStore.get(routeKey);
+    if (inFlightEntry && now < inFlightEntry.expiresAt) {
       return respondError(
         res,
         'conflict',
@@ -67,8 +75,9 @@ function idempotencyMiddleware() {
         409,
       );
     }
+    if (inFlightEntry) inFlightStore.delete(routeKey);
 
-    inFlightStore.set(routeKey, true);
+    inFlightStore.set(routeKey, { expiresAt: now + IN_FLIGHT_TTL_MS });
 
     const clearInFlight = () => {
       inFlightStore.delete(routeKey);

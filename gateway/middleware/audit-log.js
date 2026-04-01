@@ -90,19 +90,29 @@ function auditMiddleware({ strict = true } = {}) {
 
     res.on('finish', () => {
       if (!auditAction) return;
-      appendAuditEvent({
-        event_id: `aud_${crypto.randomBytes(12).toString('hex')}`,
-        event_time: new Date().toISOString(),
-        request_id: req.request_id,
-        trace_id: req.trace_id || null,
-        tenant_id: req.auth?.tenant_id || null,
-        actor_id: req.auth?.sub || null,
-        action: auditAction,
-        method: req.method.toUpperCase(),
-        route: req.path,
-        resource_id: Object.values(req.params || {})[0] || null,
-        result: res.statusCode < 400 ? 'success' : 'failure',
-      });
+      try {
+        appendAuditEvent({
+          event_id: `aud_${crypto.randomBytes(12).toString('hex')}`,
+          event_time: new Date().toISOString(),
+          request_id: req.request_id,
+          trace_id: req.trace_id || null,
+          tenant_id: req.auth?.tenant_id || null,
+          actor_id: req.auth?.sub || null,
+          action: auditAction,
+          method: req.method.toUpperCase(),
+          route: req.path,
+          resource_id: Object.values(req.params || {})[0] || null,
+          result: res.statusCode < 400 ? 'success' : 'failure',
+        });
+      } catch (error) {
+        req.app?.locals?.logger?.error?.({
+          event: 'audit.append.failed',
+          request_id: req.request_id,
+          trace_id: req.trace_id || null,
+          tenant_id: req.auth?.tenant_id || null,
+          reason: error instanceof Error ? error.message : 'unknown',
+        });
+      }
     });
 
     return next();
