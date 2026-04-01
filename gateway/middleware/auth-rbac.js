@@ -41,6 +41,16 @@ function authMiddleware() {
       return respondError(res, 'unauthorized', 'Token is missing required claims.', [{ field: 'authorization', reason: 'missing_required_claims' }], 401);
     }
 
+    if (typeof claims.iss !== 'string' || !claims.iss || !Array.isArray(claims.aud) && typeof claims.aud !== 'string') {
+      return respondError(
+        res,
+        'unauthorized',
+        'Token is missing issuer or audience claims.',
+        [{ field: 'authorization', reason: 'missing_iss_or_aud' }],
+        401,
+      );
+    }
+
     req.auth = {
       sub: claims.sub,
       tenant_id: claims.tenant_id,

@@ -29,6 +29,11 @@ def _gate() -> list[tuple[str, bool, str]]:
         "auth-rbac middleware missing tenant-bound ABAC guard",
     ))
     checks.append((
+        "Security: JWT issuer/audience claims enforced",
+        "missing_iss_or_aud" in auth,
+        "auth-rbac middleware missing issuer/audience enforcement",
+    ))
+    checks.append((
         "Rate limiting: canonical route bucketing present",
         "canonicalRoute" in rate and "bucketKey" in rate,
         "rate-limit middleware missing canonical route normalization",
@@ -47,6 +52,11 @@ def _gate() -> list[tuple[str, bool, str]]:
         "Failure recovery: idempotency avoids caching 5xx",
         "res.statusCode < 500" in idem,
         "idempotency middleware caches server errors",
+    ))
+    checks.append((
+        "Failure recovery: idempotency route canonicalization + in-flight TTL",
+        "canonicalRoute(req.path)" in idem and "IN_FLIGHT_TTL_MS" in idem,
+        "idempotency middleware missing canonical route or in-flight lease expiry",
     ))
     return checks
 

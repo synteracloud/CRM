@@ -13,6 +13,7 @@ const app = express();
 const runtimeConfig = buildRuntimeConfig();
 
 app.locals.runtimeConfig = runtimeConfig;
+app.locals.logger = console;
 
 app.use(express.json());
 app.use(requestIdMiddleware);
