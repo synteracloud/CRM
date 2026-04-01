@@ -77,6 +77,7 @@ class EscalationAction:
     rule_id: str
     level: int
     route_to: str
+    escalation_state: str
     reason: str
     escalated_at: str
 

@@ -95,6 +95,7 @@ class SlaEscalationService:
         self._ticket_service = ticket_service
         self._rules: dict[str, list[EscalationRule]] = {}
         self._audit_log: list[EscalationAuditRecord] = []
+        self._triggered_actions: set[tuple[str, str]] = set()
         self._next_audit_id = 1
 
     def register_rules(self, tenant_id: str, rules: list[EscalationRule]) -> None:
@@ -115,19 +116,25 @@ class SlaEscalationService:
         if not applicable_rules:
             raise TicketStateError(f"No escalation rules configured for tenant={ticket.tenant_id}")
 
+        escalation_state = self._derive_escalation_state(ticket, now)
         actions: list[EscalationAction] = []
         for rule in applicable_rules:
+            action_key = (ticket.ticket_id, rule.rule_id)
+            if action_key in self._triggered_actions:
+                continue
             if self._rule_matches(rule, ticket, now):
                 action = EscalationAction(
                     ticket_id=ticket.ticket_id,
                     tenant_id=ticket.tenant_id,
                     rule_id=rule.rule_id,
                     level=rule.level,
-                    route_to=rule.route_to,
-                    reason=f"{rule.trigger} escalation",
+                    route_to=self._resolve_route(rule, escalation_state),
+                    escalation_state=escalation_state,
+                    reason=f"{rule.trigger} escalation ({escalation_state})",
                     escalated_at=now,
                 )
                 actions.append(action)
+                self._triggered_actions.add(action_key)
                 self._append_audit(
                     ticket,
                     now,
@@ -135,12 +142,13 @@ class SlaEscalationService:
                     {
                         "rule_id": rule.rule_id,
                         "level": rule.level,
-                        "route_to": rule.route_to,
+                        "route_to": action.route_to,
+                        "escalation_state": escalation_state,
                         "trigger": rule.trigger,
                     },
                 )
         if not actions:
-            self._append_audit(ticket, now, "escalation.none", {"reason": "no_rules_matched"})
+            self._append_audit(ticket, now, "escalation.none", {"reason": "no_rules_matched", "escalation_state": escalation_state})
         return actions
 
     def predict_breach(self, ticket_id: str, now: str, horizon_minutes: int = 30) -> dict[str, bool | int]:
@@ -177,6 +185,27 @@ class SlaEscalationService:
             value = getattr(ticket, rule.condition_field, None)
             return self._check_condition(value, rule.condition_op, rule.condition_value)
         return True
+
+    def _derive_escalation_state(self, ticket: Ticket, now: str) -> str:
+        now_dt = _parse_rfc3339(now)
+        response_due = _parse_rfc3339(ticket.response_due_at)
+        resolution_due = _parse_rfc3339(ticket.resolution_due_at)
+
+        if now_dt >= resolution_due or (ticket.resolved_at is None and now_dt >= resolution_due):
+            return "breached"
+        if now_dt >= response_due and ticket.first_responded_at is None:
+            return "at_risk"
+        if (response_due - now_dt) <= timedelta(minutes=15) and ticket.first_responded_at is None:
+            return "at_risk"
+        return "healthy"
+
+    @staticmethod
+    def _resolve_route(rule: EscalationRule, escalation_state: str) -> str:
+        if escalation_state == "breached":
+            return "incident-command-queue"
+        if escalation_state == "at_risk" and rule.level >= 2:
+            return "support-manager-queue"
+        return rule.route_to
 
     @staticmethod
     def _check_condition(value: str | None, op: str | None, expected: str | None) -> bool:

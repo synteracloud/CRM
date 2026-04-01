@@ -87,8 +87,9 @@ class TicketManagementTests(unittest.TestCase):
         second = escalation_service.evaluate_escalations("t-1", now="2026-03-26T01:30:00Z")
 
         self.assertEqual([a.rule_id for a in first], ["r1", "r2"])
-        self.assertEqual([a.route_to for a in first], ["support-team-l2", "support-manager"])
-        self.assertEqual([(a.rule_id, a.route_to) for a in first], [(a.rule_id, a.route_to) for a in second])
+        self.assertEqual([a.route_to for a in first], ["support-team-l2", "support-manager-queue"])
+        self.assertEqual([a.escalation_state for a in first], ["at_risk", "at_risk"])
+        self.assertEqual(second, [])
 
     def test_breach_prediction_and_audit_paths_complete(self) -> None:
         ticket_service = TicketService()
@@ -102,6 +103,8 @@ class TicketManagementTests(unittest.TestCase):
 
         actions = escalation_service.evaluate_escalations("t-1", now="2026-03-26T04:30:00Z")
         self.assertEqual([a.rule_id for a in actions], ["r1", "r2", "r3"])
+        self.assertEqual([a.route_to for a in actions], ["incident-command-queue"] * 3)
+        self.assertEqual([a.escalation_state for a in actions], ["breached"] * 3)
 
         audit = escalation_service.list_audit("t-1")
         event_types = [entry.event_type for entry in audit]
@@ -124,6 +127,18 @@ class TicketManagementTests(unittest.TestCase):
 
         audit = api.list_escalation_audit("t-1", request_id="req-audit")
         self.assertGreaterEqual(len(audit["data"]), 1)
+
+    def test_no_missed_escalation_when_evaluated_late(self) -> None:
+        ticket_service = TicketService()
+        ticket_service.create_ticket(self._ticket("t-late"))
+        escalation_service = SlaEscalationService(ticket_service)
+        escalation_service.register_rules("tenant-1", self._rules())
+
+        actions = escalation_service.evaluate_escalations("t-late", now="2026-03-26T05:30:00Z")
+        self.assertEqual([a.rule_id for a in actions], ["r1", "r2", "r3"])
+
+        repeated = escalation_service.evaluate_escalations("t-late", now="2026-03-26T06:00:00Z")
+        self.assertEqual(repeated, [])
 
 
 if __name__ == "__main__":
