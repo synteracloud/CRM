@@ -42,6 +42,7 @@ PRIOR_QC_SCRIPTS = [
     "scripts/self_qc_automation_journeys.py",
     "scripts/self_qc_omnichannel_inbox.py",
     "scripts/self_qc_ticket_management.py",
+    "scripts/self_qc_integration_end_to_end.py",
 ]
 
 
