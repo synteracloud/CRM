@@ -309,6 +309,71 @@ class ReportingDashboardTests(unittest.TestCase):
         )
         self.assertEqual(allowed["data"]["widgets"][0]["raw_value"], 1)
 
+    def test_role_dashboard_defaults_are_role_accurate(self) -> None:
+        service = DashboardReadModelService()
+        self.assertEqual(service.resolve_default_dashboard_for_roles(("sales_manager",)), "sales")
+        self.assertEqual(service.resolve_default_dashboard_for_roles(("support_agent",)), "support")
+        self.assertEqual(service.resolve_default_dashboard_for_roles(("marketing_manager",)), "marketing")
+        self.assertEqual(service.resolve_default_dashboard_for_roles(("finance_ops",)), "admin")
+
+        verdict = service.qc_role_dashboard_contract()
+        self.assertTrue(verdict.role_accuracy)
+        self.assertTrue(verdict.widget_zone_coverage)
+        self.assertEqual(verdict.score_out_of_ten, 10)
+
+    def test_widget_system_returns_zones_and_states(self) -> None:
+        service = DashboardReadModelService()
+        api = DashboardApi(service)
+        service.refresh_support(
+            tenant_id="tenant-zones",
+            as_of="2026-03-26T00:00:00Z",
+            cases=[],
+        )
+        layout = DashboardLayoutConfig(
+            dashboard_type="support",
+            title="Support ops",
+            columns=3,
+            widgets=(
+                WidgetDefinition(
+                    widget_id="posture-freshness",
+                    title="Data freshness",
+                    widget_type="status",
+                    zone="posture",
+                    metric_path="as_of",
+                ),
+                WidgetDefinition(
+                    widget_id="kpi-open",
+                    title="Open cases",
+                    widget_type="kpi",
+                    zone="primary_kpi",
+                    metric_path="open_case_count",
+                    format_as="integer",
+                    empty_value=0,
+                ),
+                WidgetDefinition(
+                    widget_id="risk-breach",
+                    title="SLA breaches",
+                    widget_type="kpi",
+                    zone="risk_anomaly",
+                    metric_path="sla_breach_count",
+                    format_as="integer",
+                    empty_value=0,
+                ),
+            ),
+        )
+        response = api.get_dynamic_dashboard(
+            "tenant-zones",
+            "req-zones",
+            layout=layout,
+            role_ids=("support_manager",),
+            permissions=("reports.read",),
+        )
+        self.assertEqual(response["data"]["default_dashboard_type"], "support")
+        self.assertEqual(response["data"]["widgets"][0]["state"], "default")
+        self.assertEqual(response["data"]["widgets"][1]["state"], "empty")
+        self.assertEqual(response["data"]["widget_zones"]["posture"], ["posture-freshness"])
+        self.assertEqual(response["data"]["widget_zones"]["risk_anomaly"], ["risk-breach"])
+
 
 if __name__ == "__main__":
     unittest.main()
