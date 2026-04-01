@@ -187,7 +187,7 @@ Emit alert events to incident channel when:
     "request_id": "req_01HT...",
     "trace_id": "3d9dcd8f0bb24f7eb8f2d41786bde3e1",
     "method": "POST",
-    "route": "/v1/users/usr_99/roles"
+    "route": "/api/v1/users/usr_99/roles"
   },
   "integrity": {
     "hash": "sha256:...",
@@ -199,7 +199,7 @@ Emit alert events to incident channel when:
 
 ## 4.2 Endpoints
 
-### `GET /v1/audit/events`
+### `GET /api/v1/audits/events`
 
 Query immutable audit events.
 
@@ -218,11 +218,11 @@ Authorization:
 
 Response includes `next_cursor` for pagination.
 
-### `GET /v1/audit/events/{event_id}`
+### `GET /api/v1/audits/events/{event_id}`
 
 Fetch single event by ID (tenant-scoped).
 
-### `POST /v1/audit/exports`
+### `POST /api/v1/audits/exports`
 
 Create asynchronous export job.
 
@@ -241,11 +241,11 @@ Body:
 
 Authorization: `audit.logs.read` + export policy flag.
 
-### `GET /v1/audit/exports/{job_id}`
+### `GET /api/v1/audits/exports/{job_id}`
 
 Check export job status and retrieve signed download URL when complete.
 
-### `GET /v1/audit/integrity/verify`
+### `GET /api/v1/audits/integrity/verify`
 
 Verify hash-chain integrity for a time window.
 

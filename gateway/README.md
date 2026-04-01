@@ -98,3 +98,7 @@ Returns aggregate forecast totals and buckets from caller-provided opportunity r
   - `group_by` (`stage` or `forecast_category`, optional; defaults to `stage`)
 
 Both endpoints validate opportunity rows using the domain-model shape (`opportunity_id`, `tenant_id`, `stage`, `amount`, `close_date`, `forecast_category`, `is_closed`, `is_won`) and reject invalid data with `422 validation_error`.
+
+## Audit APIs
+
+- `GET /api/v1/audits/events` (scope: `audit.logs.read`)
