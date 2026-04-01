@@ -159,6 +159,9 @@ class FollowupEnforcementEngine:
     def job_queue(self) -> FollowupJobQueue:
         return self._queue
 
+    def has_lead(self, lead_id: str) -> bool:
+        return lead_id in self._leads
+
     def tasks_for_lead(self, lead_id: str) -> list[FollowupTask]:
         return list(self._tasks_by_lead[lead_id])
 
