@@ -7,8 +7,12 @@ const { respondError } = require('./middleware/response-wrapper');
 const { authMiddleware } = require('./middleware/auth-rbac');
 const { auditMiddleware } = require('./middleware/audit-log');
 const { idempotencyMiddleware } = require('./middleware/idempotency');
+const { buildRuntimeConfig } = require('./config/runtime-config');
 
 const app = express();
+const runtimeConfig = buildRuntimeConfig();
+
+app.locals.runtimeConfig = runtimeConfig;
 
 app.use(express.json());
 app.use(requestIdMiddleware);

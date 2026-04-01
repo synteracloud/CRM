@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { respondError } = require('./response-wrapper');
 
 const recordStore = new Map();
+const inFlightStore = new Map();
 const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 function fingerprintRequest(req) {
@@ -57,6 +58,24 @@ function idempotencyMiddleware() {
       return;
     }
 
+    if (inFlightStore.has(routeKey)) {
+      return respondError(
+        res,
+        'conflict',
+        'An equivalent request is already in progress for this idempotency key.',
+        [{ field: 'idempotency_key', reason: 'request_in_progress' }],
+        409,
+      );
+    }
+
+    inFlightStore.set(routeKey, true);
+
+    const clearInFlight = () => {
+      inFlightStore.delete(routeKey);
+    };
+    res.once('finish', clearInFlight);
+    res.once('close', clearInFlight);
+
     const originalJson = res.json.bind(res);
     res.json = (payload) => {
       if (res.statusCode < 500) {
@@ -66,6 +85,7 @@ function idempotencyMiddleware() {
           body: payload,
         });
       }
+      clearInFlight();
       return originalJson(payload);
     };
 
