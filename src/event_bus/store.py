@@ -17,20 +17,24 @@ class EventValidationError(ValueError):
 class EventStore:
     def __init__(self) -> None:
         self._events: list[Event] = []
-        self._event_by_id: dict[str, Event] = {}
+        self._event_by_dedupe_key: dict[tuple[str, str, str], Event] = {}
         self._payload_requirements = load_event_payload_requirements()
 
     def append(self, event: Event) -> Event:
         self._validate(event)
-        if event.event_id in self._event_by_id:
-            return self._event_by_id[event.event_id]
+        dedupe_key = (event.tenant_id, event.event_name, event.event_id)
+        if dedupe_key in self._event_by_dedupe_key:
+            return self._event_by_dedupe_key[dedupe_key]
 
         self._events.append(event)
-        self._event_by_id[event.event_id] = event
+        self._event_by_dedupe_key[dedupe_key] = event
         return event
 
     def get(self, event_id: str) -> Event | None:
-        return self._event_by_id.get(event_id)
+        for event in self._events:
+            if event.event_id == event_id:
+                return event
+        return None
 
     def query(
         self,

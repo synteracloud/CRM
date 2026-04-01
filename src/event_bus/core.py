@@ -24,7 +24,7 @@ class InMemoryEventBus(EventPublisher, EventSubscriber):
     def __init__(self, retry_policy: RetryPolicy | None = None) -> None:
         self._retry_policy = retry_policy or RetryPolicy()
         self._handlers: dict[str, list[EventHandler]] = defaultdict(list)
-        self._processed_event_ids: set[str] = set()
+        self._processed_event_keys: set[tuple[str, str, str]] = set()
         self._dead_lettered: list[Event] = []
 
     @property
@@ -37,19 +37,20 @@ class InMemoryEventBus(EventPublisher, EventSubscriber):
 
     def publish(self, event: Event) -> None:
         self._validate_event_name(event.event_name)
+        dedupe_key = (event.tenant_id, event.event_name, event.event_id)
 
-        if event.event_id in self._processed_event_ids:
+        if dedupe_key in self._processed_event_keys:
             return
 
         handlers = self._handlers.get(event.event_name, [])
         if not handlers:
-            self._processed_event_ids.add(event.event_id)
+            self._processed_event_keys.add(dedupe_key)
             return
 
         for handler in handlers:
             self._dispatch_with_retry(event, handler)
 
-        self._processed_event_ids.add(event.event_id)
+        self._processed_event_keys.add(dedupe_key)
 
     def _dispatch_with_retry(self, event: Event, handler: EventHandler) -> None:
         attempts = 0
