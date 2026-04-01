@@ -56,6 +56,8 @@ class SupportConsoleService:
 
         workspace = SupportWorkspace(
             workspace_id=workspace_id,
+            workflow_name="Case management & SLA",
+            read_model="CaseSLAOperationalRM",
             primary_view="queue",
             queue_items=queue_items,
             selected_ticket_id=selected_ticket_id,

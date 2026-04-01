@@ -39,6 +39,8 @@ class SupportConsoleTests(unittest.TestCase):
         workspace = self.service.build_workspace(workspace_id="ws-1", selected_ticket_id="tick-1")
 
         self.assertEqual(workspace.primary_view, "queue")
+        self.assertEqual(workspace.workflow_name, "Case management & SLA")
+        self.assertEqual(workspace.read_model, "CaseSLAOperationalRM")
         self.assertIn("queue_view", workspace.views)
         self.assertIn("conversation_thread_panel", workspace.views)
         self.assertIn("customer_context_sidebar", workspace.views)
