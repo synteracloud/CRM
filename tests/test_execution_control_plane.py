@@ -6,6 +6,7 @@ from middleware.execution_control import ExecutionControlMiddleware
 from services.core.execution import (
     ExecutionControlPlane,
     IdempotencyConflictError,
+    IdempotencyInProgressError,
     IdempotencyScope,
     NonRetryableBusinessError,
     RetryPolicy,
@@ -112,3 +113,60 @@ def test_review_agent_reports_10_of_10_alignment() -> None:
     assert report.race_conditions == []
     assert report.failure_gaps == []
     assert report.alignment_percent == 100
+
+
+def test_inflight_duplicate_is_blocked() -> None:
+    plane = ExecutionControlPlane()
+    scope = IdempotencyScope("t4", "POST", "/v1/orders", "idem-6")
+    plane.idempotency.reserve_or_get(scope=scope, payload={"quote_id": "q1"})
+
+    with pytest.raises(IdempotencyInProgressError):
+        plane.execute(
+            scope=scope,
+            payload={"quote_id": "q1"},
+            lock_domain="quote",
+            lock_object_id="q1",
+            operation=lambda: {"ok": True},
+        )
+
+
+def test_retryable_failures_become_retryable_terminal_state() -> None:
+    plane = ExecutionControlPlane(retry_policy=RetryPolicy(max_attempts=2, base_backoff_seconds=0.001, max_backoff_seconds=0.01))
+    scope = IdempotencyScope("t5", "POST", "/v1/payments", "idem-7")
+
+    with pytest.raises(RetryableTransientError):
+        plane.execute(
+            scope=scope,
+            payload={"payment_id": "p1"},
+            lock_domain="payment",
+            lock_object_id="p1",
+            operation=lambda: (_ for _ in ()).throw(RetryableTransientError("temporarily unavailable")),
+        )
+
+    record = plane.idempotency.get(scope)
+    assert record is not None
+    assert record.status == "failed_retryable"
+
+
+def test_payload_hash_is_stable_for_nested_payload_key_order() -> None:
+    plane = ExecutionControlPlane()
+    scope = IdempotencyScope("t6", "POST", "/v1/workflows", "idem-8")
+    payload_a = {"workflow_id": "wf-1", "metadata": {"priority": "high", "owner": "u1"}}
+    payload_b = {"workflow_id": "wf-1", "metadata": {"owner": "u1", "priority": "high"}}
+
+    first = plane.execute(
+        scope=scope,
+        payload=payload_a,
+        lock_domain="workflow",
+        lock_object_id="wf-1",
+        operation=lambda: {"ok": True},
+    )
+    second = plane.execute(
+        scope=scope,
+        payload=payload_b,
+        lock_domain="workflow",
+        lock_object_id="wf-1",
+        operation=lambda: {"ok": True},
+    )
+
+    assert first == second

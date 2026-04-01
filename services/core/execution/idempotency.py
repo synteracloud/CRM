@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from hashlib import sha256
+import json
 from threading import RLock
 from time import time
 from typing import Any
@@ -9,6 +10,10 @@ from typing import Any
 
 class IdempotencyConflictError(ValueError):
     """Raised when an idempotency key is reused with payload drift."""
+
+
+class IdempotencyInProgressError(RuntimeError):
+    """Raised when an equivalent idempotent request is still in-flight."""
 
 
 @dataclass(frozen=True)
@@ -35,7 +40,7 @@ class GlobalIdempotencyLedger:
     Scope key: (tenant_id, http_method, canonical_route, idempotency_key)
     """
 
-    TERMINAL_STATUSES = {"succeeded", "failed_non_retryable"}
+    TERMINAL_STATUSES = {"succeeded", "failed_non_retryable", "failed_retryable"}
 
     def __init__(self) -> None:
         self._lock = RLock()
@@ -43,7 +48,7 @@ class GlobalIdempotencyLedger:
 
     @staticmethod
     def hash_payload(payload: dict[str, Any]) -> str:
-        canonical = repr(sorted(payload.items()))
+        canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
         return sha256(canonical.encode("utf-8")).hexdigest()
 
     @staticmethod

@@ -1,5 +1,10 @@
 from .control_plane import ExecutionControlPlane, ReviewReport
-from .idempotency import GlobalIdempotencyLedger, IdempotencyConflictError, IdempotencyScope
+from .idempotency import (
+    GlobalIdempotencyLedger,
+    IdempotencyConflictError,
+    IdempotencyInProgressError,
+    IdempotencyScope,
+)
 from .recovery import RecoveryQueue
 from .retry import (
     NonRetryableBusinessError,
@@ -15,6 +20,7 @@ __all__ = [
     "ExecutionControlPlane",
     "GlobalIdempotencyLedger",
     "IdempotencyConflictError",
+    "IdempotencyInProgressError",
     "IdempotencyScope",
     "NonRetryableBusinessError",
     "NonRetryableSystemError",

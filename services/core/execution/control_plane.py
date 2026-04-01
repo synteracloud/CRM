@@ -5,7 +5,7 @@ import logging
 from typing import Any, Callable
 
 from .concurrency import ConcurrencyController
-from .idempotency import GlobalIdempotencyLedger, IdempotencyScope
+from .idempotency import GlobalIdempotencyLedger, IdempotencyInProgressError, IdempotencyScope
 from .recovery import RecoveryQueue
 from .retry import NonRetryableBusinessError, RetryExecutor, RetryPolicy
 from .transactions import TransactionManager
@@ -41,6 +41,10 @@ class ExecutionControlPlane:
         if not is_new and record.status == "succeeded" and record.response is not None:
             logger.info("idempotency-hit", extra={"scope": record.scope})
             return record.response
+        if not is_new and record.status == "in_progress":
+            raise IdempotencyInProgressError("request_in_progress")
+        if not is_new and record.status == "failed_retryable":
+            logger.info("idempotency-retryable-retry", extra={"scope": record.scope})
 
         lock_key = self.concurrency.lock_key(
             tenant_id=scope.tenant_id,
@@ -70,6 +74,7 @@ class ExecutionControlPlane:
         except Exception as exc:
             self.recovery.enqueue(f"{scope.tenant_id}:{scope.idempotency_key}", payload)
             self.recovery.mark_failed(f"{scope.tenant_id}:{scope.idempotency_key}", reason=str(exc))
+            self.idempotency.finalize(scope=scope, status="failed_retryable", response={"error": str(exc)})
             logger.exception("execution-failed-retryable", extra={"scope": scope, "error": str(exc)})
             raise
 
