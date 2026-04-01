@@ -18,15 +18,23 @@ from adapters.interfaces.types import AdapterContext, AdapterError
 
 from .entities import Contact, Conversation, ConversationState, MessageDirection, MessageEvent, MessageRecord
 from .repository import MessagingRepository
+from services.leads.service import WhatsAppLeadCaptureService
 
 
 class WhatsAppCoreEngine:
     """Country-agnostic execution layer for message processing and timeline mapping."""
 
-    def __init__(self, repository: MessagingRepository, adapter: MessagingAdapter, provider: str) -> None:
+    def __init__(
+        self,
+        repository: MessagingRepository,
+        adapter: MessagingAdapter,
+        provider: str,
+        lead_capture_service: WhatsAppLeadCaptureService | None = None,
+    ) -> None:
         self._repository = repository
         self._adapter = adapter
         self._provider = provider
+        self._lead_capture_service = lead_capture_service
 
     def handle_inbound_webhook(self, webhook: RawWebhookInput, ctx: AdapterContext) -> list[MessageRecord]:
         inbound = self._adapter.parse_inbound(webhook, ctx)
@@ -182,7 +190,7 @@ class WhatsAppCoreEngine:
             provider=self._provider,
             provider_message_id=item.provider_message_id,
             text=item.text,
-            intent="INBOUND_USER_MESSAGE",
+            intent=self._classify_inbound_intent(item.text),
             status=MessageDeliveryStatus.RECEIVED.value,
             payload_hash=self._hash_payload(item.text, item.from_number),
             timestamp=item.occurred_at,
@@ -198,6 +206,15 @@ class WhatsAppCoreEngine:
                 occurred_at=item.occurred_at,
             )
         )
+        if self._lead_capture_service:
+            self._lead_capture_service.capture_inbound_message(
+                tenant_id=ctx.tenant_id,
+                contact_id=contact.contact_id,
+                normalized_phone=contact.normalized_phone,
+                conversation_id=conversation.conversation_id,
+                message=stored,
+                classified_intent=stored.intent,
+            )
         return stored
 
     def _resolve_contact_conversation(
@@ -240,6 +257,19 @@ class WhatsAppCoreEngine:
     @staticmethod
     def _hash_payload(text: str, phone: str) -> str:
         return hashlib.sha256(f"{phone}:{text}".encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _classify_inbound_intent(text: str) -> str:
+        normalized = text.lower()
+        if any(token in normalized for token in ("buy", "invoice paid", "payment done", "confirmed")):
+            return "PURCHASE_CONFIRMED"
+        if any(token in normalized for token in ("price", "discount", "offer", "negotiate", "counter")):
+            return "NEGOTIATION"
+        if any(token in normalized for token in ("not interested", "stop", "cancel")):
+            return "LOST_SIGNAL"
+        if any(token in normalized for token in ("budget", "team size", "company", "need", "requirements")):
+            return "QUALIFICATION"
+        return "INBOUND_USER_MESSAGE"
 
     def _make_event(
         self,
