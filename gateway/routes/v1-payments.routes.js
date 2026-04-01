@@ -20,6 +20,7 @@ const ALLOWED_STATUS_FLOW = Object.freeze({
 
 const payments = [];
 const revenueLedger = [];
+const paymentTransitionDedupe = new Set();
 
 function nowIso() {
   return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -36,6 +37,26 @@ function parseDateBoundary(value, boundaryName) {
   }
 
   return { value: parsed };
+}
+
+function clonePayment(payment) {
+  return {
+    ...payment,
+    status_flow: payment.status_flow.map((entry) => ({ ...entry })),
+  };
+}
+
+function runPaymentTransaction(work) {
+  const paymentDraft = payments.map(clonePayment);
+  const revenueDraft = revenueLedger.map((entry) => ({ ...entry }));
+  const dedupeDraft = new Set(paymentTransitionDedupe);
+  const result = work({ paymentDraft, revenueDraft, dedupeDraft });
+
+  payments.splice(0, payments.length, ...paymentDraft);
+  revenueLedger.splice(0, revenueLedger.length, ...revenueDraft);
+  paymentTransitionDedupe.clear();
+  for (const key of dedupeDraft) paymentTransitionDedupe.add(key);
+  return result;
 }
 
 router.get('/', requestValidationMiddleware(), requireScopes(['payments.read']), (req, res) => {
@@ -135,43 +156,62 @@ router.post(
     }
 
     const changedAt = changed_at || nowIso();
-    const previousStatus = payment.status;
-    payment.status = status;
-    payment.updated_at = changedAt;
-    payment.status_flow.push({
-      from_status: previousStatus,
-      to_status: status,
-      changed_at: changedAt,
-      reason: reason || null,
-    });
-
-    if (status === 'settled') {
-      revenueLedger.push({
-        tenant_id: payment.tenant_id,
+    const transitionKey = `${payment.tenant_id}:${payment.payment_id}:${status}:${changedAt}:${reason || ''}`;
+    if (paymentTransitionDedupe.has(transitionKey)) {
+      return respondSuccess(res, {
         payment_id: payment.payment_id,
-        amount_delta: payment.amount,
-        currency: payment.currency,
-        entry_type: 'recognition',
-        recognized_at: changedAt,
-      });
-    } else if (status === 'partially_refunded' || status === 'refunded' || status === 'chargeback') {
-      revenueLedger.push({
-        tenant_id: payment.tenant_id,
-        payment_id: payment.payment_id,
-        amount_delta: -payment.amount,
-        currency: payment.currency,
-        entry_type: status === 'chargeback' ? 'chargeback_adjustment' : 'refund',
-        recognized_at: changedAt,
+        previous_status: payment.status,
+        current_status: payment.status,
+        changed_at: changedAt,
+        status_flow: payment.status_flow,
       });
     }
 
-    return respondSuccess(res, {
-      payment_id: payment.payment_id,
-      previous_status: previousStatus,
-      current_status: status,
-      changed_at: changedAt,
-      status_flow: payment.status_flow,
+    const response = runPaymentTransaction(({ paymentDraft, revenueDraft, dedupeDraft }) => {
+      const paymentDraftRow = paymentDraft.find((p) => p.payment_id === payment.payment_id && p.tenant_id === req.auth.tenant_id);
+      if (!paymentDraftRow) return null;
+
+      const previousStatus = paymentDraftRow.status;
+      paymentDraftRow.status = status;
+      paymentDraftRow.updated_at = changedAt;
+      paymentDraftRow.status_flow.push({
+        from_status: previousStatus,
+        to_status: status,
+        changed_at: changedAt,
+        reason: reason || null,
+      });
+
+      if (status === 'settled') {
+        revenueDraft.push({
+          tenant_id: paymentDraftRow.tenant_id,
+          payment_id: paymentDraftRow.payment_id,
+          amount_delta: paymentDraftRow.amount,
+          currency: paymentDraftRow.currency,
+          entry_type: 'recognition',
+          recognized_at: changedAt,
+        });
+      } else if (status === 'partially_refunded' || status === 'refunded' || status === 'chargeback') {
+        revenueDraft.push({
+          tenant_id: paymentDraftRow.tenant_id,
+          payment_id: paymentDraftRow.payment_id,
+          amount_delta: -paymentDraftRow.amount,
+          currency: paymentDraftRow.currency,
+          entry_type: status === 'chargeback' ? 'chargeback_adjustment' : 'refund',
+          recognized_at: changedAt,
+        });
+      }
+
+      dedupeDraft.add(transitionKey);
+      return {
+        payment_id: paymentDraftRow.payment_id,
+        previous_status: previousStatus,
+        current_status: status,
+        changed_at: changedAt,
+        status_flow: paymentDraftRow.status_flow,
+      };
     });
+
+    return respondSuccess(res, response);
   },
 );
 

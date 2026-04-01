@@ -8,7 +8,7 @@ const {
   listQuotes,
   getQuoteById,
   acceptQuote,
-  createOrderFromQuote,
+  acceptQuoteAndCreateOrderUow,
 } = require('../data/cpq-store');
 
 const router = express.Router();
@@ -135,16 +135,10 @@ router.post('/:quote_id/orders', requestValidationMiddleware(), requireScopes(['
   }
 
   if (quote.status !== 'accepted' || !quote.accepted_at) {
-    return respondError(
-      res,
-      'conflict',
-      'Quote must be accepted before conversion to order.',
-      [{ field: 'status', reason: 'quote_not_accepted' }],
-      409,
-    );
+    return respondError(res, 'conflict', 'Quote must be accepted before conversion to order.', [{ field: 'status', reason: 'quote_not_accepted' }], 409);
   }
 
-  const order = createOrderFromQuote(quote);
+  const order = acceptQuoteAndCreateOrderUow(req.auth.tenant_id, req.params.quote_id);
 
   return res.status(201).json({
     data: order,
