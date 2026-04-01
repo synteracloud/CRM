@@ -2,18 +2,26 @@ const { respondError } = require('./response-wrapper');
 
 const buckets = new Map();
 const WINDOW_MS = 60 * 1000;
+const ROUTE_TOKEN_PATTERN = /\/[A-Za-z0-9_-]{6,}/g;
+
+function canonicalRoute(path = '') {
+  return path.replace(ROUTE_TOKEN_PATTERN, '/:id');
+}
 
 function endpointLimit(method, path) {
-  const key = `${method.toUpperCase()} ${path}`;
+  const canonicalPath = canonicalRoute(path);
+  const key = `${method.toUpperCase()} ${canonicalPath}`;
   if (/POST \/api\/v1\/(payments|emails|users|forecasts)/.test(key)) return 20;
+  if (/POST \/api\/v1\/(audit|audits)/.test(key)) return 10;
   if (method.toUpperCase() === 'GET') return 300;
   return 120;
 }
 
 function localEvaluate({ path, method, subject, tenant_id }) {
+  const canonicalPath = canonicalRoute(path);
   const limit = endpointLimit(method, path);
   const now = Date.now();
-  const bucketKey = `${tenant_id || 'unknown'}:${subject}:${method.toUpperCase()}:${path}`;
+  const bucketKey = `${tenant_id || 'unknown'}:${subject}:${method.toUpperCase()}:${canonicalPath}`;
   let bucket = buckets.get(bucketKey);
 
   if (!bucket || now >= bucket.resetAt) {

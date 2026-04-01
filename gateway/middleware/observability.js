@@ -11,6 +11,7 @@ function normalizeTraceId(incoming) {
 }
 
 function observabilityMiddleware({ logger = console } = {}) {
+  let inflight = 0;
   return function observe(req, res, next) {
     const startedAt = process.hrtime.bigint();
     const incomingTrace = req.headers['x-trace-id'];
@@ -18,8 +19,10 @@ function observabilityMiddleware({ logger = console } = {}) {
 
     req.trace_id = traceId;
     res.setHeader('x-trace-id', traceId);
+    inflight += 1;
 
     res.on('finish', () => {
+      inflight = Math.max(inflight - 1, 0);
       const elapsedNs = process.hrtime.bigint() - startedAt;
       const elapsedMs = Number(elapsedNs / 1000000n);
       logger.info?.({
@@ -32,6 +35,8 @@ function observabilityMiddleware({ logger = console } = {}) {
         route: req.path,
         status_code: res.statusCode,
         duration_ms: elapsedMs,
+        inflight_requests: inflight,
+        severity: res.statusCode >= 500 ? 'error' : 'info',
       });
     });
 
