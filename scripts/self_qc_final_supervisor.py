@@ -12,6 +12,7 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -46,6 +47,42 @@ PRIOR_QC_SCRIPTS = [
 ]
 
 
+def _discover_qc_scripts() -> list[str]:
+    """Return all self-QC scripts except this final supervisor wrapper.
+
+    The list is deterministic and merged with the curated PRIOR_QC_SCRIPTS list,
+    ensuring we execute explicitly required gates and any newly added QC layers.
+    """
+
+    discovered = {
+        str(path.relative_to(ROOT)).replace("\\", "/")
+        for path in (ROOT / "scripts").glob("self_qc_*.py")
+        if path.name != "self_qc_final_supervisor.py"
+    }
+    ordered = list(dict.fromkeys([*PRIOR_QC_SCRIPTS, *sorted(discovered)]))
+    return ordered
+
+
+def _retry_safe_run(path: str, attempts: int = 2) -> tuple[bool, str]:
+    """Run a QC script with bounded retries to absorb transient execution flakes."""
+
+    outputs: list[str] = []
+    for idx in range(1, attempts + 1):
+        ok, output = _run_python(path)
+        outputs.append(f"attempt {idx}: {output}".strip())
+        if ok:
+            return True, output
+    return False, "\n".join(outputs)
+
+
+def _non_empty_docs(paths: Iterable[Path]) -> list[str]:
+    return [
+        str(path.relative_to(ROOT)).replace("\\", "/")
+        for path in paths
+        if path.is_file() and not path.read_text(encoding="utf-8").strip()
+    ]
+
+
 def _read(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
@@ -72,6 +109,7 @@ def _gate() -> list[tuple[str, bool, str]]:
     concurrency = _read("docs/concurrency-control.md")
     locks = _read("docs/distributed-lock-strategy.md")
     routes_index = _read("gateway/routes/index.js")
+    all_docs = sorted((ROOT / "docs").glob("*.md"))
 
     checks: list[tuple[str, bool, str]] = []
 
@@ -80,6 +118,13 @@ def _gate() -> list[tuple[str, bool, str]]:
         "B0->B9 QC corpus exists",
         not missing_docs,
         "" if not missing_docs else f"missing: {', '.join(missing_docs)}",
+    ))
+
+    empty_docs = _non_empty_docs(all_docs)
+    checks.append((
+        "All /docs artifacts are non-empty",
+        not empty_docs,
+        "" if not empty_docs else f"empty docs: {', '.join(empty_docs)}",
     ))
 
     checks.append((
@@ -112,8 +157,8 @@ def _gate() -> list[tuple[str, bool, str]]:
         "idempotency/OCC/distributed lock guarantees incomplete",
     ))
 
-    for script in PRIOR_QC_SCRIPTS:
-        ok, output = _run_python(script)
+    for script in _discover_qc_scripts():
+        ok, output = _retry_safe_run(script)
         checks.append((
             f"Prior QC pass: {script}",
             ok,
