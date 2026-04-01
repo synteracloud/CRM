@@ -1,8 +1,10 @@
 const { app } = require('./app');
+const { buildRuntimeConfig } = require('./config/runtime-config');
 
-const port = Number(process.env.PORT || 8080);
+const runtimeConfig = buildRuntimeConfig();
+const port = runtimeConfig.service.port;
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
-  console.log(`API gateway listening on ${port}`);
+  console.log(`API gateway listening on ${port} (${runtimeConfig.service.name}@${runtimeConfig.service.version})`);
 });
