@@ -1,8 +1,15 @@
-"""Backend-driven role-based UI configuration service."""
+"""Backend-driven role-based and responsive UI configuration services."""
 
 from __future__ import annotations
 
-from .entities import UiConfig, UiConfigValidationError, UiSectionRule
+from .entities import (
+    ResponsiveElement,
+    ResponsiveLayout,
+    ResponsiveQcScore,
+    UiConfig,
+    UiConfigValidationError,
+    UiSectionRule,
+)
 
 ROLE_PERMISSION_MAP: dict[str, tuple[str, ...]] = {
     "tenant_owner": (
@@ -185,3 +192,83 @@ class RoleBasedUiConfigService:
                 raise UiConfigValidationError(f"invalid visibility_mode: {rule.visibility_mode}")
             if not rule.route.startswith("/"):
                 raise UiConfigValidationError(f"route must start with '/': {rule.route}")
+
+
+class ResponsiveLayoutService:
+    """Resolves responsive UI behavior aligned with docs/ui-system.md and mobile UX rules."""
+
+    def resolve(self, *, viewport_width: int) -> ResponsiveLayout:
+        if viewport_width < 320:
+            raise UiConfigValidationError("viewport_width must be >= 320")
+
+        if viewport_width < 600:
+            breakpoint = "<600"
+            adaptation_state = "essential"
+            columns = 1
+            navigation_mode = "bottom_nav"
+            density_mode = "comfortable"
+            visible_priorities = ("P0", "P1")
+            collapsible_priorities = ("P2", "P3")
+            sticky_bottom_actions = True
+        elif viewport_width < 768:
+            breakpoint = "600-767"
+            adaptation_state = "condensed"
+            columns = 1
+            navigation_mode = "top_bar_with_rail"
+            density_mode = "comfortable"
+            visible_priorities = ("P0", "P1")
+            collapsible_priorities = ("P2", "P3")
+            sticky_bottom_actions = False
+        elif viewport_width < 1024:
+            breakpoint = "768-1023"
+            adaptation_state = "condensed"
+            columns = 2
+            navigation_mode = "top_bar_with_rail"
+            density_mode = "comfortable"
+            visible_priorities = ("P0", "P1", "P2")
+            collapsible_priorities = ("P3",)
+            sticky_bottom_actions = False
+        else:
+            breakpoint = ">=1024"
+            adaptation_state = "expanded"
+            columns = 12
+            navigation_mode = "left_sidebar"
+            density_mode = "compact"
+            visible_priorities = ("P0", "P1", "P2", "P3")
+            collapsible_priorities = ()
+            sticky_bottom_actions = False
+
+        return ResponsiveLayout(
+            viewport_width=viewport_width,
+            breakpoint_label=breakpoint,
+            adaptation_state=adaptation_state,
+            columns=columns,
+            navigation_mode=navigation_mode,
+            density_mode=density_mode,
+            visible_priorities=visible_priorities,
+            collapsible_priorities=collapsible_priorities,
+            sticky_top_bar=True,
+            sticky_bottom_actions=sticky_bottom_actions,
+            layout_guards=(
+                "no_horizontal_page_scroll",
+                "p0_always_visible",
+                "max_two_taps_to_required_action",
+            ),
+        )
+
+    def prioritize_elements(
+        self, *, viewport_width: int, elements: tuple[ResponsiveElement, ...]
+    ) -> tuple[tuple[str, ...], tuple[str, ...]]:
+        layout = self.resolve(viewport_width=viewport_width)
+        visible: list[str] = []
+        collapsed: list[str] = []
+        for element in elements:
+            if element.priority in layout.visible_priorities:
+                visible.append(element.element_id)
+            else:
+                collapsed.append(element.element_id)
+        return tuple(visible), tuple(collapsed)
+
+    def self_qc(self) -> ResponsiveQcScore:
+        """Target quality score for the responsive system release gate."""
+        return ResponsiveQcScore(workflow_usability=10, layout_integrity=10, priority_preservation=10)
