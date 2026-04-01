@@ -192,9 +192,12 @@ class CPQRulesEngine:
             )
 
         products = {item.product_id for item in quote.line_items}
+        bundle_discounts = self._bundle_discounts(products)
         for item in quote.line_items:
             if item.quantity <= 0:
                 errors.append(f"Line {item.line_id} has invalid quantity {item.quantity}")
+            if item.list_price < Decimal("0"):
+                errors.append(f"Line {item.line_id} has invalid list price {item.list_price}")
             policy = self._ruleset.product_policies.get(item.product_id)
             if policy is None:
                 errors.append(f"Product {item.product_id} does not exist in pricing policy")
@@ -202,6 +205,11 @@ class CPQRulesEngine:
             if item.requested_discount_percent > policy.max_discount_percent:
                 errors.append(
                     f"Line {item.line_id} discount {item.requested_discount_percent}% exceeds max {policy.max_discount_percent}%"
+                )
+            combined_discount = item.requested_discount_percent + bundle_discounts.get(item.product_id, Decimal("0"))
+            if combined_discount > Decimal("100"):
+                errors.append(
+                    f"Line {item.line_id} has invalid pricing discount {combined_discount}% (must be <= 100%)"
                 )
             for must_have in policy.must_bundle_with:
                 if must_have not in products:
@@ -225,6 +233,7 @@ class CPQRulesEngine:
         lines: list[CPQLineResult] = []
         for item in sorted(quote.line_items, key=lambda entry: entry.line_id):
             discount_percent = _quantize_percent(item.requested_discount_percent + bundle_discounts.get(item.product_id, Decimal("0")))
+            discount_percent = min(discount_percent, Decimal("100"))
             discount_multiplier = Decimal("1") - (discount_percent / Decimal("100"))
             net_unit = _money(item.list_price * discount_multiplier)
             lines.append(
