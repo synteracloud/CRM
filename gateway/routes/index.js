@@ -17,7 +17,9 @@ const { respondError } = require('../middleware/response-wrapper');
 
 const router = express.Router();
 
-router.use('/users', usersV1Router);
+const API_V1_PREFIX = '/api/v1';
+
+router.use('/users', usersV1Router); // Mounted under /api/v1/users at gateway entrypoint.
 router.use('/accounts', accountsV1Router);
 router.use('/contacts', contactsV1Router);
 router.use('/quotes', quotesV1Router);
