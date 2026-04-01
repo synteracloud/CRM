@@ -8,7 +8,7 @@ from typing import Any
 
 LEAD_EVENT_TO_CATALOG: dict[str, str] = {
     "lead_created": "lead.created.v1",
-    "lead_qualified": "internal.lead.qualified.v1",
+    "lead_qualified": "lead.assignment.updated.v1",
     "lead_converted": "lead.converted.v1",
 }
 

@@ -13,11 +13,11 @@ LEAD_LIFECYCLE_WORKFLOW: tuple[dict[str, str], ...] = (
         "catalog_event": "lead.created.v1",
     },
     {
-        "step": "qualify",
+        "step": "assign_and_qualify",
         "status": "qualified",
         "service": "Lead Management Service",
         "event": "lead_qualified",
-        "catalog_event": "internal.lead.qualified.v1",
+        "catalog_event": "lead.assignment.updated.v1",
     },
     {
         "step": "convert",

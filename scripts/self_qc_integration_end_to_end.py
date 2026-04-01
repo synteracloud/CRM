@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
 
@@ -13,9 +14,12 @@ if str(ROOT) not in sys.path:
 from src.automation_journeys import JourneyService
 from src.automation_journeys.workflow_mapping import build_default_journeys
 from src.campaigns import Campaign, CampaignLeadLink, CampaignService, SegmentDefinition, SegmentRule
+from src.campaigns.workflow_mapping import CAMPAIGN_SEGMENTATION_WORKFLOW
 from src.data_deduplication_engine import DataDeduplicationEngine
 from src.event_bus import Event, InMemoryEventBus
-from src.lead_management import Lead, LeadService
+from src.event_bus.catalog_events import EVENT_NAME_SET
+from src.lead_management import LEAD_LIFECYCLE_WORKFLOW, Lead, LeadService
+from src.lead_management.events import LEAD_EVENT_TO_CATALOG
 from src.rule_engine import CPQLineItemInput, CPQQuoteInput, CPQRulesEngine
 from src.subscription_billing import PaymentEvent, Subscription, SubscriptionBillingService
 from src.support_console import QueueItem, SupportConsoleService
@@ -23,8 +27,77 @@ from src.ticket_management import EscalationRule, SlaEscalationService, Ticket, 
 from src.usage_billing import BillableEventRule, MeterRateCard, TrackedEvent, UsageBillingService, period_bounds_from_month
 
 
+@dataclass(frozen=True)
+class ReviewReport:
+    gaps: list[str]
+    drift: list[str]
+    missing_flows: list[str]
+    sales_alignment_percent: int
+    support_alignment_percent: int
+    marketing_alignment_percent: int
+    cross_module_alignment_percent: int
+
+
+def _pct(results: list[bool]) -> int:
+    return int(round((sum(1 for ok in results if ok) / len(results)) * 100)) if results else 0
+
+
+def _run_review_phase() -> ReviewReport:
+    gaps: list[str] = []
+    drift: list[str] = []
+    missing_flows: list[str] = []
+
+    sales_checks = [
+        any(step["catalog_event"] == "lead.created.v1" for step in LEAD_LIFECYCLE_WORKFLOW),
+        any(step["catalog_event"] == "lead.assignment.updated.v1" for step in LEAD_LIFECYCLE_WORKFLOW),
+        any(step["catalog_event"] == "lead.converted.v1" for step in LEAD_LIFECYCLE_WORKFLOW),
+        LEAD_EVENT_TO_CATALOG.get("lead_qualified") == "lead.assignment.updated.v1",
+    ]
+    if not sales_checks[1]:
+        gaps.append("Sales workflow missing lead.assignment.updated.v1 transition")
+    if not sales_checks[3]:
+        drift.append("Lead qualified event is not catalog-aligned with assignment transition")
+
+    support_checks = [
+        TicketService().create_ticket,
+        hasattr(TicketService, "start_progress"),
+        hasattr(TicketService, "resolve_ticket"),
+        hasattr(TicketService, "close_ticket"),
+    ]
+    if not support_checks[3]:
+        gaps.append("Support workflow missing resolved -> closed lifecycle transition")
+
+    marketing_checks = [
+        any(step["catalog_event"] == "campaign.created.v1" for step in CAMPAIGN_SEGMENTATION_WORKFLOW),
+        any(step["catalog_event"] == "campaign.activated.v1" for step in CAMPAIGN_SEGMENTATION_WORKFLOW),
+        any(step["catalog_event"] == "campaign.completed.v1" for step in CAMPAIGN_SEGMENTATION_WORKFLOW),
+    ]
+    if not all(marketing_checks):
+        missing_flows.append("Marketing campaign lifecycle is missing canonical campaign stage events")
+
+    cross_checks = [
+        "lead.converted.v1" in EVENT_NAME_SET,
+        "workflow.execution.completed.v1" in EVENT_NAME_SET,
+        "payment.event.recorded.v1" in EVENT_NAME_SET,
+        "campaign.completed.v1" in EVENT_NAME_SET,
+    ]
+    if not all(cross_checks):
+        missing_flows.append("Cross-module event catalog does not fully cover sales/support/marketing/billing handoffs")
+
+    return ReviewReport(
+        gaps=gaps,
+        drift=drift,
+        missing_flows=missing_flows,
+        sales_alignment_percent=_pct(sales_checks),
+        support_alignment_percent=_pct([bool(item) for item in support_checks]),
+        marketing_alignment_percent=_pct(marketing_checks),
+        cross_module_alignment_percent=_pct(cross_checks),
+    )
+
+
 def run_self_qc() -> tuple[int, list[str]]:
     checks: list[tuple[str, bool]] = []
+    review = _run_review_phase()
 
     tenant_id = "tenant-e2e"
 
@@ -335,6 +408,18 @@ def run_self_qc() -> tuple[int, list[str]]:
 
     # 6) ID continuity across lifecycle artifacts.
     checks.append(("lifecycle IDs remain linked end-to-end", invoice_inputs[0].subscription_id == subscription.subscription_id == payment.subscription_id))
+
+    checks.extend(
+        (
+            ("review phase gaps list is empty", not review.gaps),
+            ("review phase drift list is empty", not review.drift),
+            ("review phase missing flow list is empty", not review.missing_flows),
+            ("sales alignment is 100%", review.sales_alignment_percent == 100),
+            ("support alignment is 100%", review.support_alignment_percent == 100),
+            ("marketing alignment is 100%", review.marketing_alignment_percent == 100),
+            ("cross-module alignment is 100%", review.cross_module_alignment_percent == 100),
+        )
+    )
 
     passed = sum(1 for _, ok in checks if ok)
     score = int(round((passed / len(checks)) * 10))
