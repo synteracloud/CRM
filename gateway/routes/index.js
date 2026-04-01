@@ -30,7 +30,7 @@ router.use('/api/v1/activities', activitiesV1Router);
 router.use('/api/v1/tasks', tasksV1Router);
 router.use('/api/v1/price-books', priceBooksV1Router);
 router.use('/api/v1/emails', emailsV1Router);
-router.use('/api/v1/audit', auditV1Router);
+router.use('/api/v1/audits', auditV1Router);
 
 router.use((req, res) => respondError(res, 'not_found', 'The requested resource was not found.', [], 404));
 
