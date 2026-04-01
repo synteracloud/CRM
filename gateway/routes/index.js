@@ -17,20 +17,20 @@ const { respondError } = require('../middleware/response-wrapper');
 
 const router = express.Router();
 
-router.use('/api/v1/users', usersV1Router);
-router.use('/api/v1/accounts', accountsV1Router);
-router.use('/api/v1/contacts', contactsV1Router);
-router.use('/api/v1/quotes', quotesV1Router);
-router.use('/api/v1/orders', ordersV1Router);
-router.use('/api/v1/payments', paymentsV1Router);
-router.use('/api/v1/forecasts', forecastsV1Router);
-router.use('/api/v1/subscriptions', subscriptionsV1Router);
-router.use('/api/v1/invoice-summaries', invoiceSummariesV1Router);
-router.use('/api/v1/activities', activitiesV1Router);
-router.use('/api/v1/tasks', tasksV1Router);
-router.use('/api/v1/price-books', priceBooksV1Router);
-router.use('/api/v1/emails', emailsV1Router);
-router.use('/api/v1/audits', auditV1Router);
+router.use('/users', usersV1Router);
+router.use('/accounts', accountsV1Router);
+router.use('/contacts', contactsV1Router);
+router.use('/quotes', quotesV1Router);
+router.use('/orders', ordersV1Router);
+router.use('/payments', paymentsV1Router);
+router.use('/forecasts', forecastsV1Router);
+router.use('/subscriptions', subscriptionsV1Router);
+router.use('/invoice-summaries', invoiceSummariesV1Router);
+router.use('/activities', activitiesV1Router);
+router.use('/tasks', tasksV1Router);
+router.use('/price-books', priceBooksV1Router);
+router.use('/emails', emailsV1Router);
+router.use('/audits', auditV1Router);
 
 router.use((req, res) => respondError(res, 'not_found', 'The requested resource was not found.', [], 404));
 
