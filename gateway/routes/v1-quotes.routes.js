@@ -1,6 +1,5 @@
 const express = require('express');
 const { requestValidationMiddleware } = require('../middleware/request-validation');
-const { respondSuccess, respondError } = require('../middleware/response-wrapper');
 const { requireScopes } = require('../middleware/auth-rbac');
 const { isRfc3339Utc } = require('../validators/common');
 const {

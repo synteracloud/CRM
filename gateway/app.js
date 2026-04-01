@@ -24,7 +24,7 @@ app.use(
 app.use(idempotencyMiddleware());
 app.use(auditMiddleware({ strict: true }));
 
-app.use(routes);
+app.use('/api/v1', routes);
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
