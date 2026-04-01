@@ -95,6 +95,39 @@ class CollectionsEngineTests(unittest.TestCase):
         assert rec is not None
         self.assertEqual(rec.match_status, "needs_review")
 
+    def test_collections_automation_cycle_response_tracking_and_escalation(self) -> None:
+        self.service.create_invoice(
+            Invoice(
+                invoice_id="inv-3",
+                invoice_number="INV-300",
+                customer_id="cust-3",
+                issue_date="2026-03-01",
+                due_date="2026-03-20",
+                currency="PKR",
+                total_amount=800,
+            )
+        )
+
+        invoice_after_ignore_1 = self.service.track_customer_response(
+            invoice_id="inv-3", reminder_sequence=1, replied=False, note="no answer"
+        )
+        self.assertEqual(invoice_after_ignore_1.escalation_level, 0)
+
+        invoice_after_ignore_2 = self.service.track_customer_response(
+            invoice_id="inv-3", reminder_sequence=2, replied=False, note="still no answer"
+        )
+        self.assertGreaterEqual(invoice_after_ignore_2.escalation_level, 2)
+
+        invoice_after_reply = self.service.track_customer_response(
+            invoice_id="inv-3", reminder_sequence=3, replied=True, note="will pay this week"
+        )
+        self.assertGreaterEqual(invoice_after_reply.escalation_level, 2)
+
+        cycle = self.service.run_automation_cycle("inv-3", payment_received=False)
+        self.assertEqual(cycle.alignment_percent, 100)
+        self.assertEqual(cycle.score, "10/10")
+        self.assertTrue(cycle.missed_payment_detected)
+
 
 if __name__ == "__main__":
     unittest.main()

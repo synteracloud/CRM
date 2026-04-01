@@ -6,6 +6,8 @@ from dataclasses import replace
 from datetime import date
 from typing import Protocol
 
+from .automation import CollectionsAutomationEngine
+from .automation.entities import AutomationCycleReport, CustomerResponse
 from .entities import Invoice, Payment, ReconciliationCase, ReviewReport
 from .reminders import ReminderScheduler
 
@@ -30,6 +32,7 @@ class CollectionsService:
         self._reconciliation_cases: dict[str, ReconciliationCase] = {}
         self._invoice_to_payments: dict[str, list[str]] = {}
         self._scheduler = ReminderScheduler()
+        self._automation = CollectionsAutomationEngine()
 
     def create_invoice(self, invoice: Invoice) -> Invoice:
         if invoice.invoice_id in self._invoices or invoice.invoice_number in self._invoice_by_number:
@@ -134,6 +137,27 @@ class CollectionsService:
         )
         self._reconciliation_cases[case.case_id] = case
         return case
+
+
+    def run_automation_cycle(self, invoice_id: str, payment_received: bool = False) -> AutomationCycleReport:
+        invoice = self.get_invoice(invoice_id)
+        plan = self._automation.build_plan(invoice)
+        for touchpoint in plan.touchpoints:
+            self._automation.mark_sent(invoice_id, touchpoint.sequence)
+        return self._automation.evaluate_cycle(invoice, payment_received=payment_received)
+
+    def track_customer_response(self, invoice_id: str, reminder_sequence: int, replied: bool, note: str | None = None) -> Invoice:
+        response = CustomerResponse(
+            invoice_id=invoice_id,
+            reminder_sequence=reminder_sequence,
+            state="replied" if replied else "ignored",
+            response_note=note,
+        )
+        decision = self._automation.track_response(response)
+        current = self.get_invoice(invoice_id)
+        updated = self._automation.apply_escalation(current, decision)
+        self._invoices[invoice_id] = updated
+        return updated
 
     def run_overdue_rollup(self, as_of: str) -> list[Invoice]:
         out: list[Invoice] = []
