@@ -53,6 +53,8 @@ class EscalationControl:
 @dataclass(frozen=True)
 class SupportWorkspace:
     workspace_id: str
+    workflow_name: str
+    read_model: str
     primary_view: Literal["queue"]
     queue_items: tuple[QueueItem, ...]
     selected_ticket_id: str | None
