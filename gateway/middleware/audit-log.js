@@ -12,6 +12,10 @@ function hashEnvelope(envelope) {
 }
 
 function appendAuditEvent(event) {
+  const chainState = verifyAuditChain();
+  if (!chainState.valid) {
+    throw new Error(`Audit chain tamper detected at index ${chainState.failing_index}`);
+  }
   const previousHash = auditEvents.length > 0 ? auditEvents[auditEvents.length - 1].hash : null;
   const envelope = {
     ...event,
@@ -21,6 +25,22 @@ function appendAuditEvent(event) {
   const immutableRecord = Object.freeze({ ...envelope, hash });
   auditEvents.push(immutableRecord);
   return immutableRecord;
+}
+
+function verifyAuditChain() {
+  for (let i = 0; i < auditEvents.length; i += 1) {
+    const current = auditEvents[i];
+    const expectedPrevHash = i === 0 ? null : auditEvents[i - 1].hash;
+    if (current.previous_hash !== expectedPrevHash) {
+      return { valid: false, failing_index: i, reason: 'previous_hash_mismatch' };
+    }
+
+    const { hash, ...envelope } = current;
+    if (hashEnvelope(envelope) !== hash) {
+      return { valid: false, failing_index: i, reason: 'hash_mismatch' };
+    }
+  }
+  return { valid: true };
 }
 
 const ACTIONS_BY_ROUTE = Object.freeze({
@@ -90,10 +110,11 @@ function auditMiddleware({ strict = true } = {}) {
 }
 
 function listAuditEvents(tenantId) {
-  return auditEvents.filter((event) => event.tenant_id === tenantId);
+  return Object.freeze(auditEvents.filter((event) => event.tenant_id === tenantId).map((event) => Object.freeze({ ...event })));
 }
 
 module.exports = {
   auditMiddleware,
   listAuditEvents,
+  verifyAuditChain,
 };

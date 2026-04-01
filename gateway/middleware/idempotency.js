@@ -59,11 +59,13 @@ function idempotencyMiddleware() {
 
     const originalJson = res.json.bind(res);
     res.json = (payload) => {
-      recordStore.set(routeKey, {
-        fingerprint,
-        status: res.statusCode,
-        body: payload,
-      });
+      if (res.statusCode < 500) {
+        recordStore.set(routeKey, {
+          fingerprint,
+          status: res.statusCode,
+          body: payload,
+        });
+      }
       return originalJson(payload);
     };
 

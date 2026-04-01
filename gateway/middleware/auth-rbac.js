@@ -55,6 +55,7 @@ function authMiddleware() {
 
 function requireScopes(requiredScopes = [], options = {}) {
   const requiredRoles = Array.isArray(options.requiredRoles) ? options.requiredRoles : [];
+  const tenantBoundFields = Array.isArray(options.tenantBoundFields) ? options.tenantBoundFields : [];
 
   return function authorize(req, res, next) {
     const tenantHeader = req.headers['x-tenant-id'];
@@ -65,6 +66,7 @@ function requireScopes(requiredScopes = [], options = {}) {
     if (tenantHeader.trim() !== req.auth?.tenant_id) {
       return respondError(res, 'forbidden', 'Tenant context mismatch.', [{ field: 'x-tenant-id', reason: 'tenant_mismatch' }], 403);
     }
+    const tenantId = tenantHeader.trim();
 
     const principalScopes = new Set(req.auth?.scopes || []);
     const missingScopes = requiredScopes.filter((scope) => !principalScopes.has(scope));
@@ -87,6 +89,22 @@ function requireScopes(requiredScopes = [], options = {}) {
           'forbidden',
           'Missing required role for this operation.',
           requiredRoles.map((role) => ({ field: 'roles', reason: `requires_${role}` })),
+          403,
+        );
+      }
+    }
+
+    for (const field of tenantBoundFields) {
+      const fromParams = req.params?.[field];
+      const fromBody = req.body?.[field];
+      const fromQuery = req.query?.[field];
+      const candidate = [fromParams, fromBody, fromQuery].find((value) => typeof value === 'string' && value.trim());
+      if (candidate && candidate.trim() !== tenantId) {
+        return respondError(
+          res,
+          'forbidden',
+          'Tenant-scoped resource mismatch.',
+          [{ field, reason: 'tenant_resource_mismatch' }],
           403,
         );
       }
