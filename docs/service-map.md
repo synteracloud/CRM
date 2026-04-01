@@ -51,7 +51,7 @@
 | External | Telephony Provider | External | Provide call placement/recording and call event webhooks. | Dial requests, call control commands | Call records, call state events, recordings metadata | Communication Service |
 | External | Payment Gateway | External | Process charges/refunds and emit payment lifecycle events. | Payment intents, capture/refund commands | Payment outcomes, settlement events, dispute events | Billing & Subscription Service |
 
-## Capability Ownership Matrix (No Overlap)
+## Domain Coverage Matrix (No Overlap)
 
 | Capability | Single Owning Service |
 |---|---|
