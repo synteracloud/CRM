@@ -1,10 +1,11 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-18 (session 20 — infrastructure seal + environment setup)
+**Last updated:** 2026-05-18 (session 20 — infrastructure seal + rebuild plan initiated)
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
 **Python env:** `D:\Python\python.exe` (3.12.10) → venv `D:\CRM\backend\.venv` → fastapi/uvicorn/pydantic installed — zero C: leakage
+**Rebuild plan:** `REBUILD-PLAN.md` — 5 phases, ~15 weeks to 10/10. Task checklist: `PENDING.md` (root).
 
 ---
 
@@ -152,6 +153,7 @@
 | Batch 17 | investment, new-chat, new-project, plans, search-chat, search-image, your-chat, search-apps, search-apps-details | 2026-05-15 |
 | Session 18–19 | Doc consolidation — 93 production-readiness gaps fixed across 26 docs; linkage audit (11 issues resolved); naming normalisation (ALL-CAPS authority files, kebab-case QC docs) | 2026-05-17 |
 | Session 20 | Infrastructure seal — folder restructure (V4_extracted→backend, nexlink triple-wrap→frontend); all 96 pages verified HTTP 200; npm cache → D:\CRM\.npm-cache; pip cache → D:\CRM\.pip-cache; Python 3.12.10 installed at D:\Python; venv at D:\CRM\backend\.venv; fastapi/uvicorn/pydantic installed; zero C: leakage confirmed | 2026-05-18 |
+| Phase 1 | Foundation Seal COMPLETE — README.md, CHANGELOG.md, CONTRIBUTING.md, Makefile, .pre-commit-config.yaml, ADR-001/002/003, Alembic setup (sqlalchemy+psycopg2 added to requirements), docker-compose+Dockerfiles confirmed existing; 96/96 pages HTTP 200; pushed to GitHub | 2026-05-18 |
 
 ---
 

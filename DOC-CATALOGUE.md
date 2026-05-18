@@ -1,6 +1,6 @@
 # Pakistan CRM — Document Catalogue
 
-**Last updated:** 2026-05-18 (Folder restructure + naming normalisation; Python env sealed: 3.12.10 at D:\Python, venv at D:\CRM\backend\.venv, pip cache at D:\CRM\.pip-cache — zero C: leakage)
+**Last updated:** 2026-05-18 (Phase 1 complete: README.md, CHANGELOG.md, CONTRIBUTING.md, Makefile, .pre-commit-config.yaml, ADR-001/002/003, Alembic setup)
 **Scope:** All .md files in the project — 81 active + 3 archived — each with purpose and description.
 **Purpose:** Ground-truth index built from an actual file system scan. Use this to find any document, understand its purpose, and know whether it is active or a QC record. Paths reflect current folder structure.
 **Linkage audit:** 2026-05-17 — 11 issues resolved (3 broken refs, 5 stale refs, 3 notation mismatches). All cross-references verified clean.
@@ -38,7 +38,12 @@ Build authority files. Claude reads these first every session.
 | `PRODUCT-SPEC.md` | Product specification — what the CRM is, Pakistan behavioural layer, market intelligence. Consolidated from 5 source files (all deleted). | Active |
 | `SCREEN-ARTEFACTS.md` | QC artefact records for all built custom pages — dashboard, leads, followups, contacts. Each has L0–L9 artefact set + T1–T4 QC record. Browser sign-offs pending. | Active |
 | `DOC-CATALOGUE.md` | This file. Index of all .md documents in the project. | Active |
-| `PROGRESS.md` | Frontend page progress tracker — 96/96 library pages complete, custom phase queue defined. | Active |
+| `PROGRESS.md` | Frontend page progress tracker — 96/96 library pages complete, custom phase queue defined. Rebuild plan reference added. | Active |
+| `REBUILD-PLAN.md` | 10/10 rebuild roadmap — 5 phases, ~15 weeks. Phase 1 COMPLETE. Current grades, phase deliverables, non-negotiable rules. | Active |
+| `PENDING.md` | Rebuild task checklist — 155 tasks across 5 phases. Phase 1: 14/14 ✓. Updated as each task completes. | Active |
+| `README.md` | Root GitHub landing page — architecture diagram, quick start, doc index, key constraints. | Active |
+| `CHANGELOG.md` | Version history — sessions 0.1.0 through current. Updated each phase. | Active |
+| `CONTRIBUTING.md` | Branch naming, commit format, PR process, non-negotiable rules for all contributors. | Active |
 
 ---
 

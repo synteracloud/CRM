@@ -1,0 +1,89 @@
+# Changelog
+
+All notable changes to the Pakistan CRM OS are documented here.
+
+Format: [Semantic Versioning](https://semver.org). Each entry covers a build session or phase.
+
+---
+
+## [Unreleased] — Rebuild Phase 1 in progress
+
+### Added
+- `README.md` (root) — GitHub landing page with quick start, architecture diagram, doc index
+- `CHANGELOG.md` — this file
+- `CONTRIBUTING.md` — branch naming, commit format, PR process
+- `Makefile` — make dev, make test, make migrate, make lint
+- `.pre-commit-config.yaml` — ruff + black enforced on every commit
+- `backend/docs/adr/ADR-001.md` — DDD + microservices architecture decision
+- `backend/docs/adr/ADR-002.md` — Adapter pattern for Pakistan isolation
+- `backend/docs/adr/ADR-003.md` — WhatsApp-first interaction model
+- Alembic migration framework — configured in `backend/alembic/`
+- `REBUILD-PLAN.md` — 5-phase 10/10 roadmap
+- `PENDING.md` (root) — 155-task rebuild checklist
+
+---
+
+## [0.20.0] — 2026-05-18 — Infrastructure Seal
+
+### Added
+- Python 3.12.10 runtime at `D:\Python` — zero C: leakage
+- Python venv at `D:\CRM\backend\.venv` — fastapi 0.115.0, uvicorn 0.30.6, pydantic 2.8.2 installed
+- `frontend/.npmrc` — npm cache locked to `D:\CRM\.npm-cache`
+- `C:\Users\Admin\AppData\Roaming\pip\pip.ini` — pip cache locked to `D:\CRM\.pip-cache`
+- `backend/.gitignore` — full Python ignore rules added
+- `.gitignore` (root) — cache and runtime dirs locked to D:\CRM
+
+### Changed
+- Dev server path confirmed: `npm run serve` from `D:\CRM\frontend` — port 3001
+
+### Fixed
+- All 96 library pages verified HTTP 200 after folder restructure
+
+---
+
+## [0.19.0] — 2026-05-17 — Doc Production Readiness
+
+### Changed
+- 93 production-readiness gaps fixed across 26 backend docs
+- 11 linkage/cross-reference issues resolved across all docs
+- Naming normalisation: ALL-CAPS authority files, kebab-case QC/domain docs
+- `DOC-CATALOGUE.md` overhauled as ground-truth document index
+
+---
+
+## [0.18.0] — 2026-05-17 — Workspace Restructure
+
+### Changed
+- Folder restructure: `V4_extracted/CRM-main` → `backend/`; nexlink triple-wrap → `frontend/`
+- All internal paths updated across all docs
+
+---
+
+## [0.17.0] — 2026-05-15 — Library Phase Complete
+
+### Added
+- Session 17: AI section pages (investment, new-chat, new-project, plans, search-chat, search-image, your-chat, search-apps, search-apps-details) — self-contained pages with own aside + header, no crm-shell.js
+
+### Changed
+- All 96/96 NexLink library pages complete — all browser-approved
+
+---
+
+## [0.10.0–0.16.0] — 2026-05-12 to 2026-05-15 — Library Build Phase
+
+### Added
+- 96 NexLink library pages built across 17 batches
+- crm-shell.js, crm-api.js (DUMMY_MODE), crm-dummy.js
+- All authentication, error, chart, map, icon, component, form pages complete
+
+---
+
+## [0.1.0] — Project Initialisation
+
+### Added
+- Pakistan CRM OS project initialised
+- DDD microservices backend architecture designed
+- 47 domain spec documents written
+- 13-archetype UI spec system (b9-p series)
+- Pakistan adapter architecture (JazzCash, Easypaisa, WhatsApp)
+- Database schemas for all core domains
