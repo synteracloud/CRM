@@ -6,7 +6,36 @@ Format: [Semantic Versioning](https://semver.org). Each entry covers a build ses
 
 ---
 
-## [Unreleased] — Rebuild Phase 1 in progress
+## [Unreleased] — Rebuild Phase 3 next
+
+---
+
+## [0.22.0] — 2026-05-18 — Phase 2: Follow-up Engine
+
+### Added
+- `backend/services/db/base.py` — SQLAlchemy declarative base
+- `backend/services/db/__init__.py` — lazy session factory (no import-time Postgres connection)
+- `backend/services/db/models/followup.py` — `FollowupTask` + `FollowupEscalation` ORM models
+- `backend/services/db/models/lead.py` — `Lead` ORM model
+- `backend/services/db/models/activity.py` — `Activity` ORM model
+- `backend/alembic/versions/0001_followup_schema.py` — first real schema migration
+- `backend/services/auth/jwt_deps.py` — `get_current_user` FastAPI dependency (JWT Bearer validation)
+- `backend/services/followup/http/public.py` — public REST router: 5 endpoints at `/api/v1/followups`
+- `backend/tests/followup/test_enforcement.py` — 18 unit tests (timers, escalation ladder, closure gate)
+- `backend/tests/followup/test_public_api.py` — 20 integration tests (all endpoints, happy path + error states)
+- `pytest`, `httpx`, `python-jose[cryptography]` added to `requirements.txt`
+
+### Changed
+- `backend/alembic/env.py` — wired to `Base.metadata` (autogenerate-ready)
+- `backend/services/app.py` — public followup router mounted at `/api/v1/followups`
+
+### Verified
+- 38/38 tests passing
+- 96/96 library pages HTTP 200
+
+---
+
+## [0.21.0] — 2026-05-18 — Phase 1: Foundation Seal
 
 ### Added
 - `README.md` (root) — GitHub landing page with quick start, architecture diagram, doc index

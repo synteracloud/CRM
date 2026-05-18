@@ -95,6 +95,8 @@ from services.sync.service import SyncService
 from services.sync.http.internal import router as sync_router
 from services.sync.http.internal import set_service as set_sync_service
 
+from services.followup.http.public import router as followup_public_router
+
 logger = logging.getLogger(__name__)
 
 # ── Lifespan (startup + shutdown) ─────────────────────────────────────────────
@@ -154,11 +156,12 @@ def health() -> dict:
 # ── Mount internal routers ────────────────────────────────────────────────────
 # All routes are under /internal to signal they are not public-facing.
 
-app.include_router(activity_router,     prefix="/internal")
-app.include_router(followup_router,     prefix="/internal")
-app.include_router(collections_router,  prefix="/internal")
-app.include_router(conversation_router, prefix="/internal")
-app.include_router(sync_router,         prefix="/internal")
+app.include_router(activity_router,       prefix="/internal")
+app.include_router(followup_router,       prefix="/internal")
+app.include_router(collections_router,    prefix="/internal")
+app.include_router(conversation_router,   prefix="/internal")
+app.include_router(sync_router,           prefix="/internal")
+app.include_router(followup_public_router)  # /api/v1/followups — JWT-gated public API
 
 
 # ── Global exception handler ──────────────────────────────────────────────────

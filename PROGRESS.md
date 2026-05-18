@@ -154,6 +154,7 @@
 | Session 18–19 | Doc consolidation — 93 production-readiness gaps fixed across 26 docs; linkage audit (11 issues resolved); naming normalisation (ALL-CAPS authority files, kebab-case QC docs) | 2026-05-17 |
 | Session 20 | Infrastructure seal — folder restructure (V4_extracted→backend, nexlink triple-wrap→frontend); all 96 pages verified HTTP 200; npm cache → D:\CRM\.npm-cache; pip cache → D:\CRM\.pip-cache; Python 3.12.10 installed at D:\Python; venv at D:\CRM\backend\.venv; fastapi/uvicorn/pydantic installed; zero C: leakage confirmed | 2026-05-18 |
 | Phase 1 | Foundation Seal COMPLETE — README.md, CHANGELOG.md, CONTRIBUTING.md, Makefile, .pre-commit-config.yaml, ADR-001/002/003, Alembic setup (sqlalchemy+psycopg2 added to requirements), docker-compose+Dockerfiles confirmed existing; 96/96 pages HTTP 200; pushed to GitHub | 2026-05-18 |
+| Phase 2 | Follow-up Engine COMPLETE — SQLAlchemy ORM models (FollowupTask, FollowupEscalation, Lead, Activity); Alembic migration 0001_followup_schema; public REST API /api/v1/followups (5 endpoints, JWT-gated); JWT auth dependency (services/auth/jwt_deps.py); python-jose/pytest/httpx added to requirements; 38 tests passing (18 unit + 20 integration); 96/96 pages HTTP 200 | 2026-05-18 |
 
 ---
 

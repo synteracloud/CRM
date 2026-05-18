@@ -10,14 +10,17 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Read DATABASE_URL from environment — overrides alembic.ini default.
-# Phase 2+: import Base.metadata here once models exist:
-#   from services.db.base import Base
-#   target_metadata = Base.metadata
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
     config.set_main_option("sqlalchemy.url", database_url)
 
-target_metadata = None  # replaced with Base.metadata in Phase 2
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from services.db.base import Base
+import services.db.models  # noqa: F401 — registers all ORM models with Base
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:

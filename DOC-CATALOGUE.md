@@ -1,6 +1,6 @@
 # Pakistan CRM — Document Catalogue
 
-**Last updated:** 2026-05-18 (Phase 1 complete: README.md, CHANGELOG.md, CONTRIBUTING.md, Makefile, .pre-commit-config.yaml, ADR-001/002/003, Alembic setup)
+**Last updated:** 2026-05-18 (Phase 2 complete: SQLAlchemy ORM models, Alembic migration 0001, JWT auth, public /api/v1/followups endpoints, 38 tests passing)
 **Scope:** All .md files in the project — 81 active + 3 archived — each with purpose and description.
 **Purpose:** Ground-truth index built from an actual file system scan. Use this to find any document, understand its purpose, and know whether it is active or a QC record. Paths reflect current folder structure.
 **Linkage audit:** 2026-05-17 — 11 issues resolved (3 broken refs, 5 stale refs, 3 notation mismatches). All cross-references verified clean.

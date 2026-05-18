@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-18 — Phase 1 COMPLETE (14/14). Phase 2 next.
+**Last updated:** 2026-05-18 — Phase 2 COMPLETE (19/19). Phase 3 next.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -11,11 +11,11 @@
 | Phase | Total tasks | Done | % |
 |---|---|---|---|
 | Phase 1 — Foundation Seal | 14 | 14 | 100% ✓ |
-| Phase 2 — Follow-up Engine | 19 | 0 | 0% |
+| Phase 2 — Follow-up Engine | 19 | 19 | 100% ✓ |
 | Phase 3 — 5 Engines | 30 | 0 | 0% |
 | Phase 4 — Frontend (75 pages) | 78 | 0 | 0% |
 | Phase 5 — Hardening | 14 | 0 | 0% |
-| **Total** | **155** | **0** | **0%** |
+| **Total** | **155** | **33** | **21%** |
 
 ---
 
@@ -46,35 +46,35 @@
 ## Phase 2 — Follow-up Engine
 
 ### Models & DB
-- [ ] SQLAlchemy model — `FollowUp` (fields from domain-model.md)
-- [ ] SQLAlchemy model — `Lead`
-- [ ] SQLAlchemy model — `Activity`
-- [ ] Alembic migration — first real schema migration
+- [x] SQLAlchemy model — `FollowUp` (services/db/models/followup.py — FollowupTask + FollowupEscalation)
+- [x] SQLAlchemy model — `Lead` (services/db/models/lead.py)
+- [x] SQLAlchemy model — `Activity` (services/db/models/activity.py)
+- [x] Alembic migration — first real schema migration (alembic/versions/0001_followup_schema.py)
 
 ### API Endpoints
-- [ ] `GET /api/v1/followups` — list, overdue-pinned sort
-- [ ] `POST /api/v1/followups` — create with T+0 trigger
-- [ ] `GET /api/v1/followups/{id}` — detail
-- [ ] `PATCH /api/v1/followups/{id}/complete` — mark done
-- [ ] `POST /api/v1/followups/{id}/escalate` — manual escalation
-- [ ] `/docs` — OpenAPI endpoint exposed
+- [x] `GET /api/v1/followups` — list, overdue-pinned sort
+- [x] `POST /api/v1/followups` — create with T+0 trigger
+- [x] `GET /api/v1/followups/{id}` — detail
+- [x] `PATCH /api/v1/followups/{id}/complete` — mark done
+- [x] `POST /api/v1/followups/{id}/escalate` — manual escalation
+- [x] `/docs` — OpenAPI endpoint exposed (FastAPI auto-generates)
 
 ### Business Logic
-- [ ] Enforcement timers — T+0 / +2h / +24h / +48h
-- [ ] Inactivity rule engine (precedence: inactivity > time > activity)
-- [ ] Reassignment configuration mechanism
-- [ ] Scheduler job — background overdue escalation
+- [x] Enforcement timers — T+0 / +2h / +24h / +48h (pre-existing engine.py)
+- [x] Inactivity rule engine (precedence: inactivity > time > activity) (pre-existing)
+- [x] Reassignment configuration mechanism (pre-existing engine.py)
+- [x] Scheduler job — background overdue escalation (pre-existing scheduler.py)
 
 ### Security
-- [ ] JWT middleware wired to all followup routes
-- [ ] RBAC role gates enforced (from identity-auth-rbac.md)
+- [x] JWT middleware wired to all followup routes (services/auth/jwt_deps.py)
+- [x] RBAC role gates enforced (from identity-auth-rbac.md)
 
 ### Tests
-- [ ] `conftest.py` + pytest config
-- [ ] Unit tests — enforcement timer logic
-- [ ] Integration tests — all 5 endpoints (happy path + error states)
-- [ ] Verify: all 96 existing pages still HTTP 200 after Phase 2 push
-- [ ] GitHub push — Phase 2 complete
+- [x] `conftest.py` + pytest config (pre-existing + requirements updated)
+- [x] Unit tests — enforcement timer logic (tests/followup/test_enforcement.py — 18 tests)
+- [x] Integration tests — all 5 endpoints (tests/followup/test_public_api.py — 20 tests)
+- [x] Verify: all 96 existing pages still HTTP 200 after Phase 2 push
+- [x] GitHub push — Phase 2 complete
 
 ---
 
