@@ -52,6 +52,7 @@ def _invoice_dict(inv: Invoice) -> dict[str, Any]:
         "invoice_id": inv.invoice_id,
         "invoice_number": inv.invoice_number,
         "customer_id": inv.customer_id,
+        "tenant_id": inv.tenant_id,
         "total_amount": inv.total_amount,
         "amount_paid": inv.amount_paid,
         "amount_outstanding": inv.amount_outstanding,
@@ -98,6 +99,7 @@ def create_invoice(
         due_date=body.due_date,
         currency=body.currency,
         total_amount=body.total_amount,
+        tenant_id=claims.tenant_id,
     )
     try:
         created = _service.create_invoice(invoice)
@@ -111,7 +113,7 @@ def list_invoices(
     claims: TokenClaims = Depends(get_current_user),
 ) -> dict[str, Any]:
     """List all invoices. Phase 2: in-memory store; Phase 5 swaps to DB with tenant filter."""
-    invoices = list(_service._invoices.values())
+    invoices = [inv for inv in _service._invoices.values() if inv.tenant_id == claims.tenant_id]
     return {"data": [_invoice_dict(inv) for inv in invoices], "meta": _meta(total=len(invoices))}
 
 
@@ -126,6 +128,28 @@ def get_invoice(
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
     return {"data": _invoice_dict(inv), "meta": _meta()}
+
+
+@router.post("/api/v1/invoices/{invoice_id}/send")
+def send_invoice(
+    invoice_id: str,
+    claims: TokenClaims = Depends(get_current_user),
+) -> dict[str, Any]:
+    """Mark invoice as dispatched to customer and return scheduled WhatsApp reminder dates."""
+    try:
+        inv = _service.get_invoice(invoice_id)
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+    reminders = _service.list_invoice_reminders(invoice_id)
+    return {
+        "data": {
+            "invoice_id": inv.invoice_id,
+            "customer_id": inv.customer_id,
+            "action": "sent",
+            "reminders_scheduled": reminders,
+        },
+        "meta": _meta(),
+    }
 
 
 @router.post("/api/v1/payments/callback/{provider}", status_code=status.HTTP_200_OK)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 InvoiceState = Literal["unpaid", "partial", "paid", "overdue"]
@@ -34,6 +34,7 @@ class Invoice:
     overdue_days: int = 0
     reminder_policy_id: str = "default"
     escalation_level: int = 0
+    tenant_id: str = ""
     metadata: dict[str, str] = field(default_factory=dict)
 
     def with_updates(self, **changes: Any) -> "Invoice":
@@ -97,4 +98,4 @@ class ReviewReport:
 
 
 def utc_now() -> str:
-    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z"

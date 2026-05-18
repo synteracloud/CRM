@@ -185,3 +185,51 @@ class TestListConversations:
 
         assert r.status_code == 200
         assert r.json()["data"] == []
+
+
+# ── GET /api/v1/conversations/{conversation_id} ───────────────────────────────
+
+
+class TestGetConversation:
+    def test_get_returns_conversation_with_messages(self, client: TestClient) -> None:
+        client.post(
+            "/api/v1/webhooks/whatsapp",
+            json=_webhook_payload(),
+            headers={"X-Api-Key": _API_KEY},
+        )
+        conv_id = client.get("/api/v1/conversations").json()["data"][0]["conversation_id"]
+        r = client.get(f"/api/v1/conversations/{conv_id}")
+        assert r.status_code == 200
+        data = r.json()["data"]
+        assert data["conversation_id"] == conv_id
+        assert "messages" in data
+
+    def test_get_includes_message_content(self, client: TestClient) -> None:
+        client.post(
+            "/api/v1/webhooks/whatsapp",
+            json=_webhook_payload(),
+            headers={"X-Api-Key": _API_KEY},
+        )
+        conv_id = client.get("/api/v1/conversations").json()["data"][0]["conversation_id"]
+        data = client.get(f"/api/v1/conversations/{conv_id}").json()["data"]
+        assert len(data["messages"]) == 1
+        assert data["messages"][0]["direction"] == "inbound"
+
+    def test_get_unknown_returns_404(self, client: TestClient) -> None:
+        r = client.get("/api/v1/conversations/nonexistent-conv-id")
+        assert r.status_code == 404
+
+    def test_get_tenant_isolation(self, client: TestClient) -> None:
+        import uuid as _uuid
+        conv_id = str(_uuid.uuid4())
+        conv_module._conversations[f"other-tenant:{conv_id}"] = {
+            "conversation_id": conv_id,
+            "tenant_id": "other-tenant",
+            "from_number": "+920000000000",
+            "state": "ACTIVE",
+            "created_at": "2026-05-18T00:00:00Z",
+            "updated_at": "2026-05-18T00:00:00Z",
+            "intent_history": [],
+        }
+        r = client.get(f"/api/v1/conversations/{conv_id}")
+        assert r.status_code == 404

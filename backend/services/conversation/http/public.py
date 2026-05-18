@@ -123,6 +123,28 @@ def inbound_webhook(
     }
 
 
+@router.get("/api/v1/conversations/{conversation_id}")
+def get_conversation(
+    conversation_id: str,
+    claims: TokenClaims = Depends(get_current_user),
+) -> dict[str, Any]:
+    """Get a single conversation by ID with its full message thread."""
+    conv = next(
+        (
+            c for c in _conversations.values()
+            if c["conversation_id"] == conversation_id and c["tenant_id"] == claims.tenant_id
+        ),
+        None,
+    )
+    if conv is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found")
+    messages = _messages.get(conversation_id, [])
+    return {
+        "data": {**conv, "messages": messages},
+        "meta": _meta(message_count=len(messages)),
+    }
+
+
 @router.get("/api/v1/conversations")
 def list_conversations(
     claims: TokenClaims = Depends(get_current_user),

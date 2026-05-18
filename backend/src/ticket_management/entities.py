@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Any
+from typing import Any, Literal
 
 
 TICKET_FIELDS: tuple[str, ...] = (

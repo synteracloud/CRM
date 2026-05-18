@@ -59,18 +59,26 @@ TEST_USER   = "user-test-001"
 
 
 def _override_auth():
-    return TokenClaims(
-        sub=TEST_USER,
-        tenant_id=TEST_TENANT,
-        role="sales_rep",
-        jti=str(uuid.uuid4()),
-    )
+    return TokenClaims(sub=TEST_USER, tenant_id=TEST_TENANT, role="sales_rep", jti=str(uuid.uuid4()))
+
+
+def _override_auth_manager():
+    return TokenClaims(sub=TEST_USER, tenant_id=TEST_TENANT, role="manager", jti=str(uuid.uuid4()))
 
 
 @pytest.fixture
 def client():
     app.dependency_overrides[get_db] = _override_db
     app.dependency_overrides[get_current_user] = _override_auth
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def client_manager():
+    app.dependency_overrides[get_db] = _override_db
+    app.dependency_overrides[get_current_user] = _override_auth_manager
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
@@ -210,9 +218,9 @@ class TestCompleteFollowup:
 
 
 class TestEscalateFollowup:
-    def test_escalate_creates_escalation_record(self, client: TestClient) -> None:
-        task_id = client.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
-        r = client.post(
+    def test_escalate_creates_escalation_record(self, client_manager: TestClient) -> None:
+        task_id = client_manager.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
+        r = client_manager.post(
             f"/api/v1/followups/{task_id}/escalate",
             json={"reason": "No response for 24h", "escalation_level": "warning"},
         )
@@ -221,35 +229,43 @@ class TestEscalateFollowup:
         assert body["data"]["escalation"]["escalation_level"] == "warning"
         assert body["data"]["task"]["escalation_level"] == "warning"
 
-    def test_escalate_updates_task_level(self, client: TestClient) -> None:
-        task_id = client.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
-        client.post(
+    def test_escalate_updates_task_level(self, client_manager: TestClient) -> None:
+        task_id = client_manager.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
+        client_manager.post(
             f"/api/v1/followups/{task_id}/escalate",
             json={"reason": "Manager escalation", "escalation_level": "escalated"},
         )
-        r = client.get(f"/api/v1/followups/{task_id}")
+        r = client_manager.get(f"/api/v1/followups/{task_id}")
         assert r.json()["data"]["escalation_level"] == "escalated"
 
-    def test_escalate_invalid_level_returns_422(self, client: TestClient) -> None:
-        task_id = client.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
-        r = client.post(
+    def test_escalate_invalid_level_returns_422(self, client_manager: TestClient) -> None:
+        task_id = client_manager.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
+        r = client_manager.post(
             f"/api/v1/followups/{task_id}/escalate",
             json={"reason": "test", "escalation_level": "invalid_level"},
         )
         assert r.status_code == 422
 
-    def test_escalate_completed_task_returns_409(self, client: TestClient) -> None:
-        task_id = client.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
-        client.patch(f"/api/v1/followups/{task_id}/complete", json={})
-        r = client.post(
+    def test_escalate_completed_task_returns_409(self, client_manager: TestClient) -> None:
+        task_id = client_manager.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
+        client_manager.patch(f"/api/v1/followups/{task_id}/complete", json={})
+        r = client_manager.post(
             f"/api/v1/followups/{task_id}/escalate",
             json={"reason": "test", "escalation_level": "reminder"},
         )
         assert r.status_code == 409
 
-    def test_escalate_unknown_id_returns_404(self, client: TestClient) -> None:
-        r = client.post(
+    def test_escalate_unknown_id_returns_404(self, client_manager: TestClient) -> None:
+        r = client_manager.post(
             f"/api/v1/followups/{uuid.uuid4()}/escalate",
             json={"reason": "test", "escalation_level": "reminder"},
         )
         assert r.status_code == 404
+
+    def test_sales_rep_cannot_escalate(self, client: TestClient) -> None:
+        task_id = client.post("/api/v1/followups", json=_create_payload()).json()["data"]["task_id"]
+        r = client.post(
+            f"/api/v1/followups/{task_id}/escalate",
+            json={"reason": "test", "escalation_level": "reminder"},
+        )
+        assert r.status_code == 403

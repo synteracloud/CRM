@@ -141,6 +141,55 @@ class _MockAdapter:
         return payload
 
 
+class TestSendInvoice:
+    def test_send_returns_200_with_action_sent(self, client: TestClient) -> None:
+        invoice_id = client.post("/api/v1/invoices", json=_invoice_payload()).json()["data"]["invoice_id"]
+        r = client.post(f"/api/v1/invoices/{invoice_id}/send")
+        assert r.status_code == 200
+        data = r.json()["data"]
+        assert data["invoice_id"] == invoice_id
+        assert data["action"] == "sent"
+
+    def test_send_returns_scheduled_reminders(self, client: TestClient) -> None:
+        invoice_id = client.post("/api/v1/invoices", json=_invoice_payload("INV-SEND")).json()["data"]["invoice_id"]
+        r = client.post(f"/api/v1/invoices/{invoice_id}/send")
+        assert r.status_code == 200
+        reminders = r.json()["data"]["reminders_scheduled"]
+        assert isinstance(reminders, list)
+        assert len(reminders) > 0
+
+    def test_send_unknown_invoice_returns_404(self, client: TestClient) -> None:
+        r = client.post("/api/v1/invoices/inv-does-not-exist/send")
+        assert r.status_code == 404
+
+
+class TestTenantIsolation:
+    def test_list_excludes_other_tenant_invoices(
+        self, client: TestClient, fresh_service: CollectionsService
+    ) -> None:
+        from services.collections.entities import Invoice
+        other = Invoice(
+            invoice_id="inv-other-001",
+            invoice_number="INV-OTHER",
+            customer_id="cust-other",
+            issue_date="2026-05-01",
+            due_date="2026-05-31",
+            currency="PKR",
+            total_amount=9999.0,
+            tenant_id="other-tenant-xyz",
+        )
+        fresh_service._invoices[other.invoice_id] = other
+        fresh_service._invoice_by_number[other.invoice_number] = other.invoice_id
+        r = client.get("/api/v1/invoices")
+        assert r.status_code == 200
+        assert r.json()["data"] == []
+
+    def test_create_stamps_tenant_id(self, client: TestClient) -> None:
+        r = client.post("/api/v1/invoices", json=_invoice_payload("INV-TENANT"))
+        assert r.status_code == 201
+        assert r.json()["data"]["tenant_id"] == TEST_TENANT
+
+
 class TestPaymentCallback:
     def test_unknown_provider_returns_422(self, client: TestClient) -> None:
         r = client.post(

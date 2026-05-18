@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-18 — Phase 3 COMPLETE (27/27). Phase 4 next.
+**Last updated:** 2026-05-18 — Phase 3 COMPLETE. 9 audit gaps fixed (all [x]). 308 tests passing. Phase 4 next.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -14,8 +14,8 @@
 | Phase 2 — Follow-up Engine | 19 | 19 | 100% ✓ |
 | Phase 3 — 5 Engines | 27 | 27 | 100% ✓ |
 | Phase 4 — Frontend (75 pages) | 78 | 0 | 0% |
-| Phase 5 — Hardening | 14 | 0 | 0% |
-| **Total** | **152** | **60** | **39%** |
+| Phase 5 — Hardening | 23 | 9 | 39% |
+| **Total** | **161** | **69** | **43%** |
 
 ---
 
@@ -230,6 +230,29 @@
 - [ ] GitHub Actions — test on every push
 - [ ] GitHub Actions — Docker build on push to main
 - [ ] GitHub Actions — deploy to staging on merge to main
+
+### Audit Fixes — Phase 1–3 gaps found in pre-Phase-4 audit
+
+#### Critical / High
+- [x] P3-A: Fix `Literal` import missing in `src/ticket_management/entities.py` — added `Literal` to typing import; `pytest` from root now runs cleanly
+- [x] P3-B: Wire public router singletons in `app.py` lifespan — production wiring added (gated with `PYTEST_CURRENT_TEST` check so test autouse fixtures retain control)
+
+#### Security / Auth
+- [x] P2-A: Implement RBAC role gates on followup endpoints — `escalate_followup` now requires manager/admin role; `sales_rep` returns 403; `client_manager` fixture + 1 new test added
+
+#### Business Logic
+- [x] P2-B: Background scheduler worker — `services/followup/overdue.py` + asyncio background task in lifespan; 4 new tests in `tests/followup/test_overdue_scanner.py`
+
+#### API Correctness
+- [x] P2-C: Fix double-query in `list_followups` — replaced double query with single `func.count()` query
+- [x] P3-C: Invoice "send" state transition — `POST /api/v1/invoices/{invoice_id}/send` added; returns scheduled WhatsApp reminder dates; 3 new tests
+- [x] P3-F: Add `GET /api/v1/conversations/{id}` detail endpoint — returns conversation + full message thread; 4 new tests
+
+#### Data Correctness
+- [x] P3-D: Tenant isolation in `list_invoices` — `tenant_id` field added to `Invoice` entity; stamped on creation; list filtered by tenant; 2 new tests
+
+#### Code Quality
+- [x] P3-E: Replace `datetime.utcnow()` with `datetime.now(timezone.utc)` in `services/activity/entities.py` and `services/collections/entities.py`
 
 ### Security
 - [ ] Rate limiting middleware — 10k/min per-tenant (security-model.md)

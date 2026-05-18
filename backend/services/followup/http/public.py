@@ -20,7 +20,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
-from sqlalchemy import case, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from services.auth.jwt_deps import TokenClaims, get_current_user
@@ -31,6 +31,7 @@ router = APIRouter(tags=["followups"])
 
 _VALID_RULE_TYPES = {"TimeBased", "ActivityBased", "InactivityBased"}
 _VALID_ESCALATION_LEVELS = {"reminder", "warning", "escalated", "reassigned"}
+_MANAGER_ROLES: frozenset[str] = frozenset({"manager", "admin"})
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -56,6 +57,14 @@ def _task_dict(t: FollowupTask) -> dict[str, Any]:
         "generated_by": t.generated_by,
         "is_canonical": t.is_canonical,
     }
+
+
+def _require_manager(claims: TokenClaims) -> None:
+    if claims.role not in _MANAGER_ROLES:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Manager or admin role required",
+        )
 
 
 def _get_task_or_404(task_id: str, tenant_id: str, db: Session) -> FollowupTask:
@@ -111,15 +120,14 @@ def list_followups(
     )
     q = q.order_by(sort_key, FollowupTask.due_at)
 
-    total = db.execute(
-        select(FollowupTask).where(FollowupTask.tenant_id == claims.tenant_id)
-        if not lead_id
-        else select(FollowupTask).where(
-            FollowupTask.tenant_id == claims.tenant_id,
-            FollowupTask.lead_id == lead_id,
-        )
+    count_q = (
+        select(func.count())
+        .select_from(FollowupTask)
+        .where(FollowupTask.tenant_id == claims.tenant_id)
     )
-    total_count = len(total.scalars().all())
+    if lead_id:
+        count_q = count_q.where(FollowupTask.lead_id == lead_id)
+    total_count = db.execute(count_q).scalar_one()
 
     offset = (page - 1) * page_size
     rows = db.execute(q.offset(offset).limit(page_size)).scalars().all()
@@ -208,7 +216,8 @@ def escalate_followup(
     claims: TokenClaims = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    """Manually escalate a follow-up task."""
+    """Manually escalate a follow-up task. Requires manager or admin role."""
+    _require_manager(claims)
     if body.escalation_level not in _VALID_ESCALATION_LEVELS:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

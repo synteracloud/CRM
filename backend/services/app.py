@@ -32,6 +32,8 @@ Environment variables:
 
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import json
 import logging
 import os
@@ -102,7 +104,39 @@ from services.activity.http.public import router as activity_public_router
 from services.activation.http.public import router as activation_public_router
 from services.core.execution.http.public import router as dlq_public_router
 
+# Public router singleton injectors (P3-B: share instances with internal routers)
+from services.activity.http.public import set_engine as set_activity_public_engine
+from services.collections.http.public import set_service as set_collections_public_service
+from services.activation.http.public import set_orchestrator as set_activation_orchestrator
+from services.core.execution.http.public import set_plane as set_execution_plane
+from services.activation.service import ActivationOrchestrator
+from services.core.execution.control_plane import ExecutionControlPlane
+
 logger = logging.getLogger(__name__)
+
+
+# ── Background overdue scanner (P2-B) ─────────────────────────────────────────
+
+async def _overdue_scanner(stop_event: asyncio.Event) -> None:
+    """Background task: marks pending follow-ups past due_at as overdue every 60 s."""
+    from services.db import _get_engine
+    from services.followup.overdue import scan_overdue_tasks
+    while not stop_event.is_set():
+        await asyncio.sleep(60)
+        if stop_event.is_set():
+            break
+        try:
+            _, SessionLocal = _get_engine()
+            db = SessionLocal()
+            try:
+                count = scan_overdue_tasks(db)
+                if count:
+                    logger.info("overdue_scanner: marked %d tasks overdue", count)
+            finally:
+                db.close()
+        except Exception:
+            logger.exception("overdue_scanner: error in scan cycle")
+
 
 # ── Lifespan (startup + shutdown) ─────────────────────────────────────────────
 
@@ -125,15 +159,36 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     collections_svc    = CollectionsService()
     sync_svc           = SyncService()
 
-    # Inject into HTTP router modules
+    # Inject into internal HTTP router modules
     set_activity_engine(activity_engine)
     set_followup_engine(followup_engine)
     set_collections_service(collections_svc)
     set_sync_service(sync_svc)
 
+    # P3-B: wire public routers — share same singletons so internal+public see the same state.
+    # Skipped during tests (PYTEST_CURRENT_TEST is set by pytest) so test autouse fixtures
+    # retain full control of module-level singletons via set_*() injection.
+    if not os.environ.get("PYTEST_CURRENT_TEST"):
+        activation_orchestrator = ActivationOrchestrator()
+        execution_plane = ExecutionControlPlane()
+        set_activity_public_engine(activity_engine)
+        set_collections_public_service(collections_svc)
+        set_activation_orchestrator(activation_orchestrator)
+        set_execution_plane(execution_plane)
+
     logger.info("services.app: all service singletons wired")
 
+    # P2-B: start background overdue scanner
+    stop_scanner = asyncio.Event()
+    scanner_task = asyncio.create_task(_overdue_scanner(stop_scanner))
+
     yield  # ── application runs here ──────────────────────────────────────────
+
+    # Stop background scanner cleanly
+    stop_scanner.set()
+    scanner_task.cancel()
+    with contextlib.suppress(asyncio.CancelledError, Exception):
+        await scanner_task
 
     logger.info("services.app: lifespan shutdown")
     shutdown(stop_fns)
