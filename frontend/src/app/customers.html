@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customers — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Customers</li>
+              </ol>
+            </nav>
+          </div>
+          <a href="javascript:void(0);" class="btn-link" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="fi fi-rr-plus me-1"></i> New Customer
+          </a>
+        </div>
+
+        <div class="row">
+
+          <div class="col-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-3 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Customer List</h6>
+                <div class="clearfix d-flex align-items-center gap-2">
+                  <div class="dropdown">
+                    <button class="btn dropdown-toggle btn-white btn-shadow waves-effect btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      All Status
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="javascript:void(0);">Active</a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0);">Inactive</a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0);">Pending</a></li>
+                    </ul>
+                  </div>
+                  <div id="dt_CustomerList_Search"></div>
+                </div>
+              </div>
+              <div class="card-body px-1 pt-2 pb-2">
+                <table id="dt_CustomerList" class="table table-sm table-row-rounded data-row-checkbox">
+                  <thead class="table-light">
+                    <tr>
+                      <th>
+                        <div class="form-check">
+                          <input class="form-check-input" data-row-checkbox type="checkbox">
+                        </div>
+                      </th>
+                      <th class="minw-200px">Name & Profile</th>
+                      <th class="minw-150px">Phone</th>
+                      <th class="minw-150px">Email</th>
+                      <th class="minw-150px">Country</th>
+                      <th class="minw-150px">Date</th>
+                      <th class="minw-150px">Status</th>
+                      <th class="minw-100px">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar1.webp" alt=""></div>John Carter</div></td>
+                      <td>+1 (646) 555-7788</td>
+                      <td>john.carter@email.com</td>
+                      <td>USA</td>
+                      <td>01-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar2.webp" alt=""></div>Sophia Miller</div></td>
+                      <td>+44 7911 123456</td>
+                      <td>sophia.miller@email.com</td>
+                      <td>UK</td>
+                      <td>03-08-2025</td>
+                      <td><span class="badge badge-lg bg-danger-subtle text-danger">Inactive</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar3.webp" alt=""></div>David Johnson</div></td>
+                      <td>+1 (646) 555-7788</td>
+                      <td>david.j@email.com</td>
+                      <td>Canada</td>
+                      <td>05-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar4.webp" alt=""></div>Emma Wilson</div></td>
+                      <td>+49 176 12345678</td>
+                      <td>emma.w@email.com</td>
+                      <td>Australia</td>
+                      <td>06-08-2025</td>
+                      <td><span class="badge badge-lg bg-warning-subtle text-warning">Pending</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar5.webp" alt=""></div>Michael Brown</div></td>
+                      <td>+1 (416) 555-3210</td>
+                      <td>mike.b@email.com</td>
+                      <td>Germany</td>
+                      <td>09-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar6.webp" alt=""></div>Olivia Davis</div></td>
+                      <td>+1 (213) 555-0192</td>
+                      <td>olivia.d@email.com</td>
+                      <td>France</td>
+                      <td>11-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar7.webp" alt=""></div>James Anderson</div></td>
+                      <td>+49 176 12345678</td>
+                      <td>james.a@email.com</td>
+                      <td>USA</td>
+                      <td>13-08-2025</td>
+                      <td><span class="badge badge-lg bg-danger-subtle text-danger">Inactive</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar8.webp" alt=""></div>Isabella Thomas</div></td>
+                      <td>+20 100 123 4567 </td>
+                      <td>isabella.t@email.com</td>
+                      <td>India</td>
+                      <td>15-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar9.webp" alt=""></div>William Martinez</div></td>
+                      <td>+1 (646) 555-7788</td>
+                      <td>william.m@email.com</td>
+                      <td>Spain</td>
+                      <td>17-08-2025</td>
+                      <td><span class="badge badge-lg bg-warning-subtle text-warning">Pending</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar10.webp" alt=""></div>Charlotte Rodriguez</div></td>
+                      <td>+33 6 12 34 56 78 </td>
+                      <td>charlotte.r@email.com</td>
+                      <td>Brazil</td>
+                      <td>19-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar2.webp" alt=""></div>Sophia Miller</div></td>
+                      <td>+44 7911 123456</td>
+                      <td>sophia.miller@email.com</td>
+                      <td>UK</td>
+                      <td>03-08-2025</td>
+                      <td><span class="badge badge-lg bg-danger-subtle text-danger">Inactive</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar3.webp" alt=""></div>David Johnson</div></td>
+                      <td>+1 (646) 555-7788</td>
+                      <td>david.j@email.com</td>
+                      <td>Canada</td>
+                      <td>05-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar4.webp" alt=""></div>Emma Wilson</div></td>
+                      <td>+49 176 12345678</td>
+                      <td>emma.w@email.com</td>
+                      <td>Australia</td>
+                      <td>06-08-2025</td>
+                      <td><span class="badge badge-lg bg-warning-subtle text-warning">Pending</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar5.webp" alt=""></div>Michael Brown</div></td>
+                      <td>+1 (416) 555-3210</td>
+                      <td>mike.b@email.com</td>
+                      <td>Germany</td>
+                      <td>09-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar6.webp" alt=""></div>Olivia Davis</div></td>
+                      <td>+1 (213) 555-0192</td>
+                      <td>olivia.d@email.com</td>
+                      <td>France</td>
+                      <td>11-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar7.webp" alt=""></div>James Anderson</div></td>
+                      <td>+49 176 12345678</td>
+                      <td>james.a@email.com</td>
+                      <td>USA</td>
+                      <td>13-08-2025</td>
+                      <td><span class="badge badge-lg bg-danger-subtle text-danger">Inactive</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar3.webp" alt=""></div>David Johnson</div></td>
+                      <td>+1 (646) 555-7788</td>
+                      <td>david.j@email.com</td>
+                      <td>Canada</td>
+                      <td>05-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar4.webp" alt=""></div>Emma Wilson</div></td>
+                      <td>+49 176 12345678</td>
+                      <td>emma.w@email.com</td>
+                      <td>Australia</td>
+                      <td>06-08-2025</td>
+                      <td><span class="badge badge-lg bg-warning-subtle text-warning">Pending</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar5.webp" alt=""></div>Michael Brown</div></td>
+                      <td>+1 (416) 555-3210</td>
+                      <td>mike.b@email.com</td>
+                      <td>Germany</td>
+                      <td>09-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><div class="form-check p-0 w-auto d-inline-block"><input class="form-check-input m-0" data-checkbox="" type="checkbox"></div></td>
+                      <td><div class="d-flex align-items-center"><div class="avatar avatar-xxs me-2 rounded-circle"><img src="assets/images/avatar/avatar6.webp" alt=""></div>Olivia Davis</div></td>
+                      <td>+1 (213) 555-0192</td>
+                      <td>olivia.d@email.com</td>
+                      <td>France</td>
+                      <td>11-08-2025</td>
+                      <td><span class="badge badge-lg bg-success-subtle text-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-subtle-secondary btn-sm btn-shadow btn-icon waves-effect me-1" type="button"><i class="icon-eye"></i></button>
+                        <div class="btn-group"><button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fi fi-rr-menu-dots"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li><li><a class="dropdown-item" href="javascript:void(0);">Delete</a></li></ul></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── Script block — SOP-BUILD §6 load order ─────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'customers';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/app/crm-customers.js"></script>
+</body>
+</html>

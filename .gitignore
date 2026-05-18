@@ -1,0 +1,9 @@
+# CRM project — all cache and runtime dirs locked to D:\CRM\
+.npm-cache/
+.pip-cache/
+.venv/
+node_modules/
+dist/
+*.log
+.env
+*.env

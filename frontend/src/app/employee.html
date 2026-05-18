@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Employee</li>
+              </ol>
+            </nav>
+          </div>
+          <a href="javascript:void(0);" class="btn-link" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+            <i class="fi fi-rr-plus me-1"></i> Add Employee
+          </a>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-success-subtle text-success">Active</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar1.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Emma Johnson</h5>
+                  <p class="text-primary mb-0">UI/UX Designer</p>
+                </div>
+                <div class="p-3 bg-light rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Creative Design</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">18 Mar 2021</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>emma.johnson@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+44 7894 321 678
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card bg-success-subtle border-0">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-success-subtle text-success">Active</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar2.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Liam Anderson</h5>
+                  <p class="text-primary mb-0">Front-End Developer</p>
+                </div>
+                <div class="p-3 bg-body rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Product Engineering</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">07 Jul 2019</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>liam.anderson@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+1 555 673 2299
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-danger-subtle text-danger">On Leave</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar3.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Ethan Wilson</h5>
+                  <p class="text-primary mb-0">Web Designer</p>
+                </div>
+                <div class="p-3 bg-light rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Marketing Creative</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">29 Oct 2020</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>ethan.wilson@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+1 457 234 1098
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-success-subtle text-success">Active</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar4.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Sophia Martinez</h5>
+                  <p class="text-primary mb-0">Data Analyst</p>
+                </div>
+                <div class="p-3 bg-light rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Business Intelligence</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">03 Jan 2022</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>sophia.martinez@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+1 662 555 8874
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-warning-subtle text-warning">Probation</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar5.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Noah Thompson</h5>
+                  <p class="text-primary mb-0">Software Tester</p>
+                </div>
+                <div class="p-3 bg-light rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Quality Assurance</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">10 Jun 2024</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>noah.thompson@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+1 245 336 5555
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card bg-info-subtle border-0">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-info-subtle text-info">Remote</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar6.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Olivia Taylor</h5>
+                  <p class="text-primary mb-0">Content Strategist</p>
+                </div>
+                <div class="p-3 bg-body rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Digital Marketing</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">22 Feb 2020</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>olivia.taylor@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+44 9987 223 110
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar7.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">James Lee</h5>
+                  <p class="text-primary mb-0">HR Specialist</p>
+                </div>
+                <div class="p-3 bg-light rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Human Resources</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">15 Sep 2018</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>james.lee@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+1 888 112 5555
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card bg-danger-subtle border-0">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0 p-3">
+                <span class="badge bg-danger-subtle text-danger">Resigned</span>
+                <div class="clearfix">
+                  <div class="btn-group">
+                    <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="fi fi-rr-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-2 pt-0">
+                <div class="text-center mb-3">
+                  <div class="avatar avatar-xxl rounded-4 mx-auto mb-3">
+                    <img src="assets/images/avatar/avatar8.webp" alt="">
+                  </div>
+                  <h5 class="mb-0 fw-bold">Mia Brown</h5>
+                  <p class="text-primary mb-0">Sales Manager</p>
+                </div>
+                <div class="p-3 bg-body rounded">
+                  <div class="d-flex gap-3">
+                    <div class="w-50">
+                      <span class="text-1xs">Department</span>
+                      <h6 class="mb-0">Sales & Marketing</h6>
+                    </div>
+                    <div class="w-50">
+                      <span class="text-1xs">Hired Date</span>
+                      <h6 class="mb-0">11 Aug 2017</h6>
+                    </div>
+                  </div>
+                  <hr class="border-dashed">
+                  <div class="d-grid gap-2">
+                    <span>
+                      <i class="fi fi-rr-envelope me-2 text-primary"></i>mia.brown@company.com
+                    </span>
+                    <span>
+                      <i class="fi fi-rr-phone-call me-2 text-primary"></i>+44 7711 990 453
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <nav aria-label="pagination" class="float-end">
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0);" aria-label="Previous">
+                    <i class="fi fi-rr-angle-left me-1"></i>
+                    Previous
+                  </a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0);">1</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0);">2</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0);">3</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="javascript:void(0);" aria-label="Next">
+                    Next
+                    <i class="fi fi-rr-angle-right ms-1"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header py-3">
+                <h5 class="modal-title">Add Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Enter full name">
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="email" class="form-label">Email Address</label>
+                      <input type="email" class="form-control" id="email" placeholder="example@email.com">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="phone" class="form-label">Phone Number</label>
+                      <input type="tel" class="form-control" id="phone" placeholder="+91 9876543210">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="department" class="form-label">Department</label>
+                      <select class="form-select" id="department">
+                        <option selected disabled>Select Department</option>
+                        <option>HR</option>
+                        <option>Development</option>
+                        <option>Sales</option>
+                        <option>Marketing</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="designation" class="form-label">Designation</label>
+                      <input type="text" class="form-control" id="designation" placeholder="e.g. Software Engineer">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="joiningDate" class="form-label">Joining Date</label>
+                      <input type="date" class="form-control flatpickr-date" id="joiningDate">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="status" class="form-label">Employment Status</label>
+                      <select class="form-select" id="status">
+                        <option>Active</option>
+                        <option>Inactive</option>
+                        <option>Probation</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea class="form-control" id="address" rows="2" placeholder="Enter address"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="photo" class="form-label">Profile Photo</label>
+                    <input class="form-control" type="file" id="photo">
+                  </div>
+                  <div class="text-end">
+                    <button type="submit" class="btn btn-success">Add Employee</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+  <script>window.CRM_PAGE = 'employees';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-employee.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

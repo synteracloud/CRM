@@ -1,0 +1,150 @@
+# docker-compose.yml — Full-stack local development — P-023
+#
+# Services:
+#   gateway   — Node.js API gateway       → localhost:3000
+#   services  — Python service layer      → localhost:5002
+#   postgres  — PostgreSQL 16             → localhost:5432
+#   migrate   — DB migration runner (exits after migrations complete)
+#
+# Usage:
+#   cp .env.example .env        # fill in secrets
+#   docker compose up           # start everything
+#   docker compose down -v      # teardown (removes DB volume)
+#
+# Constraint (C-009): JAZZCASH_STUB_MODE and EASYPAISA_STUB_MODE are forced
+# to 'true' here.  Never set them to 'false' without verified sandbox credentials.
+
+version: "3.9"
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_USER:-crm}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB:       ${DB_NAME:-crm}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Auto-load all schema files on first boot (alphabetical order)
+      - ./db:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-crm} -d ${DB_NAME:-crm}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── DB Migration runner (exits after completion) ───────────────────────────────
+  migrate:
+    image: postgres:16-alpine
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST:     postgres
+      PGPORT:     5432
+      PGUSER:     ${DB_USER:-crm}
+      PGPASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      PGDATABASE: ${DB_NAME:-crm}
+    volumes:
+      - ./db:/migrations:ro
+    # Run all .up.sql migration files in order
+    command: >
+      sh -c "
+        for f in /migrations/*/migrations/*.up.sql; do
+          echo \"Running migration: $$f\";
+          psql -f \"$$f\" || exit 1;
+        done;
+        echo 'All migrations complete.'
+      "
+    restart: "no"
+
+  # ── Python service layer ───────────────────────────────────────────────────────
+  services:
+    build:
+      context: .
+      dockerfile: services/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV:           development
+      SERVICE_NAME:       crm-python-services
+      LOG_LEVEL:          ${LOG_LEVEL:-info}
+      DB_HOST:            postgres
+      DB_PORT:            5432
+      DB_USER:            ${DB_USER:-crm}
+      DB_PASSWORD:        ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_NAME:            ${DB_NAME:-crm}
+      IDEMPOTENCY_TTL_SECONDS:    ${IDEMPOTENCY_TTL_SECONDS:-86400}
+      IDEMPOTENCY_EVICT_INTERVAL: ${IDEMPOTENCY_EVICT_INTERVAL:-3600}
+    ports:
+      - "5002:5002"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5002/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── Node.js API gateway ────────────────────────────────────────────────────────
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      services:
+        condition: service_healthy
+    environment:
+      NODE_ENV:           development
+      PORT:               3000
+      SERVICE_NAME:       crm-gateway
+      SERVICE_VERSION:    dev
+      REGION:             local
+      LOG_LEVEL:          ${LOG_LEVEL:-info}
+      # Database
+      DB_HOST:            postgres
+      DB_PORT:            5432
+      DB_USER:            ${DB_USER:-crm}
+      DB_PASSWORD:        ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_NAME:            ${DB_NAME:-crm}
+      # JWT — use JWT_SECRET (HS256) for local dev; JWT_PUBLIC_KEY (RS256) in production
+      JWT_SECRET:         ${JWT_SECRET:-dev-secret-change-in-production}
+      JWT_ISSUER:         ${JWT_ISSUER:-crm-local}
+      JWT_AUDIENCE:       ${JWT_AUDIENCE:-crm-api}
+      SKIP_JWT_VERIFICATION: ${SKIP_JWT_VERIFICATION:-false}
+      # Python service URLs — all point to the services container
+      FOLLOWUP_SERVICE_URL:      http://services:5002
+      ACTIVITY_SERVICE_URL:      http://services:5002
+      COLLECTIONS_SERVICE_URL:   http://services:5002
+      CONVERSATION_SERVICE_URL:  http://services:5002
+      SYNC_SERVICE_URL:          http://services:5002
+      # WhatsApp provider secrets
+      META_APP_SECRET:           ${META_APP_SECRET:-}
+      META_VERIFY_TOKEN:         ${META_VERIFY_TOKEN:-}
+      DIALOG360_WEBHOOK_SECRET:  ${DIALOG360_WEBHOOK_SECRET:-}
+      # Payment gateways — ALWAYS stub in local dev (C-009)
+      JAZZCASH_STUB_MODE:        true
+      EASYPAISA_STUB_MODE:       true
+      JAZZCASH_API_URL:          ${JAZZCASH_API_URL:-}
+      JAZZCASH_PASSWORD:         ${JAZZCASH_PASSWORD:-}
+      JAZZCASH_HASH_KEY:         ${JAZZCASH_HASH_KEY:-}
+      EASYPAISA_API_URL:         ${EASYPAISA_API_URL:-}
+      EASYPAISA_STORE_PASSWORD:  ${EASYPAISA_STORE_PASSWORD:-}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

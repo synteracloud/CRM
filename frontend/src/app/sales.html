@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Sales Dashboard</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Sales Dashboard</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-3 col-sm-6">
+            <div class="card">
+              <div class="card-header pb-0 border-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-circle">
+                  <i class="fi fi-rr-wallet"></i>
+                </div>
+              </div>
+              <div class="card-body d-flex align-items-end">
+                <div class="clearfix me-auto">
+                  <p class="mb-1">Total Earning</p>
+                  <h2 class="mb-0">$12,354</h2>
+                </div>
+                <span class="badge bg-success-subtle text-success">+12.4%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <div class="card">
+              <div class="card-header pb-0 border-0">
+                <div class="avatar bg-success-subtle text-success rounded-circle">
+                  <i class="fi fi-rr-shopping-cart"></i>
+                </div>
+              </div>
+              <div class="card-body d-flex align-items-end">
+                <div class="clearfix me-auto">
+                  <p class="mb-1">Total Orders</p>
+                  <h2 class="mb-0">10,654</h2>
+                </div>
+                <span class="badge bg-danger-subtle text-danger">+18.2%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <div class="card">
+              <div class="card-header pb-0 border-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-circle">
+                  <i class="fi fi-rr-chart-histogram"></i>
+                </div>
+              </div>
+              <div class="card-body d-flex align-items-end">
+                <div class="clearfix me-auto">
+                  <p class="mb-1">Revenue Growth</p>
+                  <h2 class="mb-0">+18.5%</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <div class="card">
+              <div class="card-header pb-0 border-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-circle">
+                  <i class="fi fi-rr-bullseye-arrow"></i>
+                </div>
+              </div>
+              <div class="card-body d-flex align-items-end">
+                <div class="clearfix me-auto">
+                  <p class="mb-1">Conversion Rate</p>
+                  <h2 class="mb-0">7.6%</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-6 col-lg-8">
+            <div class="card">
+              <div class="card-header pb-0 border-0 d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Sales Report</h6>
+                <ul class="nav nav-pills nav-pills-custom nav-fill p-1 bg-light rounded-5" id="chartRevenueTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-5" id="todayRevenueTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false" tabindex="-1">
+                      Today
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-5" id="weekRevenueTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false" tabindex="-1">
+                      Week
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-5" id="monthRevenueTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">
+                      Month
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-body pb-0">
+                <div class="d-flex gap-5">
+                  <div class="mb-2">
+                    <h2 class="mb-0">
+                      <span class="text-body">$</span>87,352<span class="text-primary">50</span>
+                    </h2>
+                    Average Income <span class="badge badge-sm bg-success-subtle text-success ms-1">+12.4%</span>
+                  </div>
+                  <div class="mb-2">
+                    <h2 class="mb-0">
+                      <span class="text-body">$</span>97,500<span class="text-primary">50</span>
+                    </h2>
+                    Average Expenses <span class="badge badge-sm bg-danger-subtle text-danger ms-1">-7.3%</span>
+                  </div>
+                </div>
+                <div id="SalesChart" class="mx-n3"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-4 col-md-6">
+            <div class="card overflow-hidden">
+              <div class="card-header pb-0 border-0">
+                <h6 class="card-title mb-0">Monthly Target</h6>
+              </div>
+              <div class="card-body pt-0 border-light border-bottom">
+                <div class="mb-0 mt-n2">
+                  <div id="MonthlyTargetChart"></div>
+                  <div class="mt-n5 text-center">32,500 Sales</div>
+                </div>
+              </div>
+              <div class="card-footer border-0">
+                <h6 class="card-title mb-3">Sales Status</h6>
+                <div class="progress-stacked bg-transparent mb-4">
+                  <div class="progress bg-transparent" role="progressbar" aria-label="Segment one" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
+                    <div class="progress-bar bg-primary"></div>
+                  </div>
+                  <div class="progress bg-transparent" role="progressbar" aria-label="Segment two" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                    <div class="progress-bar bg-primary bg-opacity-75"></div>
+                  </div>
+                  <div class="progress bg-transparent" role="progressbar" aria-label="Segment three" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 3%">
+                    <div class="progress-bar bg-primary bg-opacity-50"></div>
+                  </div>
+                </div>
+                <div class="d-grid gap-1">
+                  <div class="d-flex gap-1 align-items-center py-1 mx-1">
+                    <i class="fa fa-square text-primary me-1"></i>
+                    Paid
+                    <strong class="text-dark fw-semibold ms-auto">75%</strong>
+                  </div>
+                  <div class="d-flex gap-1 align-items-center py-1 py-1 mx-1">
+                    <i class="fa fa-square text-primary text-opacity-75 me-1"></i>
+                    Cancelled
+                    <strong class="text-dark fw-semibold ms-auto">22%</strong>
+                  </div>
+                  <div class="d-flex gap-1 align-items-center py-1 mx-1">
+                    <i class="fa fa-square text-primary text-opacity-50 me-1"></i>
+                    Refunded
+                    <strong class="text-dark fw-semibold ms-auto">3%</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-lg-6 col-md-6">
+            <div class="card">
+              <div class="card-header border-0 pb-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Sales by Country</h6>
+                <a href="javascript:void(0);" class="btn-link">View All</a>
+              </div>
+              <div class="card-body pt-2">
+                <div class="d-flex gap-2 mb-3 align-items-center">
+                  <h2 class="mb-0">$45,314</h2>
+                  <span>+8.2% vs last month</span>
+                </div>
+                <div class="row g-1">
+                  <div class="col-xxl-12 col-lg-6 col-md-12 col-sm-6">
+                    <div class="p-3 border rounded">
+                      <div class="d-flex align-items-center mb-1">
+                        <div class="avatar rounded-circle avatar-xxs me-2">
+                          <img src="../assets/images/country/uk.svg" alt="">
+                        </div>
+                        <h5 class="mb-0">America</h5>
+                      </div>
+                      <h5 class="mb-0">4,265 <span class="text-2xs text-body ms-1">PRODUCTS</span>
+                      </h5>
+                    </div>
+                  </div>
+                  <div class="col-xxl-12 col-lg-6 col-md-12 col-sm-6">
+                    <div class="p-3 border rounded">
+                      <div class="d-flex align-items-center mb-1">
+                        <div class="avatar rounded-circle avatar-xxs me-2">
+                          <img src="../assets/images/country/china.svg" alt="">
+                        </div>
+                        <h5 class="mb-0">China</h5>
+                      </div>
+                      <h5 class="mb-0">3,740 <span class="text-2xs text-body ms-1">Products</span>
+                      </h5>
+                    </div>
+                  </div>
+                  <div class="col-xxl-12 col-lg-6 col-md-12 col-sm-6">
+                    <div class="p-3 border rounded">
+                      <div class="d-flex align-items-center mb-1">
+                        <div class="avatar rounded-circle avatar-xxs me-2">
+                          <img src="../assets/images/country/germany.svg" alt="">
+                        </div>
+                        <h5 class="mb-0">Germany</h5>
+                      </div>
+                      <h5 class="mb-0">2,980 <span class="text-2xs text-body ms-1">Products</span>
+                      </h5>
+                    </div>
+                  </div>
+                  <div class="col-xxl-12 col-lg-6 col-md-12 col-sm-6">
+                    <div class="p-3 border rounded">
+                      <div class="d-flex align-items-center mb-1">
+                        <div class="avatar rounded-circle avatar-xxs me-2">
+                          <img src="../assets/images/country/japan.svg" alt="">
+                        </div>
+                        <h5 class="mb-0">Japan</h5>
+                      </div>
+                      <h5 class="mb-0">1,640 <span class="text-2xs text-body ms-1">Products</span>
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4 col-lg-6">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Total Visitors</h6>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body pt-2 pb-0">
+                <h2 class="mb-0">
+                  <span class="text-body">$</span>12,552.<span class="text-primary">50</span>
+                </h2>
+                <div id="VisitorsChart" class="mx-n3 mt-n2"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-8">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-3 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Recent Sales</h6>
+                <div class="d-flex">
+                  <div id="dt_RecentSales_Search"></div>
+                </div>
+              </div>
+              <div class="card-body px-1 pt-2 pb-2">
+                <table id="dt_RecentSales" class="table table-sm display table-row-rounded data-row-checkbox">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="pe-0">
+                        <div class="form-check">
+                          <input class="form-check-input" data-row-checkbox type="checkbox">
+                        </div>
+                      </th>
+                      <th class="minw-100px">Order ID</th>
+                      <th class="minw-200px">Customer Name</th>
+                      <th class="minw-200px">Product</th>
+                      <th class="minw-100px">Amount</th>
+                      <th class="minw-100px">Payment</th>
+                      <th class="minw-100px">Status</th>
+                      <th class="minw-100px">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10234</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar1.webp" alt="">
+                          </div>
+                          Emma Johnson
+                        </div>
+                      </td>
+                      <td>Wireless Headphones</td>
+                      <td>$2499</td>
+                      <td>Debit Card</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Failed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10235</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar2.webp" alt="">
+                          </div>
+                          Liam Smith
+                        </div>
+                      </td>
+                      <td>Smart Watch</td>
+                      <td>$3299</td>
+                      <td>UPI</td>
+                      <td>
+                        <span class="badge badge-lg bg-warning-subtle text-warning">Pending</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10236</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar3.webp" alt="">
+                          </div>
+                          Olivia Brown
+                        </div>
+                      </td>
+                      <td>Laptop Sleeve</td>
+                      <td>$1249</td>
+                      <td>Credit Card</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10237</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar4.webp" alt="">
+                          </div>
+                          Noah Davis
+                        </div>
+                      </td>
+                      <td>Bluetooth Speaker</td>
+                      <td>$2799</td>
+                      <td>Wallet</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10238</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar5.webp" alt="">
+                          </div>
+                          Sophia Wilson
+                        </div>
+                      </td>
+                      <td>DSLR Camera</td>
+                      <td>$45499</td>
+                      <td>UPI</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10239</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar6.webp" alt="">
+                          </div>
+                          Ethan Miller
+                        </div>
+                      </td>
+                      <td>Gaming Mouse</td>
+                      <td>$1999</td>
+                      <td>Credit Card</td>
+                      <td>
+                        <span class="badge badge-lg bg-warning-subtle text-warning">Pending</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10240</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar7.webp" alt="">
+                          </div>
+                          Ava Taylor
+                        </div>
+                      </td>
+                      <td>Fitness Tracker</td>
+                      <td>$2499</td>
+                      <td>UPI</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10241</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar8.webp" alt="">
+                          </div>
+                          Mason Brown
+                        </div>
+                      </td>
+                      <td>LED Monitor</td>
+                      <td>$11499</td>
+                      <td>Netbanking</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10242</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar9.webp" alt="">
+                          </div>
+                          Isabella Martinez
+                        </div>
+                      </td>
+                      <td>Portable Charger</td>
+                      <td>$1299</td>
+                      <td>Debit Card</td>
+                      <td>
+                        <span class="badge badge-lg bg-warning-subtle text-warning">Pending</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>#TXN10243</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/avatar/avatar10.webp" alt="">
+                          </div>
+                          James Anderson
+                        </div>
+                      </td>
+                      <td>Wireless Keyboard</td>
+                      <td>$1899</td>
+                      <td>Credit Card</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Completed</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-8 col-lg-7">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-2 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Top Selling Items</h6>
+                <div id="dt_TopSellingItems_Search"></div>
+              </div>
+              <div class="card-body px-1 pt-1 pb-2">
+                <table id="dt_TopSellingItems" class="table table-sm table-row-rounded display">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-100px">Order ID</th>
+                      <th class="minw-300px">Product Name</th>
+                      <th class="minw-100px">Stock</th>
+                      <th class="minw-100px">Price</th>
+                      <th class="minw-100px">Total Sale</th>
+                      <th class="minw-100px">Status</th>
+                      <th class="minw-100px">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>#TXN10001</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/1.webp" alt="">
+                          </div>
+                          Smart Home Electronics Kit
+                        </div>
+                      </td>
+                      <td>1200</td>
+                      <td>$120.00</td>
+                      <td>$2499.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10002</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/2.webp" alt="">
+                          </div>
+                          Modern Wooden Office Chair
+                        </div>
+                      </td>
+                      <td>1800</td>
+                      <td>$145.50</td>
+                      <td>$3250.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10003</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/3.webp" alt="">
+                          </div>
+                          Luxury Fashion Hoodie Wear
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10004</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/4.webp" alt="">
+                          </div>
+                          Organic Beauty Skincare Set
+                        </div>
+                      </td>
+                      <td>1275</td>
+                      <td>$75.50</td>
+                      <td>$7075.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10005</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/5.webp" alt="">
+                          </div>
+                          Professional Sports Fitness Gear
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10007</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/6.webp" alt="">
+                          </div>
+                          Trendy Travel Luggage Bag
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10008</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/2.webp" alt="">
+                          </div>
+                          Modern Wooden Office Chair
+                        </div>
+                      </td>
+                      <td>1800</td>
+                      <td>$145.50</td>
+                      <td>$3250.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10009</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/3.webp" alt="">
+                          </div>
+                          Luxury Fashion Hoodie Wear
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10010</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/4.webp" alt="">
+                          </div>
+                          Organic Beauty Skincare Set
+                        </div>
+                      </td>
+                      <td>1275</td>
+                      <td>$75.50</td>
+                      <td>$7075.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10011</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/5.webp" alt="">
+                          </div>
+                          Professional Sports Fitness Gear
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>#TXN10012</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="../assets/images/product/6.webp" alt="">
+                          </div>
+                          Trendy Travel Luggage Bag
+                        </div>
+                      </td>
+                      <td>0</td>
+                      <td>$125.50</td>
+                      <td>$5275.00</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Not-Available</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4 col-lg-5">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Sales Growth</h6>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body pt-2 pb-0">
+                <h2 class="mb-0">78.50%</h2>
+                <div id="SalesGrowthChart" class="mx-n3"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/plugins/datatable.js"></script>
+  <script>window.CRM_PAGE = 'sales';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-sales.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

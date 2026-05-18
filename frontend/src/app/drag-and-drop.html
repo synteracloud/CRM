@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">      <div class="container-fluid">
+
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Drag and Drop</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Simple list</h6>
+              </div>
+              <div class="card-body">
+                <ul id="sortableBasic" class="list-group list-group-smooth list-group-unlined">
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Prepare monthly financial report</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox" checked="">
+                    <span class="form-label mb-0 text-dark">Develop new marketing strategy</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Reply to customer emails</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Update website content</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox" type="checkbox" checked="">
+                    <span class="form-label mb-0">Review employee performance</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <input class="form-check-input todo-checkbox check-success" type="checkbox" checked="">
+                    <span class="form-label mb-0">Reply to customer emails</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Handle</h6>
+              </div>
+              <div class="card-body">
+                <ul id="sortableHandle" class="list-group list-group-smooth list-group-unlined">
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Prepare monthly financial report</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox" checked="">
+                    <span class="form-label mb-0 text-dark">Develop new marketing strategy</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Reply to customer emails</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                    <span class="form-label mb-0">Update website content</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox" type="checkbox" checked="">
+                    <span class="form-label mb-0">Review employee performance</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                    <span class="sortable-handle">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.9998 3.16667C12.7362 3.16667 13.3332 2.56971 13.3332 1.83333C13.3332 1.09695 12.7362 0.5 11.9998 0.5C11.2635 0.5 10.6665 1.09695 10.6665 1.83333C10.6665 2.56971 11.2635 3.16667 11.9998 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 9.26237C12.7362 9.26237 13.3332 8.66542 13.3332 7.92904C13.3332 7.19266 12.7362 6.5957 11.9998 6.5957C11.2635 6.5957 10.6665 7.19266 10.6665 7.92904C10.6665 8.66542 11.2635 9.26237 11.9998 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M11.9998 15.3571C12.7362 15.3571 13.3332 14.7601 13.3332 14.0238C13.3332 13.2874 12.7362 12.6904 11.9998 12.6904C11.2635 12.6904 10.6665 13.2874 10.6665 14.0238C10.6665 14.7601 11.2635 15.3571 11.9998 15.3571Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 3.16667C5.49818 3.16667 6.09513 2.56971 6.09513 1.83333C6.09513 1.09695 5.49818 0.5 4.7618 0.5C4.02542 0.5 3.42847 1.09695 3.42847 1.83333C3.42847 2.56971 4.02542 3.16667 4.7618 3.16667Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 9.26237C5.49818 9.26237 6.09513 8.66542 6.09513 7.92904C6.09513 7.19266 5.49818 6.5957 4.7618 6.5957C4.02542 6.5957 3.42847 7.19266 3.42847 7.92904C3.42847 8.66542 4.02542 9.26237 4.7618 9.26237Z" fill="var(--bs-body-color)"></path>
+                        <path d="M4.7618 15.3571C5.49818 15.3571 6.09513 14.7601 6.09513 14.0238C6.09513 13.2874 5.49818 12.6904 4.7618 12.6904C4.02542 12.6904 3.42847 13.2874 3.42847 14.0238C3.42847 14.7601 4.02542 15.3571 4.7618 15.3571Z" fill="var(--bs-body-color)"></path>
+                      </svg>
+                    </span>
+                    <input class="form-check-input todo-checkbox check-success" type="checkbox" checked="">
+                    <span class="form-label mb-0">Reply to customer emails</span>
+                    <span class="todo-time text-body">04:25PM</span>
+                    <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                      <i class="fi fi-rr-trash"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Cloning</h6>
+              </div>
+              <div class="card-body pb-0">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <h6 class="mb-3">Cloning 1</h6>
+                    <ul id="sortableCloning1" class="list-group list-group-smooth list-group-unlined">
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Prepare monthly financial report</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox" checked="">
+                        <span class="form-label mb-0 text-dark">Develop new marketing strategy</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Reply to customer emails</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Update website content</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox" type="checkbox" checked="">
+                        <span class="form-label mb-0">Review employee performance</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-success" type="checkbox" checked="">
+                        <span class="form-label mb-0">Reply to customer emails</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <h6 class="mb-3">Cloning 2</h6>
+                    <ul id="sortableCloning2" class="list-group list-group-smooth list-group-unlined">
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Prepare monthly financial report</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox" checked="">
+                        <span class="form-label mb-0 text-dark">Develop new marketing strategy</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Reply to customer emails</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-dark" type="checkbox">
+                        <span class="form-label mb-0">Update website content</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox" type="checkbox" checked="">
+                        <span class="form-label mb-0">Review employee performance</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                      <li class="list-group-item d-flex gap-2 align-items-center mb-1 ps-3 pe-2 py-2 bg-light bg-opacity-50">
+                        <input class="form-check-input todo-checkbox check-success" type="checkbox" checked="">
+                        <span class="form-label mb-0">Reply to customer emails</span>
+                        <span class="todo-time text-body">04:25PM</span>
+                        <button type="button" class="btn btn-action-gray btn-sm btn-icon waves-effect waves-light item-delete ms-auto">
+                          <i class="fi fi-rr-trash"></i>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <h6 class="card-title mb-3">Grid Example</h6>
+            <div class="row" id="sortableGrid">
+              <div class="col-xxl-3 col-md-6">
+                <div class="card card-action action-elevate bg-primary-subtle border-0 shadow-none">
+                  <div class="card-body">
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                      <div class="avatar bg-body rounded-3 p-2">
+                        <img src="assets/images/media/figma.png" alt="">
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="mb-1 text-sm">Figma Designer</h6>
+                        <ul class="list-inline list-inline-disc d-flex mb-0">
+                          <li>Full Time</li>
+                          <li>Remote</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="bg-body p-3 rounded-3 mb-3 d-flex">
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">76</h2>
+                        <span class="text-primary">Applied</span>
+                      </div>
+                      <div class="vr"></div>
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">14</h2>
+                        <span class="text-primary">New</span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between gap-2 pt-1 mb-3">
+                      <div class="text-start">
+                        <span class="text-1xs">Salary</span>
+                        <span class="text-sm text-dark d-block fw-semibold">$100K - $200K</span>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-1xs">Location</span>
+                        <span class="text-sm text-dark d-block fw-semibold">USA</span>
+                      </div>
+                    </div>
+                    <a href="pages/blog.html" class="btn btn-primary waves-effect waves-light w-100">
+                      See Job Post
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xxl-3 col-md-6">
+                <div class="card card-action action-elevate bg-secondary-subtle border-0 shadow-none">
+                  <div class="card-body">
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                      <div class="avatar bg-body rounded-3 p-2">
+                        <img src="assets/images/media/python.png" alt="">
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="mb-1 text-sm">Python Developer </h6>
+                        <ul class="list-inline list-inline-disc d-flex mb-0">
+                          <li>Full Time</li>
+                          <li>Remote</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="bg-body p-3 rounded-3 mb-3 d-flex">
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">12</h2>
+                        <span class="text-primary">Applied</span>
+                      </div>
+                      <div class="vr"></div>
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">07</h2>
+                        <span class="text-primary">New</span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between gap-2 pt-1 mb-3">
+                      <div class="text-start">
+                        <span class="text-1xs">Salary</span>
+                        <span class="text-sm text-dark d-block fw-semibold">$100K - $200K</span>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-1xs">Location</span>
+                        <span class="text-sm text-dark d-block fw-semibold">USA</span>
+                      </div>
+                    </div>
+                    <a href="pages/blog.html" class="btn btn-primary waves-effect waves-light w-100">
+                      See Job Post
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xxl-3 col-md-6">
+                <div class="card card-action action-elevate bg-info-subtle border-0 shadow-none">
+                  <div class="card-body">
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                      <div class="avatar bg-body rounded-3 p-2">
+                        <img src="assets/images/media/code.png" alt="">
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="mb-1 text-sm">Web Developer</h6>
+                        <ul class="list-inline list-inline-disc d-flex mb-0">
+                          <li>Full Time</li>
+                          <li>Remote</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="bg-body p-3 rounded-3 mb-3 d-flex">
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">99</h2>
+                        <span class="text-primary">Applied</span>
+                      </div>
+                      <div class="vr"></div>
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">23</h2>
+                        <span class="text-primary">New</span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between gap-2 pt-1 mb-3">
+                      <div class="text-start">
+                        <span class="text-1xs">Salary</span>
+                        <span class="text-sm text-dark d-block fw-semibold">$100K - $200K</span>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-1xs">Location</span>
+                        <span class="text-sm text-dark d-block fw-semibold">USA</span>
+                      </div>
+                    </div>
+                    <a href="pages/blog.html" class="btn btn-primary waves-effect waves-light w-100">
+                      See Job Post
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xxl-3 col-md-6">
+                <div class="card card-action action-elevate bg-success-subtle border-0 shadow-none">
+                  <div class="card-body">
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                      <div class="avatar bg-body rounded-3 p-2">
+                        <img src="assets/images/media/react.png" alt="">
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="mb-1 text-sm">React Developer</h6>
+                        <ul class="list-inline list-inline-disc d-flex mb-0">
+                          <li>Full Time</li>
+                          <li>Remote</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="bg-body p-3 rounded-3 mb-3 d-flex">
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">46</h2>
+                        <span class="text-primary">Applied</span>
+                      </div>
+                      <div class="vr"></div>
+                      <div class="text-center w-50">
+                        <h2 class="fs-1 fw-bold mb-1">61</h2>
+                        <span class="text-primary">New</span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-between gap-2 pt-1 mb-3">
+                      <div class="text-start">
+                        <span class="text-1xs">Salary</span>
+                        <span class="text-sm text-dark d-block fw-semibold">$100K - $200K</span>
+                      </div>
+                      <div class="text-end">
+                        <span class="text-1xs">Location</span>
+                        <span class="text-sm text-dark d-block fw-semibold">USA</span>
+                      </div>
+                    </div>
+                    <a href="pages/blog.html" class="btn btn-primary waves-effect waves-light w-100">
+                      See Job Post
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>  <script src="assets/libs/sortable/Sortable.min.js"></script>
+  <script src="assets/js/plugins/sortable.js"></script>
+</body>
+</html>

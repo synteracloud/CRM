@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Settings</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Settings</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <ul class="nav nav-underline card-header-tabs" id="settingsTab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#general">General</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#users">Users</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#appearance">Appearance</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#notifications">Notifications</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#integrations">Integrations</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#security">Security</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#backup">Backup</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#developer">Developer</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="tab-pane fade show active" id="general">
+                    <h5 class="mb-3">General Settings</h5>
+                    <form>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Website Name</label>
+                          <input type="text" class="form-control" placeholder="My Website">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Contact Email</label>
+                          <input type="email" class="form-control" placeholder="admin@example.com">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Logo Upload</label>
+                        <input type="file" class="form-control">
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Timezone</label>
+                          <select class="form-select">
+                            <option>UK</option>
+                            <option>UTC</option>
+                            <option>America/New_York</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Language</label>
+                          <select class="form-select">
+                            <option>English</option>
+                            <option>USA</option>
+                            <option>French</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="users">
+                    <h5 class="mb-3">User &amp; Authentication</h5>
+                    <form>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="twofa">
+                        <label class="form-check-label" for="twofa">Enable Two-Factor Authentication</label>
+                      </div>
+                      <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="socialLogin">
+                        <label class="form-check-label" for="socialLogin">Enable Social Logins (Google, FB)</label>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Password Minimum Length</label>
+                        <input type="number" class="form-control" value="8">
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="appearance">
+                    <h5 class="mb-3">Appearance</h5>
+                    <form>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Theme Mode</label>
+                          <select class="form-select">
+                            <option>Light</option>
+                            <option>Dark</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Font Family</label>
+                          <select class="form-select">
+                            <option>Segoe UI</option>
+                            <option>Roboto</option>
+                            <option>Inter</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Primary Color</label>
+                          <input type="color" class="form-control form-control-color" value="#316AFF">
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="notifications">
+                    <h5 class="mb-3">Notifications</h5>
+                    <form>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="emailNoti" checked>
+                        <label class="form-check-label" for="emailNoti">Email Notifications</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pushNoti">
+                        <label class="form-check-label" for="pushNoti">Push Notifications</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="smsNoti">
+                        <label class="form-check-label" for="smsNoti">SMS Alerts</label>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="integrations">
+                    <h5 class="mb-3">Integrations &amp; APIs</h5>
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Google Analytics ID</label>
+                        <input type="text" class="form-control" placeholder="UA-XXXXXXX">
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">SMTP Host</label>
+                        <input type="text" class="form-control" placeholder="smtp.example.com">
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Payment Gateway Key</label>
+                        <input type="password" class="form-control" placeholder="********">
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="security">
+                    <h5 class="mb-3">Security Settings</h5>
+                    <form>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="captcha">
+                        <label class="form-check-label" for="captcha">Enable Captcha</label>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Session Timeout (minutes)</label>
+                        <input type="number" class="form-control" value="30">
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">IP Whitelist</label>
+                        <textarea class="form-control" rows="2" placeholder="192.168.1.1, 10.0.0.5"></textarea>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="tab-pane fade" id="backup">
+                    <h5 class="mb-3">Data &amp; Backup</h5>
+                    <button class="btn btn-primary me-2">Backup Now</button>
+                    <button class="btn btn-outline-secondary me-2">Export Data</button>
+                    <button class="btn btn-outline-danger">Clear Cache</button>
+                  </div>
+                  <div class="tab-pane fade" id="developer">
+                    <h5 class="mb-3">Developer Settings</h5>
+                    <form>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="debugMode">
+                        <label class="form-check-label" for="debugMode">Enable Debug Mode</label>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-control" placeholder="Enter API Key">
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Webhook URL</label>
+                        <input type="url" class="form-control" placeholder="https://example.com/webhook">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- begin::NexLink Footer -->
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end::NexLink Footer -->
+
+  </div>
+
+  <!-- begin::NexLink Page Scripts -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script>window.CRM_PAGE = 'settings';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-settings.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <!-- end::NexLink Page Scripts -->
+</body>
+
+</html>

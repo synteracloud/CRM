@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Profile</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+
+
+          <div class="col-lg-4 col-sm-12">
+            <div class="row">
+
+              <div class="col-lg-12">
+                <div class="card">
+                  <div class="card-header pb-0 border-0">
+                    <div class="mb-4 border-bottom pb-4 d-flex border-0 justify-content-between align-items-start">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar avatar-xl rounded-circle position-relative me-3">
+                          <img src="assets/images/avatar/avatar5.webp" alt="">
+                          <a href="javascript:void(0);" class="avatar avatar-xxs bg-primary rounded-circle text-white position-absolute top-0 mt-n1 me-n1 end-0">
+                            <i class="fi fi-rr-camera text-1xs"></i>
+                          </a>
+                        </div>
+                        <div class="clearfix">
+                          <h4 class="fw-bold mb-0">Liam Anderson</h4>
+                          <small class="mb-0">Senior UI/UX Designer</small>
+                        </div>
+                      </div>
+                      <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect" type="button">
+                        <i class="fi fi-rr-pencil"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body pt-0">
+
+                    <div class="mb-4 border-bottom pb-4">
+                      <div class="mb-3">
+                        <h4 class="card-title mb-0">Basic Information</h4>
+                      </div>
+                      <div class="clearfix">
+                        <div class="mb-3">
+                          <span class="mb-1">Full Name</span>
+                          <p class="text-dark fw-semibold mb-0">Liam Anderson</p>
+                        </div>
+                        <div class="mb-3">
+                          <span class="mb-1">Email</span>
+                          <p class="text-dark fw-semibold mb-0">liam.anderson@creatify.com</p>
+                        </div>
+                        <div class="mb-3">
+                          <span class="mb-1">Phone</span>
+                          <p class="text-dark fw-semibold mb-0">+1 (452) 639-7814</p>
+                        </div>
+                        <div class="mb-3">
+                          <span class="mb-1">Date of Birth</span>
+                          <p class="text-dark fw-semibold mb-0">22 November 1988</p>
+                        </div>
+                        <div class="mb-0">
+                          <span class="mb-1">Joined Date</span>
+                          <p class="text-dark fw-semibold mb-0">August 18, 2019</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mb-4 border-bottom pb-4">
+                      <div class="mb-3">
+                        <h4 class="card-title mb-0">Social Media Links</h4>
+                      </div>
+                      <div class="d-flex flex-wrap gap-2">
+                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-subtle-facebook waves-effect waves-light">
+                          <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-subtle-twitter waves-effect waves-light">
+                          <i class="fa-brands fa-x-twitter"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-subtle-instagram waves-effect waves-light">
+                          <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-icon btn-sm btn-subtle-linkedin waves-effect waves-light">
+                          <i class="fa-brands fa-linkedin"></i>
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="mb-0">
+                      <div class="mb-3">
+                        <h4 class="card-title mb-0">Expertise</h4>
+                      </div>
+
+                      <div class="row align-items-center g-2 mb-3">
+                        <div class="col-sm-3">Figma</div>
+                        <div class="col-sm-9">
+                          <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: 92%"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row align-items-center g-2 mb-3">
+                        <div class="col-sm-3">Adobe XD</div>
+                        <div class="col-sm-9">
+                          <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: 85%"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row align-items-center g-2 mb-3">
+                        <div class="col-sm-3">HTML / CSS</div>
+                        <div class="col-sm-9">
+                          <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: 80%"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row align-items-center g-2 mb-3">
+                        <div class="col-sm-3">User Research</div>
+                        <div class="col-sm-9">
+                          <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: 70%"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row align-items-center g-2 mb-3">
+                        <div class="col-sm-3">Prototyping</div>
+                        <div class="col-sm-9">
+                          <div class="progress progress-sm">
+                            <div class="progress-bar" style="width: 88%"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-lg-8 col-sm-12">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Account Settings</h4>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Full Name</label>
+                          <input type="text" class="form-control" value="Emma Smith">
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Email</label>
+                          <input type="email" class="form-control" value="emma.smith@gmail.com">
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Phone</label>
+                          <input type="tel" class="form-control" value="+1 (123) 456-7890">
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">Role</label>
+                          <input type="text" class="form-control" value="Administrator" readonly>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <label class="form-label">Location</label>
+                          <input type="text" class="form-control" value="San Francisco">
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label">New Password</label>
+                          <input type="password" class="form-control" placeholder="••••••••">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-control" rows="5">I manage user roles, oversee platform settings, and ensure everything runs smoothly and securely. With a focus on performance, privacy, and efficiency, I help streamline daily operations so your team can focus on what matters most.</textarea>
+                      </div>
+                      <div class="text-end">
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Save Changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="card border border-danger bg-danger-subtle border-2">
+                  <div class="card-header border-0 pb-0">
+                    <h5 class="text-danger fw-bold mb-0">Danger Zone</h5>
+                    <small>Critical actions that affect your account.</small>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex gap-3 justify-content-between align-items-start mb-4 flex-wrap">
+                      <div class="pe-3">
+                        <h6 class="text-danger mb-1">Delete Account</h6>
+                        <p class="mb-0 small">This action is <strong>permanent</strong> and cannot be undone. Please make sure you really want to delete your account.</p>
+                      </div>
+                      <button class="btn btn-danger waves-effect waves-light">Delete Account</button>
+                    </div>
+                    <hr class="border-danger my-3">
+                    <div class="d-flex gap-3 justify-content-between align-items-start flex-wrap">
+                      <div class="pe-3">
+                        <h6 class="text-primary mb-1">Export Your Data</h6>
+                        <p class="mb-0 small">Backup your data in case you decide to delete your account later.</p>
+                      </div>
+                      <button class="btn btn-outline-primary waves-effect waves-light">Export Data</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── Script block — SOP-BUILD §6 load order ─────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'profile';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-profile.js"></script>
+</body>
+</html>

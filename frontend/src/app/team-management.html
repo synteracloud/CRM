@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Management — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Team Management</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xxl-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-lg-12">
+                    <div class="card">
+                      <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                        <h6 class="card-title mb-0">Total Team Members</h6>
+                        <span class="badge bg-success-subtle text-success">+12.1%</span>
+                      </div>
+                      <div class="card-body pt-3">
+                        <h2 class="mb-0">12,354</h2>
+                      </div>
+                      <div class="card-footer">
+                        <span>Vs last month: 8,554</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6 col-lg-12">
+                    <div class="card">
+                      <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                        <h6 class="card-title mb-0">Customer Satisfaction</h6>
+                        <span class="badge bg-success-subtle text-success">+12.1%</span>
+                      </div>
+                      <div class="card-body pt-3">
+                        <h2 class="mb-0">94%</h2>
+                      </div>
+                      <div class="card-footer">
+                        <span>Vs last month: 20%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                    <h6 class="card-title mb-0">New Team Members</h6>
+                    <span class="badge bg-success-subtle text-success">+18.6%</span>
+                  </div>
+                  <div class="card-body pt-2">
+                    <h2 class="mb-0">4,544</h2>
+                    <div id="chartNewTeam" class="mb-n6 mt-n6 d-flex justify-content-end"></div>
+                  </div>
+                  <div class="card-footer p-0">
+                    <div class="row g-0">
+                      <div class="col-6 border-end p-3">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                          <h4 class="mb-0">248</h4>
+                          <span class="badge badge-sm bg-success-subtle text-success">+12.1%</span>
+                        </div>
+                        <span>Active Leads</span>
+                      </div>
+                      <div class="col-6 p-3">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                          <h4 class="mb-0">192</h4>
+                          <span class="badge badge-sm bg-success-subtle text-success">+9.1%</span>
+                        </div>
+                        <span>Converted Leads</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-6">
+            <div class="card">
+              <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Team Performances</h6>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="btn-group">
+                    <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fi fi-bs-menu-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body p-0">
+                <div id="TeamPerformanceChart"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-9 col-xl-8">
+            <div class="card">
+              <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Recent Projects</h6>
+                <a href="javascript:void(0);" class="btn-link">View All</a>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card-body border rounded">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <div class="clearfix">
+                          <h6 class="mb-1">CRM Revamp System</h6>
+                          <small>Deadline: 31 Oct 2025</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="btn-group">
+                            <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-bs-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="my-3">
+                      <div class="d-flex align-items-end justify-content-between mb-2">
+                        <div class="clearfix">
+                          <h4 class="mb-0">58<span class="text-body">/70</span>
+                          </h4>
+                          <span>Tasks</span>
+                        </div>
+                        <span class="text-success fw-semibold mb-0">
+                          <i class="fi fi-rr-arrow-trend-up me-1"></i> 83%
+                        </span>
+                      </div>
+                      <div class="progress bg-light" style="height: 8px">
+                        <div class="progress-bar bg-success" style="width: 83%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body border rounded">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <div class="clearfix">
+                          <h6 class="mb-1">Customer Onboarding Flow</h6>
+                          <small>Deadline: 05 Nov 2025</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="btn-group">
+                            <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-bs-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="my-3">
+                      <div class="d-flex align-items-end justify-content-between mb-2">
+                        <div class="clearfix">
+                          <h4 class="mb-0">39<span class="text-body">/60</span>
+                          </h4>
+                          <span>Tasks</span>
+                        </div>
+                        <span class="text-warning fw-semibold mb-0">
+                          <i class="fi fi-rr-arrow-trend-up me-1"></i> 65%
+                        </span>
+                      </div>
+                      <div class="progress bg-light" style="height: 8px">
+                        <div class="progress-bar bg-warning" style="width: 65%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body border rounded">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <div class="clearfix">
+                          <h6 class="mb-1">Lead Tracker Automation</h6>
+                          <small>Deadline: 10 Nov 2025</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="btn-group">
+                            <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-bs-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="my-3">
+                      <div class="d-flex align-items-end justify-content-between mb-2">
+                        <div class="clearfix">
+                          <h4 class="mb-0">52<span class="text-body">/100</span>
+                          </h4>
+                          <span>Tasks</span>
+                        </div>
+                        <span class="text-info fw-semibold mb-0">
+                          <i class="fi fi-rr-arrow-trend-up me-1"></i> 52%
+                        </span>
+                      </div>
+                      <div class="progress bg-light" style="height: 8px">
+                        <div class="progress-bar bg-info" style="width: 52%"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card-body border rounded">
+                      <div class="d-flex align-items-start justify-content-between">
+                        <div class="clearfix">
+                          <h6 class="mb-1">Support Chatbot Upgrade</h6>
+                          <small>Deadline: 08 Nov 2025</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="btn-group">
+                            <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-bs-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <hr class="my-3">
+                      <div class="d-flex align-items-end justify-content-between mb-2">
+                        <div class="clearfix">
+                          <h4 class="mb-0">73<span class="text-body">/100</span>
+                          </h4>
+                          <span>Tasks</span>
+                        </div>
+                        <span class="text-success fw-semibold mb-0">
+                          <i class="fi fi-rr-arrow-trend-up me-1"></i> 73%
+                        </span>
+                      </div>
+                      <div class="progress bg-light" style="height: 8px">
+                        <div class="progress-bar bg-success" style="width: 73%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-xl-4">
+            <div class="card">
+              <div class="card-header pb-0 border-0 d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Team Control</h6>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item px-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center me-auto">
+                        <div class="avatar rounded-circle me-2">
+                          <img src="assets/images/avatar/avatar1.webp" alt="">
+                        </div>
+                        <div class="clearfix">
+                          <h6 class="mb-0">Emma Johnson</h6>
+                          <span class="text-2xs text-body">5 Tasks Handled</span>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rr-phone-call"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rs-comment-dots"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item px-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center me-auto">
+                        <div class="avatar rounded-circle me-2">
+                          <img src="assets/images/avatar/avatar2.webp" alt="">
+                        </div>
+                        <div class="clearfix">
+                          <h6 class="mb-0">Liam Smith</h6>
+                          <span class="text-2xs text-body">8 Tasks Handled</span>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rr-phone-call"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rs-comment-dots"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item px-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center me-auto">
+                        <div class="avatar rounded-circle me-2">
+                          <img src="assets/images/avatar/avatar3.webp" alt="">
+                        </div>
+                        <div class="clearfix">
+                          <h6 class="mb-0">Olivia Brown</h6>
+                          <span class="text-2xs text-body">6 Tasks Handled</span>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rr-phone-call"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rs-comment-dots"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item px-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center me-auto">
+                        <div class="avatar rounded-circle me-2">
+                          <img src="assets/images/avatar/avatar4.webp" alt="">
+                        </div>
+                        <div class="clearfix">
+                          <h6 class="mb-0">Noah Davis</h6>
+                          <span class="text-2xs text-body">9 Tasks Handled</span>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rr-phone-call"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rs-comment-dots"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="list-group-item px-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center me-auto">
+                        <div class="avatar rounded-circle me-2">
+                          <img src="assets/images/avatar/avatar5.webp" alt="">
+                        </div>
+                        <div class="clearfix">
+                          <h6 class="mb-0">Sophia Wilson</h6>
+                          <span class="text-2xs text-body">7 Tasks Handled</span>
+                        </div>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rr-phone-call"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-icon waves-effect rounded-pill" type="button">
+                          <i class="fi fi-rs-comment-dots"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-3 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Team Performance List</h6>
+                <div class="d-flex">
+                  <div id="dt_TeamPerformance_Search"></div>
+                </div>
+              </div>
+              <div class="card-body px-1 pt-2 pb-2">
+                <table id="dt_TeamPerformance" class="table table-sm display table-row-rounded data-row-checkbox">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="pe-0">
+                        <div class="form-check">
+                          <input class="form-check-input" data-row-checkbox type="checkbox">
+                        </div>
+                      </th>
+                      <th class="minw-200px">Member Name</th>
+                      <th class="minw-150px">Role</th>
+                      <th class="minw-150px">Assigned</th>
+                      <th class="minw-150px">Converted</th>
+                      <th class="minw-150px">Conversion Rate</th>
+                      <th class="minw-150px">Response Time</th>
+                      <th class="minw-150px">Rating</th>
+                      <th class="minw-100px">Status</th>
+                      <th class="minw-100px">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar1.webp" alt="">
+                          </div>
+                          Emma Johnson
+                        </div>
+                      </td>
+                      <td>CRM Manager</td>
+                      <td>62</td>
+                      <td>51</td>
+                      <td>82%</td>
+                      <td>1.3 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.9)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar2.webp" alt="">
+                          </div>
+                          Liam Anderson
+                        </div>
+                      </td>
+                      <td>Sales Executive</td>
+                      <td>55</td>
+                      <td>42</td>
+                      <td>76%</td>
+                      <td>1.8 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.7)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar3.webp" alt="">
+                          </div>
+                          Olivia Brown
+                        </div>
+                      </td>
+                      <td>Support Specialist</td>
+                      <td>49</td>
+                      <td>39</td>
+                      <td>79%</td>
+                      <td>1.5 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.8)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar4.webp" alt="">
+                          </div>
+                          Noah Wilson
+                        </div>
+                      </td>
+                      <td>Lead Nurturer</td>
+                      <td>46</td>
+                      <td>31</td>
+                      <td>67%</td>
+                      <td>2.2 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.5)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar5.webp" alt="">
+                          </div>
+                          Sophia Taylor
+                        </div>
+                      </td>
+                      <td>Customer Support</td>
+                      <td>43</td>
+                      <td>34</td>
+                      <td>79%</td>
+                      <td>1.6 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.7)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar6.webp" alt="">
+                          </div>
+                          James Miller
+                        </div>
+                      </td>
+                      <td>Data Entry Operator</td>
+                      <td>38</td>
+                      <td>0</td>
+                      <td>—</td>
+                      <td>1.1 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.2)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">On Leave</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar7.webp" alt="">
+                          </div>
+                          Ava Martinez
+                        </div>
+                      </td>
+                      <td>Relationship Executive</td>
+                      <td>40</td>
+                      <td>33</td>
+                      <td>82%</td>
+                      <td>1.7 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.9)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar8.webp" alt="">
+                          </div>
+                          Ethan Davis
+                        </div>
+                      </td>
+                      <td>Sales Associate</td>
+                      <td>41</td>
+                      <td>35</td>
+                      <td>85%</td>
+                      <td>1.4 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.8)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar9.webp" alt="">
+                          </div>
+                          Isabella Moore
+                        </div>
+                      </td>
+                      <td>CRM Trainee</td>
+                      <td>29</td>
+                      <td>19</td>
+                      <td>66%</td>
+                      <td>2.5 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.4)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-warning-subtle text-warning">Training</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block mb-0 mb-n1">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-xxs rounded-circle me-2">
+                            <img src="assets/images/avatar/avatar10.webp" alt="">
+                          </div>
+                          Mason Clark
+                        </div>
+                      </td>
+                      <td>Technical Support</td>
+                      <td>33</td>
+                      <td>25</td>
+                      <td>75%</td>
+                      <td>2.0 hrs</td>
+                      <td>
+                        <i class="fi fi-ss-star me-1 text-warning"></i> Rating (4.6)
+                      </td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Active</span>
+                      </td>
+                      <td>
+                        <div class="btn-group">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/plugins/datatable.js"></script>
+  <script>window.CRM_PAGE = 'team';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-team-management.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Chat</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Chat</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-12">
+            <div class="card card-body overflow-hidden chat-wrapper p-0">
+              <div class="sidebar-mobile-overlay"></div>
+              <div class="chat-sidebar">
+                <div class="d-flex p-3 align-items-center justify-content-between">
+                  <form class="d-flex align-items-center shadow-sm rounded-2 position-relative w-100" action="#">
+                    <button type="button" class="btn btn-sm border-0 position-absolute start-0 ms-3 p-0">
+                      <i class="fi fi-rr-search"></i>
+                    </button>
+                    <input type="text" class="form-control ps-5" placeholder="Search">
+                  </form>
+                  <button type="button" class="btn btn-sm btn-shadow btn-icon ms-2 btn-close d-inline-flex d-lg-none">
+                    <i class="fi fi-sr-cross"></i>
+                  </button>
+                </div>
+                <div class="chat-nav" id="myTab" role="tablist" data-simplebar>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle avatar-status-success">
+                      <img src="assets/images/avatar/vector/avatar1.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Alex Storm</h6>
+                        <span class="type">Typing...</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">02:21 PM</small>
+                        <span class="badge badge-sm rounded-pill bg-primary">12</span>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item active">
+                    <div class="avatar rounded-circle avatar-status-success">
+                      <img src="assets/images/avatar/vector/avatar2.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Jordan Miles</h6>
+                        <span class="text">Hey, did you get th..</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">02:20 PM</small>
+                        <span class="badge badge-sm rounded-pill bg-primary">9</span>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle avatar-status-danger">
+                      <img src="assets/images/avatar/vector/avatar3.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Liam Carter</h6>
+                        <span class="text">Looks great, bro</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">02:19 PM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle avatar-status-danger">
+                      <img src="assets/images/avatar/vector/avatar4.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Noah Blake</h6>
+                        <span class="text">Voice message</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">01:00 PM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar5.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Mia Lane</h6>
+                        <span class="text">Thanks a lot!</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">12:30 PM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar1.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Jordan Miles</h6>
+                        <span class="text">Hey, did you get th..</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">11:00 AM</small>
+                        <span class="badge badge-sm rounded-pill bg-primary">8</span>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar2.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Liam Carter</h6>
+                        <span class="text">Looks great, bro</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">11:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar3.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Noah Blake</h6>
+                        <span class="text">Voice message</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">10:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar4.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Mia Lane</h6>
+                        <span class="text">Thanks a lot!</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">09:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar5.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Noah Blake</h6>
+                        <span class="text">Voice message</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">08:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar2.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Liam Carter</h6>
+                        <span class="text">Looks great, bro</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">11:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="javascript:void(0);" class="chat-nav-item">
+                    <div class="avatar rounded-circle">
+                      <img src="assets/images/avatar/vector/avatar3.webp" alt="">
+                    </div>
+                    <div class="chat-avatar-info">
+                      <div class="clearfix">
+                        <h6 class="name">Noah Blake</h6>
+                        <span class="text">Voice message</span>
+                      </div>
+                      <div class="text-end">
+                        <small class="time">10:00 AM</small>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="chat-container">
+                <div class="chat-header">
+                  <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-white btn-shadow btn-icon waves-effect chat-sidebar-toggler d-lg-none">
+                      <i class="fi fi-rs-list"></i>
+                    </button>
+                    <a href="javascript:void(0);" class="chat-nav-item">
+                      <div class="avatar rounded-circle avatar-status-success">
+                        <img src="assets/images/avatar/vector/avatar2.webp" alt="">
+                      </div>
+                      <div class="chat-avatar-info">
+                        <div class="clearfix">
+                          <h6 class="name">Jordan Miles</h6>
+                          <span class="text">Hey, did you get th..</span>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="clearfix">
+                    <a href="javascript:void(0);" class="btn btn-white text-success btn-shadow btn-icon waves-effect me-1 d-none d-sm-inline-flex">
+                      <i class="fi fi-rr-phone-flip"></i>
+                    </a>
+                    <a href="javascript:void(0);" class="btn btn-white text-danger btn-shadow btn-icon waves-effect me-1 d-none d-sm-inline-flex">
+                      <i class="fi fi-rr-video-camera-alt"></i>
+                    </a>
+                    <div class="btn-group">
+                      <button class="btn btn-white btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fi fi-rr-menu-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0);">View Contact</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0);">Block Contact</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0);">Report</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="chat-body">
+                  <div class="chat-conversation" data-simplebar>
+                    <div class="chat-divider">
+                      <div class="chat-date">Today, 25 july</div>
+                    </div>
+                    <div class="chat-message-right">
+                      <div class="chat-message-text">
+                        <p>Guysss, next year we go to Japan! ✈️🎉</p>
+                        <p>Please help with the task distribution like usual later 🙏</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>Also, please help divide the tasks like usual later.</p>
+                      </div>
+                      <div class="chat-time">10:25 PM</div>
+                    </div>
+                    <div class="chat-message-left">
+                      <div class="chat-message-text">
+                        <p>Are you serious???</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>Gokilll!!</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>Please check the Figma file for me</p>
+                      </div>
+                      <div class="chat-time">10:30 PM</div>
+                    </div>
+                    <div class="chat-message-right">
+                      <div class="chat-message-text">
+                        <p>Guys, let's plan a trip to Japan next year!</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>Also, please help divide the tasks like usual later.</p>
+                      </div>
+                      <div class="chat-time">10:40 PM</div>
+                    </div>
+                    <div class="chat-message-left">
+                      <div class="chat-message-text">
+                        <p>Already checked, looks clean 👌</p>
+                        <p>Maybe add a hover effect on the second card?</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>I'll review it in 10 mins ya 🙋‍</p>
+                      </div>
+                      <div class="chat-message-text">
+                        <p>Mantapp guys! Let's finalize by tonight please 🕙</p>
+                      </div>
+                      <div class="chat-time">11:00 PM</div>
+                    </div>
+                  </div>
+                  <form class="chat-send-form">
+                    <input class="form-control chat-input border-0 shadow-none" placeholder="Type message">
+                    <div class="d-flex">
+                      <button type="button" class="btn btn-action-gray btn-icon waves-effect waves-light me-1">
+                        <i class="fi fi-rr-add-image"></i>
+                      </button>
+                      <button type="button" class="btn btn-action-gray btn-icon waves-effect waves-light me-3">
+                        <i class="fi fi-rr-link-alt"></i>
+                      </button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light">
+                        Send
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- begin::NexLink Footer -->
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end::NexLink Footer -->
+
+  </div>
+
+  <!-- begin::NexLink Page Scripts -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script>window.CRM_PAGE = 'chat';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-chat.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <!-- end::NexLink Page Scripts -->
+</body>
+
+</html>

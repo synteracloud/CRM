@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Font Awesome</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="d-flex flex-wrap gap-2 gap-sm-3">
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-user">
+                <i class="fa-regular fa-user"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-envelope">
+                <i class="fa-regular fa-envelope"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-calendar">
+                <i class="fa-regular fa-calendar"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-clock">
+                <i class="fa-regular fa-clock"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-heart">
+                <i class="fa-regular fa-heart"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-star">
+                <i class="fa-regular fa-star"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file">
+                <i class="fa-regular fa-file"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-image">
+                <i class="fa-regular fa-image"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-comment">
+                <i class="fa-regular fa-comment"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-bell">
+                <i class="fa-regular fa-bell"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-bookmark">
+                <i class="fa-regular fa-bookmark"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-building">
+                <i class="fa-regular fa-building"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-folder">
+                <i class="fa-regular fa-folder"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-newspaper">
+                <i class="fa-regular fa-newspaper"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-paper-plane">
+                <i class="fa-regular fa-paper-plane"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-address-book">
+                <i class="fa-regular fa-address-book"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-address-card">
+                <i class="fa-regular fa-address-card"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-thumbs-up">
+                <i class="fa-regular fa-thumbs-up"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-thumbs-down">
+                <i class="fa-regular fa-thumbs-down"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-credit-card">
+                <i class="fa-regular fa-credit-card"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-gem">
+                <i class="fa-regular fa-gem"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-lightbulb">
+                <i class="fa-regular fa-lightbulb"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-alt">
+                <i class="fa-regular fa-file-alt"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-pdf">
+                <i class="fa-regular fa-file-pdf"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-word">
+                <i class="fa-regular fa-file-word"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-excel">
+                <i class="fa-regular fa-file-excel"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-powerpoint">
+                <i class="fa-regular fa-file-powerpoint"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-folder-open">
+                <i class="fa-regular fa-folder-open"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-eye">
+                <i class="fa-regular fa-eye"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-eye-slash">
+                <i class="fa-regular fa-eye-slash"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-up">
+                <i class="fa-regular fa-hand-point-up"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-down">
+                <i class="fa-regular fa-hand-point-down"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-left">
+                <i class="fa-regular fa-hand-point-left"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-right">
+                <i class="fa-regular fa-hand-point-right"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-question-circle">
+                <i class="fa-regular fa-question-circle"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-smile">
+                <i class="fa-regular fa-smile"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-frown">
+                <i class="fa-regular fa-frown"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-meh">
+                <i class="fa-regular fa-meh"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-trash-alt">
+                <i class="fa-regular fa-trash-alt"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-edit">
+                <i class="fa-regular fa-edit"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-save">
+                <i class="fa-regular fa-save"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-share-square">
+                <i class="fa-regular fa-share-square"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-window-maximize">
+                <i class="fa-regular fa-window-maximize"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hospital">
+                <i class="fa-regular fa-hospital"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-id-badge">
+                <i class="fa-regular fa-id-badge"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-id-card">
+                <i class="fa-regular fa-id-card"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-images">
+                <i class="fa-regular fa-images"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-keyboard">
+                <i class="fa-regular fa-keyboard"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-lemon">
+                <i class="fa-regular fa-lemon"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-life-ring">
+                <i class="fa-regular fa-life-ring"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-map">
+                <i class="fa-regular fa-map"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-money-bill-alt">
+                <i class="fa-regular fa-money-bill-alt"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-object-group">
+                <i class="fa-regular fa-object-group"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-object-ungroup">
+                <i class="fa-regular fa-object-ungroup"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-paste">
+                <i class="fa-regular fa-paste"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-registered">
+                <i class="fa-regular fa-registered"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-sun">
+                <i class="fa-regular fa-sun"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-moon">
+                <i class="fa-regular fa-moon"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-surprise">
+                <i class="fa-regular fa-surprise"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-tired">
+                <i class="fa-regular fa-tired"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-audio">
+                <i class="fa-regular fa-file-audio"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-video">
+                <i class="fa-regular fa-file-video"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-archive">
+                <i class="fa-regular fa-file-archive"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-code">
+                <i class="fa-regular fa-file-code"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-image">
+                <i class="fa-regular fa-file-image"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-alt">
+                <i class="fa-regular fa-file-alt"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-word">
+                <i class="fa-regular fa-file-word"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-pdf">
+                <i class="fa-regular fa-file-pdf"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-excel">
+                <i class="fa-regular fa-file-excel"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-file-powerpoint">
+                <i class="fa-regular fa-file-powerpoint"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-folder-open">
+                <i class="fa-regular fa-folder-open"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-compass">
+                <i class="fa-regular fa-compass"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-copy">
+                <i class="fa-regular fa-copy"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-save">
+                <i class="fa-regular fa-save"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-calendar-check">
+                <i class="fa-regular fa-calendar-check"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-calendar-times">
+                <i class="fa-regular fa-calendar-times"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-calendar-minus">
+                <i class="fa-regular fa-calendar-minus"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-calendar-plus">
+                <i class="fa-regular fa-calendar-plus"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-chart-bar">
+                <i class="fa-regular fa-chart-bar"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-paper">
+                <i class="fa-regular fa-hand-paper"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-rock">
+                <i class="fa-regular fa-hand-rock"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-scissors">
+                <i class="fa-regular fa-hand-scissors"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-lizard">
+                <i class="fa-regular fa-hand-lizard"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-peace">
+                <i class="fa-regular fa-hand-peace"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-up">
+                <i class="fa-regular fa-hand-point-up"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-down">
+                <i class="fa-regular fa-hand-point-down"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-left">
+                <i class="fa-regular fa-hand-point-left"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hand-point-right">
+                <i class="fa-regular fa-hand-point-right"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-circle">
+                <i class="fa-regular fa-circle"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-dot-circle">
+                <i class="fa-regular fa-dot-circle"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-gem">
+                <i class="fa-regular fa-gem"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-bell-slash">
+                <i class="fa-regular fa-bell-slash"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-hdd">
+                <i class="fa-regular fa-hdd"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-snowflake">
+                <i class="fa-regular fa-snowflake"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-star-half">
+                <i class="fa-regular fa-star-half"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-sticky-note">
+                <i class="fa-regular fa-sticky-note"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-sun">
+                <i class="fa-regular fa-sun"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-moon">
+                <i class="fa-regular fa-moon"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-life-ring">
+                <i class="fa-regular fa-life-ring"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-handshake">
+                <i class="fa-regular fa-handshake"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-thumbs-up">
+                <i class="fa-regular fa-thumbs-up"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-thumbs-down">
+                <i class="fa-regular fa-thumbs-down"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-smile">
+                <i class="fa-regular fa-smile"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-frown">
+                <i class="fa-regular fa-frown"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-meh">
+                <i class="fa-regular fa-meh"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-laugh">
+                <i class="fa-regular fa-laugh"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-grin">
+                <i class="fa-regular fa-grin"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-kiss">
+                <i class="fa-regular fa-kiss"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-surprise">
+                <i class="fa-regular fa-surprise"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-tired">
+                <i class="fa-regular fa-tired"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-angry">
+                <i class="fa-regular fa-angry"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-dizzy">
+                <i class="fa-regular fa-dizzy"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-flushed">
+                <i class="fa-regular fa-flushed"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-grin-alt">
+                <i class="fa-regular fa-grin-alt"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-grin-beam">
+                <i class="fa-regular fa-grin-beam"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-grin-beam-sweat">
+                <i class="fa-regular fa-grin-beam-sweat"></i>
+              </a>
+
+              <a href="javascript:void(0);" class="btn btn-icon btn-white btn-xl" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="fa-regular fa-grin-hearts">
+                <i class="fa-regular fa-grin-hearts"></i>
+              </a>
+
+            </div>
+
+            <div class="text-center mt-5">
+              <a href="https://fontawesome.com/icons" target="_blank" class="btn btn-action-primary waves-effect waves-light">View All Icons</a>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+</body>
+</html>

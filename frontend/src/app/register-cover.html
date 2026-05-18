@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <div class="auth-cover-wrapper">
+      <div class="row g-0">
+        <div class="col-md-6 order-md-1">
+          <div class="auth-cover">
+            <div class="clearfix">
+              <img src="assets/images/auth/vector1.svg" alt="" class="img-fluid cover-img">
+              <div class="auth-content">
+                <h1 class="display-6 fw-bold">Welcome Back!</h1>
+                <p>Welcome to NexLink, your all-in-one solution for smart business management. Streamline workflows, boost productivity, and grow your business with confidence.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 align-self-center">
+          <div class="px-3 py-5 p-sm-5 maxw-450px m-auto">
+            <div class="mb-4 text-center">
+              <a href="app/dashboard.html" aria-label="NexLink logo">
+                <img class="visible-light" src="assets/images/logo.svg" alt="NexLink logo">
+              </a>
+            </div>
+            <div class="text-center mb-5">
+              <h5 class="mb-1">Welcome to NexLink</h5>
+              <p>Sign up to create your secure admin.</p>
+            </div>
+            <form action="app/dashboard.html">
+              <div class="mb-4">
+                <label class="form-label" for="registerName">Name</label>
+                <input type="text" class="form-control" id="registerName" placeholder="Full Name">
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="registerEmail">Email Address</label>
+                <input type="email" class="form-control" id="registerEmail" placeholder="info@example.com">
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="loginPassword">Password</label>
+                <div class="password-wrapper">
+                  <input type="password" class="form-control password-input" id="loginPassword" placeholder="********">
+                  <button type="button" id="togglePassword" class="toggle-password" aria-pressed="false" aria-label="Show password" title="Show password">
+                    <i class="close fi fi-rr-eye-crossed" aria-hidden="true"></i>
+                    <i class="open fi fi-rr-eye" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="mb-4">
+                <div class="form-check mb-0">
+                  <input class="form-check-input" type="checkbox" id="termsConditions" name="terms">
+                  <label class="form-check-label" for="termsConditions">
+                    I agree to <a href="javascript:void(0);">privacy policy &amp; terms</a>
+                  </label>
+                </div>
+              </div>
+              <div class="mb-3">
+                <button type="submit" value="Submit" class="btn btn-primary waves-effect waves-light w-100">Sign up</button>
+              </div>
+              <p class="mb-5 text-center">Have any account? <a href="app/login-cover.html">Sign In here</a></p>
+              <div class="border-bottom position-relative my-4 text-center">
+                <span class="px-3 position-absolute translate-middle top-50 start-50 bg-body">Or Continue With</span>
+              </div>
+              <button type="submit" class="btn btn-light waves-effect waves-light w-100">
+                <img src="assets/images/icons/google.svg" alt="" class="me-1"> Sign up with Google
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-register-cover.js"></script>
+</body>
+</html>

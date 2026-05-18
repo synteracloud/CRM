@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">      <div class="container-fluid">
+
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Popovers</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Directions</h6>
+                <p class="card-text">Four options are available: top, right, bottom, and left. Directions are mirrored when using Bootstrap in RTL. Set <code>data-bs-placement</code> to change the direction.</p>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 justify-content-between">
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Popover on top
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-placement="right" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Popover on right
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-placement="bottom" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Popover on bottom
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-placement="left" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Popover on left
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Custom tooltips</h6>
+                <p class="card-text">You can customize the appearance of popovers using CSS variables.</p>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-primary" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Primary
+                  </button>
+                  <button type="button" class="btn btn-secondary waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-secondary" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Secondary
+                  </button>
+                  <button type="button" class="btn btn-success waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-success" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Success
+                  </button>
+                  <button type="button" class="btn btn-info waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-info" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Info
+                  </button>
+                  <button type="button" class="btn btn-warning waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-warning" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Warning
+                  </button>
+                  <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-danger" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Danger
+                  </button>
+                  <button type="button" class="btn btn-dark waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-dark" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Dark
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Custom Header Color</h6>
+                <p class="card-text">You can customize the appearance of popovers using CSS variables.</p>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-primary" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Primary
+                  </button>
+                  <button type="button" class="btn btn-secondary waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-secondary" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Secondary
+                  </button>
+                  <button type="button" class="btn btn-success waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-success" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Success
+                  </button>
+                  <button type="button" class="btn btn-info waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-info" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Info
+                  </button>
+                  <button type="button" class="btn btn-warning waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-warning" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Warning
+                  </button>
+                  <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-danger" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Danger
+                  </button>
+                  <button type="button" class="btn btn-dark waves-effect waves-light" data-bs-toggle="popover" data-bs-custom-class="popover-header-dark" data-bs-title="Popover title" data-bs-placement="top" data-bs-content="And here’s some amazing content. It’s very engaging. Right?">
+                    Dark
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title">Without header</h6>
+              </div>
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Top popover">
+                    Popover on top
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="Right popover">
+                    Popover on right
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Bottom popover">
+                    Popover on bottom
+                  </button>
+                  <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="Left popover">
+                    Popover on left
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+</body>
+</html>

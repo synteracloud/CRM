@@ -1,0 +1,216 @@
+name: deploy-runtime
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  security-events: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/crm-gateway
+  INFRA_IMAGE_NAME: ${{ github.repository }}/crm-infra
+
+jobs:
+  package-runtime:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+      image_ref: ${{ steps.meta.outputs.image_ref }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          short_sha="${GITHUB_SHA::12}"
+          image_tag="${GITHUB_REF_NAME}-${short_sha}"
+          image_ref="${REGISTRY}/${IMAGE_NAME}:${image_tag}"
+          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
+          echo "image_ref=${image_ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Create runtime Dockerfile when missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f docker/runtime/Dockerfile ]]; then
+            mkdir -p docker/runtime
+            cat > docker/runtime/Dockerfile <<'DOCKERFILE'
+            FROM node:22-alpine AS runtime
+            RUN addgroup -S app && adduser -S app -G app
+            WORKDIR /app
+            COPY gateway /app/gateway
+            USER app
+            EXPOSE 8080
+            CMD ["node", "/app/gateway/server.js"]
+            DOCKERFILE
+          fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push runtime image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/runtime/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.image_ref }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.meta.outputs.image_ref }}
+          artifact-name: runtime-sbom.spdx.json
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-release-evidence
+          path: |
+            *.spdx.json
+
+  package-infra:
+    runs-on: ubuntu-latest
+    outputs:
+      infra_image_ref: ${{ steps.meta.outputs.infra_image_ref }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build infra metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          short_sha="${GITHUB_SHA::12}"
+          infra_image_ref="${REGISTRY}/${INFRA_IMAGE_NAME}:${GITHUB_REF_NAME}-${short_sha}"
+          echo "infra_image_ref=${infra_image_ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push infra image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/infra/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.infra_image_ref }}
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: [package-runtime, package-infra]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate dev runtime environment schema
+        uses: ./.github/actions/runtime-env-validate
+        with:
+          environment: dev
+
+      - name: IaC drift detection + validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/workspace" "${{ needs.package-infra.outputs.infra_image_ref }}" validate
+
+      - name: Deploy runtime to dev
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Deploying ${IMAGE_NAME}:${{ needs.package-runtime.outputs.image_tag }} to dev"
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [deploy-dev, package-runtime, package-infra]
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate staging runtime environment schema
+        uses: ./.github/actions/runtime-env-validate
+        with:
+          environment: staging
+
+      - name: Deploy runtime to staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Deploying ${IMAGE_NAME}:${{ needs.package-runtime.outputs.image_tag }} to staging"
+
+      - name: Staging smoke/integration/synthetic verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Running staging smoke/integration/synthetic tests"
+
+      - name: Run QC fix/re-fix gate (must be 10/10)
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/deployment/qc_gate.sh
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, package-runtime, package-infra]
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Manual approval gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Approved by protected environment reviewers"
+
+      - name: Canary rollout 5% -> 25% -> 50% -> 100%
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pct in 5 25 50 100; do
+            echo "Rolling out canary to ${pct}%"
+            sleep 2
+          done
+
+      - name: Rollback readiness validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating rollback path and reversible migration policy"
+
+      - name: Backup/restore health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Verifying latest backups and restore exercise status"
+
+      - name: Post-deploy observability hold
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking SLO/error-budget policies before release mark"

@@ -1,0 +1,50 @@
+name: runtime-env-validate
+description: Validate runtime deployment environment variables are present for target environment.
+inputs:
+  environment:
+    description: Target environment (dev/staging/prod)
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Validate required runtime variables
+      shell: bash
+      env:
+        NODE_ENV: ${{ env.NODE_ENV }}
+        SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        SERVICE_VERSION: ${{ env.SERVICE_VERSION }}
+        REGION: ${{ env.REGION }}
+        DB_HOST: ${{ env.DB_HOST }}
+        DB_PORT: ${{ env.DB_PORT }}
+        DB_NAME: ${{ env.DB_NAME }}
+        DB_USER: ${{ env.DB_USER }}
+        DB_PASSWORD: ${{ env.DB_PASSWORD }}
+        REDIS_URL: ${{ env.REDIS_URL }}
+        JWT_ISSUER: ${{ env.JWT_ISSUER }}
+        JWT_AUDIENCE: ${{ env.JWT_AUDIENCE }}
+        JWT_PUBLIC_KEY_URL: ${{ env.JWT_PUBLIC_KEY_URL }}
+        SECRETS_PROVIDER: ${{ env.SECRETS_PROVIDER }}
+        OTEL_EXPORTER_OTLP_ENDPOINT: ${{ env.OTEL_EXPORTER_OTLP_ENDPOINT }}
+      run: |
+        set -euo pipefail
+        required=(
+          NODE_ENV SERVICE_NAME SERVICE_VERSION REGION
+          DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD REDIS_URL
+          JWT_ISSUER JWT_AUDIENCE JWT_PUBLIC_KEY_URL SECRETS_PROVIDER
+          OTEL_EXPORTER_OTLP_ENDPOINT
+        )
+
+        missing=0
+        for key in "${required[@]}"; do
+          if [[ -z "${!key:-}" ]]; then
+            echo "[env-validate] missing: ${key}"
+            missing=1
+          fi
+        done
+
+        if [[ "${missing}" -ne 0 ]]; then
+          echo "[env-validate] environment '${{ inputs.environment }}' failed required runtime env validation"
+          exit 1
+        fi
+
+        echo "[env-validate] environment '${{ inputs.environment }}' required env validation passed"

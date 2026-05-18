@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deals — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Deals</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xxl-3 col-sm-6">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-0">
+                <div class="d-flex align-items-center me-auto">
+                  <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle me-2">
+                    <i class="fi fi-rr-handshake"></i>
+                  </div>
+                  <h6 class="mb-0">Total Deals</h6>
+                </div>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <h2 class="mb-1">1,240</h2>
+                <div class="d-flex align-items-center">
+                  <span class="badge badge-sm bg-success-subtle text-success me-2">+18%</span>
+                  <span>from last week</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-sm-6">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-0">
+                <div class="d-flex align-items-center me-auto">
+                  <div class="avatar avatar-sm bg-success-subtle text-success rounded-circle me-2">
+                    <i class="fi fi-rr-check"></i>
+                  </div>
+                  <h6 class="mb-0">Deals Won</h6>
+                </div>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <h2 class="mb-1">520</h2>
+                <div class="d-flex align-items-center">
+                  <span class="badge badge-sm bg-success-subtle text-success me-2">+12%</span>
+                  <span>from last week</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-sm-6">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-0">
+                <div class="d-flex align-items-center me-auto">
+                  <div class="avatar avatar-sm bg-danger-subtle text-danger rounded-circle me-2">
+                    <i class="fi fi-rr-circle-xmark"></i>
+                  </div>
+                  <h6 class="mb-0">Deals Lost</h6>
+                </div>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <h2 class="mb-1">310</h2>
+                <div class="d-flex align-items-center">
+                  <span class="badge badge-sm bg-danger-subtle text-danger me-2">-5%</span>
+                  <span>from last week</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-sm-6">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-0">
+                <div class="d-flex align-items-center me-auto">
+                  <div class="avatar avatar-sm bg-warning-subtle text-warning rounded-circle me-2">
+                    <i class="fi fi-rr-clock"></i>
+                  </div>
+                  <h6 class="mb-0">Deals In Progress</h6>
+                </div>
+                <div class="btn-group">
+                  <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fi fi-bs-menu-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card-body">
+                <h2 class="mb-1">410</h2>
+                <div class="d-flex align-items-center">
+                  <span class="badge badge-sm bg-warning-subtle text-warning me-2">0.5%</span>
+                  <span>from last week</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-5">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap gap-2 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Deals Value Trend</h6>
+                <ul class="nav nav-pills nav-pills-custom nav-fill p-1 bg-light rounded-5" id="chartDealsTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-5" id="todayDealsTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false" tabindex="-1">
+                      Today
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-5" id="weekDealsTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="false" tabindex="-1">
+                      Week
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-5" id="monthDealsTab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">
+                      Month
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="card-body px-2 py-0">
+                <div id="chartDeals"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-7">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-0">
+                <h6 class="card-title mb-0">Deal Pipeline</h6>
+              </div>
+              <div class="card-body p-2 py-0">
+                <div id="chartDealPipeline"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-3 align-items-center justify-content-between border-0 pb-0">
+                <h6 class="card-title mb-0">Recent Deals</h6>
+                <div id="dt_NewCustomers_Search"></div>
+              </div>
+              <div class="card-body px-1 pt-2 pb-2">
+                <table id="dt_NewCustomers" class="table table-sm display table-row-rounded data-row-checkbox">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-50px pe-0">
+                        <div class="form-check">
+                          <input class="form-check-input" data-row-checkbox type="checkbox">
+                        </div>
+                      </th>
+                      <th class="minw-150px">Client Name</th>
+                      <th class="minw-150px">Deal Name</th>
+                      <th class="minw-150px">Stage</th>
+                      <th class="minw-150px">Value</th>
+                      <th class="minw-150px">Assigned To</th>
+                      <th class="minw-150px">Closing Date</th>
+                      <th class="minw-150px">Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>John Miller</td>
+                      <td>Alpha Project</td>
+                      <td>Proposal Sent</td>
+                      <td>$45,000</td>
+                      <td>Emily Watson</td>
+                      <td>Dec 10, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Sarah Evans</td>
+                      <td>Beta Expansion</td>
+                      <td>Negotiation</td>
+                      <td>$75,000</td>
+                      <td>Mark Davis</td>
+                      <td>Dec 12, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Lucas Brown</td>
+                      <td>Gamma Upgrade</td>
+                      <td>Closed Won</td>
+                      <td>$32,000</td>
+                      <td>Mia Roberts</td>
+                      <td>Nov 28, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Won</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Olivia Brooks</td>
+                      <td>Delta Launch</td>
+                      <td>Contacted</td>
+                      <td>$28,000</td>
+                      <td>Ethan Price</td>
+                      <td>Dec 15, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Chris Hill</td>
+                      <td>Epsilon Campaign</td>
+                      <td>Closed Lost</td>
+                      <td>$14,000</td>
+                      <td>James Carter</td>
+                      <td>Nov 30, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Lost</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Michael Scott</td>
+                      <td>Zeta Expansion</td>
+                      <td>Negotiation</td>
+                      <td>$50,000</td>
+                      <td>Mark Davis</td>
+                      <td>Dec 18, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Angela Martin</td>
+                      <td>Theta Upgrade</td>
+                      <td>Proposal Sent</td>
+                      <td>$38,000</td>
+                      <td>Mia Roberts</td>
+                      <td>Dec 20, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Stanley Hudson</td>
+                      <td>Iota Campaign</td>
+                      <td>Contacted</td>
+                      <td>$22,000</td>
+                      <td>Ethan Price</td>
+                      <td>Dec 22, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Phyllis Vance</td>
+                      <td>Kappa Expansion</td>
+                      <td>Closed Won</td>
+                      <td>$40,000</td>
+                      <td>Mia Roberts</td>
+                      <td>Dec 05, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-success-subtle text-success">Won</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Kevin Malone</td>
+                      <td>Lambda Launch</td>
+                      <td>Closed Lost</td>
+                      <td>$18,000</td>
+                      <td>James Carter</td>
+                      <td>Dec 01, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-danger-subtle text-danger">Lost</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="pe-0">
+                        <div class="form-check p-0 w-auto d-inline-block">
+                          <input class="form-check-input m-0" data-checkbox type="checkbox">
+                        </div>
+                      </td>
+                      <td>Toby Flenderson</td>
+                      <td>Mu Expansion</td>
+                      <td>Proposal Sent</td>
+                      <td>$35,000</td>
+                      <td>Emily Watson</td>
+                      <td>Dec 08, 2025</td>
+                      <td>
+                        <span class="badge badge-lg bg-primary-subtle text-primary">In Progress</span>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── Script block — SOP-BUILD §6 load order ─────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'deals';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/app/crm-deals.js"></script>
+</body>
+</html>

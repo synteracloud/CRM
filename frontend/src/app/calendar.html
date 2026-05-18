@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Calendar</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <div class="clearfix">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                  <a href="app/dashboard.html">
+                    <i class="fi fi-rr-home"></i> Home
+                  </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Calendar</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+
+            <div class="card">
+              <div class="card-body p-0">
+                <div class="row g-0">
+                  <div class="col-lg-3 p-4 border-end">
+                    <button id="openDrawerBtn" class="btn btn-primary waves-effect waves-light w-100" data-bs-toggle="modal" data-bs-target="#modalAddEvent">
+                      <i class="fi fi-rr-plus me-1"></i> Add Event
+                    </button>
+                    <hr class="border-dashed my-4">
+                    <h6 class="mb-3">Draggable Events</h6>
+                    <div id="external-events" class="d-grid gap-2">
+                      <div class="fc-event cursor-move rounded-2 px-3 py-2 bg-primary-subtle text-primary" data-color="var(--bs-primary)" data-location="Head Office" data-description="Discuss project status and next steps.">
+                        <i class="fi fi-rr-plane-departure me-1"></i> Tour &amp; Picnic
+                      </div>
+                      <div class="fc-event cursor-move rounded-2 px-3 py-2 bg-success-subtle text-success" data-color="var(--bs-success)" data-location="Remote" data-description="Complete assigned tasks and update progress.">
+                        <i class="fi fi-rr-workflow-alt me-1"></i> Group Projects
+                      </div>
+                      <div class="fc-event cursor-move rounded-2 px-3 py-2 bg-info-subtle text-info" data-color="var(--bs-info)" data-location="Conference Room" data-description="Prepare and deliver client presentation.">
+                        <i class="fi fi-rr-podium me-1"></i> Presentation
+                      </div>
+                      <div class="fc-event cursor-move rounded-2 px-3 py-2 bg-warning-subtle text-warning" data-color="var(--bs-warning)" data-location="Personal" data-description="Follow up on pending emails and calls.">
+                        <i class="fi fi-rs-massage me-1"></i> Employee Wellness
+                      </div>
+                      <div class="fc-event cursor-move rounded-2 px-3 py-2 bg-danger-subtle text-danger" data-color="var(--bs-danger)" data-location="Office" data-description="Handle urgent support tickets immediately.">
+                        <i class="fi fi-rr-hr me-1"></i> Recruitment
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-9 p-4">
+                    <div id="calendar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="modalAddEvent" tabindex="-1" aria-labelledby="modalAddEventLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalAddEventLabel">Add Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="eventForm">
+                      <div class="row">
+                        <div class="col-12 mb-3">
+                          <label class="form-label">Title</label>
+                          <input type="text" id="title" class="form-control" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                          <label class="form-label">Label</label>
+                          <select id="label" class="form-select">
+                            <option value="primary">Primary</option>
+                            <option value="success">Success</option>
+                            <option value="warning">Warning</option>
+                            <option value="danger">Danger</option>
+                            <option value="info">Info</option>
+                          </select>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <label class="form-label">Start Date</label>
+                          <input type="datetime-local" id="eventStartDate" class="form-control" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                          <label class="form-label">End Date</label>
+                          <input type="datetime-local" id="eventEndDate" class="form-control">
+                        </div>
+                        <div class="col-12 mb-3">
+                          <label class="form-label">Event URL</label>
+                          <input type="url" id="url" class="form-control" placeholder="https://www.google.com/">
+                        </div>
+                        <div class="col-12 mb-3">
+                          <label class="form-label">Location</label>
+                          <input type="text" id="location" class="form-control">
+                        </div>
+                        <div class="col-12 mb-3">
+                          <label class="form-label">Description</label>
+                          <textarea id="description" class="form-control"></textarea>
+                        </div>
+                        <div class="col-12">
+                          <button type="button" class="btn btn-light waves-effect waves-light" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary waves-effect waves-light ms-2" data-bs-dismiss="modal">Add Event</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="eventTitle">Event Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      <strong class="text-dark">Start:</strong>
+                      <span id="eventStart"></span>
+                    </p>
+                    <p>
+                      <strong class="text-dark">End:</strong>
+                      <span id="eventEnd"></span>
+                    </p>
+                    <p>
+                      <strong class="text-dark">Location:</strong>
+                      <span id="eventLocation"></span>
+                    </p>
+                    <p class="mb-0">
+                      <strong class="text-dark">Description:</strong>
+                      <span id="eventDescription"></span>
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light waves-effect waves-light" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- begin::NexLink Footer -->
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end::NexLink Footer -->
+
+  </div>
+
+  <!-- begin::NexLink Page Scripts -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+  <script src="assets/libs/fullcalendar/index.global.min.js"></script>
+  <script src="assets/js/plugins/fullcalendar.js"></script>
+  <script>window.CRM_PAGE = 'calendar';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-calendar.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <!-- end::NexLink Page Scripts -->
+</body>
+
+</html>

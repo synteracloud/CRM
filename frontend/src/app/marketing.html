@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Marketing</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Marketing</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-xxl-3">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6>Campaign Revenue</h6>
+                <h2>$74,000</h2>
+              </div>
+              <div class="card-body p-0">
+                <div id="revChart"></div>
+              </div>
+              <div class="card-footer">
+                <p class="mb-0">
+                  <span class="text-success">+8.2%</span> last month
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6>Avg. Order Value (AOV)</h6>
+                <h2>$46</h2>
+              </div>
+              <div class="card-body p-0">
+                <div id="aovChart"></div>
+              </div>
+              <div class="card-footer">
+                <p class="mb-0">
+                  <span class="text-success">+4.2%</span> last month
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6>Marketing Purchases</h6>
+                <h2>2,140 Orders</h2>
+              </div>
+              <div class="card-body p-0">
+                <div id="purchaseChart"></div>
+              </div>
+              <div class="card-footer">
+                <p class="mb-0">
+                  <span class="text-danger">-1.6%</span> last month
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6>Sales Growth (30 Days)</h6>
+                <h2>+12%</h2>
+              </div>
+              <div class="card-body p-0">
+                <div id="growthChart"></div>
+              </div>
+              <div class="card-footer">
+                <p class="mb-0">
+                  <span class="text-success">+4.3%</span> last month
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-8">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title mb-2">Ads Performance (Google Ads / Meta Ads)</h6>
+                <span class="badge bg-primary-subtle text-primary">Last 30 Days</span>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">Total Spend</small>
+                      <h4 class="mb-0">$14,200</h4>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">Impressions</small>
+                      <h4 class="mb-0">4.8M</h4>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">Clicks</small>
+                      <h4 class="mb-0">148,200</h4>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">CPC</small>
+                      <h4 class="mb-0">$0.18</h4>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">CPM</small>
+                      <h4 class="mb-0">$2.96</h4>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="p-3 border rounded">
+                      <small class="text-body">ROAS</small>
+                      <h4 class="mb-0">5.2X</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer border-0 pb-0">
+                <h5 class="mb-1">Clicks Trend</h5>
+                <div id="adsTrendChart" class="mx-n2"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="card-title m-0">Social Media Analytics</h6>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-lg-12">
+                    <div class="p-3 rounded border">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-sm bg-danger text-white rounded-circle me-2">
+                          <i class="fi fi-brands-instagram text-sm"></i>
+                        </div>
+                        <h6 class="mb-0">Instagram</h6>
+                      </div>
+                      <div class="d-flex align-items-center gap-5">
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Followers</p>
+                          <h4 class="fw-bold mb-0">182k</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Engagement Rate</p>
+                          <h4 class="fw-bold text-primary mb-0">3.2%</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Monthly Growth</p>
+                          <h4 class="fw-bold text-success mb-0">+4.5%</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="p-3 rounded border">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-sm bg-primary text-white rounded-circle me-2">
+                          <i class="fi fi-brands-facebook text-sm"></i>
+                        </div>
+                        <h6 class="mb-0">Facebook</h6>
+                      </div>
+                      <div class="d-flex align-items-center gap-5">
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Followers</p>
+                          <h4 class="fw-bold mb-0">240k</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Engagement</p>
+                          <h4 class="fw-bold text-primary mb-0">2.4%</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Clicks</p>
+                          <h4 class="fw-bold text-success mb-0">13,800</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="p-3 rounded border">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-sm bg-dark text-white rounded-circle me-2">
+                          <i class="fi fi-brands-twitter-alt text-sm"></i>
+                        </div>
+                        <h6 class="mb-0">Twitter</h6>
+                      </div>
+                      <div class="d-flex align-items-center gap-5">
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Followers</p>
+                          <h4 class="fw-bold mb-0">72k</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">CTR</p>
+                          <h4 class="fw-bold text-primary mb-0">1.9%</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Mentions</p>
+                          <h4 class="fw-bold text-success mb-0">540</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="p-3 rounded border">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-sm bg-info text-white rounded-circle me-2">
+                          <i class="fi fi-brands-linkedin text-sm"></i>
+                        </div>
+                        <h6 class="mb-0">LinkedIn</h6>
+                      </div>
+                      <div class="d-flex align-items-center gap-5">
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Followers</p>
+                          <h4 class="fw-bold mb-0">38k</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Engagement</p>
+                          <h4 class="fw-bold text-primary mb-0">4.1%</h4>
+                        </div>
+                        <div class="clearfix">
+                          <p class="mb-1 text-body small">Monthly Growth</p>
+                          <h4 class="fw-bold text-success mb-0">+3.2%</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-3">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-1">Marketing Overview</h5>
+                <p class="text-body small mb-0">Performance Summary</p>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-primary-subtle">
+                      <p class="text-body small mb-1">Total Leads</p>
+                      <h4 class="mb-0 fw-semibold">48,720</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-success-subtle">
+                      <p class="text-body small mb-1">New Leads (Month)</p>
+                      <h4 class="mb-0 fw-semibold">3,420</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-warning-subtle">
+                      <p class="text-body small mb-1">Conversion Rate</p>
+                      <h4 class="mb-0 fw-semibold">12.4%</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-info-subtle">
+                      <p class="text-body small mb-1">Campaigns Running</p>
+                      <h4 class="mb-0 fw-semibold">18</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-secondary-subtle">
+                      <p class="text-body small mb-1">Email Open Rate</p>
+                      <h4 class="mb-0 fw-semibold">27%</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-danger-subtle">
+                      <p class="text-body small mb-1">CTR</p>
+                      <h4 class="mb-0 fw-semibold">3.8%</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-light border">
+                      <p class="text-body small mb-1">Marketing Revenue</p>
+                      <h4 class="mb-0 fw-semibold">$482,000</h4>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded bg-light border">
+                      <p class="text-body small mb-1">CAC</p>
+                      <h4 class="mb-0 fw-semibold">$34</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <span class="badge bg-success-subtle text-success">
+                  ROI (30 Days): +62%
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="col-xxl-5 col-lg-5">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title mb-1">Lead Funnel / Pipeline</h5>
+                <p class="text-body small mb-0">Stage-wise Lead Drop &amp; Conversion</p>
+              </div>
+              <div class="card-body pb-0">
+                <div id="leadFunnelChart"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title m-0">Email Marketing Insights</h5>
+                <span class="badge bg-primary">Analytics</span>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle mb-3">
+                        <i class="fi fi-rr-paper-plane text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Total Emails Sent</h6>
+                        <h3 class="fw-bold mb-0">420,000</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-success-subtle text-success rounded-circle mb-3">
+                        <i class="fi fi-rr-newsletter-subscribe text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Delivered</h6>
+                        <h3 class="fw-bold mb-0">407,000</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-secondary-subtle text-secondary rounded-circle mb-3">
+                        <i class="fi fi-rr-eye text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Open Rate</h6>
+                        <h3 class="fw-bold text-primary mb-0">27%</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-info-subtle text-info rounded-circle mb-3">
+                        <i class="fi fi-rr-cursor text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Click Rate</h6>
+                        <h3 class="fw-bold text-primary mb-0">3.8%</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-danger-subtle text-danger rounded-circle mb-3">
+                        <i class="fi fi-rr-circle-xmark text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Bounce Rate</h6>
+                        <h3 class="fw-bold text-danger mb-0">1.2%</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded border">
+                      <div class="avatar avatar-sm bg-warning-subtle text-warning rounded-circle mb-3">
+                        <i class="fi fi-rr-delete-user text-sm"></i>
+                      </div>
+                      <div class="clearfix">
+                        <h6 class="text-body">Unsubscribe Rate</h6>
+                        <h3 class="fw-bold text-danger mb-0">0.4%</h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-12">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title m-0">Campaign Performance</h5>
+                <span class="badge bg-primary">Total Active: 3</span>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light">
+                      <tr>
+                        <th>Campaign Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Reach</th>
+                        <th>Conversions</th>
+                        <th>Cost</th>
+                        <th>ROI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <strong>Summer Sale 2025</strong>
+                        </td>
+                        <td>Email</td>
+                        <td>
+                          <span class="badge bg-success">Running</span>
+                        </td>
+                        <td>64,200</td>
+                        <td>1,120</td>
+                        <td>$2,800</td>
+                        <td class="text-success fw-bold">+71%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <strong>App Install Boost</strong>
+                        </td>
+                        <td>Social Ads</td>
+                        <td>
+                          <span class="badge bg-success">Running</span>
+                        </td>
+                        <td>128,000</td>
+                        <td>2,540</td>
+                        <td>$5,600</td>
+                        <td class="text-success fw-bold">+88%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <strong>Black Friday Promo</strong>
+                        </td>
+                        <td>Google Ads</td>
+                        <td>
+                          <span class="badge bg-secondary">Completed</span>
+                        </td>
+                        <td>92,000</td>
+                        <td>980</td>
+                        <td>$4,200</td>
+                        <td class="text-success fw-bold">+56%</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <strong>Loyalty Members Push</strong>
+                        </td>
+                        <td>SMS</td>
+                        <td>
+                          <span class="badge bg-success">Running</span>
+                        </td>
+                        <td>22,800</td>
+                        <td>410</td>
+                        <td>$900</td>
+                        <td class="text-success fw-bold">+43%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- begin::NexLink Footer -->
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li>
+                <a class="text-body" href="app/dashboard.html">Home</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Faq's</a>
+              </li>
+              <li>
+                <a class="text-body" href="javascript:void(0);">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- end::NexLink Footer -->
+
+  </div>
+
+  <!-- begin::NexLink Page Scripts -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script>window.CRM_PAGE = 'marketing';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-marketing.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <!-- end::NexLink Page Scripts -->
+</body>
+
+</html>

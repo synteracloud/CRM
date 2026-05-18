@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Datatable</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">DataTable basic</h6>
+              </div>
+              <div class="card-body p-0 pb-2">
+                <table id="dt_basic" class="table display">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-200px">Name</th>
+                      <th class="minw-150px">Leave Type</th>
+                      <th class="minw-200px">Department</th>
+                      <th class="minw-150px">Days</th>
+                      <th class="minw-150px">Start</th>
+                      <th class="minw-150px">End</th>
+                      <th class="minw-100px">Status</th>
+                      <th class="text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Row 1 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar1.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Alice Brown</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>Front-End Developer</td>
+                      <td>3 Days</td>
+                      <td>01 Sep 2024</td>
+                      <td>03 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 2 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar2.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Brian Clark</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-warning">Paternity Leave</span>
+                      </td>
+                      <td>QA Engineer</td>
+                      <td>5 Days</td>
+                      <td>10 Sep 2024</td>
+                      <td>14 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-secondary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Rejected</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary" data-selected="true">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 3 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar3.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Catherine Lee</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-body">Maternity Leave</span>
+                      </td>
+                      <td>Product Manager</td>
+                      <td>2 Days</td>
+                      <td>05 Sep 2024</td>
+                      <td>06 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-outline-light dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Pending</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light" data-selected="true">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 4 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar4.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Daniel Fox</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>UI/UX Designer</td>
+                      <td>1 Day</td>
+                      <td>08 Sep 2024</td>
+                      <td>08 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 5 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar5.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Evelyn King</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-warning">Sick Leave</span>
+                      </td>
+                      <td>Backend Developer</td>
+                      <td>2 Days</td>
+                      <td>11 Sep 2024</td>
+                      <td>12 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-secondary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Rejected</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary" data-selected="true">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 6 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar6.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Fiona White</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>Marketing Executive</td>
+                      <td>3 Days</td>
+                      <td>13 Sep 2024</td>
+                      <td>15 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 7 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar7.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">George Martin</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-body">Sabbatical</span>
+                      </td>
+                      <td>HR Manager</td>
+                      <td>10 Days</td>
+                      <td>01 Oct 2024</td>
+                      <td>10 Oct 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-outline-light dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Pending</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light" data-selected="true">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 8 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar8.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Hannah Scott</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>Content Writer</td>
+                      <td>1 Day</td>
+                      <td>15 Sep 2024</td>
+                      <td>15 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 9 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar9.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Ian Cooper</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-warning">Sick Leave</span>
+                      </td>
+                      <td>DevOps Engineer</td>
+                      <td>4 Days</td>
+                      <td>18 Sep 2024</td>
+                      <td>21 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-secondary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Rejected</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary" data-selected="true">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 10 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar10.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Julia Adams</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-body">Unpaid Leave</span>
+                      </td>
+                      <td>Customer Support</td>
+                      <td>2 Days</td>
+                      <td>22 Sep 2024</td>
+                      <td>23 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-outline-light dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Pending</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light" data-selected="true">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 11 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar4.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Kevin Lewis</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>Frontend Developer</td>
+                      <td>2 Days</td>
+                      <td>24 Sep 2024</td>
+                      <td>25 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 12 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar9.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Laura Phillips</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-warning">Sick Leave</span>
+                      </td>
+                      <td>QA Engineer</td>
+                      <td>1 Day</td>
+                      <td>26 Sep 2024</td>
+                      <td>26 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-secondary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Rejected</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary" data-selected="true">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 13 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar6.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Michael Turner</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-body">Maternity Leave</span>
+                      </td>
+                      <td>Product Manager</td>
+                      <td>3 Days</td>
+                      <td>27 Sep 2024</td>
+                      <td>29 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-outline-light dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Pending</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light" data-selected="true">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 14 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar5.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Natalie Harris</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-success">Casual Leave</span>
+                      </td>
+                      <td>UI/UX Designer</td>
+                      <td>1 Day</td>
+                      <td>30 Sep 2024</td>
+                      <td>30 Sep 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-primary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Approved</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary" data-selected="true">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Row 15 -->
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center mw-175px">
+                          <div class="avatar avatar-xxs rounded-circle">
+                            <img src="assets/images/avatar/avatar10.webp" alt="">
+                          </div>
+                          <div class="ms-2 me-auto">Daniel Edwards</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-warning">Sick Leave</span>
+                      </td>
+                      <td>Backend Developer</td>
+                      <td>2 Days</td>
+                      <td>01 Oct 2024</td>
+                      <td>02 Oct 2024</td>
+                      <td>
+                        <div class="dropdown select-status">
+                          <button class="btn btn-sm btn-subtle-secondary dropdown-toggle waves-effect waves-light" type="button" data-bs-toggle="dropdown">Rejected</button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-outline-light">Pending</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-primary">Approved</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-secondary" data-selected="true">Rejected</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);" data-class="btn-subtle-success">New</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="btn-group float-end">
+                          <button class="btn btn-white btn-sm btn-shadow btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fi fi-rr-menu-dots"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Edit</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Complex headers</h6>
+              </div>
+              <div class="card-body p-0 pb-2">
+                <table id="dt_ComplexHeaders" class="table display table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-150px" rowspan="2">Name</th>
+                      <th class="minw-350px" colspan="2">Position</th>
+                      <th class="minw-450px" colspan="3">Contact</th>
+                    </tr>
+                    <tr>
+                      <th colspan="3" data-dt-order="disable">HR info</th>
+                      <th colspan="2">Direct</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>John Smith</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>001</td>
+                      <td>john.smith@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Emily Johnson</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Marketing</td>
+                      <td>002</td>
+                      <td>emily.johnson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Michael Brown</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>003</td>
+                      <td>michael.brown@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Sarah Davis</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Development</td>
+                      <td>004</td>
+                      <td>sarah.davis@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>David Wilson</td>
+                      <td>Executive</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>005</td>
+                      <td>david.wilson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Laura Martinez</td>
+                      <td>Manager</td>
+                      <td>Inactive</td>
+                      <td>Sales</td>
+                      <td>006</td>
+                      <td>laura.martinez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>James Anderson</td>
+                      <td>Executive</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>007</td>
+                      <td>james.anderson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Linda Taylor</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Development</td>
+                      <td>008</td>
+                      <td>linda.taylor@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Robert Thomas</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>009</td>
+                      <td>robert.thomas@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Patricia Jackson</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Marketing</td>
+                      <td>010</td>
+                      <td>patricia.jackson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Daniel White</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>011</td>
+                      <td>daniel.white@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Barbara Harris</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Development</td>
+                      <td>012</td>
+                      <td>barbara.harris@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>William Martin</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Sales</td>
+                      <td>013</td>
+                      <td>william.martin@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Elizabeth Thompson</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>014</td>
+                      <td>elizabeth.thompson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Joseph Garcia</td>
+                      <td>Executive</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>015</td>
+                      <td>joseph.garcia@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jennifer Martinez</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Development</td>
+                      <td>016</td>
+                      <td>jennifer.martinez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Charles Robinson</td>
+                      <td>Team Lead</td>
+                      <td>Inactive</td>
+                      <td>Sales</td>
+                      <td>017</td>
+                      <td>charles.robinson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jessica Clark</td>
+                      <td>Executive</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>018</td>
+                      <td>jessica.clark@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Christopher Rodriguez</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>019</td>
+                      <td>christopher.rodriguez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ashley Lewis</td>
+                      <td>Manager</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>020</td>
+                      <td>ashley.lewis@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Matthew Lee</td>
+                      <td>Executive</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>021</td>
+                      <td>matthew.lee@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Amanda Walker</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>022</td>
+                      <td>amanda.walker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Anthony Hall</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>023</td>
+                      <td>anthony.hall@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Stephanie Allen</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>024</td>
+                      <td>stephanie.allen@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Joshua Young</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>025</td>
+                      <td>joshua.young@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Sarah Hernandez</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>026</td>
+                      <td>sarah.hernandez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Kevin King</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>027</td>
+                      <td>kevin.king@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Michelle Wright</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>028</td>
+                      <td>michelle.wright@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Brian Lopez</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>029</td>
+                      <td>brian.lopez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Emily Hill</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>030</td>
+                      <td>emily.hill@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jason Scott</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>031</td>
+                      <td>jason.scott@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ashley Green</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>032</td>
+                      <td>ashley.green@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Justin Adams</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>033</td>
+                      <td>justin.adams@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Lauren Baker</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>034</td>
+                      <td>lauren.baker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Brandon Gonzalez</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>035</td>
+                      <td>brandon.gonzalez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Katherine Nelson</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>036</td>
+                      <td>katherine.nelson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ryan Carter</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>037</td>
+                      <td>ryan.carter@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Victoria Mitchell</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>038</td>
+                      <td>victoria.mitchell@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Eric Perez</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>039</td>
+                      <td>eric.perez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Samantha Roberts</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>040</td>
+                      <td>samantha.roberts@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Daniel Turner</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>041</td>
+                      <td>daniel.turner@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Olivia Phillips</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>042</td>
+                      <td>olivia.phillips@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Andrew Campbell</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>043</td>
+                      <td>andrew.campbell@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Hannah Parker</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>044</td>
+                      <td>hannah.parker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Kevin Evans</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>045</td>
+                      <td>kevin.evans@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Melissa Edwards</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>046</td>
+                      <td>melissa.edwards@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Patrick Collins</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>047</td>
+                      <td>patrick.collins@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Rachel Stewart</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>048</td>
+                      <td>rachel.stewart@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Tyler Sanchez</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>049</td>
+                      <td>tyler.sanchez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Victoria Morris</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>050</td>
+                      <td>victoria.morris@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jason Rogers</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>051</td>
+                      <td>jason.rogers@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Amanda Reed</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>052</td>
+                      <td>amanda.reed@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Brian Cook</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>053</td>
+                      <td>brian.cook@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Nicole Morgan</td>
+                      <td>Team Lead</td>
+                      <td>Active</td>
+                      <td>Marketing</td>
+                      <td>054</td>
+                      <td>nicole.morgan@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Steven Bell</td>
+                      <td>Admin</td>
+                      <td>Active</td>
+                      <td>Support</td>
+                      <td>055</td>
+                      <td>steven.bell@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Rebecca Murphy</td>
+                      <td>Executive</td>
+                      <td>Inactive</td>
+                      <td>Development</td>
+                      <td>056</td>
+                      <td>rebecca.murphy@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Joshua Bailey</td>
+                      <td>Manager</td>
+                      <td>Active</td>
+                      <td>Sales</td>
+                      <td>057</td>
+                      <td>joshua.bailey@crm.com</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Name</th>
+                      <th>Position</th>
+                      <th>Status</th>
+                      <th>Department</th>
+                      <th>ID</th>
+                      <th>Email</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Ajax sourced data</h6>
+              </div>
+              <div class="card-body p-0 pb-2">
+                <table id="dt_AjaxData" class="table display">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-150px">Name</th>
+                      <th class="minw-250px">Position</th>
+                      <th class="minw-150px">Department</th>
+                      <th class="minw-100px">ID</th>
+                      <th class="minw-150px">Joining Date</th>
+                      <th class="minw-150px">Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Extra Detailed</h6>
+              </div>
+              <div class="card-body p-0 pb-2">
+                <table id="dt_ExtraDetailed" class="table table-striped display">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="minw-50px"></th>
+                      <th class="minw-200px">Name</th>
+                      <th class="minw-200px">Position</th>
+                      <th class="minw-150px">Department</th>
+                      <th class="minw-150px">Email</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <div class="card overflow-hidden">
+              <div class="card-header d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Scroll vertical</h6>
+                <div id="dt_ScrollVertical_Search"></div>
+              </div>
+              <div class="card-body p-0 pb-3">
+                <table id="dt_ScrollVertical" class="table display">
+                  <thead>
+                    <tr>
+                      <th class="minw-150px">Name</th>
+                      <th class="minw-200px">Position</th>
+                      <th class="minw-150px">Department</th>
+                      <th class="minw-100px">Age</th>
+                      <th class="minw-150px">Start Date</th>
+                      <th class="minw-150px">Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Joseph Garcia</td>
+                      <td>Executive</td>
+                      <td>Support</td>
+                      <td>40</td>
+                      <td>2017-06-03</td>
+                      <td>joseph.garcia@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>John Smith</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>45</td>
+                      <td>2015-06-12</td>
+                      <td>john.smith@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Emily Johnson</td>
+                      <td>Executive</td>
+                      <td>Marketing</td>
+                      <td>38</td>
+                      <td>2018-09-21</td>
+                      <td>emily.johnson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Michael Brown</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>41</td>
+                      <td>2016-02-15</td>
+                      <td>michael.brown@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Sarah Davis</td>
+                      <td>Team Lead</td>
+                      <td>Development</td>
+                      <td>34</td>
+                      <td>2019-01-10</td>
+                      <td>sarah.davis@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>David Wilson</td>
+                      <td>Executive</td>
+                      <td>Marketing</td>
+                      <td>29</td>
+                      <td>2020-04-18</td>
+                      <td>david.wilson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Laura Martinez</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>50</td>
+                      <td>2012-11-05</td>
+                      <td>laura.martinez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>James Anderson</td>
+                      <td>Executive</td>
+                      <td>Support</td>
+                      <td>37</td>
+                      <td>2017-07-23</td>
+                      <td>james.anderson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Linda Taylor</td>
+                      <td>Admin</td>
+                      <td>Development</td>
+                      <td>42</td>
+                      <td>2014-05-29</td>
+                      <td>linda.taylor@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Robert Thomas</td>
+                      <td>Team Lead</td>
+                      <td>Sales</td>
+                      <td>36</td>
+                      <td>2016-08-11</td>
+                      <td>robert.thomas@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Patricia Jackson</td>
+                      <td>Executive</td>
+                      <td>Marketing</td>
+                      <td>33</td>
+                      <td>2019-03-30</td>
+                      <td>patricia.jackson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Daniel White</td>
+                      <td>Manager</td>
+                      <td>Support</td>
+                      <td>48</td>
+                      <td>2013-12-02</td>
+                      <td>daniel.white@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Barbara Harris</td>
+                      <td>Team Lead</td>
+                      <td>Development</td>
+                      <td>39</td>
+                      <td>2015-05-19</td>
+                      <td>barbara.harris@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>William Martin</td>
+                      <td>Executive</td>
+                      <td>Sales</td>
+                      <td>41</td>
+                      <td>2016-01-07</td>
+                      <td>william.martin@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Elizabeth Thompson</td>
+                      <td>Admin</td>
+                      <td>Marketing</td>
+                      <td>35</td>
+                      <td>2018-11-14</td>
+                      <td>elizabeth.thompson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jennifer Martinez</td>
+                      <td>Manager</td>
+                      <td>Development</td>
+                      <td>44</td>
+                      <td>2014-08-22</td>
+                      <td>jennifer.martinez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Charles Robinson</td>
+                      <td>Team Lead</td>
+                      <td>Sales</td>
+                      <td>37</td>
+                      <td>2015-03-18</td>
+                      <td>charles.robinson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jessica Clark</td>
+                      <td>Executive</td>
+                      <td>Marketing</td>
+                      <td>30</td>
+                      <td>2019-07-11</td>
+                      <td>jessica.clark@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Christopher Rodriguez</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>42</td>
+                      <td>2014-12-30</td>
+                      <td>christopher.rodriguez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ashley Lewis</td>
+                      <td>Manager</td>
+                      <td>Development</td>
+                      <td>46</td>
+                      <td>2013-09-14</td>
+                      <td>ashley.lewis@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Matthew Lee</td>
+                      <td>Executive</td>
+                      <td>Sales</td>
+                      <td>39</td>
+                      <td>2017-02-05</td>
+                      <td>matthew.lee@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Amanda Walker</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>34</td>
+                      <td>2018-06-18</td>
+                      <td>amanda.walker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Anthony Hall</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>41</td>
+                      <td>2016-04-21</td>
+                      <td>anthony.hall@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Stephanie Allen</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>36</td>
+                      <td>2017-09-29</td>
+                      <td>stephanie.allen@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Joshua Young</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>45</td>
+                      <td>2015-11-12</td>
+                      <td>joshua.young@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Sarah Hernandez</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>33</td>
+                      <td>2018-02-25</td>
+                      <td>sarah.hernandez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Kevin King</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>40</td>
+                      <td>2016-07-30</td>
+                      <td>kevin.king@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Michelle Wright</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>37</td>
+                      <td>2017-05-08</td>
+                      <td>michelle.wright@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Brian Lopez</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>42</td>
+                      <td>2015-12-20</td>
+                      <td>brian.lopez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Emily Hill</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>35</td>
+                      <td>2018-08-03</td>
+                      <td>emily.hill@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Jason Scott</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>39</td>
+                      <td>2016-05-17</td>
+                      <td>jason.scott@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ashley Green</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>38</td>
+                      <td>2017-03-12</td>
+                      <td>ashley.green@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Justin Adams</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>41</td>
+                      <td>2015-09-22</td>
+                      <td>justin.adams@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Lauren Baker</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>36</td>
+                      <td>2018-01-15</td>
+                      <td>lauren.baker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Brandon Gonzalez</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>40</td>
+                      <td>2016-11-05</td>
+                      <td>brandon.gonzalez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Katherine Nelson</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>33</td>
+                      <td>2017-08-09</td>
+                      <td>katherine.nelson@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Ryan Carter</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>44</td>
+                      <td>2015-04-28</td>
+                      <td>ryan.carter@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Victoria Mitchell</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>39</td>
+                      <td>2018-06-12</td>
+                      <td>victoria.mitchell@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Eric Perez</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>41</td>
+                      <td>2016-02-27</td>
+                      <td>eric.perez@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Samantha Roberts</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>35</td>
+                      <td>2017-09-19</td>
+                      <td>samantha.roberts@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Daniel Turner</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>47</td>
+                      <td>2015-03-04</td>
+                      <td>daniel.turner@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Olivia Phillips</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>34</td>
+                      <td>2018-07-22</td>
+                      <td>olivia.phillips@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Andrew Campbell</td>
+                      <td>Admin</td>
+                      <td>Support</td>
+                      <td>39</td>
+                      <td>2016-06-15</td>
+                      <td>andrew.campbell@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Hannah Parker</td>
+                      <td>Executive</td>
+                      <td>Development</td>
+                      <td>36</td>
+                      <td>2017-05-27</td>
+                      <td>hannah.parker@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Kevin Evans</td>
+                      <td>Manager</td>
+                      <td>Sales</td>
+                      <td>42</td>
+                      <td>2015-12-09</td>
+                      <td>kevin.evans@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Melissa Edwards</td>
+                      <td>Team Lead</td>
+                      <td>Marketing</td>
+                      <td>38</td>
+                      <td>2018-09-01</td>
+                      <td>melissa.edwards@crm.com</td>
+                    </tr>
+                    <tr>
+                      <td>Tyler Simmons</td>
+                      <td>Executive</td>
+                      <td>Support</td>
+                      <td>40</td>
+                      <td>2016-03-12</td>
+                      <td>tyler.simmons@crm.com</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/plugins/datatable.js"></script>
+</body>
+</html>

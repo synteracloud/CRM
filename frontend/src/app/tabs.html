@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexLink | CRM Admin Dashboard Template</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">      <div class="container-fluid">
+
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Tabs</li>
+            </ol>
+          </nav>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Tab underline</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-underline card-header-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">Messages</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="messages" role="tabpanel" aria-labelledby="messages-tab" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Tab pills</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-pills card-header-pills" id="myTabPills" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabPills" data-bs-toggle="tab" data-bs-target="#homePills" type="button" role="tab" aria-controls="homePills" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabPills" data-bs-toggle="tab" data-bs-target="#profilePills" type="button" role="tab" aria-controls="profilePills" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabPills" data-bs-toggle="tab" data-bs-target="#messagesPills" type="button" role="tab" aria-controls="messagesPills" aria-selected="false">Messages</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade show active" id="homePills" role="tabpanel" aria-labelledby="home-tabPills" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="profilePills" role="tabpanel" aria-labelledby="profile-tabPills" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="messagesPills" role="tabpanel" aria-labelledby="messages-tabPills" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Tabs Header</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header bg-body-secondary">
+                  <ul class="nav nav-tabs card-header-tabs" id="myTabDefault" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabDefault" data-bs-toggle="tab" data-bs-target="#homeDefault" type="button" role="tab" aria-controls="homeDefault" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabDefault" data-bs-toggle="tab" data-bs-target="#profileDefault" type="button" role="tab" aria-controls="profileDefault" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabDefault" data-bs-toggle="tab" data-bs-target="#messagesDefault" type="button" role="tab" aria-controls="messagesDefault" aria-selected="false">Messages</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade show active" id="homeDefault" role="tabpanel" aria-labelledby="home-tabDefault" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="profileDefault" role="tabpanel" aria-labelledby="profile-tabDefault" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="messagesDefault" role="tabpanel" aria-labelledby="messages-tabDefault" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Fill and justify</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-pills nav-fill card-header-pills" id="myTabPillsFill" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabPillsFill" data-bs-toggle="tab" data-bs-target="#homePillsFill" type="button" role="tab" aria-controls="homePillsFill" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabPillsFill" data-bs-toggle="tab" data-bs-target="#profilePillsFill" type="button" role="tab" aria-controls="profilePillsFill" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabPillsFill" data-bs-toggle="tab" data-bs-target="#messagesPillsFill" type="button" role="tab" aria-controls="messagesPillsFill" aria-selected="false">Messages</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade show active" id="homePillsFill" role="tabpanel" aria-labelledby="home-tabPillsFill" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="profilePillsFill" role="tabpanel" aria-labelledby="profile-tabPillsFill" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade" id="messagesPillsFill" role="tabpanel" aria-labelledby="messages-tabPillsFill" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Fade in up</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-underline card-header-tabs" id="myTabFadeUp" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabFadeUp" data-bs-toggle="tab" data-bs-target="#homeFadeUp" type="button" role="tab" aria-controls="homeFadeUp" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabFadeUp" data-bs-toggle="tab" data-bs-target="#profileFadeUp" type="button" role="tab" aria-controls="profileFadeUp" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabFadeUp" data-bs-toggle="tab" data-bs-target="#messagesFadeUp" type="button" role="tab" aria-controls="messagesFadeUp" aria-selected="false">Messages</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="settings-tabFadeUp" data-bs-toggle="tab" data-bs-target="#settingsFadeUp" type="button" role="tab" aria-controls="settingsFadeUp" aria-selected="false">Settings</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade tab-fade-up show active" id="homeFadeUp" role="tabpanel" aria-labelledby="home-tabFadeUp" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-up" id="profileFadeUp" role="tabpanel" aria-labelledby="profile-tabFadeUp" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-up" id="messagesFadeUp" role="tabpanel" aria-labelledby="messages-tabFadeUp" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-up" id="settingsFadeUp" role="tabpanel" aria-labelledby="settings-tabFadeUp" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Fade in down</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-underline card-header-tabs" id="myTabFadeDown" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabFadeDown" data-bs-toggle="tab" data-bs-target="#homeFadeDown" type="button" role="tab" aria-controls="homeFadeDown" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabFadeDown" data-bs-toggle="tab" data-bs-target="#profileFadeDown" type="button" role="tab" aria-controls="profileFadeDown" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabFadeDown" data-bs-toggle="tab" data-bs-target="#messagesFadeDown" type="button" role="tab" aria-controls="messagesFadeDown" aria-selected="false">Messages</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="settings-tabFadeDown" data-bs-toggle="tab" data-bs-target="#settingsFadeDown" type="button" role="tab" aria-controls="settingsFadeDown" aria-selected="false">Settings</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade tab-fade-down show active" id="homeFadeDown" role="tabpanel" aria-labelledby="home-tabFadeDown" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-down" id="profileFadeDown" role="tabpanel" aria-labelledby="profile-tabFadeDown" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-down" id="messagesFadeDown" role="tabpanel" aria-labelledby="messages-tabFadeDown" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-down" id="settingsFadeDown" role="tabpanel" aria-labelledby="settings-tabFadeDown" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Fade in left</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-underline card-header-tabs" id="myTabFadeLeft" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabFadeLeft" data-bs-toggle="tab" data-bs-target="#homeFadeLeft" type="button" role="tab" aria-controls="homeFadeLeft" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabFadeLeft" data-bs-toggle="tab" data-bs-target="#profileFadeLeft" type="button" role="tab" aria-controls="profileFadeLeft" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabFadeLeft" data-bs-toggle="tab" data-bs-target="#messagesFadeLeft" type="button" role="tab" aria-controls="messagesFadeLeft" aria-selected="false">Messages</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="settings-tabFadeLeft" data-bs-toggle="tab" data-bs-target="#settingsFadeLeft" type="button" role="tab" aria-controls="settingsFadeLeft" aria-selected="false">Settings</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade tab-fade-start show active" id="homeFadeLeft" role="tabpanel" aria-labelledby="home-tabFadeLeft" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-start" id="profileFadeLeft" role="tabpanel" aria-labelledby="profile-tabFadeLeft" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-start" id="messagesFadeLeft" role="tabpanel" aria-labelledby="messages-tabFadeLeft" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-start" id="settingsFadeLeft" role="tabpanel" aria-labelledby="settings-tabFadeLeft" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Fade in right</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-header">
+                  <ul class="nav nav-underline card-header-tabs" id="myTabFadeRight" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tabFadeRight" data-bs-toggle="tab" data-bs-target="#homeFadeRight" type="button" role="tab" aria-controls="homeFadeRight" aria-selected="true">Home</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tabFadeRight" data-bs-toggle="tab" data-bs-target="#profileFadeRight" type="button" role="tab" aria-controls="profileFadeRight" aria-selected="false">Profile</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="messages-tabFadeRight" data-bs-toggle="tab" data-bs-target="#messagesFadeRight" type="button" role="tab" aria-controls="messagesFadeRight" aria-selected="false">Messages</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="settings-tabFadeRight" data-bs-toggle="tab" data-bs-target="#settingsFadeRight" type="button" role="tab" aria-controls="settingsFadeRight" aria-selected="false">Settings</button>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body">
+                  <div class="tab-content">
+                    <div class="tab-pane fade tab-fade-end show active" id="homeFadeRight" role="tabpanel" aria-labelledby="home-tabFadeRight" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-end" id="profileFadeRight" role="tabpanel" aria-labelledby="profile-tabFadeRight" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-end" id="messagesFadeRight" role="tabpanel" aria-labelledby="messages-tabFadeRight" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                    <div class="tab-pane fade tab-fade-end" id="settingsFadeRight" role="tabpanel" aria-labelledby="settings-tabFadeRight" tabindex="0">
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                      <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Vertical left</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-body p-0">
+                  <div class="d-flex">
+                    <div class="nav flex-column nav-pills border-end p-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                      <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
+                      <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
+                      <button class="nav-link" id="v-pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#v-pills-disabled" type="button" role="tab" aria-controls="v-pills-disabled" aria-selected="false" disabled>Disabled</button>
+                      <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
+                      <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</button>
+                    </div>
+                    <div class="tab-content p-4" id="v-pills-tabContent">
+                      <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-disabled" role="tabpanel" aria-labelledby="v-pills-disabled-tab" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <h6 class="card-title mb-3">Vertical right</h6>
+            <div class="clearfix">
+              <div class="card">
+                <div class="card-body p-0">
+                  <div class="d-flex">
+                    <div class="tab-content p-4" id="v-pills-tabContent2">
+                      <div class="tab-pane fade show active" id="v-pills-home2" role="tabpanel" aria-labelledby="v-pills-home-tab2" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-profile2" role="tabpanel" aria-labelledby="v-pills-profile-tab2" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-disabled2" role="tabpanel" aria-labelledby="v-pills-disabled-tab2" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-messages2" role="tabpanel" aria-labelledby="v-pills-messages-tab2" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                      <div class="tab-pane fade" id="v-pills-settings2" role="tabpanel" aria-labelledby="v-pills-settings-tab2" tabindex="0">
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                      </div>
+                    </div>
+                    <div class="nav flex-column nav-pills border-start p-2" id="v-pills-tab2" role="tablist" aria-orientation="vertical">
+                      <button class="nav-link active" id="v-pills-home-tab2" data-bs-toggle="pill" data-bs-target="#v-pills-home2" type="button" role="tab" aria-controls="v-pills-home2" aria-selected="true">Home</button>
+                      <button class="nav-link" id="v-pills-profile-tab2" data-bs-toggle="pill" data-bs-target="#v-pills-profile2" type="button" role="tab" aria-controls="v-pills-profile2" aria-selected="false">Profile</button>
+                      <button class="nav-link" id="v-pills-disabled-tab2" data-bs-toggle="pill" data-bs-target="#v-pills-disabled2" type="button" role="tab" aria-controls="v-pills-disabled2" aria-selected="false" disabled>Disabled</button>
+                      <button class="nav-link" id="v-pills-messages-tab2" data-bs-toggle="pill" data-bs-target="#v-pills-messages2" type="button" role="tab" aria-controls="v-pills-messages2" aria-selected="false">Messages</button>
+                      <button class="nav-link" id="v-pills-settings-tab2" data-bs-toggle="pill" data-bs-target="#v-pills-settings2" type="button" role="tab" aria-controls="v-pills-settings2" aria-selected="false">Settings</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+</body>
+</html>
