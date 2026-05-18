@@ -1,6 +1,6 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-18 (Phase 3 complete — 5 public API engines, 93 tests passing; Phase 4 frontend custom pages next)
+**Last updated:** 2026-05-18 (Pre-Phase-4 audit complete — 9 fixes applied, 308 tests passing; Phase 4 frontend custom pages next)
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
@@ -155,6 +155,8 @@
 | Session 20 | Infrastructure seal — folder restructure (V4_extracted→backend, nexlink triple-wrap→frontend); all 96 pages verified HTTP 200; npm cache → D:\CRM\.npm-cache; pip cache → D:\CRM\.pip-cache; Python 3.12.10 installed at D:\Python; venv at D:\CRM\backend\.venv; fastapi/uvicorn/pydantic installed; zero C: leakage confirmed | 2026-05-18 |
 | Phase 1 | Foundation Seal COMPLETE — README.md, CHANGELOG.md, CONTRIBUTING.md, Makefile, .pre-commit-config.yaml, ADR-001/002/003, Alembic setup (sqlalchemy+psycopg2 added to requirements), docker-compose+Dockerfiles confirmed existing; 96/96 pages HTTP 200; pushed to GitHub | 2026-05-18 |
 | Phase 2 | Follow-up Engine COMPLETE — SQLAlchemy ORM models (FollowupTask, FollowupEscalation, Lead, Activity); Alembic migration 0001_followup_schema; public REST API /api/v1/followups (5 endpoints, JWT-gated); JWT auth dependency (services/auth/jwt_deps.py); python-jose/pytest/httpx added to requirements; 38 tests passing (18 unit + 20 integration); 96/96 pages HTTP 200 | 2026-05-18 |
+| Phase 3 | 5 Engine public APIs COMPLETE — WhatsApp (12 tests), Collections (11), Activity (10), Activation (10), DLQ (10); all 5 routers mounted in app.py; 93/93 tests passing; 96/96 pages HTTP 200; GitHub push | 2026-05-18 |
+| Audit | Pre-Phase-4 audit: 9 fixes applied — P3-A Literal import, P3-B lifespan singleton wiring, P2-A RBAC escalation gate, P2-B overdue scanner, P2-C list_followups count query, P3-C invoice send endpoint, P3-D tenant isolation, P3-E utcnow() deprecation, P3-F conversation detail endpoint; 14 new tests; 308/308 tests passing; GitHub push | 2026-05-18 |
 
 ---
 

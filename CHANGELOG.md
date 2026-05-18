@@ -10,6 +10,42 @@ Format: [Semantic Versioning](https://semver.org). Each entry covers a build ses
 
 ---
 
+## [0.23.1] — 2026-05-18 — Pre-Phase-4 Audit: 9 Fixes
+
+### Fixed — Critical / High
+- `src/ticket_management/entities.py` — added `Literal` to typing import; `pytest` from backend/ root no longer aborts on collection (was hidden by collection error)
+- `services/app.py` — lifespan now wires public router singletons in production (`PYTEST_CURRENT_TEST` gate preserves test isolation); activity + collections public routers share same in-memory instance as internal routers
+
+### Fixed — Security / Auth
+- `services/followup/http/public.py` — `POST /api/v1/followups/{id}/escalate` now requires `manager` or `admin` role; `sales_rep` returns 403; `_require_manager()` helper added; `client_manager` test fixture added
+
+### Fixed — Business Logic
+- `services/followup/overdue.py` (new) — `scan_overdue_tasks(db)` scans for pending tasks past `due_at` and marks them `overdue`
+- `services/app.py` — asyncio background task `_overdue_scanner` runs every 60 s in production; starts in lifespan, cancelled cleanly on shutdown
+
+### Fixed — API Correctness
+- `services/followup/http/public.py` — `list_followups` double-query replaced with single `SELECT COUNT(*)` via `func.count()`
+- `services/collections/http/public.py` — `POST /api/v1/invoices/{id}/send` endpoint added; returns scheduled WhatsApp reminder dates
+- `services/conversation/http/public.py` — `GET /api/v1/conversations/{id}` detail endpoint added; returns conversation + full message thread
+
+### Fixed — Data Correctness
+- `services/collections/entities.py` — `tenant_id: str = ""` field added to `Invoice`; stamped from `claims.tenant_id` on creation; `list_invoices` now filters by tenant
+
+### Fixed — Code Quality
+- `services/activity/entities.py`, `services/collections/entities.py` — `datetime.utcnow()` replaced with `datetime.now(timezone.utc)`
+
+### Tests
+- `tests/followup/test_overdue_scanner.py` (new) — 4 tests for overdue scanner
+- `tests/followup/test_public_api.py` — updated escalation tests to use `client_manager`; +1 test (`test_sales_rep_cannot_escalate`)
+- `tests/coll/test_collections_public.py` — +3 tests (`TestSendInvoice`) + 2 tests (`TestTenantIsolation`)
+- `tests/conversation/test_whatsapp_public.py` — +4 tests (`TestGetConversation`)
+
+### Verified
+- 308/308 tests passing (93 original Phase 2+3 + 14 new from audit fixes + 201 legacy src/ tests now visible after P3-A fix)
+- 96/96 library pages HTTP 200
+
+---
+
 ## [0.23.0] — 2026-05-18 — Phase 3: 5 Engines — Public API Layer
 
 ### Added — Sprint 1: WhatsApp Engine

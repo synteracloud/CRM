@@ -1,6 +1,6 @@
 # Pakistan CRM — Document Catalogue
 
-**Last updated:** 2026-05-18 (Phase 3 complete: 5 public API engines — WhatsApp, Collections, Activity, Activation, DLQ; 93/93 tests passing)
+**Last updated:** 2026-05-18 (Pre-Phase-4 audit: 9 fixes — RBAC, overdue scanner, tenant isolation, conversation detail, invoice send, utcnow deprecation; 308/308 tests passing)
 **Scope:** All .md files in the project — 81 active + 3 archived — each with purpose and description.
 **Purpose:** Ground-truth index built from an actual file system scan. Use this to find any document, understand its purpose, and know whether it is active or a QC record. Paths reflect current folder structure.
 **Linkage audit:** 2026-05-17 — 11 issues resolved (3 broken refs, 5 stale refs, 3 notation mismatches). All cross-references verified clean.
@@ -40,7 +40,7 @@ Build authority files. Claude reads these first every session.
 | `DOC-CATALOGUE.md` | This file. Index of all .md documents in the project. | Active |
 | `PROGRESS.md` | Frontend page progress tracker — 96/96 library pages complete, custom phase queue defined. Rebuild plan reference added. | Active |
 | `REBUILD-PLAN.md` | 10/10 rebuild roadmap — 5 phases, ~15 weeks. Phase 1 COMPLETE. Current grades, phase deliverables, non-negotiable rules. | Active |
-| `PENDING.md` | Rebuild task checklist — 155 tasks across 5 phases. Phase 1: 14/14 ✓. Updated as each task completes. | Active |
+| `PENDING.md` | Rebuild task checklist — 161 tasks across 5 phases. Phases 1–3: 69/161 ✓ (43%). Updated as each task completes. | Active |
 | `README.md` | Root GitHub landing page — architecture diagram, quick start, doc index, key constraints. | Active |
 | `CHANGELOG.md` | Version history — sessions 0.1.0 through current. Updated each phase. | Active |
 | `CONTRIBUTING.md` | Branch naming, commit format, PR process, non-negotiable rules for all contributors. | Active |
@@ -63,17 +63,19 @@ Backend project authority files.
 
 ---
 
-## §B2 — Phase 3 Public API layer (10 files)
+## §B2 — Phase 3 Public API layer + Audit Fixes (11 files)
 
 New service public-facing HTTP modules. All JWT-gated; webhook endpoints use X-Api-Key.
+Updated during pre-Phase-4 audit: new endpoints, RBAC gates, tenant isolation, overdue scanner.
 
 | File | Routes | Tests |
 |---|---|---|
-| `services/conversation/http/public.py` | `POST /api/v1/webhooks/whatsapp` · `GET /api/v1/conversations` | `tests/conversation/test_whatsapp_public.py` (12) |
-| `services/collections/http/public.py` | `POST/GET /api/v1/invoices` · `POST /api/v1/payments/callback/{provider}` | `tests/coll/test_collections_public.py` (11) |
+| `services/conversation/http/public.py` | `POST /api/v1/webhooks/whatsapp` · `GET /api/v1/conversations` · `GET /api/v1/conversations/{id}` | `tests/conversation/test_whatsapp_public.py` (16) |
+| `services/collections/http/public.py` | `POST/GET /api/v1/invoices` · `POST /api/v1/invoices/{id}/send` · `GET /api/v1/invoices/{id}` · `POST /api/v1/payments/callback/{provider}` | `tests/coll/test_collections_public.py` (16) |
 | `services/activity/http/public.py` | `POST/GET /api/v1/activities` · `GET /api/v1/activities/chain-integrity` | `tests/activity/test_activity_public.py` (10) |
 | `services/activation/http/public.py` | `POST /api/v1/activation/start` · `/whatsapp-sim` · `/move-deal` · `GET /api/v1/activation/status` | `tests/activation/test_activation_public.py` (10) |
 | `services/core/execution/http/public.py` | `GET /api/v1/admin/dead-letters` · `POST /{id}/retry` · `POST /{id}/requeue` | `tests/execution/test_dlq_public.py` (10) |
+| `services/followup/overdue.py` | — (background worker utility) | `tests/followup/test_overdue_scanner.py` (4) |
 
 ---
 
