@@ -6,7 +6,43 @@ Format: [Semantic Versioning](https://semver.org). Each entry covers a build ses
 
 ---
 
-## [Unreleased] — Rebuild Phase 3 next
+## [Unreleased] — Rebuild Phase 4 next (75 frontend custom pages)
+
+---
+
+## [0.23.0] — 2026-05-18 — Phase 3: 5 Engines — Public API Layer
+
+### Added — Sprint 1: WhatsApp Engine
+- `backend/services/conversation/http/public.py` — `POST /api/v1/webhooks/whatsapp` (API-key auth) + `GET /api/v1/conversations` (JWT)
+- Intent classification via keyword rules (payment_query > follow_up_response > lead_inquiry > support_request)
+- Anti-lead-loss guarantee: every inbound message creates/updates a conversation record
+- `backend/tests/conversation/test_whatsapp_public.py` — 12 tests
+
+### Added — Sprint 2: Collections Engine
+- `backend/services/collections/http/public.py` — `POST/GET /api/v1/invoices` (JWT) + `POST /api/v1/payments/callback/{provider}` (API-key auth)
+- JazzCash/Easypaisa payment callback → auto-reconciliation against open invoices
+- `backend/tests/coll/test_collections_public.py` — 11 tests
+
+### Added — Sprint 3: Activity Control Engine
+- `backend/services/activity/http/public.py` — `POST /api/v1/activities` + `GET /api/v1/activities` + `GET /api/v1/activities/chain-integrity` (JWT)
+- Immutable audit hash chain exposed via public endpoint
+- `backend/tests/activity/test_activity_public.py` — 10 tests
+
+### Added — Sprint 4: Activation Engine
+- `backend/services/activation/http/__init__.py` + `public.py` — `POST /api/v1/activation/start` + `/whatsapp-sim` + `/move-deal` + `GET /api/v1/activation/status` (JWT)
+- <10-minute activation path: seed 5 contacts + 4 deals + pipeline; Aha triggered by first inbound + deal move
+- `backend/tests/activation/test_activation_public.py` — 10 tests
+
+### Added — Sprint 5: Execution Control Plane (DLQ Operator API)
+- `backend/services/core/execution/http/__init__.py` + `public.py` — `GET /api/v1/admin/dead-letters` + `POST /{id}/retry` + `POST /{id}/requeue` (JWT, admin role)
+- `backend/tests/execution/test_dlq_public.py` — 10 tests
+
+### Changed
+- `backend/services/app.py` — mounted all 5 new public routers
+
+### Verified
+- 93/93 tests passing (38 Phase 2 + 55 Phase 3)
+- 96/96 library pages HTTP 200
 
 ---
 

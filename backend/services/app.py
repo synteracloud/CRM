@@ -96,6 +96,11 @@ from services.sync.http.internal import router as sync_router
 from services.sync.http.internal import set_service as set_sync_service
 
 from services.followup.http.public import router as followup_public_router
+from services.conversation.http.public import router as conversation_public_router
+from services.collections.http.public import router as collections_public_router
+from services.activity.http.public import router as activity_public_router
+from services.activation.http.public import router as activation_public_router
+from services.core.execution.http.public import router as dlq_public_router
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +166,12 @@ app.include_router(followup_router,       prefix="/internal")
 app.include_router(collections_router,    prefix="/internal")
 app.include_router(conversation_router,   prefix="/internal")
 app.include_router(sync_router,           prefix="/internal")
-app.include_router(followup_public_router)  # /api/v1/followups — JWT-gated public API
+app.include_router(followup_public_router)       # /api/v1/followups
+app.include_router(conversation_public_router)  # /api/v1/webhooks/whatsapp + /api/v1/conversations
+app.include_router(collections_public_router)   # /api/v1/invoices + /api/v1/payments/callback
+app.include_router(activity_public_router)      # /api/v1/activities
+app.include_router(activation_public_router)    # /api/v1/activation
+app.include_router(dlq_public_router)           # /api/v1/admin/dead-letters
 
 
 # ── Global exception handler ──────────────────────────────────────────────────

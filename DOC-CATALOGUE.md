@@ -1,6 +1,6 @@
 # Pakistan CRM — Document Catalogue
 
-**Last updated:** 2026-05-18 (Phase 2 complete: SQLAlchemy ORM models, Alembic migration 0001, JWT auth, public /api/v1/followups endpoints, 38 tests passing)
+**Last updated:** 2026-05-18 (Phase 3 complete: 5 public API engines — WhatsApp, Collections, Activity, Activation, DLQ; 93/93 tests passing)
 **Scope:** All .md files in the project — 81 active + 3 archived — each with purpose and description.
 **Purpose:** Ground-truth index built from an actual file system scan. Use this to find any document, understand its purpose, and know whether it is active or a QC record. Paths reflect current folder structure.
 **Linkage audit:** 2026-05-17 — 11 issues resolved (3 broken refs, 5 stale refs, 3 notation mismatches). All cross-references verified clean.
@@ -60,6 +60,20 @@ Backend project authority files.
 | `gap-register.md` | Docs vs code gap register — 20 gaps, all resolved. | **Archived → D:\CRM\_archive\** |
 | `market-research-gap-register.md` | Pakistan market research gaps — MR-001 to MR-007 (Facebook leads, voice notes, Kuickpay, offline sync, collections, WhatsApp flows, territory). | Active |
 | `FRONTEND-BACKEND-MAPPING.md` | NexLink page → live API endpoint wiring — every page mapped to its endpoint, column → API field, row action → API call, status (DIRECT/EXTEND/BUILD). | Active |
+
+---
+
+## §B2 — Phase 3 Public API layer (10 files)
+
+New service public-facing HTTP modules. All JWT-gated; webhook endpoints use X-Api-Key.
+
+| File | Routes | Tests |
+|---|---|---|
+| `services/conversation/http/public.py` | `POST /api/v1/webhooks/whatsapp` · `GET /api/v1/conversations` | `tests/conversation/test_whatsapp_public.py` (12) |
+| `services/collections/http/public.py` | `POST/GET /api/v1/invoices` · `POST /api/v1/payments/callback/{provider}` | `tests/coll/test_collections_public.py` (11) |
+| `services/activity/http/public.py` | `POST/GET /api/v1/activities` · `GET /api/v1/activities/chain-integrity` | `tests/activity/test_activity_public.py` (10) |
+| `services/activation/http/public.py` | `POST /api/v1/activation/start` · `/whatsapp-sim` · `/move-deal` · `GET /api/v1/activation/status` | `tests/activation/test_activation_public.py` (10) |
+| `services/core/execution/http/public.py` | `GET /api/v1/admin/dead-letters` · `POST /{id}/retry` · `POST /{id}/requeue` | `tests/execution/test_dlq_public.py` (10) |
 
 ---
 
