@@ -5,7 +5,7 @@
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
 **Python env:** `D:\Python\python.exe` (3.12.10) → venv `D:\CRM\backend\.venv` → fastapi/uvicorn/pydantic installed — zero C: leakage
-**Rebuild plan:** `REBUILD-PLAN.md` — 5 phases, ~15 weeks to 10/10. Task checklist: `PENDING.md` (root).
+**Rebuild plan:** `REBUILD-PLAN.md` — 6 phases, ~21 weeks to 10/10. Task checklist: `PENDING.md` (root).
 
 ---
 

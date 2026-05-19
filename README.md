@@ -109,8 +109,8 @@ D:\CRM\
 │   ├── db/                 # PostgreSQL schemas + migrations
 │   ├── docs/               # 47 domain specs + ADRs
 │   └── docker-compose.yml  # Full-stack local dev
-├── REBUILD-PLAN.md         # 10/10 roadmap (5 phases, ~15 weeks)
-├── PENDING.md              # Task checklist — 155 items
+├── REBUILD-PLAN.md         # 10/10 roadmap (6 phases, ~21 weeks)
+├── PENDING.md              # Task checklist — 229 tasks
 ├── DESIGN-SPEC.md          # 75 custom pages, 13 archetypes
 └── DOC-CATALOGUE.md        # Full document index
 ```
@@ -128,7 +128,7 @@ D:\CRM\
 | [`backend/docs/domain-model.md`](backend/docs/domain-model.md) | 58 canonical domain entities |
 | [`backend/CONSTRAINTS.md`](backend/CONSTRAINTS.md) | 17 non-negotiable build constraints |
 | [`backend/PENDING.md`](backend/PENDING.md) | Blocked items (P-016 credentials, P-017 Urdu) |
-| [`DOC-CATALOGUE.md`](DOC-CATALOGUE.md) | Index of all 80+ project documents |
+| [`DOC-CATALOGUE.md`](DOC-CATALOGUE.md) | Index of all 90+ project documents |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to contribute — branch naming, commits, PRs |
 
 ---

@@ -6,7 +6,7 @@ Format: [Semantic Versioning](https://semver.org). Each entry covers a build ses
 
 ---
 
-## [Unreleased] — Rebuild Phase 4 next (75 frontend custom pages)
+## [Unreleased] — Phase 4 next (Backend Hardening + Missing Docs)
 
 ---
 
