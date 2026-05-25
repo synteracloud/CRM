@@ -84,10 +84,11 @@ try {
 }
 
 if (!repo) {
-  VALID_STAGES    = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost'];
-  VALID_STATUSES  = ['open', 'contacted', 'working', 'closed'];
-  VALID_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
-  VALID_SOURCES   = ['web', 'whatsapp', 'referral', 'cold_call', 'event', 'import', 'other'];
+  // Stages aligned to migration 0001 + domain/opportunities-pipeline.md §2
+  VALID_STAGES    = ['new', 'qualifying', 'nurturing', 'proposal', 'negotiation', 'won', 'lost', 'disqualified'];
+  VALID_STATUSES  = ['open', 'working', 'idle', 'closed'];
+  VALID_PRIORITIES = ['hot', 'warm', 'cold'];
+  VALID_SOURCES   = ['whatsapp', 'web', 'import', 'manual', 'referral', 'campaign'];
 }
 
 // In-memory fallback store (used only when repo === null)

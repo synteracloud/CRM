@@ -17,18 +17,19 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 
 DOCS_REQUIRED = [
-    "docs/foundation-qc.md",
-    "docs/b4-intelligence-data-qc.md",
-    "docs/b5-integration-qc.md",
-    "docs/execution-hardening-qc.md",
-    "docs/b8-qc01-enterprise-depth-qc.md",
-    "docs/b9-qc01-ui-experience-qc.md",
-    "docs/service-map.md",
-    "docs/capability-matrix.md",
-    "docs/data-architecture.md",
-    "docs/global-idempotency.md",
-    "docs/concurrency-control.md",
-    "docs/distributed-lock-strategy.md",
+    # Canonical QC anchors (paths updated for Stage 2E 9-subdir restructure)
+    "BACKEND-QC.md",
+    "docs/_qc/qc-intelligence-data.md",
+    "docs/_qc/qc-integration.md",
+    "docs/infrastructure/execution-hardening.md",
+    "docs/domain/enterprise-depth.md",
+    "docs/_b9/b9-p01-dashboard-kpi.md",
+    "docs/architecture/service-map.md",
+    "docs/architecture/capability-matrix.md",
+    "docs/architecture/data-architecture.md",
+    "docs/infrastructure/global-idempotency.md",
+    "docs/infrastructure/concurrency-control.md",
+    "docs/infrastructure/distributed-lock-strategy.md",
 ]
 
 PRIOR_QC_SCRIPTS = [
@@ -101,15 +102,15 @@ def _run_python(path: str) -> tuple[bool, str]:
 
 
 def _gate() -> list[tuple[str, bool, str]]:
-    service_map = _read("docs/service-map.md")
-    capability_matrix = _read("docs/capability-matrix.md")
-    data_arch = _read("docs/data-architecture.md")
-    governance = _read("docs/b8-p10-data-governance-layer.md")
-    idempotency = _read("docs/global-idempotency.md")
-    concurrency = _read("docs/concurrency-control.md")
-    locks = _read("docs/distributed-lock-strategy.md")
+    service_map = _read("docs/architecture/service-map.md")
+    capability_matrix = _read("docs/architecture/capability-matrix.md")
+    data_arch = _read("docs/architecture/data-architecture.md")
+    governance = _read("docs/domain/data-governance-layer.md")
+    idempotency = _read("docs/infrastructure/global-idempotency.md")
+    concurrency = _read("docs/infrastructure/concurrency-control.md")
+    locks = _read("docs/infrastructure/distributed-lock-strategy.md")
     routes_index = _read("gateway/routes/index.js")
-    all_docs = sorted((ROOT / "docs").glob("*.md"))
+    all_docs = sorted((ROOT / "docs").rglob("*.md"))
 
     checks: list[tuple[str, bool, str]] = []
 

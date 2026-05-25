@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) COMPLETE (2A ownership blocks, 2B gap fills, 2C inconsistency fixes, 2D duplicate removal, 2E folder restructure). Next: Stage 3 — Code Overlay.
+**Last updated:** 2026-05-25 — Stage 3 Code Overlay begun. Gap register created. B-001 JWT claims, D-001 lead stages, D-004 utcnow deprecations, 3 bugfixes (JazzCash amount, _parse_rfc3339, _parse_dt), migrations 0002+0003, ORM models for collections/conversations/idempotency, doc path fixes. Tests: 314/314.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -13,10 +13,10 @@
 | Phase 1 — Foundation Seal | 14 | 14 | 100% ✓ |
 | Phase 2 — Follow-up Engine | 19 | 19 | 100% ✓ |
 | Phase 3 — 5 Engines | 27 | 27 | 100% ✓ |
-| Phase 4 — Backend Hardening | 41 | 12 | 29% |
+| Phase 4 — Backend Hardening | 41 | 25 | 61% |
 | Phase 5 — Frontend (75 pages) | 81 | 0 | 0% |
 | Phase 6 — Market Research + Final Hardening | 10 | 0 | 0% |
-| **Total** | **192** | **72** | **38%** |
+| **Total** | **192** | **85** | **44%** |
 
 ---
 
@@ -184,9 +184,35 @@
 - [x] Text references (`docs/filename.md`) updated to new paths in all files, ADR files, and tracking docs
 - [x] `DOC-CATALOGUE.md` paths updated to match new tree
 
-### Stage 3 — Code Overlay
-- [ ] Overlay normalised docs on code; fix every gap found across entity, API, and business logic layers
-- [ ] Write `backend/docs/phase4-gap-register.md` — full record of all gaps found and fixed
+### Stage 3 — Code Overlay (IN PROGRESS — 2026-05-25)
+- [x] Write `backend/docs/phase4-gap-register.md` — gap register created (28 gaps catalogued A-001 through E-008)
+- [x] B-001 — Python `TokenClaims` extended: `role_ids`, `scopes`, `aud`, `iss`, `territory_ids` (jwt_deps.py)
+- [x] D-001 — Gateway VALID_STAGES aligned to spec + migration 0001 (v1-leads.routes.js)
+- [x] D-004 — `datetime.utcnow()` → `datetime.now(timezone.utc)` in followup/engine.py + http/internal.py + activity/monitor/entities.py
+- [x] Bug fix — `_parse_rfc3339` in activity/engine.py (double +00:00 when isoformat already has offset)
+- [x] Bug fix — `_parse_dt` in dashboard/owner/service.py (same double +00:00 issue)
+- [x] Bug fix — JazzCash adapter: only divide by 100 for `pp_Amount` (paise), not generic `amount` key
+- [x] Migration 0002 — followup SNOOZED+FAILED states, leads.closure_reason, FK followup_tasks→leads, idempotency_records table
+- [x] Migration 0003 — invoices, payments, reconciliation_cases, conversations, conversation_messages tables
+- [x] ORM models — Invoice, Payment, ReconciliationCase, Conversation, ConversationMessage, IdempotencyRecord
+- [x] `CollectionsService._payments` dict added (dashboard service compatibility)
+- [x] QC script path fixes — event-catalog, execution-hardening, service-map paths updated for Stage 2E restructure
+- [x] `src/event_bus/catalog_events.py` — 9 new events added (lead.conversion.failed, case SLA events, partner events)
+- [x] Tests: 314 / 314 passing (up from 308 baseline)
+- [ ] A-001 — Wire `FollowupEnforcementEngine` to use DB tables (followup_tasks, followup_escalations)
+- [ ] A-002 — Wire `ActivityControlEngine` to persist to activities table
+- [ ] A-003/A-004 — Wire CollectionsService + ConversationService to DB repositories
+- [ ] A-005 — Gateway idempotency.js: swap in-memory Map for PostgreSQL idempotency_records
+- [ ] A-006 — Gateway rate-limit: swap in-memory buckets for Redis
+- [ ] B-002 — Gateway auth-rbac.js: extract `territory_ids` JWT claim
+- [ ] B-003 — Gateway auth-rbac.js: jti revocation check via Redis blocklist
+- [ ] B-005 — WhatsApp webhook: Meta X-Hub-Signature-256 HMAC verification
+- [ ] B-007 — Auth management endpoints (login, logout/revoke, role assignment)
+- [ ] D-002 — Update followup FollowupState enum to include SNOOZED + FAILED
+- [ ] D-005 — HTTPException → structured error envelope on all Python routers
+- [ ] D-006 — Pagination: add total_pages, rename total → total_items
+- [ ] D-008 — Manual payment reconciliation gate: require verification_status == verified
+- [ ] E-004 — GitHub Actions CI/CD pipeline (lint + test + build + staging deploy + coverage gate)
 
 ### Stage 4 — Mapping Rebuild + Final Push
 - [ ] Rebuild `FRONTEND-BACKEND-MAPPING.md` — every endpoint marked LIVE / BUILD / MISSING

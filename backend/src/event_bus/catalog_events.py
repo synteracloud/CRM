@@ -10,6 +10,7 @@ EVENT_NAMES: tuple[str, ...] = (
     "lead.created.v1",
     "lead.assignment.updated.v1",
     "lead.converted.v1",
+    "lead.conversion.failed.v1",
     "contact.created.v1",
     "contact.merged.v1",
     "account.created.v1",
@@ -32,6 +33,8 @@ EVENT_NAMES: tuple[str, ...] = (
     "campaign.completed.v1",
     "case.created.v1",
     "case.sla.breached.v1",
+    "case.sla.first_response_breached.v1",
+    "case.sla.resolution_breached.v1",
     "case.resolved.v1",
     "communication.message.sent.v1",
     "communication.message.engagement.updated.v1",
@@ -53,6 +56,13 @@ EVENT_NAMES: tuple[str, ...] = (
     "schedule.created.v1",
     "schedule.updated.v1",
     "schedule.deleted.v1",
+    # Partner channel management events
+    "partner.created.v1",
+    "partner.relationship.activated.v1",
+    "partner.deal.registered.v1",
+    "partner.attribution.locked.v1",
+    "partner.commission.calculated.v1",
+    "partner.commission.approved.v1",
 )
 
 EVENT_NAME_SET: frozenset[str] = frozenset(EVENT_NAMES)

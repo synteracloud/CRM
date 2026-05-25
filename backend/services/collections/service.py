@@ -35,6 +35,7 @@ class CollectionsService:
         self._adapters = adapters or {}
         self._invoices: dict[str, Invoice] = {}
         self._invoice_by_number: dict[str, str] = {}
+        self._payments: dict[str, Payment] = {}
         self._reconciliation_cases: dict[str, ReconciliationCase] = {}
         self._invoice_to_payments: dict[str, list[str]] = {}
         self._scheduler = ReminderScheduler()
@@ -96,6 +97,7 @@ class CollectionsService:
         ) as result:
             _ = result  # payment and ledger written atomically
 
+        self._payments[payment.payment_id] = payment
         case = self._reconcile(payment)
         return payment, case
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Literal
 from uuid import uuid4
 
@@ -38,7 +38,7 @@ def enforcement_level_for_tenant_age(tenant_created_at: datetime) -> Enforcement
     Returns:
         EnforcementLevel: "soft" | "medium" | "strict"
     """
-    age_days = (datetime.utcnow() - tenant_created_at).days
+    age_days = (datetime.now(timezone.utc) - tenant_created_at).days
     if age_days < _SOFT_DAYS:
         return "soft"
     if age_days < _MEDIUM_DAYS:

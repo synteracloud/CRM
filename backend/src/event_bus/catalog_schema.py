@@ -5,7 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
-CATALOG_PATH = Path(__file__).resolve().parents[2] / "docs" / "event-catalog.md"
+CATALOG_PATH = Path(__file__).resolve().parents[2] / "docs" / "infrastructure" / "event-catalog.md"
 _ENVELOPE_FIELDS = {"event_id", "occurred_at", "tenant_id"}
 
 

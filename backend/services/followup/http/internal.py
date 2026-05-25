@@ -18,7 +18,7 @@ Engine lifecycle:
 from __future__ import annotations
 
 from dataclasses import asdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
@@ -124,7 +124,7 @@ def register_lead(lead_id: str, body: RegisterLeadRequest) -> dict:
         status=body.status,
         priority=body.priority,
         stage=body.stage,
-        last_activity_at=now_dt or datetime.utcnow(),
+        last_activity_at=now_dt or datetime.now(timezone.utc),
     )
 
     try:

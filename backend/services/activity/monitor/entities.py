@@ -8,7 +8,7 @@ from typing import Any
 
 
 def utc_now() -> str:
-    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat() + "Z"
 
 
 def parse_rfc3339(value: str) -> datetime:

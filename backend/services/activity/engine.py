@@ -421,8 +421,11 @@ class ActivityControlEngine:
 
 
 def _parse_rfc3339(value: str) -> datetime:
-    normalized = value.replace("Z", "+00:00")
-    parsed = datetime.fromisoformat(normalized)
+    # Strip trailing Z before calling fromisoformat; the string may already
+    # carry a numeric offset (e.g. "+00:00") from datetime.now(timezone.utc).isoformat()
+    # so we must not blindly replace("Z", "+00:00") — that produces "+00:00+00:00".
+    stripped = value.rstrip("Z")
+    parsed = datetime.fromisoformat(stripped)
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)

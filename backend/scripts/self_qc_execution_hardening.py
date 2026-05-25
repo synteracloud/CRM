@@ -18,11 +18,11 @@ def _check(conditions: list[tuple[str, bool]]) -> tuple[int, list[str]]:
 
 def main() -> None:
     transaction_sql = _read("db/transaction_db/transaction_handling.sql")
-    txn_policies = _read("db/transaction_db/transaction_policies.md")
-    global_idempotency = _read("docs/global-idempotency.md")
-    concurrency = _read("docs/concurrency-control.md")
-    locks = _read("docs/distributed-lock-strategy.md")
-    scheduler = _read("docs/scheduler-jobs.md")
+    txn_policies = _read("db/transaction_db/transaction-policies.md")
+    global_idempotency = _read("docs/infrastructure/global-idempotency.md")
+    concurrency = _read("docs/infrastructure/concurrency-control.md")
+    locks = _read("docs/infrastructure/distributed-lock-strategy.md")
+    scheduler = _read("docs/infrastructure/scheduler-jobs.md")
 
     checks = [
         ("ACID boundary policy documented", "ACID-safe handling rules" in txn_policies),

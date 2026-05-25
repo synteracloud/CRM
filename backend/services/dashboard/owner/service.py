@@ -187,9 +187,9 @@ def _count_by_status(leads: list) -> dict[str, int]:
 
 
 def _parse_dt(raw: str) -> datetime:
-    if raw.endswith("Z"):
-        raw = raw[:-1] + "+00:00"
-    parsed = datetime.fromisoformat(raw)
+    # Strip trailing Z only — string may already carry +00:00 from timezone-aware isoformat()
+    stripped = raw.rstrip("Z")
+    parsed = datetime.fromisoformat(stripped)
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)

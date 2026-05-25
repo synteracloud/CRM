@@ -30,6 +30,7 @@ class FollowupTask(Base):
     tenant_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
     lead_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
     owner_id: Mapped[str] = mapped_column(String, nullable=False)
+    # States: pending | overdue | completed | snoozed | failed  (migration 0002 extended)
     state: Mapped[str] = mapped_column(
         String,
         nullable=False,

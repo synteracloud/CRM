@@ -27,7 +27,7 @@ from src.event_bus import (
     load_event_payload_requirements,
 )
 
-CATALOG_PATH = Path("docs/event-catalog.md")
+CATALOG_PATH = Path("docs/infrastructure/event-catalog.md")
 
 
 def extract_catalog_events() -> set[str]:

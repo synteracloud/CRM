@@ -154,12 +154,15 @@ class JazzCashAdapter(PakistanPaymentAdapter):
         raw_status = str(payload.get("pp_ResponseCode") or payload.get("status") or "")
         status = "succeeded" if raw_status in _SUCCESS_CODES or raw_status in {"paid", "success"} else "failed"
 
-        amount_raw = payload.get("pp_Amount") or payload.get("amount", "0")
-        # JazzCash sends amount without decimal; divide by 100 to get PKR
-        try:
-            amount = float(str(amount_raw)) / 100
-        except ValueError:
-            amount = 0.0
+        if "pp_Amount" in payload:
+            # JazzCash native format: paise string without decimal → divide by 100 → PKR
+            try:
+                amount = float(str(payload["pp_Amount"])) / 100
+            except ValueError:
+                amount = 0.0
+        else:
+            # Normalised/webhook format: amount already in PKR
+            amount = float(payload.get("amount", 0))
 
         timestamp = payload.get("pp_TxnDateTime") or payload.get("timestamp") or utcnow_iso()
 
