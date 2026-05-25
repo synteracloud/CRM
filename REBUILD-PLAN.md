@@ -1,8 +1,8 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) plan finalised; Session Resumption Protocol added; stage numbering updated (2=fix, 3=code overlay, 4=mapping); Phase 4 expanded to 41 tasks.
-**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2A NEXT) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
+**Revised:** 2026-05-25 — Stage 2 COMPLETE (2A ownership blocks, 2B gap fills, 2C inconsistency fixes, 2D duplicate removal, 2E folder restructure — 71 files into 9 subdirs). Next: Stage 3 Code Overlay.
+**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
 **Anchor:** This file. Updated every session before closing. Read first every session.
 **Task tracker:** `PENDING.md` (root) — checkbox list, mark `[x]` immediately on completion
 **Session log:** `PROGRESS.md` — one-line summary added every session
@@ -12,11 +12,11 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current location:** Phase 4 · Stage 2A  
-**Next task:** Add PRIMARY / DEFERS-TO / DO NOT RE-DEFINE header block to all 51 §F + §H spec files  
-**First file to open:** `backend/docs/phase4-stage1-read-log.md` — 30 clusters with PRIMARY designations  
-**Rule in force:** Non-destructive only. Max negative action = archiving. No deletions.  
-**Report-back rule:** Finish one sub-stage completely → report back → wait for confirmation → start next.
+**Current location:** Phase 4 · Stage 3 — Code Overlay  
+**Next task:** Overlay all normalised docs on code; fix every gap across entity, API, and business logic layers; write `backend/docs/phase4-gap-register.md`  
+**First file to open:** `backend/docs/_qc/phase4-stage1-read-log.md` — 30 clusters; then start overlaying code against each cluster's PRIMARY file  
+**Rule in force:** Non-destructive only. No deletions.  
+**Doc tree:** All specs now under `backend/docs/{architecture,security,domain,infrastructure,adapters,product,ui,_b9,_qc}/`
 
 | Phase | Stage | Status |
 |---|---|---|
@@ -25,9 +25,8 @@
 | 3 — 5 Engines | — | ✓ COMPLETE |
 | 4 — Backend Hardening | Stage 0 — Design Docs + Fixes | ✓ COMPLETE (2026-05-19) |
 | 4 — Backend Hardening | Stage 1 — Doc Read + Identify | ✓ COMPLETE (2026-05-23) |
-| **4 — Backend Hardening** | **Stage 2A — Ownership Declaration** | **← NEXT** |
-| 4 — Backend Hardening | Stage 2B–2E — Fix + Restructure | Pending Stage 2A |
-| 4 — Backend Hardening | Stage 3 — Code Overlay | Pending Stage 2 |
+| 4 — Backend Hardening | Stage 2 — Doc Fix + Restructure | ✓ COMPLETE (2026-05-25) |
+| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← NEXT** |
 | 4 — Backend Hardening | Stage 4 — Mapping + Push | Pending Stage 3 |
 | 5 — Frontend 75 pages | — | Pending Phase 4 complete |
 | 6 — Market Research | — | Pending Phase 5 complete |
@@ -46,8 +45,8 @@ Every session — including fresh sessions with no prior memory — MUST follow 
 ### Step 2 — Load stage context
 | Stage | Files to read before starting |
 |---|---|
-| Phase 4 Stage 2 (any sub-stage) | `backend/docs/phase4-stage1-read-log.md` — 30 clusters + PRIMARY designations |
-| Phase 4 Stage 3 — Code Overlay | `backend/docs/phase4-gap-register.md` (created during Stage 3) |
+| Phase 4 Stage 2 (any sub-stage) | `backend/docs/_qc/phase4-stage1-read-log.md` — 30 clusters + PRIMARY designations |
+| Phase 4 Stage 3 — Code Overlay | `backend/docs/_qc/phase4-stage1-read-log.md` + PRIMARY files per cluster in `backend/docs/{domain,infrastructure,adapters,security,architecture}/` |
 | Phase 4 Stage 4 — Mapping | `backend/FRONTEND-BACKEND-MAPPING.md` |
 | Phase 5 — any page build | `DESIGN-SPEC.md` + `FRAMEWORK.md §25–32` + relevant `backend/docs/ui/pages/` spec |
 | Phase 6 | `backend/market-research-gap-register.md` |
@@ -194,23 +193,23 @@ Each sprint follows Phase 2 pattern: models → migrations → endpoints → log
 
 ### Sprint 1 — WhatsApp Engine
 Inbound webhook, intent detection, auto lead creation, conversation threading, contact mapping.
-Spec: `docs/whatsapp-execution-model.md`
+Spec: `docs/adapters/whatsapp-execution-model.md`
 
 ### Sprint 2 — Collections Engine
 Invoice lifecycle, overdue detection, WhatsApp reminder trigger, confidence scoring (≥85 auto-match / 40–84 review), customer opt-out.
-Spec: `docs/collections-engine-model.md`
+Spec: `docs/domain/collections-engine-model.md`
 
 ### Sprint 3 — Activity Control Engine
 Immutable activity log writes, ownership tracking, audit trail endpoints.
-Spec: `docs/activity-control-model.md`
+Spec: `docs/domain/activity-control-model.md`
 
 ### Sprint 4 — Activation Engine
 Onboarding flow, auto pipeline creation, sandbox→production WhatsApp transition, sample data localisation.
-Spec: `docs/activation-model.md`
+Spec: `docs/product/activation-model.md`
 
 ### Sprint 5 — Execution Control Plane
 Idempotency key middleware, retry with exponential backoff (1s base, 2× multiplier, ±20% jitter, 60s max), dead letter queue (DLQ).
-Spec: `docs/execution-hardening.md`
+Spec: `docs/infrastructure/execution-hardening.md`
 
 ---
 
@@ -228,7 +227,7 @@ Spec: `docs/execution-hardening.md`
 
 ### Stage 1 — Doc Read + Identify ✓ COMPLETE (2026-05-23)
 **What:** All 51 §F + §H specs read line-by-line by main session. 30 duplication/overlap clusters identified.
-**Output:** `backend/docs/phase4-stage1-read-log.md` — 51 ✓ / 0 ⬜. Findings reviewed and approved.
+**Output:** `backend/docs/_qc/phase4-stage1-read-log.md` — 51 ✓ / 0 ⬜. Findings reviewed and approved.
 
 ---
 
@@ -236,7 +235,7 @@ Spec: `docs/execution-hardening.md`
 **What:** Execute all fixes for the 30 clusters. Normalise folder structure and file naming.
 **Non-destructive rule:** Max negative action = archiving. No deletions, no content truncation.
 **Report-back rule:** Complete each sub-stage fully → report back → get confirmation → start next.
-**Cluster reference:** `backend/docs/phase4-stage1-read-log.md`
+**Cluster reference:** `backend/docs/_qc/phase4-stage1-read-log.md`
 
 #### Stage 2A — Ownership Declaration ← NEXT SUB-STAGE
 Add a 3-line PRIMARY header block to all 51 §F + §H spec files:

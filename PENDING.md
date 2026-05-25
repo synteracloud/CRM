@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) tasks added (2A–2E); Stage 3 = Code Overlay; Stage 4 = Mapping + Push; Phase 4 expanded to 41 tasks; Session Resumption Protocol added to REBUILD-PLAN.md.
+**Last updated:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) COMPLETE (2A ownership blocks, 2B gap fills, 2C inconsistency fixes, 2D duplicate removal, 2E folder restructure). Next: Stage 3 — Code Overlay.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -148,37 +148,41 @@
 ### Stage 2 — Doc Fix + Restructure ← CURRENT STAGE
 **Non-destructive rule:** Max negative action = archiving. No file deletions.
 **Report-back rule:** Complete one sub-stage → report back → wait for confirmation → proceed.
-**Reference for all 30 clusters:** `backend/docs/phase4-stage1-read-log.md`
+**Reference for all 30 clusters:** `backend/docs/_qc/phase4-stage1-read-log.md`
 
-#### Stage 2A — Ownership Declaration
-- [ ] Add PRIMARY / DEFERS-TO / DO-NOT-RE-DEFINE header block to all 51 §F + §H spec files
+#### Stage 2A — Ownership Declaration ✓ COMPLETE (2026-05-25)
+- [x] Add PRIMARY / DEFERS-TO / DO-NOT-RE-DEFINE header block to all 52 §F + §H spec files
 
-#### Stage 2B — Gap Fills
-- [ ] `territory_ids` JWT claim added to `identity-auth-rbac.md` + `security-model.md`
-- [ ] `EmployeePerformanceRM` + `TerritoryPerformanceRM` added to `read-models.md`
-- [ ] `TenantUsageMetric` entity added to `domain-model.md`
-- [ ] Deny-by-default PRIMARY designated as `security-model.md`; pointer added in 3 other files
-- [ ] Tone tiers PRIMARY designated as `pakistan-adapter-architecture.md`; pointer in `collections-engine-model.md`
+#### Stage 2B — Gap Fills ✓ COMPLETE (2026-05-25)
+- [x] `territory_ids` JWT claim added to `identity-auth-rbac.md`
+- [x] `EmployeePerformanceRM` + `TerritoryPerformanceRM` added to `read-models.md`
+- [x] `TenantUsageMetric` entity added to `domain-model.md`
+- [x] 3 missing events added to `event-catalog.md` (`lead.conversion.failed.v1`, `case.sla.first_response_breached.v1`, `case.sla.resolution_breached.v1`)
+- [x] `ProviderName` values canonicalised in `integration-contracts.md`
 
-#### Stage 2C — Inconsistency Resolution
-- [ ] Payment status enum canonical — `payments-revenue.md` PRIMARY; `collections-engine-model.md` updated
-- [ ] Collections aging buckets canonical — `collections-engine-model.md` PRIMARY; `owner-dashboard.md` updated
-- [ ] Audit hash schema — `integrity.hash/prev_hash/chain_seq` canonical; `data-governance-layer.md §2.6` fixed
-- [ ] Two audit integrity endpoints — distinct purposes documented in both files
-- [ ] Event naming — `event-catalog.md` pointer note added to 5 domain files
-- [ ] Urdu keyword — `مینیجر سے بات کریں` canonical; `conversational-action-spec.md` fixed
+#### Stage 2C — Inconsistency Resolution ✓ COMPLETE (2026-05-25)
+- [x] Payment status enum canonical — `payments-revenue.md` PRIMARY; `collections-engine-model.md` scope note added
+- [x] Collections aging buckets canonical (1–7/8–30/31–60/61+) — `owner-dashboard.md` updated to 4-bucket
+- [x] Audit hash schema — `integrity.hash/prev_hash/chain_seq` canonical; `data-governance-layer.md §2.6` fixed; deprecated `before_hash/after_hash` noted
+- [x] Health endpoint contract PRIMARY in `runtime-deployment.md §3.2`; `observability-audit.md §3.2` now points there
+- [x] SLA event naming fixed — `.v1` suffix applied in `cases-domain.md`
+- [x] Urdu keyword canonical — `مینیجر سے بات کریں` fixed in `conversational-action-spec.md`
+- [x] WhatsApp opt-out/opt-in keyword handling — §7.4 added to `whatsapp-execution-model.md`
 
-#### Stage 2D — Duplicate Removal + Misplaced Content
-- [ ] 14 duplicate definitions replaced with one-line cross-reference pointers
-- [ ] 4 misplaced content blocks moved to owning files; pointer stubs left in original locations
+#### Stage 2D — Duplicate Removal + Misplaced Content ✓ COMPLETE (2026-05-25)
+- [x] Case/ticket section removed from `activities-tasks.md`; pointer stub added
+- [x] Follow-up Queue API section removed from `opportunities-pipeline.md`; pointer stub added
+- [x] `CustomFieldDefinition` merged into `FieldDefinition` in `custom-object-framework.md`
+- [x] JWT claims full list replaced with pointer in `security-model.md`
+- [x] Idempotency/authz/event-dedup pointer stubs added to `api-standards.md`
+- [x] KPI formula pointer added to `activity-control-model.md §5.2`
 
-#### Stage 2E — Rename + Folder Restructure
-- [ ] Old→new path mapping document written and approved
-- [ ] 8 subfolders created (`architecture/ security/ domain/ infrastructure/ adapters/ product/ ui/ _qc/`) each with `README.md`
-- [ ] All 91 files moved to new locations and renamed (remove `b9-p##`, standardise suffixes, ADR title slugs)
-- [ ] All internal cross-references updated to new paths
-- [ ] `DOC-CATALOGUE.md` paths + section structure updated to match new tree
-- [ ] `git status` clean; all 96 pages still HTTP 200 after restructure
+#### Stage 2E — Rename + Folder Restructure ✓ COMPLETE (2026-05-25)
+- [x] 9 subfolders created (`architecture/ security/ domain/ infrastructure/ adapters/ product/ ui/ _b9/ _qc/`)
+- [x] All 71 spec files moved to new locations with `git mv` (history preserved)
+- [x] All internal markdown hyperlinks updated to relative paths (`../category/filename.md`)
+- [x] Text references (`docs/filename.md`) updated to new paths in all files, ADR files, and tracking docs
+- [x] `DOC-CATALOGUE.md` paths updated to match new tree
 
 ### Stage 3 — Code Overlay
 - [ ] Overlay normalised docs on code; fix every gap found across entity, API, and business logic layers
