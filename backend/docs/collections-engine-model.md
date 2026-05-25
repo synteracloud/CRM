@@ -496,3 +496,135 @@ Indexes:
 - Added suspense handling for bank delayed metadata.
 
 This design is execution-ready for phased implementation (MVP → hardened production).
+
+---
+
+## §N — Manual Payment Proof Workflow
+
+**Added:** 2026-05-19 (PS-007 — product-spec-gap-register.md)
+
+### N.1 Purpose
+
+This section defines the **Manual Payment Proof** workflow — the mechanism for handling hybrid payments (cash + direct bank transfer) where there is no automated callback from a payment provider. A customer submits a screenshot or note as proof of payment; a rep or manager verifies it; the invoice is marked paid. This is distinct from the automated JazzCash/Easypaisa callback reconciliation defined in §F.
+
+### N.2 Entity Model
+
+#### PaymentProof
+
+```
+PaymentProof
+├── proof_id             : UUID (PK)
+├── invoice_id           : UUID (FK → Invoice, required)
+├── tenant_id            : str (required)
+├── attachment_url       : str (nullable — URL of uploaded screenshot/image/PDF)
+├── note                 : str (max 1000 chars — optional free-text from submitter)
+├── payment_method       : str (cash | bank_transfer | cheque | other)
+├── submitted_amount     : decimal (the amount the submitter claims was paid)
+├── submitted_by         : UUID (FK → User — agent who submitted on behalf, or system for WhatsApp self-submission)
+├── submitted_at         : datetime
+├── verification_status  : ProofVerificationStatus enum (pending | verified | rejected)
+├── verified_by          : UUID (FK → User, nullable — set on verification or rejection)
+├── verified_at          : datetime (nullable)
+├── rejection_reason     : str (nullable — set only on rejection)
+├── reconciliation_confidence : float (1.0 — manual proofs are 100% by definition once verified)
+└── created_at           : datetime
+```
+
+#### ProofVerificationStatus Enum
+
+| Status | Meaning |
+|---|---|
+| `pending` | Proof submitted; awaiting manager/admin review. |
+| `verified` | Proof accepted; invoice moved to PAID. |
+| `rejected` | Proof rejected; invoice remains open; rejection reason stored. |
+
+### N.3 State Transitions
+
+**Invoice state transitions triggered by PaymentProof:**
+
+```
+Invoice.status transitions via PaymentProof:
+  OPEN / OVERDUE → (proof submitted) → OPEN / OVERDUE (no change yet)
+  OPEN / OVERDUE → (proof verified) → PAID
+  OPEN / OVERDUE → (proof rejected) → OPEN / OVERDUE (unchanged; new proof can be submitted)
+```
+
+**Invariant:** An invoice can only transition to PAID via a verified proof (or via automated payment callback). There is no direct OPEN → PAID transition without one of these two paths.
+
+**Invariant:** `Invoice.status = PAID` requires `Invoice.paid_at` to be set. On proof verification: `paid_at = verified_at`.
+
+### N.4 Workflow Flow
+
+```
+1. Customer sends WhatsApp message with "proof" / "paid" / "ادائیگی" keyword + screenshot attachment
+   OR
+   Rep uploads proof on behalf of customer via POST /api/v1/invoices/{id}/proof
+
+2. System creates PaymentProof entity:
+   - attachment_url set if file attached
+   - submitted_amount extracted from message (regex) or set by rep
+   - verification_status = pending
+
+3. Rep/manager receives WhatsApp notification: "Payment proof received for Invoice #INV-XXX — Rs [amount]. Review now."
+
+4. Manager opens invoice detail → reviews proof
+
+5a. Manager verifies: POST /api/v1/invoices/{id}/proof/{proof_id}/verify
+    → PaymentProof.verification_status = verified
+    → Invoice.status = PAID, Invoice.paid_at = now()
+    → PaymentEvent created (source = manual_proof, amount = proof.submitted_amount)
+    → ActivityEvent logged: payment_proof_verified
+    → Customer WhatsApp notification: "Payment confirmed!"
+
+5b. Manager rejects: POST /api/v1/invoices/{id}/proof/{proof_id}/reject with { rejection_reason }
+    → PaymentProof.verification_status = rejected
+    → Invoice.status unchanged (OPEN or OVERDUE)
+    → ActivityEvent logged: payment_proof_rejected
+    → Customer WhatsApp notification: "We couldn't verify your payment. [rejection_reason]. Please resend or contact us."
+```
+
+### N.5 File Upload Spec
+
+- Accepted formats: JPEG, PNG, PDF, HEIC (auto-converted to JPEG on upload).
+- Maximum file size: 10MB.
+- Storage: uploaded to object storage; `attachment_url` is a signed URL valid for 7 days (refreshable).
+- Malware scan: uploaded files are scanned before `attachment_url` is set.
+- If upload fails: proof is still created with `attachment_url = null`; `note` is required in that case.
+
+**WhatsApp image attachment flow:**
+- Customer sends image via WhatsApp → WhatsApp Engine receives media URL.
+- System downloads media from WhatsApp CDN within 30 minutes (WhatsApp media URLs expire).
+- Stores in internal object storage; sets `PaymentProof.attachment_url`.
+
+### N.6 API Endpoints
+
+| Method | Path | Auth | Role | Description |
+|---|---|---|---|---|
+| `POST` | `/api/v1/invoices/{id}/proof` | JWT | `agent`, `manager`, `admin`, `sales_rep` | Submit a payment proof (file + note). Returns `proof_id`. |
+| `GET` | `/api/v1/invoices/{id}/proof` | JWT | `agent`, `manager`, `admin` | List all proof submissions for an invoice. |
+| `GET` | `/api/v1/invoices/{id}/proof/{proof_id}` | JWT | `agent`, `manager`, `admin` | Proof detail with attachment URL. |
+| `POST` | `/api/v1/invoices/{id}/proof/{proof_id}/verify` | JWT | `manager`, `admin` | Mark proof as verified; triggers invoice PAID transition. |
+| `POST` | `/api/v1/invoices/{id}/proof/{proof_id}/reject` | JWT | `manager`, `admin` | Reject proof with reason. |
+
+### N.7 RBAC
+
+| Operation | `sales_rep` | `agent` | `manager` | `admin` |
+|---|---|---|---|---|
+| Submit proof | ✓ | ✓ | ✓ | ✓ |
+| View proof list | Own invoices | Assigned invoices | All | All |
+| Verify proof | — | — | ✓ | ✓ |
+| Reject proof | — | — | ✓ | ✓ |
+
+### N.8 Events Emitted
+
+| Event | Trigger |
+|---|---|
+| `payment_proof.submitted` | Proof created (pending). |
+| `payment_proof.verified` | Proof verified; invoice moved to PAID. |
+| `payment_proof.rejected` | Proof rejected. |
+
+### N.9 Reconciliation Confidence
+
+Manual proofs, once verified, have `reconciliation_confidence = 1.0` (100%). This is semantically correct: a human has verified the payment, which is higher certainty than the automated confidence score algorithm. This value is stored on `PaymentProof` and referenced in the `PaymentEvent` created on verification.
+
+**PENDING.md M-15 integration:** Manual cash/proof payments must be gated behind `verification_status == verified` before updating `Invoice.status`. This section is the spec for that enforcement. See PENDING.md M-15 for the code task.

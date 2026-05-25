@@ -1,8 +1,8 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-19 — Phases restructured after tri-register gap audit
-**Status:** Phase 1 — COMPLETE ✓ | Phase 2 — COMPLETE ✓ | Phase 3 — COMPLETE ✓ | Phase 4 — NOT STARTED | Phase 5 — NOT STARTED | Phase 6 — NOT STARTED
+**Revised:** 2026-05-25 — Phase 4 Stage 1 COMPLETE: 51 specs read line-by-line, 30 duplication clusters logged. Prior: 2026-05-22 — Sprint 0 COMPLETE (19/24 tasks done)
+**Status:** Phase 1 — COMPLETE ✓ | Phase 2 — COMPLETE ✓ | Phase 3 — COMPLETE ✓ | Phase 4 — IN PROGRESS (Stage 0 + Stage 1 done · Stage 2 Code Overlay next) | Phase 5 — NOT STARTED | Phase 6 — NOT STARTED
 **Anchor:** This file. Update on every phase start and completion.
 **Task tracker:** `PENDING.md` (root) — checkbox list, updated as work completes
 **Session log:** `PROGRESS.md` — updated every session
@@ -139,85 +139,21 @@ Spec: `docs/execution-hardening.md`
 
 ---
 
-## Phase 4 — Backend Hardening + Missing Docs (~4 weeks)
-**Lifts:** Code 9/10 · Security 9/10 · Testing 8/10 · Docs 10/10
-**Gates Phase 5.** All Critical and High items must complete before frontend build starts.
-**Gap sources:** 44-gap code audit (PENDING.md C-01–L-06) · product-spec-gap-register.md (PS-001–PS-010)
+## Phase 4 — Backend Hardening (~4 weeks) — IN PROGRESS
+**Goal:** Normalise all docs, overlay docs on code, fix every gap found. Gates Phase 5.
+**Progress:** 20/24 tasks done (83%) — design docs + pre-phase fixes DONE · Stage 1 DONE · Stage 2–3 pending
 
-### Sprint 0 — Missing Design Docs
-These docs do not exist yet. Three are Phase-5 build blockers; the rest gate Sprint 2–3 implementation.
+### Stage 0 — Design Docs + Pre-Phase Fixes ✓ COMPLETE (2026-05-19)
+All 9 missing design docs written and catalogued. 9 pre-phase audit fixes applied.
 
-**Rule: every doc created or extended in this sprint must be added to DOC-CATALOGUE.md on the same day it is written. DOC-CATALOGUE.md is the single anchor for all future code audits — a doc that exists but is not catalogued is invisible to audit.**
+### Stage 1 — Doc Normalisation ✓ COMPLETE (2026-05-23)
+All 51 §F + §H specs read line-by-line. 30 duplication/overlap clusters identified and logged in `backend/docs/phase4-stage1-read-log.md`. Findings submitted for review.
 
-**Phase-5 build blockers (must exist before Phase 5 starts):**
-- `backend/docs/cases-domain.md` — entity model, state machine, SLA tiers, routing rules, escalation (PS-001; gates Phase 5 Build Phase 4: B-05, C-05, E-01, A-07, I-04, C-12)
-- `backend/docs/localization.md` — i18n framework, RTL rules, EN/UR key registry, WhatsApp template locale rules (PS-005; gates all 75 pages — CONSTRAINTS.md C-001)
-- `backend/docs/territory-management.md` — entity model, criteria schema, routing rules, RBAC scoping (PS-008; gates G-09 territories.html)
+### Stage 2 — Code Overlay
+Overlay normalised docs on the codebase. For every entity, API endpoint, and business rule defined in the specs: verify it exists in code and is correctly implemented. Fix every gap found. Output: `backend/docs/phase4-gap-register.md` recording what was found and fixed.
 
-**Architecture docs (needed for Sprint 2–3 implementation):**
-- `backend/docs/shared-inbox.md` — multi-agent assignment model, conversation handoff, queue management (PS-002)
-- `backend/docs/compliance-adapter.md` — ComplianceAdapter interface contract, Pakistan implementation, call sites (PS-003)
-- `backend/docs/conversational-action-spec.md` — command dictionary, intent-to-action mapping, context resolution, error flows (PS-004)
-- `backend/docs/employee-performance.md` — KPI definitions, aggregation model, read-model schema, RBAC visibility rules (PS-006)
-- `backend/docs/pricing-plans.md` — plan tiers, PKR prices, feature entitlements, upgrade/downgrade flow (PS-009)
-- `backend/docs/integration-flow-traces.md` — all 4 end-to-end flow traces with failure paths and end-state assertions (PS-010)
-
-**Extend existing doc:**
-- `backend/docs/collections-engine-model.md` §N — Manual Payment Proof workflow: entity model, states, endpoints, RBAC (PS-007)
-
-### Sprint 1 — Persistence (blocks everything else)
-All 6 engines + idempotency ledger use in-memory state. Replace with DB-backed repositories.
-- FollowupEnforcementEngine → SQLAlchemy (tables exist in 0001 migration)
-- ActivityControlEngine → SQLAlchemy
-- CollectionsService → SQLAlchemy
-- ConversationService → SQLAlchemy + persistent message store
-- GlobalIdempotencyLedger → PostgreSQL idempotency_records table
-- FeatureFlagEvaluator → SQLAlchemy + Redis cache
-
-### Sprint 2 — Security & Auth
-- JWT claims fix: add role_ids (array), scopes, aud, iss; add revocation check (Redis jti blocklist)
-- RBAC middleware: per-route permission annotation + user active/suspended check
-- Rate limiting: 10k/min per-tenant, 500/min per-principal (security-model.md)
-- WhatsApp webhook: replace API key with Meta X-Hub-Signature-256 HMAC
-- Auth service endpoints: POST /api/v1/auth/sessions, DELETE current, POST /users/{id}/roles
-- Fix JazzCash base.py verify_callback (sorted params + HASH_KEY, not str(payload))
-- Startup env var validation: fail-fast if JWT_ISSUER/AUDIENCE/PUBLIC_KEY_URL missing
-
-### Sprint 3 — Missing Domain APIs
-- Tasks API: GET/POST /api/v1/tasks, POST /tasks/{id}/reschedule
-- Tickets/Cases API: 5 endpoints (GET/POST/PATCH/escalate/sla)
-- Opportunity pipeline API: GET/POST /api/v1/opportunities + transitions + mark-won/lost
-- GET /api/v1/forecasts (weighted pipeline by stage probability)
-- Audit query API: GET /api/v1/audits/events + exports + integrity/verify
-
-### Sprint 4 — API Standards & State Machines
-- Error envelope: all HTTPException → `{"error":{"code":"..."},"meta":{"request_id":"..."}}` on every engine
-- Pagination: add total_pages + rename total → total_items everywhere
-- Unknown fields rejected (ConfigDict extra=forbid on all request models)
-- FollowUp states: add SNOOZED + FAILED; expand to 7 for WhatsApp execution path
-- Conversation states: add WAITING_ON_CONTACT/INTERNAL, RESOLVED, CLOSED, REOPENED
-- Lead stage enum: add NURTURING, PROPOSAL, DISQUALIFIED; rename QUALIFIED → QUALIFYING
-- Opt-out: "STOP" + "لاگ آف" intent in WhatsApp classifier
-- Cash/manual payment reconciliation gated behind verification_status == verified
-- Fix collections automation engine reminder schedule (spec: -3,-1,+1,+7,+15)
-- Wire Idempotency-Key header enforcement on all critical write endpoints
-- Add closure_reason column to leads migration; FK followup_tasks → leads
-- Scope activity engine dicts by tenant_id
-
-### Sprint 5 — Observability, CI/CD & Testing
-- Structured logging: expand to 16 required fields (trace_id, tenant_id, request_id per request)
-- Daily Merkle root checkpoint + hourly integrity job + Sev-1 alerting
-- Distributed trace headers (W3C traceparent)
-- GitHub Actions: lint + test + build + staging deploy
-- Bandit + npm audit in CI pipeline
-- Static import denylist: ruff rule blocking core → adapters/pakistan
-- Replace ConcurrencyController stub with real Redis distributed lock
-- Lead conversion saga in services/ (Account→Contact→Opportunity + compensation)
-- Retry policy: fix to 1s/2×/60s/8 attempts; remove deterministic seed
-- Fix datetime.utcnow() → datetime.now(timezone.utc) everywhere; off-hours check → PKT (UTC+5)
-- Coverage gate: CI blocks merge if < 80%
-- Load test (locust): follow-up queue + collections happy path
-- Full E2E: lead capture → follow-up → close → invoice → payment
+### Stage 3 — Mapping Rebuild + Push
+Rebuild `FRONTEND-BACKEND-MAPPING.md` to reflect true current state — every endpoint marked LIVE, BUILD, or MISSING. Verify all 96 existing pages still HTTP 200. GitHub push — Phase 4 complete.
 
 ---
 
