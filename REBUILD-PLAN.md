@@ -1,12 +1,87 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-25 — Phase 4 Stage 1 COMPLETE: 51 specs read line-by-line, 30 duplication clusters logged. Prior: 2026-05-22 — Sprint 0 COMPLETE (19/24 tasks done)
-**Status:** Phase 1 — COMPLETE ✓ | Phase 2 — COMPLETE ✓ | Phase 3 — COMPLETE ✓ | Phase 4 — IN PROGRESS (Stage 0 + Stage 1 done · Stage 2 Code Overlay next) | Phase 5 — NOT STARTED | Phase 6 — NOT STARTED
-**Anchor:** This file. Update on every phase start and completion.
-**Task tracker:** `PENDING.md` (root) — checkbox list, updated as work completes
-**Session log:** `PROGRESS.md` — updated every session
+**Revised:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) plan finalised; Session Resumption Protocol added; stage numbering updated (2=fix, 3=code overlay, 4=mapping); Phase 4 expanded to 41 tasks.
+**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2A NEXT) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
+**Anchor:** This file. Updated every session before closing. Read first every session.
+**Task tracker:** `PENDING.md` (root) — checkbox list, mark `[x]` immediately on completion
+**Session log:** `PROGRESS.md` — one-line summary added every session
 **Estimated total duration:** ~21 weeks
+
+---
+
+## RESUME POINT — Read Before Every Session
+
+**Current location:** Phase 4 · Stage 2A  
+**Next task:** Add PRIMARY / DEFERS-TO / DO NOT RE-DEFINE header block to all 51 §F + §H spec files  
+**First file to open:** `backend/docs/phase4-stage1-read-log.md` — 30 clusters with PRIMARY designations  
+**Rule in force:** Non-destructive only. Max negative action = archiving. No deletions.  
+**Report-back rule:** Finish one sub-stage completely → report back → wait for confirmation → start next.
+
+| Phase | Stage | Status |
+|---|---|---|
+| 1 — Foundation Seal | — | ✓ COMPLETE |
+| 2 — Follow-up Engine | — | ✓ COMPLETE |
+| 3 — 5 Engines | — | ✓ COMPLETE |
+| 4 — Backend Hardening | Stage 0 — Design Docs + Fixes | ✓ COMPLETE (2026-05-19) |
+| 4 — Backend Hardening | Stage 1 — Doc Read + Identify | ✓ COMPLETE (2026-05-23) |
+| **4 — Backend Hardening** | **Stage 2A — Ownership Declaration** | **← NEXT** |
+| 4 — Backend Hardening | Stage 2B–2E — Fix + Restructure | Pending Stage 2A |
+| 4 — Backend Hardening | Stage 3 — Code Overlay | Pending Stage 2 |
+| 4 — Backend Hardening | Stage 4 — Mapping + Push | Pending Stage 3 |
+| 5 — Frontend 75 pages | — | Pending Phase 4 complete |
+| 6 — Market Research | — | Pending Phase 5 complete |
+
+---
+
+## Session Resumption Protocol
+
+Every session — including fresh sessions with no prior memory — MUST follow this sequence before doing any work.
+
+### Step 1 — Orient (read in order, do not skip)
+1. `REBUILD-PLAN.md` — read RESUME POINT table above; current phase and stage are stated explicitly
+2. `PENDING.md` — find the first unchecked `[ ]` task in the current phase; that is the start point
+3. `DOC-CATALOGUE.md` §A How-to-use table — confirm file locations for current stage context
+
+### Step 2 — Load stage context
+| Stage | Files to read before starting |
+|---|---|
+| Phase 4 Stage 2 (any sub-stage) | `backend/docs/phase4-stage1-read-log.md` — 30 clusters + PRIMARY designations |
+| Phase 4 Stage 3 — Code Overlay | `backend/docs/phase4-gap-register.md` (created during Stage 3) |
+| Phase 4 Stage 4 — Mapping | `backend/FRONTEND-BACKEND-MAPPING.md` |
+| Phase 5 — any page build | `DESIGN-SPEC.md` + `FRAMEWORK.md §25–32` + relevant `backend/docs/ui/pages/` spec |
+| Phase 6 | `backend/market-research-gap-register.md` |
+
+### Step 3 — Confirm resume point
+The RESUME POINT table above is the authoritative start point. It is updated at the close of every session. Never derive the resume point from memory or the conversation summary — always read it from this file.
+
+### Step 4 — Execute
+- Work from `PENDING.md` checkboxes in strict order
+- Mark `[x]` immediately when a task completes — never batch marks
+- Complete one sub-stage entirely before starting the next
+- Report findings/results after each sub-stage; wait for explicit confirmation before proceeding
+- If a file read reveals something unexpected: stop, surface it, do not proceed silently
+
+### Step 5 — Close session (mandatory before ending)
+1. Mark all completed tasks `[x]` in `PENDING.md`
+2. Update the RESUME POINT table in this file — next unchecked task, correct sub-stage
+3. Update the **Revised** date and **Progress** line at the top of this file
+4. Add one-line summary to `PROGRESS.md`
+5. Commit all changes with semantic commit message (see `CONTRIBUTING.md` for format)
+6. Push to GitHub — run `git status` and confirm clean before closing
+
+### Non-negotiable rules — active every session, every phase
+
+| Rule | Where enforced |
+|---|---|
+| All 96 library pages must stay HTTP 200 after every push | REBUILD-PLAN.md — every phase close |
+| Max negative doc action = archiving (no file deletions) | Phase 4 Stage 2 constraint |
+| `JAZZCASH_STUB_MODE=true` until P-016 credentials supplied | `CONSTRAINTS.md C-009` |
+| All `_STRINGS['ur']` need native speaker sign-off before any customer send (P-017) | `CONSTRAINTS.md C-010` |
+| Every new `.md` file catalogued in `DOC-CATALOGUE.md` on the same day it is written | `DOC-CATALOGUE.md` rule |
+| `core/*` must never import `adapters/pakistan/*` | `ADR-001`, `ADR-002` — ruff CI enforced |
+| Report back after each sub-stage; wait for confirmation before next | Phase 4 protocol |
+| Never set `stub_mode=False` without full sandbox → prod E2E payment cycle verified | `CONSTRAINTS.md C-009` |
 
 ---
 
@@ -139,21 +214,102 @@ Spec: `docs/execution-hardening.md`
 
 ---
 
-## Phase 4 — Backend Hardening (~4 weeks) — IN PROGRESS
-**Goal:** Normalise all docs, overlay docs on code, fix every gap found. Gates Phase 5.
-**Progress:** 20/24 tasks done (83%) — design docs + pre-phase fixes DONE · Stage 1 DONE · Stage 2–3 pending
+## Phase 4 — Backend Hardening (~6 weeks) — IN PROGRESS
+**Goal:** Bullet-proof all docs, normalise structure, overlay docs on code, fix every gap. Gates Phase 5.
+**Progress:** 12/41 tasks done (29%) — Stage 0 ✓ · Stage 1 ✓ · Stage 2 next
+
+---
 
 ### Stage 0 — Design Docs + Pre-Phase Fixes ✓ COMPLETE (2026-05-19)
-All 9 missing design docs written and catalogued. 9 pre-phase audit fixes applied.
+**What:** 9 missing design docs written and catalogued. 9 pre-phase code bugs fixed.
+**Output:** 308 tests passing. 96/96 pages HTTP 200. 103 active .md files in DOC-CATALOGUE.md.
 
-### Stage 1 — Doc Normalisation ✓ COMPLETE (2026-05-23)
-All 51 §F + §H specs read line-by-line. 30 duplication/overlap clusters identified and logged in `backend/docs/phase4-stage1-read-log.md`. Findings submitted for review.
+---
 
-### Stage 2 — Code Overlay
-Overlay normalised docs on the codebase. For every entity, API endpoint, and business rule defined in the specs: verify it exists in code and is correctly implemented. Fix every gap found. Output: `backend/docs/phase4-gap-register.md` recording what was found and fixed.
+### Stage 1 — Doc Read + Identify ✓ COMPLETE (2026-05-23)
+**What:** All 51 §F + §H specs read line-by-line by main session. 30 duplication/overlap clusters identified.
+**Output:** `backend/docs/phase4-stage1-read-log.md` — 51 ✓ / 0 ⬜. Findings reviewed and approved.
 
-### Stage 3 — Mapping Rebuild + Push
-Rebuild `FRONTEND-BACKEND-MAPPING.md` to reflect true current state — every endpoint marked LIVE, BUILD, or MISSING. Verify all 96 existing pages still HTTP 200. GitHub push — Phase 4 complete.
+---
+
+### Stage 2 — Doc Fix + Restructure ← CURRENT STAGE
+**What:** Execute all fixes for the 30 clusters. Normalise folder structure and file naming.
+**Non-destructive rule:** Max negative action = archiving. No deletions, no content truncation.
+**Report-back rule:** Complete each sub-stage fully → report back → get confirmation → start next.
+**Cluster reference:** `backend/docs/phase4-stage1-read-log.md`
+
+#### Stage 2A — Ownership Declaration ← NEXT SUB-STAGE
+Add a 3-line PRIMARY header block to all 51 §F + §H spec files:
+```
+**PRIMARY for:** [concepts this file owns — code must implement from here]
+**Defers to:** [filename — concept] for any definitions sourced elsewhere
+**Do not re-define:** [concepts owned by another file — use a pointer only]
+```
+Risk: Zero — additive only. Done when all 51 files have the block.
+
+#### Stage 2B — Gap Fills
+Add 6 missing definitions to their owning files (additive only, zero risk):
+- `territory_ids` JWT claim → `identity-auth-rbac.md` + `security-model.md`
+- `EmployeePerformanceRM` → `read-models.md`
+- `TerritoryPerformanceRM` → `read-models.md`
+- `TenantUsageMetric` → `domain-model.md`
+- Deny-by-default PRIMARY designation → `security-model.md`; pointer in `api-standards.md`, `identity-auth-rbac.md`, `org-multi-tenancy.md`
+- Tone tiers (polite/firm/urgent) PRIMARY → `pakistan-adapter-architecture.md`; pointer in `collections-engine-model.md`
+
+#### Stage 2C — Inconsistency Resolution
+Resolve 6 conflicts — pick canonical value, update non-PRIMARY file only (low risk):
+- Payment status enum — `payments-revenue.md` PRIMARY (9-state); fix `collections-engine-model.md`
+- Collections aging buckets — `collections-engine-model.md` PRIMARY; fix `owner-dashboard.md`
+- Audit hash schema — `integrity.hash/prev_hash/chain_seq` canonical; fix `data-governance-layer.md §2.6`
+- Two audit integrity endpoints — clarify distinct purposes in both files (no value change)
+- Event naming — add `event-catalog.md` pointer note to 5 domain files
+- Urdu keyword — `مینیجر سے بات کریں` canonical; fix `conversational-action-spec.md`
+
+#### Stage 2D — Duplicate Removal + Misplaced Content
+Replace 14 duplicate definitions with one-line cross-reference pointers (low risk — nothing deleted):
+- Transactional outbox copies in 3 files → pointer to `data-architecture.md §3.1`
+- Idempotency 4-tuple copies in 2 files → pointer to `global-idempotency.md §1.1`
+- Event dedup 3-tuple copies in 4 files → pointer to `global-idempotency.md §3.1`
+- JWT claims + session revocation copies in `security-model.md` → pointer to `identity-auth-rbac.md`
+- CQRS-lite + Aha-moment + break-glass + retention copies → pointers to respective PRIMARYs
+
+Move 4 misplaced content blocks to owning files + leave pointer stub in original location:
+- Follow-up Queue API (5 endpoints) out of `opportunities-pipeline.md` → `followup-enforcement-model.md`
+- Ticket/Case overlay out of `activities-tasks.md` → archive in place + pointer to `cases-domain.md`
+- Evaluate 3 appended overlay sections in `payments-revenue.md`
+- `FieldDefinition` + `CustomFieldDefinition` internal near-duplicates in `custom-object-framework.md`
+
+#### Stage 2E — Rename + Folder Restructure
+Implement Diátaxis + DDD international standard taxonomy. Execute last (content must be clean first).
+New structure: `backend/docs/` → 8 subfolders:
+```
+architecture/   security/   domain/   infrastructure/
+adapters/       product/    ui/       _qc/   _tracking/
+```
+Each subfolder gets a `README.md` navigation index.
+File renaming: remove `b9-p##` codes, remove redundant suffixes (`-model`, `-layer`, `-spec` where folder provides context), kebab-case throughout.
+ADRs: add title slug (`ADR-001.md` → `ADR-001-ddd-microservices.md`).
+Update all cross-references + `DOC-CATALOGUE.md` paths in one sweep.
+Done when: all paths resolve, DOC-CATALOGUE verified, `git status` clean.
+
+---
+
+### Stage 3 — Code Overlay
+**What:** Overlay normalised, restructured docs on the codebase. For every entity, API endpoint, and business rule: verify it exists in code, is correctly implemented, and matches the spec exactly. Fix every gap found.
+**Output:** `backend/docs/phase4-gap-register.md` — full record of every gap found and fixed.
+**Gate:** Stage 2 fully complete before starting.
+
+---
+
+### Stage 4 — Mapping Rebuild + Final Push
+**What:** Rebuild `FRONTEND-BACKEND-MAPPING.md` (every endpoint: LIVE / BUILD / MISSING). Run all quality gates.
+- Rebuild `FRONTEND-BACKEND-MAPPING.md` to reflect true post-Stage-3 state
+- Verify: all 96 existing pages still HTTP 200
+- Coverage gate: CI blocks merge if coverage < 80%
+- Load test (locust): follow-up queue + collections happy path
+- Full E2E test: lead capture → follow-up → close → invoice → payment
+- GitHub push — Phase 4 complete
+**Gate:** Stage 3 fully complete before starting.
 
 ---
 

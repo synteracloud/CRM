@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-19 — Tri-register audit complete. Phases restructured: hardening (Phase 4) gates frontend (Phase 5). Market research features added as Phase 6.
+**Last updated:** 2026-05-25 — Stage 2 (Doc Fix + Restructure) tasks added (2A–2E); Stage 3 = Code Overlay; Stage 4 = Mapping + Push; Phase 4 expanded to 41 tasks; Session Resumption Protocol added to REBUILD-PLAN.md.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -13,10 +13,10 @@
 | Phase 1 — Foundation Seal | 14 | 14 | 100% ✓ |
 | Phase 2 — Follow-up Engine | 19 | 19 | 100% ✓ |
 | Phase 3 — 5 Engines | 27 | 27 | 100% ✓ |
-| Phase 4 — Backend Hardening | 24 | 19 | 79% |
+| Phase 4 — Backend Hardening | 41 | 12 | 29% |
 | Phase 5 — Frontend (75 pages) | 81 | 0 | 0% |
 | Phase 6 — Market Research + Final Hardening | 10 | 0 | 0% |
-| **Total** | **167** | **71** | **43%** |
+| **Total** | **192** | **72** | **38%** |
 
 ---
 
@@ -145,22 +145,51 @@
 
 - [x] Read all 51 specs in §F + §H line-by-line; 30 duplication/overlap clusters identified and logged in phase4-stage1-read-log.md; findings submitted for review
 
-### Stage 2 — Code Overlay
+### Stage 2 — Doc Fix + Restructure ← CURRENT STAGE
+**Non-destructive rule:** Max negative action = archiving. No file deletions.
+**Report-back rule:** Complete one sub-stage → report back → wait for confirmation → proceed.
+**Reference for all 30 clusters:** `backend/docs/phase4-stage1-read-log.md`
 
+#### Stage 2A — Ownership Declaration
+- [ ] Add PRIMARY / DEFERS-TO / DO-NOT-RE-DEFINE header block to all 51 §F + §H spec files
+
+#### Stage 2B — Gap Fills
+- [ ] `territory_ids` JWT claim added to `identity-auth-rbac.md` + `security-model.md`
+- [ ] `EmployeePerformanceRM` + `TerritoryPerformanceRM` added to `read-models.md`
+- [ ] `TenantUsageMetric` entity added to `domain-model.md`
+- [ ] Deny-by-default PRIMARY designated as `security-model.md`; pointer added in 3 other files
+- [ ] Tone tiers PRIMARY designated as `pakistan-adapter-architecture.md`; pointer in `collections-engine-model.md`
+
+#### Stage 2C — Inconsistency Resolution
+- [ ] Payment status enum canonical — `payments-revenue.md` PRIMARY; `collections-engine-model.md` updated
+- [ ] Collections aging buckets canonical — `collections-engine-model.md` PRIMARY; `owner-dashboard.md` updated
+- [ ] Audit hash schema — `integrity.hash/prev_hash/chain_seq` canonical; `data-governance-layer.md §2.6` fixed
+- [ ] Two audit integrity endpoints — distinct purposes documented in both files
+- [ ] Event naming — `event-catalog.md` pointer note added to 5 domain files
+- [ ] Urdu keyword — `مینیجر سے بات کریں` canonical; `conversational-action-spec.md` fixed
+
+#### Stage 2D — Duplicate Removal + Misplaced Content
+- [ ] 14 duplicate definitions replaced with one-line cross-reference pointers
+- [ ] 4 misplaced content blocks moved to owning files; pointer stubs left in original locations
+
+#### Stage 2E — Rename + Folder Restructure
+- [ ] Old→new path mapping document written and approved
+- [ ] 8 subfolders created (`architecture/ security/ domain/ infrastructure/ adapters/ product/ ui/ _qc/`) each with `README.md`
+- [ ] All 91 files moved to new locations and renamed (remove `b9-p##`, standardise suffixes, ADR title slugs)
+- [ ] All internal cross-references updated to new paths
+- [ ] `DOC-CATALOGUE.md` paths + section structure updated to match new tree
+- [ ] `git status` clean; all 96 pages still HTTP 200 after restructure
+
+### Stage 3 — Code Overlay
 - [ ] Overlay normalised docs on code; fix every gap found across entity, API, and business logic layers
-- [ ] Write `backend/docs/phase4-gap-register.md` — record of all gaps found and fixed
+- [ ] Write `backend/docs/phase4-gap-register.md` — full record of all gaps found and fixed
 
-### Stage 3 — Mapping Rebuild + Push
-
+### Stage 4 — Mapping Rebuild + Final Push
 - [ ] Rebuild `FRONTEND-BACKEND-MAPPING.md` — every endpoint marked LIVE / BUILD / MISSING
 - [ ] Verify: all 96 existing pages still HTTP 200
-- [ ] GitHub push — Phase 4 complete
 - [ ] Coverage gate — CI blocks merge if coverage < 80%
 - [ ] Load test (locust) — follow-up queue + collections happy path
 - [ ] Full E2E test — lead capture → follow-up → close → invoice → payment
-
-### Phase 4 close
-- [ ] Verify: all 96 existing pages still HTTP 200
 - [ ] GitHub push — Phase 4 complete
 
 ---
