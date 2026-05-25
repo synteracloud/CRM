@@ -1,7 +1,7 @@
 # Pakistan CRM — Document Catalogue
 
 **Last updated:** 2026-05-25 — §B2 Purpose column added (6 entries); phase4-stage1-read-log.md entry normalised to 6-column §H format. Prior: 2026-05-22 — Catalogue merge COMPLETE (Steps 1–7): merged OPS + TECH into master; expanded How to use (28 rows); added §I Non-Negotiables + Permanently Blocked Items; fixed §B2 header (11→6 modules); 8 description improvements from OPS; removed §F0 + DOC-CATALOGUE-OPS.md self-ref. Previous: Batch 4 verification pass (final): 13 corrections applied (runtime-deployment env var count 23→36, ui-foundations spacing tokens 13→11 + color tokens 16→17, enterprise-depth governance planes 5→6, cases-domain API count 16→19 + events 10→12, compliance-adapter PII fields 24→19, conversational-action-spec command count 9→10 + error conditions 7→6, localization namespace count 14→15, employee-performance schema fields 15→16, territory-management RM fields 10→13 + events 8→7). Batch 3: 8 corrections. Batch 2: 5 corrections. Batch 1: 9 corrections across §B2 and §E. Previous pass: 9 corrections across §A/§B/§C/§G.
-**Scope:** All .md files in the project — 99 active + 0 planned (Sprint 0 complete) + 4 archived. (2 sub-catalogues merged and deleted 2026-05-22 per CATALOGUE-MERGE-PLAN.md.)
+**Scope:** All .md files in the project — 103 active + 0 planned + 3 archived. (2 sub-catalogues merged and deleted 2026-05-22 per CATALOGUE-MERGE-PLAN.md. Count last verified 2026-05-25 by full file system scan.)
 **Purpose:** Ground-truth index built from full reads of every file. Use this to find any document, understand what it contains, and know why it exists. Paths reflect current folder structure.
 **Linkage audit:** 2026-05-17 — 11 issues resolved. All cross-references verified clean.
 **Production readiness audit:** 2026-05-17 — 93 gaps identified and fixed across 26 files.
@@ -150,7 +150,7 @@ B9-series UI specs. Each spec defines scope, layout, components, read model bind
 
 ---
 
-## §F — backend/docs/ — Domain & Architecture Specs (47 files)
+## §F — backend/docs/ — Domain & Architecture Specs (46 files)
 
 Authoritative backend domain documentation. These define entity fields, states, service boundaries, and system behaviour. Frontend and backend must not drift from these.
 
