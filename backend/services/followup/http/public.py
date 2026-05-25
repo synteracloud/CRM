@@ -132,10 +132,13 @@ def list_followups(
     offset = (page - 1) * page_size
     rows = db.execute(q.offset(offset).limit(page_size)).scalars().all()
 
+    import math
+    total_pages = math.ceil(total_count / page_size) if page_size else 1
     return {
         "data": [_task_dict(t) for t in rows],
         "meta": _meta(
-            total=total_count,
+            total_items=total_count,
+            total_pages=total_pages,
             page=page,
             page_size=page_size,
         ),

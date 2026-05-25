@@ -101,9 +101,26 @@ class CollectionsService:
         case = self._reconcile(payment)
         return payment, case
 
+    _MANUAL_PROVIDERS: frozenset[str] = frozenset({"manual", "cash"})
+
     def _reconcile(self, payment: Payment) -> ReconciliationCase | None:
         if payment.status != "succeeded":
             return None
+
+        # Spec §4.2: manual/cash payments must be verified before reconciliation.
+        if payment.provider in self._MANUAL_PROVIDERS and payment.verification_status != "verified":
+            case = ReconciliationCase(
+                case_id=f"rec-{len(self._reconciliation_cases)+1}",
+                payment_id=payment.payment_id,
+                invoice_id=None,
+                match_status="needs_review",
+                mismatch_reason="unknown",
+                resolver_user_id=None,
+                resolution_action=None,
+                resolved_at=None,
+            )
+            self._reconciliation_cases[case.case_id] = case
+            return case
 
         target_invoice: Invoice | None = None
         mismatch_reason = "unknown"

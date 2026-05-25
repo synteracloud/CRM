@@ -138,7 +138,7 @@ class TestListInvoices:
     def test_meta_contains_total(self, client: TestClient) -> None:
         client.post("/api/v1/invoices", json=_invoice_payload())
         r = client.get("/api/v1/invoices")
-        assert "total" in r.json()["meta"]
+        assert "total_items" in r.json()["meta"]
 
 
 # ── GET /api/v1/invoices/{id} ─────────────────────────────────────────────────

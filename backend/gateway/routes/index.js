@@ -20,6 +20,7 @@ const opportunitiesV1Router = require('./v1-opportunities.routes');
 const followupsV1Router = require('./v1-followups.routes');
 const collectionsV1Router = require('./v1-collections.routes');
 const syncV1Router = require('./v1-sync.routes');
+const authV1Router = require('./v1-auth.routes');
 const { respondError } = require('../middleware/response-wrapper');
 
 const router = express.Router();
@@ -47,6 +48,7 @@ router.use('/opportunities', opportunitiesV1Router);
 router.use('/followups', followupsV1Router);
 router.use('/collections', collectionsV1Router);
 router.use('/sync', syncV1Router);
+router.use('/auth', authV1Router);
 
 router.use((req, res) => respondError(res, 'not_found', 'The requested resource was not found.', [], 404));
 

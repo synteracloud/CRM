@@ -173,7 +173,16 @@ def list_activities(
         }
         for r in rows
     ]
-    return {"data": events, "meta": _meta(total=len(events), page=page, page_size=page_size)}
+    import math
+    # total_count not tracked separately here — len(events) is the page count, not global total
+    # Use count query for accurate total_items
+    from sqlalchemy import func as _func
+    count_q = select(_func.count()).select_from(Activity).where(Activity.tenant_id == claims.tenant_id)
+    if entity_id:
+        count_q = count_q.where(Activity.entity_id == entity_id)
+    total_count = db.execute(count_q).scalar_one()
+    total_pages = math.ceil(total_count / page_size) if page_size else 1
+    return {"data": events, "meta": _meta(total_items=total_count, total_pages=total_pages, page=page, page_size=page_size)}
 
 
 @router.get("/api/v1/activities/chain-integrity")

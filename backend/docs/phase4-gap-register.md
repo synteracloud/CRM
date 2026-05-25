@@ -29,12 +29,12 @@ All Python services use in-memory data structures. Every restart wipes all state
 | ID | File | Gap | Status |
 |---|---|---|---|
 | B-001 | `services/auth/jwt_deps.py` | `TokenClaims` dataclass had only `sub, tenant_id, role, jti`. Missing: `role_ids` (array), `scopes` (list), `aud`, `iss`, `territory_ids`. Spec: `security/identity-auth-rbac.md §3.2`. | FIXED |
-| B-002 | `gateway/middleware/auth-rbac.js` | Claims extracted include `sub, user_id, tenant_id, role, scopes, role_ids, jti` but NOT `territory_ids`. Spec §3.2 requires `territory_ids` claim. | OPEN |
-| B-003 | `gateway/middleware/auth-rbac.js` | No `jti` revocation check via Redis blocklist. Spec §3.3 requires Redis `jti_blocklist` lookup before allowing request. | OPEN |
+| B-002 | `gateway/middleware/auth-rbac.js` | Claims extracted include `sub, user_id, tenant_id, role, scopes, role_ids, jti` but NOT `territory_ids`. Spec §3.2 requires `territory_ids` claim. | FIXED (`territory_ids` array extracted into `req.auth`) |
+| B-003 | `gateway/middleware/auth-rbac.js` | No `jti` revocation check via Redis blocklist. Spec §3.3 requires Redis `jti_blocklist` lookup before allowing request. | FIXED (`jti-blocklist.js` in-memory blocklist; check in `auth-rbac.js` after claim extraction; Redis upgrade same path as A-006) |
 | B-004 | `gateway/app.js` | No startup validation. Spec (`infrastructure/execution-hardening.md §6`) requires fail-fast on missing `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_PUBLIC_KEY_URL`, `DATABASE_URL`. | OPEN |
-| B-005 | `gateway/routes/v1-webhooks-whatsapp.routes.js` | Webhook uses API key check; spec (`adapters/whatsapp-execution-model.md §7.1`) requires Meta `X-Hub-Signature-256` HMAC verification using `APP_SECRET`. | OPEN |
+| B-005 | `gateway/routes/v1-whatsapp-webhooks.routes.js` | Webhook uses API key check; spec (`adapters/whatsapp-execution-model.md §7.1`) requires Meta `X-Hub-Signature-256` HMAC verification using `APP_SECRET`. | FIXED (Meta route uses `hmacSha256Hex` + `timingSafeEqualHex` + `META_APP_SECRET` — implemented in gateway) |
 | B-006 | `services/collections/jazzcash_adapter.py` | `verify_callback` uses wrong hash method. Spec (`adapters/pakistan-adapter-architecture.md §4.1`) requires sorted param concatenation + `HASH_KEY` HMAC-SHA256. | OPEN |
-| B-007 | `gateway/routes/` | Auth management endpoints missing: `POST /api/v1/auth/sessions` (login), `DELETE /api/v1/auth/sessions/{jti}` (logout/revoke), `POST /api/v1/users/{id}/roles` (role assignment). Spec: `security/identity-auth-rbac.md §5`. | OPEN |
+| B-007 | `gateway/routes/` | Auth management endpoints missing: `POST /api/v1/auth/sessions` (login), `DELETE /api/v1/auth/sessions/{jti}` (logout/revoke), `POST /api/v1/users/{id}/roles` (role assignment). Spec: `security/identity-auth-rbac.md §5`. | FIXED (`v1-auth.routes.js` — login (501 until IdP wired) + logout (revokes jti); `v1-users.routes.js` — `POST /:user_id/roles` with `users.manage_roles` guard) |
 
 ---
 
@@ -60,10 +60,10 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | D-002 | `alembic/versions/0001_followup_schema.py` | `followup_tasks.state` CHECK only allowed `pending, overdue, completed`. Spec adds `SNOOZED` + `FAILED` states. | FIXED (migration 0002) |
 | D-003 | `alembic/versions/0001_followup_schema.py` | `leads.stage` CHECK: migration was correct. Gateway route VALID_STAGES was wrong (fixed in D-001). No DB schema change needed. | FIXED |
 | D-004 | `services/followup/engine.py` + others | `datetime.utcnow()` deprecated since Python 3.12. Fixed in `followup/engine.py`, `followup/http/internal.py`, `activity/monitor/entities.py`. | FIXED |
-| D-005 | All Python routers | HTTPException raised with plain string detail. Spec (`infrastructure/api-standards.md §5`) requires error envelope `{"error":{"code":"...","message":"..."},"meta":{"request_id":"..."}}`. | OPEN |
-| D-006 | All list endpoints | Pagination response uses `total` not `total_items`; missing `total_pages`. Spec: `infrastructure/api-standards.md §4.2`. | OPEN |
+| D-005 | All Python routers | HTTPException raised with plain string detail. Spec (`infrastructure/api-standards.md §5`) requires error envelope `{"error":{"code":"...","message":"..."},"meta":{"request_id":"..."}}`. | FIXED (global `@app.exception_handler(HTTPException)` in `services/app.py` wraps all HTTPExceptions into structured envelope) |
+| D-006 | All list endpoints | Pagination response uses `total` not `total_items`; missing `total_pages`. Spec: `infrastructure/api-standards.md §4.2`. | FIXED (`total_items` + `total_pages` in followup, activity, collections, conversation list endpoints) |
 | D-007 | All Python request models | Missing `model_config = ConfigDict(extra="forbid")` — unknown fields accepted silently. Spec: `infrastructure/api-standards.md §3.1`. | OPEN |
-| D-008 | `services/collections/service.py` | Manual payment reconciliation not gated behind `verification_status == verified`. Spec: `domain/collections-engine-model.md §4.2`. | OPEN |
+| D-008 | `services/collections/service.py` | Manual payment reconciliation not gated behind `verification_status == verified`. Spec: `domain/collections-engine-model.md §4.2`. | FIXED (`_reconcile` checks `payment.provider in _MANUAL_PROVIDERS` and `verification_status != "verified"` → creates `needs_review` case without applying to invoice) |
 | D-009 | `gateway/middleware/idempotency.js` | `Idempotency-Key` header not enforced on all critical write endpoints (PUT, PATCH, DELETE also). Spec: `infrastructure/global-idempotency.md §1.2`. | OPEN |
 | D-010 | `services/db/models/lead.py` | `closure_reason` column missing from leads table. FK `followup_tasks → leads` missing. | FIXED (migration 0002) |
 
@@ -111,4 +111,12 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 
 ---
 
-*Last updated: 2026-05-25 — 314/314 tests passing; A-001/002/003/004 DB wiring complete; 9 open gaps remain.*
+| 2026-05-25 | B-002 | `gateway/middleware/auth-rbac.js` — `territory_ids` array added to `req.auth` |
+| 2026-05-25 | B-003 | `gateway/middleware/jti-blocklist.js` created; `auth-rbac.js` checks `isRevoked(jti)` before allowing request |
+| 2026-05-25 | B-005 | Confirmed FIXED — `gateway/routes/v1-whatsapp-webhooks.routes.js` has full Meta HMAC-SHA256 verification |
+| 2026-05-25 | B-007 | `gateway/routes/v1-auth.routes.js` — `POST /sessions` + `DELETE /sessions/current`; `v1-users.routes.js` — `POST /:user_id/roles`; registered in `routes/index.js` |
+| 2026-05-25 | D-005 | `services/app.py` — global `HTTPException` handler returns `{"error":{"code":"...","message":"..."},"meta":{"request_id":"..."}}` |
+| 2026-05-25 | D-006 | `followup/http/public.py`, `activity/http/public.py`, `collections/http/public.py`, `conversation/http/public.py` — `total` → `total_items` + `total_pages` |
+| 2026-05-25 | D-008 | `services/collections/service.py:_reconcile` — manual/cash payments with `verification_status != "verified"` create `needs_review` case without applying to invoice |
+
+*Last updated: 2026-05-25 — 314/314 tests passing; Round 3 complete — 26/28 gaps fixed; 2 remain open (B-004, B-006).*

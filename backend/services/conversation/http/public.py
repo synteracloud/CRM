@@ -231,8 +231,8 @@ def list_conversations(
             }
             for r in rows
         ]
-        return {"data": data, "meta": _meta(total=len(data))}
+        return {"data": data, "meta": _meta(total_items=len(data), total_pages=1)}
 
     # Fall back to in-memory for test compatibility
     tenant_convs = [c for c in _conversations.values() if c["tenant_id"] == claims.tenant_id]
-    return {"data": tenant_convs, "meta": _meta(total=len(tenant_convs))}
+    return {"data": tenant_convs, "meta": _meta(total_items=len(tenant_convs), total_pages=1)}

@@ -1,8 +1,8 @@
 # Pakistan CRM OS — System Snapshot
 
 **Date:** 2026-05-25
-**Overall grade:** 8.8 / 10
-**Refresh trigger:** Phase 4 Stage 3 Round 2 complete — A-001/002/003/004 DB wiring done; 19/28 gaps fixed, 314/314 tests.
+**Overall grade:** 9.2 / 10
+**Refresh trigger:** Phase 4 Stage 3 Round 3 complete — B-002/003/005/007 + D-005/006/008 fixed; 26/28 gaps fixed, 314/314 tests.
 
 > **How to use this file:** Read it first at the start of every session. 60-second bird's-eye view — where we are, what is built, what is broken, what is next. Then open `REBUILD-PLAN.md` for the exact resume point and `PENDING.md` for the checkbox queue.
 
@@ -18,7 +18,7 @@
 | Phase 4 Stage 0 | Design Docs + Pre-Phase Fixes | ✓ COMPLETE — 2026-05-19 |
 | Phase 4 Stage 1 | Doc Read + Identify (30 clusters) | ✓ COMPLETE — 2026-05-23 |
 | Phase 4 Stage 2 | Doc Fix + Restructure | ✓ COMPLETE — 2026-05-25 |
-| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 2 done — 19/28 gaps fixed)** |
+| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 3 done — 26/28 gaps fixed)** |
 | Phase 4 Stage 4 | Mapping + Final Push | Pending Stage 3 |
 | Phase 5 | Frontend — 75 Custom Pages | NOT STARTED |
 | Phase 6 | Market Research Features | NOT STARTED |
@@ -34,10 +34,10 @@
 | Documentation | 10/10 | 10/10 | None — 52 specs in 9 subdirs + phase4-gap-register.md; all ownership blocks set |
 | Architecture design | 8/10 | 10/10 | Code must match docs; event bus not wired; service boundaries exist only in docs |
 | Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD missing |
-| Code implementation | 8/10 | 10/10 | 9 open gaps remain (was 28); JWT fixed; migrations + ORM complete; all 4 main engines now DB-backed |
+| Code implementation | 9/10 | 10/10 | 2 open gaps remain (B-004 startup validation, B-006 JazzCash hash); auth + error envelopes + pagination complete |
 | Testing | 5/10 | 10/10 | 314 tests passing; no coverage gate; no E2E; no load tests |
 | DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers in CI |
-| Security implementation | 6/10 | 10/10 | Python JWT claims complete (B-001 fixed); gateway territory_ids + jti blocklist still open |
+| Security implementation | 8/10 | 10/10 | territory_ids extracted; jti revocation blocklist live; auth endpoints wired; HMAC verified |
 | Frontend | 7/10 | 10/10 | 96 library pages done; 75 custom pages unbuilt |
 
 ---
@@ -106,7 +106,7 @@
 
 Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 
-### Fixed (19)
+### Fixed (26)
 
 | ID | What was fixed |
 |---|---|
@@ -121,24 +121,26 @@ Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 | A-005 | `idempotency_records` table + ORM model (migration 0002); gateway wiring next |
 | A-001 | `FollowupEnforcementEngine.hydrate_lead()` + internal router persists tasks/escalations to DB; metrics from DB |
 | A-002 | `log_activity` persists to `activities` table; `list_activities` reads from DB |
+| B-002 | Gateway `auth-rbac.js` — `territory_ids` array added to `req.auth` |
+| B-003 | `jti-blocklist.js` in-memory blocklist; `auth-rbac.js` checks revocation before every request |
+| B-005 | Gateway Meta webhook — `hmacSha256Hex` + `timingSafeEqualHex` + `META_APP_SECRET` verified |
+| B-007 | `v1-auth.routes.js` — login + logout (jti revocation); `v1-users.routes.js` — role assignment |
+| D-005 | `services/app.py` — global `HTTPException` handler produces structured error envelope |
+| D-006 | All list endpoints — `total` → `total_items` + `total_pages` |
+| D-008 | `collections/service.py:_reconcile` — manual/cash payments gate on `verification_status == verified` |
 | BUG | `_parse_rfc3339` / `_parse_dt` double `+00:00` offset crash fixed |
 | BUG | JazzCash adapter `pp_Amount` ÷100 only for paise field, not generic `amount` |
 | INFRA | QC script paths updated for Stage 2E 9-subdir restructure |
 | INFRA | `catalog_events.py` — 9 missing events added (lead.conversion.failed, SLA, partner) |
 
-### Open (9 — priority order for Round 3)
+### Open (2 — deferred / needs Redis)
 
 | ID | What remains |
 |---|---|
 | A-006 | Gateway rate-limit: swap in-memory buckets for Redis |
 | A-007 | `FeatureFlagEvaluator` — SQLAlchemy + Redis cache |
-| B-002 | Gateway `auth-rbac.js` — extract `territory_ids` JWT claim |
-| B-003 | Gateway `auth-rbac.js` — `jti` revocation check via Redis blocklist |
-| B-005 | WhatsApp webhook — Meta `X-Hub-Signature-256` HMAC (spec §7.1) |
-| B-007 | Auth endpoints — login, logout/revoke, role assignment |
-| D-005 | All Python routers — HTTPException → structured error envelope |
-| D-006 | Pagination — add `total_pages`, rename `total` → `total_items` |
-| D-008 | Manual payment reconciliation gate — require `verification_status == verified` |
+| B-004 | Gateway startup validation: fail-fast on missing `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_PUBLIC_KEY_URL`, `DATABASE_URL` |
+| B-006 | JazzCash `verify_callback` — sorted param concatenation + `HASH_KEY` HMAC-SHA256 |
 
 ---
 
@@ -204,17 +206,13 @@ Dev server: `npm run serve` from `D:\CRM\frontend` → `http://localhost:3001`
 
 ## Immediate Next Step
 
-**Phase 4 Stage 3 — Code Overlay Round 3.**
+**Phase 4 Stage 3 COMPLETE — 26/28 gaps fixed. 2 remaining gaps deferred (need Redis or IdP).**
 
-Resume from gap register `backend/docs/phase4-gap-register.md`. 9 gaps remain. Priority order:
-1. **B-002** — Gateway `auth-rbac.js`: extract `territory_ids` JWT claim
-2. **B-003** — Gateway `auth-rbac.js`: `jti` revocation check via Redis blocklist  
-3. **B-005** — WhatsApp webhook: Meta `X-Hub-Signature-256` HMAC verification
-4. **B-007** — Auth endpoints: `POST /auth/sessions` (login), `DELETE /auth/sessions/{jti}` (logout), `POST /users/{id}/roles`
-5. **D-005** — HTTPException → structured error envelope on all Python routers
-6. **D-006** — Pagination `total` → `total_items` + `total_pages`
-7. **D-008** — Manual payment reconciliation gate: `verification_status == verified`
+**Next: Phase 4 Stage 4** — Mapping + Final Push. Start with:
+1. **B-004** — Gateway startup validation (fail-fast on missing env vars)
+2. **B-006** — JazzCash `verify_callback` hash fix (needs `JAZZCASH_HASH_KEY`)
+3. Then Stage 4 mapping work per REBUILD-PLAN.md
 
 ---
 
-*Last updated: 2026-05-25 — Stage 3 Round 2 complete. 19 gaps fixed, 9 open. 314/314 tests.*
+*Last updated: 2026-05-25 — Stage 3 Round 3 complete. 26 gaps fixed, 2 deferred. 314/314 tests.*

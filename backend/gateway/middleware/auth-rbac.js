@@ -1,5 +1,6 @@
 const { respondError } = require('./response-wrapper');
 const { verifyJwt }   = require('./auth');
+const { isRevoked }   = require('./jti-blocklist');
 
 function authMiddleware() {
   return function authenticate(req, res, next) {
@@ -62,14 +63,21 @@ function authMiddleware() {
       );
     }
 
+    const jti = typeof claims.jti === 'string' ? claims.jti : null;
+
+    if (jti && isRevoked(jti)) {
+      return respondError(res, 'unauthorized', 'Token has been revoked.', [{ field: 'authorization', reason: 'token_revoked' }], 401);
+    }
+
     req.auth = {
-      sub:       claims.sub,
-      user_id:   claims.sub,            // alias used by route handlers
-      tenant_id: claims.tenant_id,
-      role:      typeof claims.role === 'string' ? claims.role : null,
-      scopes:    Array.isArray(claims.scopes)   ? claims.scopes.filter((s)  => typeof s === 'string' && s) : [],
-      role_ids:  Array.isArray(claims.role_ids) ? claims.role_ids.filter((r) => typeof r === 'string' && r) : [],
-      jti:       typeof claims.jti === 'string' ? claims.jti : null,
+      sub:           claims.sub,
+      user_id:       claims.sub,
+      tenant_id:     claims.tenant_id,
+      role:          typeof claims.role === 'string' ? claims.role : null,
+      scopes:        Array.isArray(claims.scopes)        ? claims.scopes.filter((s)        => typeof s === 'string' && s) : [],
+      role_ids:      Array.isArray(claims.role_ids)      ? claims.role_ids.filter((r)      => typeof r === 'string' && r) : [],
+      territory_ids: Array.isArray(claims.territory_ids) ? claims.territory_ids.filter((t) => typeof t === 'string' && t) : [],
+      jti,
     };
 
     return next();

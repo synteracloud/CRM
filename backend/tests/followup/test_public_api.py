@@ -161,7 +161,8 @@ class TestListFollowups:
         client.post("/api/v1/followups", json=_create_payload())
         r = client.get("/api/v1/followups")
         meta = r.json()["meta"]
-        assert "total" in meta
+        assert "total_items" in meta
+        assert "total_pages" in meta
         assert "page" in meta
         assert "page_size" in meta
 

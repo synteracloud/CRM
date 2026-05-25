@@ -72,7 +72,9 @@ def _configure_logging() -> None:
 
 _configure_logging()
 
-from fastapi import FastAPI
+import uuid as _uuid_mod
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from services.bootstrap import startup, shutdown
@@ -229,12 +231,40 @@ app.include_router(activation_public_router)    # /api/v1/activation
 app.include_router(dlq_public_router)           # /api/v1/admin/dead-letters
 
 
-# ── Global exception handler ──────────────────────────────────────────────────
+# ── Global exception handlers ─────────────────────────────────────────────────
+
+_STATUS_CODE_MAP: dict[int, str] = {
+    400: "bad_request",
+    401: "unauthorized",
+    403: "forbidden",
+    404: "not_found",
+    409: "conflict",
+    422: "validation_error",
+    429: "rate_limited",
+    500: "internal_error",
+    503: "service_unavailable",
+}
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    code = _STATUS_CODE_MAP.get(exc.status_code, "error")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": {"code": code, "message": str(exc.detail) if exc.detail else ""},
+            "meta": {"request_id": str(_uuid_mod.uuid4())},
+        },
+    )
+
 
 @app.exception_handler(Exception)
-async def unhandled_exception_handler(request, exc: Exception) -> JSONResponse:
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal server error", "type": type(exc).__name__},
+        content={
+            "error": {"code": "internal_error", "message": "An unexpected error occurred."},
+            "meta": {"request_id": str(_uuid_mod.uuid4())},
+        },
     )

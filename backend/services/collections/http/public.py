@@ -165,7 +165,7 @@ def list_invoices(
         .order_by(InvoiceORM.created_at.desc())
     ).scalars().all()
     data = [_orm_invoice_dict(r) for r in rows]
-    return {"data": data, "meta": _meta(total=len(data))}
+    return {"data": data, "meta": _meta(total_items=len(data), total_pages=1)}
 
 
 @router.get("/api/v1/invoices/{invoice_id}")
