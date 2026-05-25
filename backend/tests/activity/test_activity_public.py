@@ -11,11 +11,39 @@ import uuid
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 import services.activity.http.public as activity_module
 from services.activity.engine import ActivityControlEngine
 from services.app import app
 from services.auth.jwt_deps import TokenClaims, get_current_user
+from services.db import get_db
+from services.db.base import Base
+import services.db.models  # noqa: F401
+
+_test_engine = create_engine(
+    "sqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+_TestSession = sessionmaker(autocommit=False, autoflush=False, bind=_test_engine)
+
+
+@pytest.fixture(autouse=True)
+def setup_test_db():
+    Base.metadata.create_all(bind=_test_engine)
+    yield
+    Base.metadata.drop_all(bind=_test_engine)
+
+
+def _override_db():
+    db = _TestSession()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -42,6 +70,7 @@ def fresh_engine():
 @pytest.fixture
 def client():
     app.dependency_overrides[get_current_user] = _override_auth
+    app.dependency_overrides[get_db] = _override_db
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()

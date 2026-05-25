@@ -6,7 +6,61 @@ Format: [Semantic Versioning](https://semver.org). Each entry covers a build ses
 
 ---
 
-## [Unreleased] — Phase 4 next (Backend Hardening + Missing Docs)
+## [Unreleased]
+
+---
+
+## [0.25.0] — 2026-05-25 — Phase 4 Stage 3: Code Overlay Round 1
+
+### Added
+- `backend/docs/phase4-gap-register.md` — living gap register; 28 gaps catalogued across Groups A–E (persistence, security, domain APIs, API standards, observability/CI)
+- `backend/alembic/versions/0002_followup_states_leads_idempotency.py` — migration: `snoozed`+`failed` followup states, `leads.closure_reason`, FK `followup_tasks→leads`, `idempotency_records` table
+- `backend/alembic/versions/0003_collections_conversations.py` — migration: `invoices`, `payments`, `reconciliation_cases`, `conversations`, `conversation_messages` tables
+- `backend/services/db/models/collections.py` — `Invoice`, `Payment`, `ReconciliationCase` ORM models
+- `backend/services/db/models/conversations.py` — `Conversation`, `ConversationMessage` ORM models
+- `backend/services/db/models/idempotency.py` — `IdempotencyRecord` ORM model (4-tuple key, state: in_flight/complete/conflict)
+
+### Fixed — Security / Auth
+- `services/auth/jwt_deps.py` (B-001) — `TokenClaims` extended from 4 → 9 claims: added `role_ids`, `scopes`, `aud`, `iss`, `territory_ids`; conditional aud/iss verification from env vars
+
+### Fixed — API Correctness
+- `gateway/routes/v1-leads.routes.js` (D-001) — `VALID_STAGES` aligned to DB + spec: `qualifying, nurturing, won, lost, disqualified` (was `new, contacted, qualified, proposal, negotiation, closed_won, closed_lost`)
+
+### Fixed — State Machines
+- Migration 0002 (D-002) — `followup_tasks.state` CHECK extended to include `snoozed` + `failed` states
+- Migration 0002 (D-010) — `leads.closure_reason TEXT NULL` column + FK `followup_tasks → leads`
+
+### Fixed — Bugs
+- `services/activity/engine.py` — `_parse_rfc3339`: `.replace("Z", "+00:00")` → `.rstrip("Z")` — prevented double-offset `+00:00+00:00` crash (`ValueError: Invalid isoformat string`)
+- `services/dashboard/owner/service.py` — `_parse_dt`: same double-offset fix
+- `adapters/pakistan/payments/jazzcash.py` — `normalize_transaction`: only divide by 100 for `pp_Amount` (native JazzCash paise format); `amount` fallback key is already PKR
+- `services/collections/service.py` — `_payments` dict added; fixes `AttributeError` from dashboard service
+
+### Fixed — Infrastructure
+- `src/event_bus/catalog_schema.py` — path updated for Stage 2E subdirectory restructure
+- `src/event_bus/catalog_events.py` — 9 missing events added: `lead.conversion.failed.v1`, 2 `case.sla.*`, 6 `partner.*` events
+- `scripts/self_qc_event_bus.py`, `self_qc_execution_hardening.py`, `self_qc_final_supervisor.py` — all doc paths updated for Stage 2E 9-subdir structure
+
+### Verified
+- 314/314 tests passing (was 308 before Stage 3)
+- 96/96 library pages HTTP 200
+
+---
+
+## [0.24.0] — 2026-05-25 — Phase 4 Stage 2: Doc Fix + Restructure
+
+### Changed
+- All 71 flat `backend/docs/*.md` files reorganised into 9 subdirectories (Diátaxis + DDD taxonomy): `architecture/`, `security/`, `domain/`, `infrastructure/`, `adapters/`, `product/`, `ui/`, `_b9/`, `_qc/`
+- Ownership blocks (PRIMARY / Defers to / Do not re-define) added to all 51 core spec files (Stage 2A)
+- 6 gap fills added to owning spec files (Stage 2B): `territory_ids` JWT claim, EmployeePerformanceRM, TerritoryPerformanceRM, TenantUsageMetric, deny-by-default, tone tiers
+- 6 inconsistencies resolved — canonical values locked, non-PRIMARY files updated (Stage 2C)
+- 14 duplicate definitions replaced with cross-reference pointers; 4 misplaced content blocks moved (Stage 2D)
+- All cross-references + `DOC-CATALOGUE.md` paths updated for new subdirectory structure (Stage 2E)
+- `DOC-CATALOGUE.md` — 103 active docs catalogued (75 backend + others)
+
+### Verified
+- 308/308 tests passing
+- 96/96 library pages HTTP 200
 
 ---
 

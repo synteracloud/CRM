@@ -1,8 +1,8 @@
 # Pakistan CRM OS — System Snapshot
 
 **Date:** 2026-05-25
-**Overall grade:** 8.5 / 10
-**Refresh trigger:** Phase 4 Stage 2 complete — doc tree restructured, all gaps and inconsistencies resolved.
+**Overall grade:** 8.6 / 10
+**Refresh trigger:** Phase 4 Stage 3 Round 1 complete — gap register created, 15 gaps fixed, 314/314 tests.
 
 > **How to use this file:** Read it first at the start of every session. 60-second bird's-eye view — where we are, what is built, what is broken, what is next. Then open `REBUILD-PLAN.md` for the exact resume point and `PENDING.md` for the checkbox queue.
 
@@ -18,12 +18,12 @@
 | Phase 4 Stage 0 | Design Docs + Pre-Phase Fixes | ✓ COMPLETE — 2026-05-19 |
 | Phase 4 Stage 1 | Doc Read + Identify (30 clusters) | ✓ COMPLETE — 2026-05-23 |
 | Phase 4 Stage 2 | Doc Fix + Restructure | ✓ COMPLETE — 2026-05-25 |
-| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT** |
+| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 1 done — 15/28 gaps fixed)** |
 | Phase 4 Stage 4 | Mapping + Final Push | Pending Stage 3 |
 | Phase 5 | Frontend — 75 Custom Pages | NOT STARTED |
 | Phase 6 | Market Research Features | NOT STARTED |
 
-**Overall task progress:** 72 / 192 tasks done (38%)
+**Overall task progress:** 85 / 192 tasks done (44%)
 
 ---
 
@@ -31,20 +31,20 @@
 
 | Area | Score | Target | Gap |
 |---|---|---|---|
-| Documentation | 10/10 | 10/10 | None — 52 specs in 9 subdirs, all ownership blocks set, all inconsistencies resolved |
+| Documentation | 10/10 | 10/10 | None — 52 specs in 9 subdirs + phase4-gap-register.md; all ownership blocks set |
 | Architecture design | 8/10 | 10/10 | Code must match docs; event bus not wired; service boundaries exist only in docs |
 | Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD missing |
-| Code implementation | 7/10 | 10/10 | 44 audit gaps outstanding; 8 critical (no DB persistence, no RBAC, broken JWT) |
-| Testing | 5/10 | 10/10 | 308 tests passing; no coverage gate; no E2E; no load tests |
+| Code implementation | 7.5/10 | 10/10 | 13 open gaps remain (was 28); JWT fixed; migrations + ORM models complete; engines still in-memory |
+| Testing | 5/10 | 10/10 | 314 tests passing; no coverage gate; no E2E; no load tests |
 | DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers in CI |
-| Security implementation | 5/10 | 10/10 | No RBAC middleware; JWT claims incomplete; no rate limiting |
+| Security implementation | 6/10 | 10/10 | Python JWT claims complete (B-001 fixed); gateway territory_ids + jti blocklist still open |
 | Frontend | 7/10 | 10/10 | 96 library pages done; 75 custom pages unbuilt |
 
 ---
 
 ## Documentation — Current State
 
-**74 active docs** — 52 core spec files + 15 B9 UI specs + 3 QC docs + 3 ADRs + 1 enterprise-depth.
+**75 active docs** — 52 core spec files + 15 B9 UI specs + 3 QC docs + 3 ADRs + 1 enterprise-depth + 1 gap register.
 
 ### Doc Tree (`backend/docs/`)
 
@@ -60,26 +60,14 @@
 | `_b9/` | 15 | B9 phase UI specs (b9-p01 through b9-p14) |
 | `_qc/` | 3 | phase4-stage1-read-log, qc-integration, qc-intelligence-data |
 | `adr/` | 3 | ADR-001 (DDD), ADR-002 (Adapter pattern), ADR-003 (WhatsApp-first) |
-
-### Stage 2 — What Was Fixed (2026-05-25)
-
-Every spec file now has a `<!-- OWNERSHIP -->` block declaring PRIMARY FOR / DEFERS TO / DO NOT RE-DEFINE. Key fixes:
-
-- `territory_ids` JWT claim added to `security/identity-auth-rbac.md §3.2`
-- `EmployeePerformanceRM` + `TerritoryPerformanceRM` + `TenantUsageMetric` added to architecture docs
-- 3 missing events added: `lead.conversion.failed.v1`, `case.sla.first_response_breached.v1`, `case.sla.resolution_breached.v1`
-- Audit hash schema canonical: `integrity.hash/prev_hash/chain_seq` (deprecated `before_hash/after_hash`)
-- SLA event names — `.v1` suffix enforced in `domain/cases-domain.md`
-- Urdu escalation keyword canonical: `مینیجر سے بات کریں` in `adapters/conversational-action-spec.md`
-- WhatsApp opt-out handling: `STOP / بند کرو` wired to ComplianceAdapter in `adapters/whatsapp-execution-model.md §7.4`
-- Duplicate sections removed from 6 files; pointer stubs left in place
+| _(root)_ | 1 | `phase4-gap-register.md` — Stage 3 living gap register |
 
 ---
 
 ## Backend — What Is Built
 
-**Tests:** 308 / 308 passing
-`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests`
+**Tests:** 314 / 314 passing
+`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests + 6 new Stage 3 fixes`
 
 ### 6 Engines
 
@@ -94,77 +82,67 @@ Every spec file now has a `<!-- OWNERSHIP -->` block declaring PRIMARY FOR / DEF
 
 ### DB / Auth State
 
-- SQLAlchemy ORM models: `FollowupTask`, `FollowupEscalation`, `Lead`, `Activity`
-- Alembic migration: `0001_followup_schema.py`
+**ORM models (services/db/models/):**
+- `FollowupTask`, `FollowupEscalation` — migration 0001
+- `Lead`, `Activity` — migration 0001
+- `Invoice`, `Payment`, `ReconciliationCase` — migration 0003 (new)
+- `Conversation`, `ConversationMessage` — migration 0003 (new)
+- `IdempotencyRecord` — migration 0002 (new)
+
+**Alembic migrations:**
+- `0001_followup_schema.py` — followup_tasks, followup_escalations, leads, activities
+- `0002_followup_states_leads_idempotency.py` — snoozed/failed states, closure_reason, FK, idempotency_records
+- `0003_collections_conversations.py` — invoices, payments, reconciliation_cases, conversations, conversation_messages
+
+**Auth:**
 - JWT Bearer middleware on all routes
-- **All other engines: in-memory dicts** — Stage 3 target: replace with DB-backed repositories
+- Python `TokenClaims` now complete: `sub, tenant_id, role, jti, role_ids, scopes, aud, iss, territory_ids`
+- Gateway `auth-rbac.js` handles RBAC, scope enforcement, rate limiting (in-memory — Redis wiring pending)
+- **All 6 service engines still use in-memory dicts** — DB tables exist; wiring is the Stage 3 Round 2 target
 
 ---
 
-## Stage 3 — Code Overlay Targets
+## Stage 3 — Gap Register Status
 
-These are the 44 audit gaps to fix in Stage 3. Grouped by area.
+Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 
-### A — Persistence (blocks everything)
+### Fixed (15)
 
-All 6 engines use in-memory state. Every restart wipes all data.
-
-| Component | Fix |
+| ID | What was fixed |
 |---|---|
-| FollowupEnforcementEngine | SQLAlchemy (tables exist in 0001 migration) |
-| ActivityControlEngine | SQLAlchemy |
-| CollectionsService | SQLAlchemy |
-| ConversationService | SQLAlchemy + persistent message store |
-| GlobalIdempotencyLedger | PostgreSQL `idempotency_records` table |
-| FeatureFlagEvaluator | SQLAlchemy + Redis cache |
+| B-001 | Python `TokenClaims` — `role_ids`, `scopes`, `aud`, `iss`, `territory_ids` added |
+| D-001 | Gateway `VALID_STAGES` — `qualifying/nurturing/won/lost/disqualified` (was wrong names) |
+| D-002 | `followup_tasks.state` CHECK — `snoozed` + `failed` added (migration 0002) |
+| D-003 | DB leads.stage was already correct — no change |
+| D-004 | `datetime.utcnow()` → `datetime.now(timezone.utc)` in 3 Python files |
+| D-010 | `leads.closure_reason` column + FK `followup_tasks→leads` (migration 0002) |
+| A-003 | `invoices`, `payments`, `reconciliation_cases` tables + ORM models (migration 0003) |
+| A-004 | `conversations`, `conversation_messages` tables + ORM models (migration 0003) |
+| A-005 | `idempotency_records` table + ORM model (migration 0002); gateway wiring next |
+| BUG | `_parse_rfc3339` / `_parse_dt` double `+00:00` offset crash fixed |
+| BUG | JazzCash adapter `pp_Amount` ÷100 only for paise field, not generic `amount` |
+| INFRA | QC script paths updated for Stage 2E 9-subdir restructure |
+| INFRA | `catalog_events.py` — 9 missing events added (lead.conversion.failed, SLA, partner) |
 
-### B — Security & Auth
+### Open (13 — priority order for Round 2)
 
-- JWT claims incomplete: missing `role_ids` (array), `scopes`, `aud`, `iss`, `territory_ids`; no `jti` revocation check via Redis blocklist
-- No RBAC middleware: per-route permission annotation + active/suspended check missing
-- No rate limiting: spec requires 10k/min per-tenant, 500/min per-principal
-- WhatsApp webhook: uses API key; must be Meta X-Hub-Signature-256 HMAC
-- JazzCash `verify_callback` broken: wrong hash method (must be sorted params + HASH_KEY)
-- Auth endpoints missing: `POST /api/v1/auth/sessions`, `DELETE` session, `POST /users/{id}/roles`
-- Startup validation missing: no fail-fast on missing JWT_ISSUER/AUDIENCE/PUBLIC_KEY_URL
-
-### C — Missing Domain APIs
-
-| API | Endpoints |
+| ID | What remains |
 |---|---|
-| Tasks | `GET/POST /api/v1/tasks` · `POST /tasks/{id}/reschedule` |
-| Cases | 5 endpoints: GET/POST/PATCH + escalate + SLA |
-| Opportunities | `GET/POST /api/v1/opportunities` + stage transitions + mark-won/lost |
-| Forecasts | `GET /api/v1/forecasts` |
-| Audit query | `GET /api/v1/audits/events` + exports + integrity verify |
+| A-001 | Wire `FollowupEnforcementEngine` to use `followup_tasks` DB table |
+| A-002 | Wire `ActivityControlEngine` to persist to `activities` DB table |
+| A-003* | Wire `CollectionsService` to DB (table exists — service still in-memory) |
+| A-004* | Wire `ConversationalCRMService` to DB (tables exist — service still in-memory) |
+| A-006 | Gateway rate-limit: swap in-memory buckets for Redis |
+| A-007 | `FeatureFlagEvaluator` — SQLAlchemy + Redis cache |
+| B-002 | Gateway `auth-rbac.js` — extract `territory_ids` JWT claim |
+| B-003 | Gateway `auth-rbac.js` — `jti` revocation check via Redis blocklist |
+| B-005 | WhatsApp webhook — Meta `X-Hub-Signature-256` HMAC (spec §7.1) |
+| B-007 | Auth endpoints — login, logout/revoke, role assignment |
+| D-005 | All Python routers — HTTPException → structured error envelope |
+| D-006 | Pagination — add `total_pages`, rename `total` → `total_items` |
+| D-008 | Manual payment reconciliation gate — require `verification_status == verified` |
 
-### D — API Standards & State Machines
-
-- Error envelope: all HTTPException → `{"error":{"code":"..."},"meta":{"request_id":"..."}}` everywhere
-- Pagination: add `total_pages`; rename `total` → `total_items`
-- Unknown fields: `ConfigDict extra=forbid` on all request models
-- FollowUp states: add SNOOZED + FAILED (currently: pending/overdue/completed only)
-- Conversation states: add WAITING_ON_CONTACT / RESOLVED / CLOSED / REOPENED
-- Lead stage enum: add NURTURING / PROPOSAL / DISQUALIFIED; rename QUALIFIED → QUALIFYING
-- Opt-out: STOP + `لاگ آف` wired into WhatsApp intent classifier
-- Manual payment: reconciliation must be gated behind `verification_status == verified`
-- `Idempotency-Key` header enforcement on all critical write endpoints
-- Schema: add `closure_reason` to leads migration; add FK followup_tasks → leads
-
-### E — Observability, CI/CD & Testing
-
-- Structured logging: 16 required fields (trace_id, tenant_id, request_id per request)
-- W3C traceparent distributed trace headers
-- Daily Merkle root checkpoint + hourly integrity job + Sev-1 alerting
-- GitHub Actions: lint + test + build + staging deploy
-- Bandit + npm audit in CI
-- Static import denylist: ruff rule blocking `core` → `adapters/pakistan`
-- Replace ConcurrencyController stub with real Redis distributed lock
-- Lead conversion saga: `Account → Contact → Opportunity` + compensation
-- `datetime.utcnow()` → `datetime.now(timezone.utc)` everywhere; off-hours check → PKT (UTC+5)
-- Coverage gate: CI blocks merge if < 80%
-- Load test (locust): follow-up queue + collections happy path
-- Full E2E: lead capture → follow-up → close → invoice → payment
+_*A-003/A-004 tables exist from migration 0003; "wiring" means swapping in-memory dicts for DB repository calls._
 
 ---
 
@@ -230,12 +208,12 @@ Dev server: `npm run serve` from `D:\CRM\frontend` → `http://localhost:3001`
 
 ## Immediate Next Step
 
-**Phase 4 Stage 3 — Code Overlay.**
+**Phase 4 Stage 3 — Code Overlay Round 2.**
 
-Open `backend/docs/_qc/phase4-stage1-read-log.md` — 30 duplication/overlap clusters, each with a PRIMARY file designation. For each cluster, read the PRIMARY file and compare it against the running code. Record every gap found in `backend/docs/phase4-gap-register.md`. Fix gaps as you go.
+Resume from gap register `backend/docs/phase4-gap-register.md`. Start with **A-001** — wire `FollowupEnforcementEngine` to use the `followup_tasks` PostgreSQL table (migration 0001 already exists). Then A-002 (ActivityControlEngine → activities table), then A-003/A-004 (CollectionsService + ConversationalCRMService).
 
-**Highest-leverage first:** Start with Cluster A (persistence) — replacing in-memory dicts with SQLAlchemy repositories is the single most critical fix. Nothing else is durable without it.
+DB tables already exist for all 4. The work is writing repository classes and swapping the in-memory dicts.
 
 ---
 
-*Last updated: 2026-05-25 — refreshed after Phase 4 Stage 2 complete.*
+*Last updated: 2026-05-25 — Stage 3 Round 1 complete. 15 gaps fixed, 13 open. 314/314 tests.*

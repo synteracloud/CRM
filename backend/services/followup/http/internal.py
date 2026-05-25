@@ -17,14 +17,20 @@ Engine lifecycle:
 
 from __future__ import annotations
 
+import uuid as _uuid_mod
 from dataclasses import asdict
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy import select, func
+from sqlalchemy.orm import Session
 
+from services.db import get_db
+from services.db.models.followup import FollowupTask as FollowupTaskORM, FollowupEscalation as FollowupEscalationORM
+from services.db.models.lead import Lead
 from services.followup.engine import FollowupEnforcementEngine, FollowupPolicyError
-from services.followup.entities import LeadSnapshot
+from services.followup.entities import EscalationLevel, FollowupState, FollowupTask as FollowupTaskEntity, LeadSnapshot
 
 router = APIRouter(tags=["internal"])
 
@@ -38,11 +44,60 @@ def set_engine(engine: FollowupEnforcementEngine) -> None:
     _engine = engine
 
 
+# ── DB ↔ entity converters ────────────────────────────────────────────────────
+
+def _orm_to_entity(row: FollowupTaskORM) -> FollowupTaskEntity:
+    return FollowupTaskEntity(
+        task_id=row.task_id,
+        lead_id=row.lead_id,
+        tenant_id=row.tenant_id,
+        owner_id=row.owner_id,
+        state=FollowupState(row.state),
+        due_at=row.due_at,
+        created_at=row.created_at,
+        rule_type=row.rule_type,
+        escalation_level=EscalationLevel(row.escalation_level),
+        generated_by=row.generated_by,
+        completed_at=row.completed_at,
+        completed_activity_id=row.completed_activity_id,
+        is_canonical=row.is_canonical,
+    )
+
+
+def _lead_orm_to_snapshot(lead: Lead) -> LeadSnapshot:
+    return LeadSnapshot(
+        lead_id=lead.lead_id,
+        tenant_id=lead.tenant_id,
+        owner_id=lead.owner_id,
+        status=lead.status,
+        priority=lead.priority,
+        stage=lead.stage,
+        last_activity_at=lead.last_activity_at or lead.created_at or datetime.now(timezone.utc),
+    )
+
+
+def _hydrate_lead_from_db(lead_id: str, db: Session) -> None:
+    """Load lead snapshot + tasks from DB into engine if not already present."""
+    if _engine.has_lead(lead_id):
+        return
+    lead_row = db.get(Lead, lead_id)
+    if lead_row is None:
+        return
+    task_rows = db.execute(
+        select(FollowupTaskORM).where(FollowupTaskORM.lead_id == lead_id)
+    ).scalars().all()
+    _engine.hydrate_lead(
+        _lead_orm_to_snapshot(lead_row),
+        [_orm_to_entity(r) for r in task_rows],
+    )
+
+
 # ── GET /internal/leads/:lead_id/next-action ─────────────────────────────────
 @router.get("/leads/{lead_id}/next-action")
 def suggest_next_action(
     lead_id: str,
     now: str | None = Query(default=None, description="ISO-8601 override for 'now' (testing only)"),
+    db: Session = Depends(get_db),
 ) -> dict:
     """Return the highest-priority next action for a lead.
 
@@ -68,6 +123,8 @@ def suggest_next_action(
             now_dt = datetime.fromisoformat(now.replace("Z", "+00:00"))
         except ValueError:
             raise HTTPException(status_code=400, detail="now must be a valid ISO-8601 datetime")
+
+    _hydrate_lead_from_db(lead_id, db)
 
     try:
         suggestion = _engine.suggest_next_action(lead_id, now=now_dt)
@@ -96,7 +153,7 @@ class RegisterLeadRequest(BaseModel):
 
 
 @router.post("/leads/{lead_id}/register")
-def register_lead(lead_id: str, body: RegisterLeadRequest) -> dict:
+def register_lead(lead_id: str, body: RegisterLeadRequest, db: Session = Depends(get_db)) -> dict:
     """Register a lead in the enforcement engine so it is tracked for follow-up.
 
     Called by gateway/routes/v1-leads.routes.js after a lead is created (P-020).
@@ -132,6 +189,23 @@ def register_lead(lead_id: str, body: RegisterLeadRequest) -> dict:
     except FollowupPolicyError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
+    # Persist task to DB (upsert — safe if called more than once for same task_id)
+    db_task = FollowupTaskORM(
+        task_id=task.task_id,
+        tenant_id=task.tenant_id,
+        lead_id=task.lead_id,
+        owner_id=task.owner_id,
+        state=task.state.value,
+        due_at=task.due_at,
+        created_at=task.created_at,
+        rule_type=task.rule_type,
+        escalation_level=task.escalation_level.value,
+        generated_by=task.generated_by,
+        is_canonical=task.is_canonical,
+    )
+    db.merge(db_task)
+    db.commit()
+
     return {
         "lead_id": lead_id,
         "task_id": task.task_id,
@@ -144,6 +218,7 @@ def register_lead(lead_id: str, body: RegisterLeadRequest) -> dict:
 @router.post("/process-due")
 def process_due(
     now: str | None = Query(default=None, description="ISO-8601 override for 'now' (testing only)"),
+    db: Session = Depends(get_db),
 ) -> dict:
     """Process overdue task transitions and fire escalation events.
 
@@ -159,7 +234,41 @@ def process_due(
         except ValueError:
             raise HTTPException(status_code=400, detail="now must be a valid ISO-8601 datetime")
 
+    # Hydrate engine from DB — load all active leads whose tasks are in the engine's scope
+    active_lead_ids = db.execute(
+        select(FollowupTaskORM.lead_id).where(
+            FollowupTaskORM.state.in_(["pending", "overdue"])
+        ).distinct()
+    ).scalars().all()
+    for lid in active_lead_ids:
+        _hydrate_lead_from_db(lid, db)
+
     events = _engine.process_due_transitions(now=now_dt)
+
+    # Persist escalation records and task state changes
+    if events:
+        task_tenant: dict[str, str] = {}
+        for event in events:
+            if event.task_id not in task_tenant:
+                db_task = db.get(FollowupTaskORM, event.task_id)
+                if db_task:
+                    task_tenant[event.task_id] = db_task.tenant_id
+                    db_task.escalation_level = event.level.value
+                    if db_task.state == "pending":
+                        db_task.state = "overdue"
+
+            esc = FollowupEscalationORM(
+                escalation_id=str(_uuid_mod.uuid4()),
+                tenant_id=task_tenant.get(event.task_id, ""),
+                lead_id=event.lead_id,
+                task_id=event.task_id,
+                escalation_level=event.level.value,
+                owner_id=event.owner_id,
+                reason=event.reason,
+                generated_at=event.generated_at,
+            )
+            db.add(esc)
+        db.commit()
 
     return {
         "escalation_events": [
@@ -179,15 +288,39 @@ def process_due(
 
 # ── GET /internal/metrics ─────────────────────────────────────────────────────
 @router.get("/metrics")
-def metrics() -> dict:
-    """Return compliance metrics for the follow-up enforcement engine.
+def metrics(db: Session = Depends(get_db)) -> dict:
+    """Return compliance metrics computed from the DB (authoritative across restarts).
 
     Response::
         { "compliance_percent", "overdue_percent", "required_followups" }
     """
-    m = _engine.metrics()
+    _required_sources = ("Scheduler", "EscalationEngine", "SystemRepair")
+
+    total_q = select(func.count()).select_from(FollowupTaskORM).where(
+        FollowupTaskORM.generated_by.in_(_required_sources)
+    )
+    total = db.execute(total_q).scalar_one() or 0
+
+    if total == 0:
+        return {"compliance_percent": 100.0, "overdue_percent": 0.0, "required_followups": 0}
+
+    completed_on_time = db.execute(
+        select(func.count()).select_from(FollowupTaskORM).where(
+            FollowupTaskORM.generated_by.in_(_required_sources),
+            FollowupTaskORM.state == "completed",
+            FollowupTaskORM.completed_at <= FollowupTaskORM.due_at,
+        )
+    ).scalar_one() or 0
+
+    overdue_count = db.execute(
+        select(func.count()).select_from(FollowupTaskORM).where(
+            FollowupTaskORM.generated_by.in_(_required_sources),
+            FollowupTaskORM.state == "overdue",
+        )
+    ).scalar_one() or 0
+
     return {
-        "compliance_percent": m.compliance_percent,
-        "overdue_percent":    m.overdue_percent,
-        "required_followups": m.required_followups,
+        "compliance_percent": round((completed_on_time / total) * 100, 2),
+        "overdue_percent":    round((overdue_count / total) * 100, 2),
+        "required_followups": total,
     }

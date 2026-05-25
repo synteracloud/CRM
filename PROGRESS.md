@@ -1,6 +1,6 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-18 (Pre-Phase-4 audit complete — 9 fixes applied, 308 tests passing; Phase 4 frontend custom pages next)
+**Last updated:** 2026-05-25 (Phase 4 Stage 3 Round 1 complete — 15/28 gaps fixed, 314 tests passing; Stage 3 Round 2 next: A-001 FollowupEnforcementEngine DB wiring)
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
@@ -157,6 +157,9 @@
 | Phase 2 | Follow-up Engine COMPLETE — SQLAlchemy ORM models (FollowupTask, FollowupEscalation, Lead, Activity); Alembic migration 0001_followup_schema; public REST API /api/v1/followups (5 endpoints, JWT-gated); JWT auth dependency (services/auth/jwt_deps.py); python-jose/pytest/httpx added to requirements; 38 tests passing (18 unit + 20 integration); 96/96 pages HTTP 200 | 2026-05-18 |
 | Phase 3 | 5 Engine public APIs COMPLETE — WhatsApp (12 tests), Collections (11), Activity (10), Activation (10), DLQ (10); all 5 routers mounted in app.py; 93/93 tests passing; 96/96 pages HTTP 200; GitHub push | 2026-05-18 |
 | Audit | Pre-Phase-4 audit: 9 fixes applied — P3-A Literal import, P3-B lifespan singleton wiring, P2-A RBAC escalation gate, P2-B overdue scanner, P2-C list_followups count query, P3-C invoice send endpoint, P3-D tenant isolation, P3-E utcnow() deprecation, P3-F conversation detail endpoint; 14 new tests; 308/308 tests passing; GitHub push | 2026-05-18 |
+| Phase 4 Stage 1 | Full read of all 51 §F + §H specs; 30 duplication/overlap clusters identified; `backend/docs/_qc/phase4-stage1-read-log.md` written with all cluster PRIMARY designations | 2026-05-23 |
+| Phase 4 Stage 2 | Doc fix + restructure complete — 71 flat docs → 9 subdirs (Diátaxis+DDD); ownership blocks on 51 files; 6 gap fills; 6 inconsistency fixes; 14 duplicate removals; all cross-refs updated; 308/308 tests | 2026-05-25 |
+| Phase 4 Stage 3 Round 1 | Code overlay gap register created (28 gaps A-001→E-008); 15 gaps fixed — B-001 JWT claims, D-001 lead stages, migrations 0002+0003, 3 new ORM model files, 3 bug fixes (double-tz, JazzCash paise, _payments dict), 4 infra path fixes, 9 catalog events; 314/314 tests passing | 2026-05-25 |
 
 ---
 

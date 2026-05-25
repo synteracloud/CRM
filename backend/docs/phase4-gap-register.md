@@ -14,10 +14,10 @@ All Python services use in-memory data structures. Every restart wipes all state
 
 | ID | Service / File | Gap | Status |
 |---|---|---|---|
-| A-001 | `services/followup/engine.py` | `FollowupEnforcementEngine` uses in-memory `_leads`, `_tasks_by_lead`, `_escalations`, `_violations`. DB tables `followup_tasks` + `followup_escalations` exist in migration 0001 but are not used. | OPEN |
-| A-002 | `services/activity/engine.py` | `ActivityControlEngine` uses in-memory `_entities`, `_activity_log`, `_audit_log`, `_ownership_history`. DB table `activities` exists in migration 0001 but is not used. | OPEN |
-| A-003 | `services/collections/service.py` | `CollectionsService` uses in-memory `_invoices`, `_reconciliation_cases`, `_invoice_to_payments`. No DB migration exists for collections tables. | FIXED (migration 0003 + ORM models; in-memory wiring to DB is next) |
-| A-004 | `services/conversation/service.py` | `ConversationalCRMService` uses in-memory `_contexts`, `_activity_log`. No DB migration exists for conversation/message tables. | FIXED (migration 0003 + ORM models; in-memory wiring to DB is next) |
+| A-001 | `services/followup/engine.py` | `FollowupEnforcementEngine` uses in-memory `_leads`, `_tasks_by_lead`, `_escalations`, `_violations`. DB tables `followup_tasks` + `followup_escalations` exist in migration 0001 but are not used. | FIXED (`hydrate_lead()` added to engine; internal router persists tasks + escalations to DB; metrics computed from DB) |
+| A-002 | `services/activity/engine.py` | `ActivityControlEngine` uses in-memory `_entities`, `_activity_log`, `_audit_log`, `_ownership_history`. DB table `activities` exists in migration 0001 but is not used. | FIXED (`log_activity` persists to `activities` table; `list_activities` reads from DB) |
+| A-003 | `services/collections/service.py` | `CollectionsService` uses in-memory `_invoices`, `_reconciliation_cases`, `_invoice_to_payments`. No DB migration exists for collections tables. | FIXED (migration 0003 + ORM models + `create_invoice` persists to DB; `list_invoices`/`get_invoice` read from DB; `payment_callback` persists Payment + ReconciliationCase) |
+| A-004 | `services/conversation/service.py` | `ConversationalCRMService` uses in-memory `_contexts`, `_activity_log`. No DB migration exists for conversation/message tables. | FIXED (migration 0003 + ORM models + `inbound_webhook` persists Conversation + ConversationMessage; `get_conversation`/`list_conversations` read from DB) |
 | A-005 | `gateway/middleware/idempotency.js` | `recordStore = new Map()` — in-memory only. Loses all idempotency records on gateway restart. Spec (`infrastructure/global-idempotency.md §2.1`) requires PostgreSQL `idempotency_records` table. | FIXED (migration 0002 table + ORM model; gateway wiring is next) |
 | A-006 | `gateway/middleware/rate-limit-hook.js` | In-memory bucket map. Spec (`infrastructure/execution-hardening.md`) requires Redis-backed rate limiting so limits are shared across instances. | OPEN |
 | A-007 | `services/auth/jwt_deps.py` | `FeatureFlagEvaluator` not yet implemented — spec (`infrastructure/feature-flags-config.md`) requires SQLAlchemy + Redis cache. | OPEN |
@@ -104,7 +104,11 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | 2026-05-25 | INFRA | `src/event_bus/catalog_events.py` — 9 missing events added: `lead.conversion.failed.v1`, 2 `case.sla.*` events, 6 partner events |
 | 2026-05-25 | INFRA | `scripts/self_qc_event_bus.py`, `self_qc_execution_hardening.py`, `self_qc_final_supervisor.py` — doc paths updated for Stage 2E subdirectory structure |
 | 2026-05-25 | INFRA | `services/collections/service.py` — `_payments` dict added for dashboard compatibility |
+| 2026-05-25 | A-001 | `services/followup/engine.py` — `hydrate_lead()` method added; `services/followup/http/internal.py` — `register_lead` persists to DB; `suggest_next_action` hydrates from DB; `process_due` loads active leads + persists escalations; `metrics` computed from DB |
+| 2026-05-25 | A-002 | `services/activity/http/public.py` — `log_activity` persists `ActivityEvent` to `activities` table; `list_activities` reads from DB with pagination |
+| 2026-05-25 | A-003 | `services/collections/http/public.py` — `create_invoice` persists to DB; `list_invoices`/`get_invoice` read from DB; `payment_callback` persists Payment + ReconciliationCase |
+| 2026-05-25 | A-004 | `services/conversation/http/public.py` — `inbound_webhook` persists Conversation + ConversationMessage to DB; `get_conversation`/`list_conversations` read from DB |
 
 ---
 
-*Last updated: 2026-05-25 — 314/314 tests passing; Groups A-D partially fixed; B-001, D-001/002/003/004/010, A-003/004/005 + 3 bugs + 4 infra fixes complete.*
+*Last updated: 2026-05-25 — 314/314 tests passing; A-001/002/003/004 DB wiring complete; 9 open gaps remain.*

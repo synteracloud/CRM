@@ -1,8 +1,8 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-25 — Stage 2 COMPLETE (2A ownership blocks, 2B gap fills, 2C inconsistency fixes, 2D duplicate removal, 2E folder restructure — 71 files into 9 subdirs). Next: Stage 3 Code Overlay.
-**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
+**Revised:** 2026-05-25 — Stage 3 Round 1 COMPLETE (15/28 gaps fixed; 314/314 tests passing). Next: Stage 3 Round 2 — A-001 FollowupEnforcementEngine DB wiring.
+**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
 **Anchor:** This file. Updated every session before closing. Read first every session.
 **Task tracker:** `PENDING.md` (root) — checkbox list, mark `[x]` immediately on completion
 **Session log:** `PROGRESS.md` — one-line summary added every session
@@ -12,9 +12,9 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current location:** Phase 4 · Stage 3 — Code Overlay  
-**Next task:** Overlay all normalised docs on code; fix every gap across entity, API, and business logic layers; write `backend/docs/phase4-gap-register.md`  
-**First file to open:** `backend/docs/_qc/phase4-stage1-read-log.md` — 30 clusters; then start overlaying code against each cluster's PRIMARY file  
+**Current location:** Phase 4 · Stage 3 — Code Overlay (Round 2)  
+**Next task:** A-001 — Wire `FollowupEnforcementEngine` to use `followup_tasks` PostgreSQL table (migration 0001 already exists). Then A-002 (ActivityControlEngine → activities), then A-003/A-004 (CollectionsService + ConversationalCRMService).  
+**First file to open:** `backend/docs/phase4-gap-register.md` — 13 open gaps (A-001 to D-008); work in priority order  
 **Rule in force:** Non-destructive only. No deletions.  
 **Doc tree:** All specs now under `backend/docs/{architecture,security,domain,infrastructure,adapters,product,ui,_b9,_qc}/`
 
@@ -26,7 +26,7 @@
 | 4 — Backend Hardening | Stage 0 — Design Docs + Fixes | ✓ COMPLETE (2026-05-19) |
 | 4 — Backend Hardening | Stage 1 — Doc Read + Identify | ✓ COMPLETE (2026-05-23) |
 | 4 — Backend Hardening | Stage 2 — Doc Fix + Restructure | ✓ COMPLETE (2026-05-25) |
-| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← NEXT** |
+| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← IN PROGRESS (Round 1 done — 15/28 fixed)** |
 | 4 — Backend Hardening | Stage 4 — Mapping + Push | Pending Stage 3 |
 | 5 — Frontend 75 pages | — | Pending Phase 4 complete |
 | 6 — Market Research | — | Pending Phase 5 complete |
@@ -85,17 +85,18 @@ The RESUME POINT table above is the authoritative start point. It is updated at 
 
 ---
 
-## Gap Register State (as of 2026-05-19)
+## Gap Register State (as of 2026-05-25)
 
-Three audits completed. All tasks flow through `PENDING.md`.
+Three audits completed + Stage 3 code overlay gap register active. All tasks flow through `PENDING.md`.
 
-| Register | Anchor | Gaps | PENDING.md location |
+| Register | Anchor | Gaps | Status |
 |---|---|---|---|
-| Phase 1–3 Code Audit | DOC-CATALOGUE.md (90 docs) vs backend code | 44 gaps — 8 Critical · 15 High · 15 Medium · 6 Low | §Phase 4 Sprints 1–5 |
+| Phase 1–3 Code Audit | DOC-CATALOGUE.md (90 docs) vs backend code | 44 gaps — 8 Critical · 15 High · 15 Medium · 6 Low | Absorbed into Phase 4 Stage 3 |
 | Product Spec Audit | PRODUCT-SPEC.md vs repo .md files | 17 gaps — 3 Phase-5 blockers · 4 arch · 3 feature · 7 MR | §Phase 4 Sprint 0 + §Phase 6 |
 | Market Research Audit | Manus AI Pakistan market report vs system | 7 gaps — 2 buildable · 5 blocked/low | §Phase 6 |
+| **Phase 4 Stage 3 Code Overlay** | `backend/docs/phase4-gap-register.md` | **28 gaps total — 15 FIXED · 13 OPEN** | **← ACTIVE** |
 
-**Source files:** `backend/product-spec-gap-register.md` · `backend/market-research-gap-register.md`
+**Source files:** `backend/product-spec-gap-register.md` · `backend/market-research-gap-register.md` · `backend/docs/phase4-gap-register.md`
 
 ---
 
@@ -103,15 +104,15 @@ Three audits completed. All tasks flow through `PENDING.md`.
 
 | Area | Current | Target | Gap |
 |---|---|---|---|
-| Documentation | 9/10 | 10/10 | 10 product-spec docs missing (PS-001–PS-010) |
-| Architecture design | 8/10 | 10/10 | Code must match docs; event bus; service boundaries in code |
-| Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic |
-| Code implementation | 7/10 | 10/10 | 44 audit gaps; 8 critical (no DB persistence, no RBAC, broken JWT) |
-| Testing | 5/10 | 10/10 | 308 tests passing; no coverage gate; no E2E; no load tests |
-| DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers |
-| Security implementation | 5/10 | 10/10 | No RBAC middleware; JWT claims wrong; no rate limiting |
+| Documentation | 10/10 | 10/10 | None — 75 active docs in 9-subdir tree; gap register live |
+| Architecture design | 8/10 | 10/10 | Code must match docs; event bus not wired; service boundaries exist only in docs |
+| Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD missing |
+| Code implementation | 7.5/10 | 10/10 | 13 open gaps remain (A-001→D-008); JWT fixed; migrations + ORM complete; engines still in-memory |
+| Testing | 5/10 | 10/10 | 314 tests passing; no coverage gate; no E2E; no load tests |
+| DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers in CI |
+| Security implementation | 6/10 | 10/10 | JWT claims complete (B-001); gateway territory_ids + jti blocklist + HMAC open |
 | Frontend | 7/10 | 10/10 | 75 custom pages unbuilt; no API wiring |
-| **Overall** | **6.5/10** | **10/10** | |
+| **Overall** | **8.6/10** | **10/10** | |
 
 ---
 
@@ -216,7 +217,7 @@ Spec: `docs/infrastructure/execution-hardening.md`
 
 ## Phase 4 — Backend Hardening (~6 weeks) — IN PROGRESS
 **Goal:** Bullet-proof all docs, normalise structure, overlay docs on code, fix every gap. Gates Phase 5.
-**Progress:** 12/41 tasks done (29%) — Stage 0 ✓ · Stage 1 ✓ · Stage 2 next
+**Progress:** 85/192 tasks done (44%) — Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓ (15/28 gaps fixed)
 
 ---
 
@@ -232,7 +233,7 @@ Spec: `docs/infrastructure/execution-hardening.md`
 
 ---
 
-### Stage 2 — Doc Fix + Restructure ← CURRENT STAGE
+### Stage 2 — Doc Fix + Restructure ✓ COMPLETE (2026-05-25)
 **What:** Execute all fixes for the 30 clusters. Normalise folder structure and file naming.
 **Non-destructive rule:** Max negative action = archiving. No deletions, no content truncation.
 **Report-back rule:** Complete each sub-stage fully → report back → get confirmation → start next.
