@@ -38,9 +38,10 @@
 Every session — including fresh sessions with no prior memory — MUST follow this sequence before doing any work.
 
 ### Step 1 — Orient (read in order, do not skip)
-1. `REBUILD-PLAN.md` — read RESUME POINT table above; current phase and stage are stated explicitly
-2. `PENDING.md` — find the first unchecked `[ ]` task in the current phase; that is the start point
-3. `DOC-CATALOGUE.md` §A How-to-use table — confirm file locations for current stage context
+1. `SYSTEM-SNAPSHOT.md` — 60-second bird's-eye view: phase status, scores, what's built, what's broken, immediate next step
+2. `REBUILD-PLAN.md` — read RESUME POINT table above; current phase and stage are stated explicitly
+3. `PENDING.md` — find the first unchecked `[ ]` task in the current phase; that is the start point
+4. `DOC-CATALOGUE.md` §A How-to-use table — confirm file locations for current stage context
 
 ### Step 2 — Load stage context
 | Stage | Files to read before starting |
