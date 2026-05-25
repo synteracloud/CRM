@@ -1,8 +1,8 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-25 — Stage 3 Round 1 COMPLETE (15/28 gaps fixed; 314/314 tests passing). Next: Stage 3 Round 2 — A-001 FollowupEnforcementEngine DB wiring.
-**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
+**Revised:** 2026-05-25 — Stage 3 Round 2 COMPLETE (19/28 gaps fixed; 314/314 tests passing). Next: Stage 3 Round 3 — B-002/B-003/B-005/B-007 gateway auth + D-005/D-006/D-008 API standards.
+**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓ · Stage 3 Round 2 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
 **Anchor:** This file. Updated every session before closing. Read first every session.
 **Task tracker:** `PENDING.md` (root) — checkbox list, mark `[x]` immediately on completion
 **Session log:** `PROGRESS.md` — one-line summary added every session
@@ -12,9 +12,9 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current location:** Phase 4 · Stage 3 — Code Overlay (Round 2)  
-**Next task:** A-001 — Wire `FollowupEnforcementEngine` to use `followup_tasks` PostgreSQL table (migration 0001 already exists). Then A-002 (ActivityControlEngine → activities), then A-003/A-004 (CollectionsService + ConversationalCRMService).  
-**First file to open:** `backend/docs/phase4-gap-register.md` — 13 open gaps (A-001 to D-008); work in priority order  
+**Current location:** Phase 4 · Stage 3 — Code Overlay (Round 3)  
+**Next task:** B-002 — Gateway `auth-rbac.js`: extract `territory_ids` JWT claim. Then B-003 (jti blocklist), B-005 (HMAC), B-007 (auth endpoints), D-005/D-006/D-008 (API standards).  
+**First file to open:** `backend/docs/phase4-gap-register.md` — 9 open gaps; work in priority order  
 **Rule in force:** Non-destructive only. No deletions.  
 **Doc tree:** All specs now under `backend/docs/{architecture,security,domain,infrastructure,adapters,product,ui,_b9,_qc}/`
 
@@ -26,7 +26,7 @@
 | 4 — Backend Hardening | Stage 0 — Design Docs + Fixes | ✓ COMPLETE (2026-05-19) |
 | 4 — Backend Hardening | Stage 1 — Doc Read + Identify | ✓ COMPLETE (2026-05-23) |
 | 4 — Backend Hardening | Stage 2 — Doc Fix + Restructure | ✓ COMPLETE (2026-05-25) |
-| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← IN PROGRESS (Round 1 done — 15/28 fixed)** |
+| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← IN PROGRESS (Round 2 done — 19/28 fixed)** |
 | 4 — Backend Hardening | Stage 4 — Mapping + Push | Pending Stage 3 |
 | 5 — Frontend 75 pages | — | Pending Phase 4 complete |
 | 6 — Market Research | — | Pending Phase 5 complete |
@@ -217,7 +217,7 @@ Spec: `docs/infrastructure/execution-hardening.md`
 
 ## Phase 4 — Backend Hardening (~6 weeks) — IN PROGRESS
 **Goal:** Bullet-proof all docs, normalise structure, overlay docs on code, fix every gap. Gates Phase 5.
-**Progress:** 85/192 tasks done (44%) — Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓ (15/28 gaps fixed)
+**Progress:** 85/192 tasks done (44%) — Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓ · Stage 3 Round 2 ✓ (19/28 gaps fixed)
 
 ---
 

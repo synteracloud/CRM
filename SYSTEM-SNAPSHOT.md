@@ -1,8 +1,8 @@
 # Pakistan CRM OS — System Snapshot
 
 **Date:** 2026-05-25
-**Overall grade:** 8.6 / 10
-**Refresh trigger:** Phase 4 Stage 3 Round 1 complete — gap register created, 15 gaps fixed, 314/314 tests.
+**Overall grade:** 8.8 / 10
+**Refresh trigger:** Phase 4 Stage 3 Round 2 complete — A-001/002/003/004 DB wiring done; 19/28 gaps fixed, 314/314 tests.
 
 > **How to use this file:** Read it first at the start of every session. 60-second bird's-eye view — where we are, what is built, what is broken, what is next. Then open `REBUILD-PLAN.md` for the exact resume point and `PENDING.md` for the checkbox queue.
 
@@ -18,7 +18,7 @@
 | Phase 4 Stage 0 | Design Docs + Pre-Phase Fixes | ✓ COMPLETE — 2026-05-19 |
 | Phase 4 Stage 1 | Doc Read + Identify (30 clusters) | ✓ COMPLETE — 2026-05-23 |
 | Phase 4 Stage 2 | Doc Fix + Restructure | ✓ COMPLETE — 2026-05-25 |
-| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 1 done — 15/28 gaps fixed)** |
+| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 2 done — 19/28 gaps fixed)** |
 | Phase 4 Stage 4 | Mapping + Final Push | Pending Stage 3 |
 | Phase 5 | Frontend — 75 Custom Pages | NOT STARTED |
 | Phase 6 | Market Research Features | NOT STARTED |
@@ -34,7 +34,7 @@
 | Documentation | 10/10 | 10/10 | None — 52 specs in 9 subdirs + phase4-gap-register.md; all ownership blocks set |
 | Architecture design | 8/10 | 10/10 | Code must match docs; event bus not wired; service boundaries exist only in docs |
 | Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD missing |
-| Code implementation | 7.5/10 | 10/10 | 13 open gaps remain (was 28); JWT fixed; migrations + ORM models complete; engines still in-memory |
+| Code implementation | 8/10 | 10/10 | 9 open gaps remain (was 28); JWT fixed; migrations + ORM complete; all 4 main engines now DB-backed |
 | Testing | 5/10 | 10/10 | 314 tests passing; no coverage gate; no E2E; no load tests |
 | DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers in CI |
 | Security implementation | 6/10 | 10/10 | Python JWT claims complete (B-001 fixed); gateway territory_ids + jti blocklist still open |
@@ -106,7 +106,7 @@
 
 Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 
-### Fixed (15)
+### Fixed (19)
 
 | ID | What was fixed |
 |---|---|
@@ -116,22 +116,20 @@ Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 | D-003 | DB leads.stage was already correct — no change |
 | D-004 | `datetime.utcnow()` → `datetime.now(timezone.utc)` in 3 Python files |
 | D-010 | `leads.closure_reason` column + FK `followup_tasks→leads` (migration 0002) |
-| A-003 | `invoices`, `payments`, `reconciliation_cases` tables + ORM models (migration 0003) |
-| A-004 | `conversations`, `conversation_messages` tables + ORM models (migration 0003) |
+| A-003 | `invoices`, `payments`, `reconciliation_cases` tables + ORM models (migration 0003); HTTP layer reads/writes DB |
+| A-004 | `conversations`, `conversation_messages` tables + ORM models (migration 0003); HTTP layer reads/writes DB |
 | A-005 | `idempotency_records` table + ORM model (migration 0002); gateway wiring next |
+| A-001 | `FollowupEnforcementEngine.hydrate_lead()` + internal router persists tasks/escalations to DB; metrics from DB |
+| A-002 | `log_activity` persists to `activities` table; `list_activities` reads from DB |
 | BUG | `_parse_rfc3339` / `_parse_dt` double `+00:00` offset crash fixed |
 | BUG | JazzCash adapter `pp_Amount` ÷100 only for paise field, not generic `amount` |
 | INFRA | QC script paths updated for Stage 2E 9-subdir restructure |
 | INFRA | `catalog_events.py` — 9 missing events added (lead.conversion.failed, SLA, partner) |
 
-### Open (13 — priority order for Round 2)
+### Open (9 — priority order for Round 3)
 
 | ID | What remains |
 |---|---|
-| A-001 | Wire `FollowupEnforcementEngine` to use `followup_tasks` DB table |
-| A-002 | Wire `ActivityControlEngine` to persist to `activities` DB table |
-| A-003* | Wire `CollectionsService` to DB (table exists — service still in-memory) |
-| A-004* | Wire `ConversationalCRMService` to DB (tables exist — service still in-memory) |
 | A-006 | Gateway rate-limit: swap in-memory buckets for Redis |
 | A-007 | `FeatureFlagEvaluator` — SQLAlchemy + Redis cache |
 | B-002 | Gateway `auth-rbac.js` — extract `territory_ids` JWT claim |
@@ -141,8 +139,6 @@ Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 | D-005 | All Python routers — HTTPException → structured error envelope |
 | D-006 | Pagination — add `total_pages`, rename `total` → `total_items` |
 | D-008 | Manual payment reconciliation gate — require `verification_status == verified` |
-
-_*A-003/A-004 tables exist from migration 0003; "wiring" means swapping in-memory dicts for DB repository calls._
 
 ---
 
@@ -208,12 +204,17 @@ Dev server: `npm run serve` from `D:\CRM\frontend` → `http://localhost:3001`
 
 ## Immediate Next Step
 
-**Phase 4 Stage 3 — Code Overlay Round 2.**
+**Phase 4 Stage 3 — Code Overlay Round 3.**
 
-Resume from gap register `backend/docs/phase4-gap-register.md`. Start with **A-001** — wire `FollowupEnforcementEngine` to use the `followup_tasks` PostgreSQL table (migration 0001 already exists). Then A-002 (ActivityControlEngine → activities table), then A-003/A-004 (CollectionsService + ConversationalCRMService).
-
-DB tables already exist for all 4. The work is writing repository classes and swapping the in-memory dicts.
+Resume from gap register `backend/docs/phase4-gap-register.md`. 9 gaps remain. Priority order:
+1. **B-002** — Gateway `auth-rbac.js`: extract `territory_ids` JWT claim
+2. **B-003** — Gateway `auth-rbac.js`: `jti` revocation check via Redis blocklist  
+3. **B-005** — WhatsApp webhook: Meta `X-Hub-Signature-256` HMAC verification
+4. **B-007** — Auth endpoints: `POST /auth/sessions` (login), `DELETE /auth/sessions/{jti}` (logout), `POST /users/{id}/roles`
+5. **D-005** — HTTPException → structured error envelope on all Python routers
+6. **D-006** — Pagination `total` → `total_items` + `total_pages`
+7. **D-008** — Manual payment reconciliation gate: `verification_status == verified`
 
 ---
 
-*Last updated: 2026-05-25 — Stage 3 Round 1 complete. 15 gaps fixed, 13 open. 314/314 tests.*
+*Last updated: 2026-05-25 — Stage 3 Round 2 complete. 19 gaps fixed, 9 open. 314/314 tests.*
