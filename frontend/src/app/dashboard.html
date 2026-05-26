@@ -37,6 +37,31 @@
           </nav>
         </div>
 
+        <!-- Owner posture strip — LeadFunnelPerformanceRM + SubscriptionRevenueRetentionRM -->
+        <div class="row mb-2" id="owner-posture-strip">
+          <div class="col-12">
+            <div class="alert alert-warning d-flex flex-wrap align-items-center gap-3 mb-0 py-2" role="alert">
+              <i class="fi fi-rr-triangle-warning flex-shrink-0"></i>
+              <div class="d-flex flex-wrap gap-3 align-items-center">
+                <span>
+                  <strong id="posture-unassigned">5</strong> leads with no follow-up scheduled.
+                  <a href="app/leads.html" class="alert-link ms-1">Assign now →</a>
+                </span>
+                <span class="vr"></span>
+                <span>
+                  <strong id="posture-overdue-inv">3</strong> overdue invoices outstanding.
+                  <a href="app/collections.html" class="alert-link ms-1">View invoices →</a>
+                </span>
+                <span class="vr"></span>
+                <span>
+                  <strong id="posture-escalations">2</strong> escalations unacknowledged.
+                  <a href="app/followups.html" class="alert-link ms-1">Review →</a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="row">
 
           <div class="col-xxl-6 col-lg-8">
@@ -84,7 +109,7 @@
                 <div class="card overflow-hidden">
                   <div class="card-header d-flex align-items-center justify-content-between border-0 pb-0">
                     <div class="clearfix">
-                      <h6>Lead Analytics</h6>
+                      <h6>Lead Funnel <small class="text-muted fw-normal" style="font-size:0.7rem;">LeadFunnelPerformanceRM</small></h6>
                     </div>
                     <div class="btn-group">
                       <button class="btn btn-action-primary btn-sm btn-icon waves-effect dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -606,7 +631,7 @@
                         <i class="fi fi-rr-clock-five text-md"></i>
                       </div>
                       <div class="clearfix">
-                        <h6 class="text-body mb-0 text-1xs">Pipeline Value</h6>
+                        <h6 class="text-body mb-0 text-1xs">Weighted Pipeline</h6>
                         <div class="d-flex align-items-end">
                           <h4 class="mb-0">$5.2M</h4>
                           <span class="text-success text-1xs ms-1">+$270K</span>
