@@ -114,35 +114,35 @@
             </div>
           </div>
 
-          <!-- 5. Opportunities Won -->
+          <!-- 5. Conversion Rate (LeadFunnelPerformanceRM) -->
           <div class="col-xxl-2 col-md-4">
             <div class="card card-action action-border-info">
               <div class="card-header border-0 pb-0">
                 <div class="avatar bg-info-subtle text-info rounded-3">
-                  <i class="fi fi-rr-trophy"></i>
+                  <i class="fi fi-rr-stats"></i>
                 </div>
               </div>
               <div class="card-body">
-                <h6>Opportunities Won</h6>
-                <h2 class="mb-1">640</h2>
+                <h6>Conversion Rate</h6>
+                <h2 class="mb-1">33.0%</h2>
                 <p class="mb-0">
-                  <span class="text-success">+3.8%</span> success rate
+                  <span class="text-success">+1.4%</span> New → Qualified
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- 6. Total Opportunity Value -->
+          <!-- 6. Avg Assignment Latency (LeadFunnelPerformanceRM) -->
           <div class="col-xxl-2 col-md-4">
             <div class="card card-action action-border-dark">
               <div class="card-header border-0 pb-0">
                 <div class="avatar bg-dark-subtle text-dark rounded-3">
-                  <i class="fi fi-rr-coins"></i>
+                  <i class="fi fi-rr-clock"></i>
                 </div>
               </div>
               <div class="card-body">
-                <h6>Total Opportunity Value</h6>
-                <h2 class="mb-1">$4,280,000</h2>
+                <h6>Avg Assignment Latency</h6>
+                <h2 class="mb-1">2.4 hrs</h2>
                 <p class="mb-0">
                   <span class="text-success">+9.4%</span> revenue growth
                 </p>
@@ -435,50 +435,87 @@
           <div class="col-xxl-12 col-lg-12">
             <div class="card">
               <div class="card-header d-flex align-items-center justify-content-between">
-                <h6 class="card-title mb-0">Recent Leads</h6>
+                <h6 class="card-title mb-0">Lead Queue</h6>
                 <div id="dt_NewCustomers_Search"></div>
               </div>
+
+              <!-- Filter chips strip -->
+              <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center gap-2">
+                <span class="text-muted small me-1">Stage:</span>
+                <div class="btn-group btn-group-sm" id="lead-filter-stage" role="group">
+                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="New">New</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Contacted">Contacted</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Engaged">Engaged</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Qualified">Qualified</button>
+                </div>
+                <div class="vr mx-1"></div>
+                <span class="text-muted small me-1">Source:</span>
+                <div class="btn-group btn-group-sm" id="lead-filter-source" role="group">
+                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="WhatsApp">WhatsApp</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="LinkedIn">LinkedIn</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Website Form">Website</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Referral">Referral</button>
+                </div>
+                <div class="vr mx-1"></div>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="lead-filter-overdue">
+                  <i class="fi fi-rr-clock me-1"></i>Follow-up Overdue
+                </button>
+              </div>
+
               <div class="card-body px-1 pt-2 pb-2">
                 <div class="table-responsive">
                   <table id="dt_NewCustomers" class="table table-sm display table-row-rounded data-row-checkbox">
                     <thead class="table-light">
                       <tr>
-                        <th>Lead Name</th>
-                        <th>Company</th>
+                        <th>Lead / Phone</th>
+                        <th>Stage</th>
                         <th>Source</th>
-                        <th>Assigned To</th>
-                        <th>Created On</th>
-                        <th>Status</th>
+                        <th>Owner</th>
+                        <th>Follow-up Due</th>
+                        <th>Last Activity</th>
                         <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
 
-                      <!-- 1 -->
-                      <tr>
+                      <!-- 1 — overdue follow-up -->
+                      <tr data-overdue="1">
                         <td>
                           <div class="d-flex align-items-center">
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar1.webp" alt="">
                             </div>
-                            Rachel McLean
+                            <div>
+                              Ahmed Raza
+                              <div class="text-muted small">+92 300 123 4567</div>
+                            </div>
                           </div>
                         </td>
-                        <td>NovaTech</td>
-                        <td>Website Form</td>
-                        <td>Ethan Price</td>
-                        <td>Nov 21, 2025</td>
+                        <td><span class="badge bg-primary-subtle text-primary">New</span></td>
+                        <td>WhatsApp</td>
                         <td>
-                          <span class="badge bg-primary-subtle text-primary">New</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar5.webp" alt="">
+                            </div>
+                            Khalid Ahmed
+                          </div>
                         </td>
+                        <td data-order="2026-05-24">
+                          <span class="text-danger fw-semibold">May 24, 2026</span>
+                        </td>
+                        <td class="text-muted small">5 hrs ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -491,24 +528,35 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar2.webp" alt="">
                             </div>
-                            Daniel Foster
+                            <div>
+                              Sara Khan
+                              <div class="text-muted small">+92 321 987 6543</div>
+                            </div>
                           </div>
                         </td>
-                        <td>SkyCloud</td>
+                        <td><span class="badge bg-info-subtle text-info">Contacted</span></td>
                         <td>LinkedIn</td>
-                        <td>Maya Lewis</td>
-                        <td>Nov 22, 2025</td>
                         <td>
-                          <span class="badge bg-info-subtle text-info">Contacted</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar6.webp" alt="">
+                            </div>
+                            Amina Siddiqui
+                          </div>
                         </td>
+                        <td data-order="2026-05-26">
+                          <span class="text-warning fw-semibold">Today</span>
+                        </td>
+                        <td class="text-muted small">2 hrs ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -521,24 +569,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar3.webp" alt="">
                             </div>
-                            Sophia Walker
+                            <div>
+                              Bilal Malik
+                              <div class="text-muted small">+92 333 456 7890</div>
+                            </div>
                           </div>
                         </td>
-                        <td>Velocity Labs</td>
+                        <td><span class="badge bg-success-subtle text-success">Qualified</span></td>
                         <td>Email Campaign</td>
-                        <td>Liam Turner</td>
-                        <td>Nov 20, 2025</td>
                         <td>
-                          <span class="badge bg-success-subtle text-success">Qualified</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar7.webp" alt="">
+                            </div>
+                            Tariq Hassan
+                          </div>
                         </td>
+                        <td data-order="2026-05-28">May 28, 2026</td>
+                        <td class="text-muted small">1 day ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -551,24 +608,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar4.webp" alt="">
                             </div>
-                            Aaron Brooks
+                            <div>
+                              Zainab Iqbal
+                              <div class="text-muted small">+92 311 234 5678</div>
+                            </div>
                           </div>
                         </td>
-                        <td>MetaCore</td>
-                        <td>Referral</td>
-                        <td>Olivia Parker</td>
-                        <td>Nov 19, 2025</td>
+                        <td><span class="badge bg-warning-subtle text-warning">Engaged</span></td>
+                        <td>Website Form</td>
                         <td>
-                          <span class="badge bg-warning-subtle text-warning">Engaged</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar5.webp" alt="">
+                            </div>
+                            Khalid Ahmed
+                          </div>
                         </td>
+                        <td data-order="2026-05-27">May 27, 2026</td>
+                        <td class="text-muted small">3 hrs ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -581,24 +647,35 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar5.webp" alt="">
                             </div>
-                            Emily Scott
+                            <div>
+                              Hassan Qureshi
+                              <div class="text-muted small">+92 345 678 9012</div>
+                            </div>
                           </div>
                         </td>
-                        <td>HorizonSoft</td>
-                        <td>Paid Ads</td>
-                        <td>Mia Robinson</td>
-                        <td>Nov 22, 2025</td>
+                        <td><span class="badge bg-primary-subtle text-primary">New</span></td>
+                        <td>Referral</td>
                         <td>
-                          <span class="badge bg-primary-subtle text-primary">New</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar6.webp" alt="">
+                            </div>
+                            Amina Siddiqui
+                          </div>
                         </td>
+                        <td data-order="2026-05-26">
+                          <span class="text-warning fw-semibold">Today</span>
+                        </td>
+                        <td class="text-muted small">30 min ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -611,24 +688,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar6.webp" alt="">
                             </div>
-                            Nathan Gray
+                            <div>
+                              Nadia Ali
+                              <div class="text-muted small">+92 302 345 6789</div>
+                            </div>
                           </div>
                         </td>
-                        <td>AlphaWorks</td>
-                        <td>LinkedIn</td>
-                        <td>Noah Carter</td>
-                        <td>Nov 18, 2025</td>
+                        <td><span class="badge bg-success-subtle text-success">Qualified</span></td>
+                        <td>Paid Ads</td>
                         <td>
-                          <span class="badge bg-info-subtle text-info">Contacted</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar7.webp" alt="">
+                            </div>
+                            Tariq Hassan
+                          </div>
                         </td>
+                        <td data-order="2026-05-29">May 29, 2026</td>
+                        <td class="text-muted small">4 hrs ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -641,24 +727,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar7.webp" alt="">
                             </div>
-                            Olivia Harris
+                            <div>
+                              Usman Baig
+                              <div class="text-muted small">+92 315 789 0123</div>
+                            </div>
                           </div>
                         </td>
-                        <td>PixelPro</td>
-                        <td>Email Campaign</td>
-                        <td>Emma Collins</td>
-                        <td>Nov 17, 2025</td>
+                        <td><span class="badge bg-info-subtle text-info">Contacted</span></td>
+                        <td>WhatsApp</td>
                         <td>
-                          <span class="badge bg-success-subtle text-success">Qualified</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar5.webp" alt="">
+                            </div>
+                            Khalid Ahmed
+                          </div>
                         </td>
+                        <td data-order="2026-05-30">May 30, 2026</td>
+                        <td class="text-muted small">1 hr ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -671,24 +766,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar8.webp" alt="">
                             </div>
-                            Jason Miller
+                            <div>
+                              Fatima Riaz
+                              <div class="text-muted small">+92 322 456 7891</div>
+                            </div>
                           </div>
                         </td>
-                        <td>EdgeMatrix</td>
-                        <td>Referral</td>
-                        <td>Sophia Reed</td>
-                        <td>Nov 16, 2025</td>
+                        <td><span class="badge bg-warning-subtle text-warning">Engaged</span></td>
+                        <td>LinkedIn</td>
                         <td>
-                          <span class="badge bg-warning-subtle text-warning">Engaged</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar6.webp" alt="">
+                            </div>
+                            Amina Siddiqui
+                          </div>
                         </td>
+                        <td data-order="2026-06-01">Jun 1, 2026</td>
+                        <td class="text-muted small">6 hrs ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -701,24 +805,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar9.webp" alt="">
                             </div>
-                            Chloe Adams
+                            <div>
+                              Kamran Shah
+                              <div class="text-muted small">+92 334 567 8902</div>
+                            </div>
                           </div>
                         </td>
-                        <td>SoftCrest</td>
+                        <td><span class="badge bg-primary-subtle text-primary">New</span></td>
                         <td>Website Form</td>
-                        <td>Lucas Martin</td>
-                        <td>Nov 15, 2025</td>
                         <td>
-                          <span class="badge bg-primary-subtle text-primary">New</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar7.webp" alt="">
+                            </div>
+                            Tariq Hassan
+                          </div>
                         </td>
+                        <td data-order="2026-05-28">May 28, 2026</td>
+                        <td class="text-muted small">45 min ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>
@@ -731,24 +844,33 @@
                             <div class="avatar avatar-xxs rounded-circle me-2">
                               <img src="assets/images/avatar/avatar10.webp" alt="">
                             </div>
-                            Benjamin Clark
+                            <div>
+                              Iqra Siddiqui
+                              <div class="text-muted small">+92 301 890 1234</div>
+                            </div>
                           </div>
                         </td>
-                        <td>BrightLabs</td>
-                        <td>Paid Ads</td>
-                        <td>Ava Mitchell</td>
-                        <td>Nov 14, 2025</td>
+                        <td><span class="badge bg-success-subtle text-success">Qualified</span></td>
+                        <td>Referral</td>
                         <td>
-                          <span class="badge bg-danger-subtle text-danger">Lost</span>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar5.webp" alt="">
+                            </div>
+                            Khalid Ahmed
+                          </div>
                         </td>
+                        <td data-order="2026-06-02">Jun 2, 2026</td>
+                        <td class="text-muted small">2 days ago</td>
                         <td>
                           <div class="btn-group">
                             <button class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
                               <i class="fi fi-rr-menu-dots"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item">Edit</a></li>
-                              <li><a class="dropdown-item">Delete</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user-add me-2 text-primary"></i>Assign</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-calendar-plus me-2 text-warning"></i>Schedule Follow-up</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
                             </ul>
                           </div>
                         </td>

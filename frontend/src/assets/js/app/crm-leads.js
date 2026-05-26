@@ -121,24 +121,36 @@ if (opportunityTrendChart) {
   new ApexCharts(opportunityTrendChart, opportunityTrendChartConfig).render();
 }
 
-/* ── 3. Recent Leads DataTable (verbatim from dashboard.js) ────────────── */
+/* ── 3. Lead Queue DataTable ─────────────────────────────────────────── */
+/* Columns: Lead/Phone(0) | Stage(1) | Source(2) | Owner(3) | Due(4) | Last(5) | Action(6) */
+
+var _leadOverdueActive = false;
+
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+  if (settings.nTable.id !== 'dt_NewCustomers') return true;
+  if (!_leadOverdueActive) return true;
+  var rowNode = settings.aoData[dataIndex].nTr;
+  return $(rowNode).data('overdue') === 1;
+});
+
 if ($('#dt_NewCustomers').length) {
-  const dt_NewCustomers = $('#dt_NewCustomers').DataTable({
+  var dt_NewCustomers = $('#dt_NewCustomers').DataTable({
     searching: true,
     pageLength: 6,
     select: false,
     lengthChange: false,
     info: true,
     paging: true,
+    order: [[4, 'asc']],
     language: {
-      search: "",
+      search: '',
       searchPlaceholder: 'Search',
       paginate: {
         previous: "<i class='fi fi-rr-angle-left'></i>",
         next:     "<i class='fi fi-rr-angle-right'></i>",
         first:    "<i class='fi fi-rr-angle-double-left'></i>",
         last:     "<i class='fi fi-rr-angle-double-right'></i>"
-      },
+      }
     },
     initComplete: function () {
       var dtSearch = $('#dt_NewCustomers_wrapper .dt-search').detach();
@@ -147,10 +159,30 @@ if ($('#dt_NewCustomers').length) {
       $('#dt_NewCustomers_Search .dt-search label').remove();
       $('#dt_NewCustomers_wrapper > .row.mt-2.justify-content-between').first().remove();
     },
-    columnDefs: [{
-      targets: [0],
-      orderable: false,
-    }]
+    columnDefs: [
+      { targets: [0, 6], orderable: false }
+    ]
+  });
+
+  /* Stage filter */
+  $('#lead-filter-stage button').on('click', function () {
+    $('#lead-filter-stage button').removeClass('active');
+    $(this).addClass('active');
+    dt_NewCustomers.column(1).search($(this).data('filter')).draw();
+  });
+
+  /* Source filter */
+  $('#lead-filter-source button').on('click', function () {
+    $('#lead-filter-source button').removeClass('active');
+    $(this).addClass('active');
+    dt_NewCustomers.column(2).search($(this).data('filter')).draw();
+  });
+
+  /* Overdue follow-up toggle */
+  $('#lead-filter-overdue').on('click', function () {
+    _leadOverdueActive = !_leadOverdueActive;
+    $(this).toggleClass('btn-danger btn-outline-danger');
+    dt_NewCustomers.draw();
   });
 }
 
