@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Follow-up Queue — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html">
+                  <i class="fi fi-rr-home"></i> Home
+                </a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Follow-up Queue</li>
+            </ol>
+          </nav>
+          <button type="button" class="btn btn-primary btn-sm waves-effect">
+            <i class="fi fi-rr-plus me-1"></i> New Follow-up
+          </button>
+        </div>
+
+        <!-- Enforcement posture strip — hidden when no overdue tasks -->
+        <div class="row mb-2" id="enforcement-strip-row">
+          <div class="col-12">
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-0 py-2" id="enforcement-strip" role="alert">
+              <i class="fi fi-rr-triangle-warning fs-5 flex-shrink-0"></i>
+              <div>
+                <strong id="overdue-count">3</strong> follow-up task<span id="overdue-plural">s are</span> overdue.
+                Strict-level tasks will escalate automatically — action required.
+                <a href="javascript:void(0);" class="alert-link ms-2" id="show-overdue-only">Show overdue only →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="row">
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3">
+                  <i class="fi fi-rr-list-check"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Pending Tasks</h6>
+                <h2 class="mb-1" id="kpi-pending">7</h2>
+                <p class="mb-0 text-muted">Assigned to you</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-danger">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-3">
+                  <i class="fi fi-rr-clock"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Overdue</h6>
+                <h2 class="mb-1 text-danger" id="kpi-overdue">3</h2>
+                <p class="mb-0 text-muted">Require immediate action</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3">
+                  <i class="fi fi-rr-check-circle"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Completed Today</h6>
+                <h2 class="mb-1">4</h2>
+                <p class="mb-0">
+                  <span class="text-success">+1</span> vs yesterday
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3">
+                  <i class="fi fi-rr-calendar-day"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Due Today</h6>
+                <h2 class="mb-1">2</h2>
+                <p class="mb-0 text-muted">Scheduled for today</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Follow-up Queue DataTable -->
+        <div class="row">
+          <div class="col-xxl-12">
+            <div class="card">
+
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Follow-up Queue</h6>
+                <div id="dt_Followups_Search"></div>
+              </div>
+
+              <!-- Filter chips -->
+              <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center gap-2">
+                <span class="text-muted small me-1">Action:</span>
+                <div class="btn-group btn-group-sm" id="filter-action-type" role="group">
+                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Call">Call</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="WhatsApp">WhatsApp</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Reminder">Reminder</button>
+                </div>
+                <div class="vr mx-1"></div>
+                <span class="text-muted small me-1">Level:</span>
+                <div class="btn-group btn-group-sm" id="filter-level" role="group">
+                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Soft">Soft</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Medium">Medium</button>
+                  <button type="button" class="btn btn-outline-secondary" data-filter="Strict">Strict</button>
+                </div>
+                <div class="vr mx-1"></div>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="filter-overdue">
+                  <i class="fi fi-rr-clock me-1"></i>Overdue Only
+                </button>
+                <div class="ms-auto d-none gap-2 d-flex" id="bulk-actions">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                    <i class="fi fi-rr-snooze me-1"></i>Snooze Selected
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary">
+                    <i class="fi fi-rr-user-add me-1"></i>Reassign
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body px-1 pt-2 pb-2">
+                <div class="table-responsive">
+                  <table id="dt_Followups" class="table table-sm display table-row-rounded data-row-checkbox">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Lead / Contact</th>
+                        <th>Action</th>
+                        <th>Due</th>
+                        <th>Level</th>
+                        <th>Attempts</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      <!-- 1 — OVERDUE / strict -->
+                      <tr data-overdue="1">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar1.webp" alt="">
+                            </div>
+                            Ahmed Raza
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-success-subtle text-success">
+                            <i class="fi fi-brands-whatsapp me-1"></i>WhatsApp
+                          </span>
+                        </td>
+                        <td data-order="2026-05-24">
+                          <span class="text-danger fw-semibold">May 24, 2026</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-danger-subtle text-danger">Strict</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">3</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 2 — OVERDUE / medium -->
+                      <tr data-overdue="1">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar2.webp" alt="">
+                            </div>
+                            Sara Khan
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">
+                            <i class="fi fi-rr-phone-call me-1"></i>Call
+                          </span>
+                        </td>
+                        <td data-order="2026-05-24">
+                          <span class="text-danger fw-semibold">May 24, 2026</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">Medium</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">2</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 3 — OVERDUE / strict -->
+                      <tr data-overdue="1">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar3.webp" alt="">
+                            </div>
+                            Bilal Malik
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">
+                            <i class="fi fi-rr-bell me-1"></i>Reminder
+                          </span>
+                        </td>
+                        <td data-order="2026-05-25">
+                          <span class="text-danger fw-semibold">May 25, 2026</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-danger-subtle text-danger">Strict</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">4</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-bell me-2 text-warning"></i>Send Reminder</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 4 — TODAY / soft -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar4.webp" alt="">
+                            </div>
+                            Zainab Iqbal
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-success-subtle text-success">
+                            <i class="fi fi-brands-whatsapp me-1"></i>WhatsApp
+                          </span>
+                        </td>
+                        <td data-order="2026-05-26">
+                          <span class="text-warning fw-semibold">Today</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info">Soft</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">1</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 5 — TODAY / medium -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar5.webp" alt="">
+                            </div>
+                            Hassan Qureshi
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">
+                            <i class="fi fi-rr-phone-call me-1"></i>Call
+                          </span>
+                        </td>
+                        <td data-order="2026-05-26">
+                          <span class="text-warning fw-semibold">Today</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">Medium</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">0</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 6 — FUTURE / soft / snoozed -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar6.webp" alt="">
+                            </div>
+                            Nadia Ali
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">
+                            <i class="fi fi-rr-bell me-1"></i>Reminder
+                          </span>
+                        </td>
+                        <td data-order="2026-05-27">May 27, 2026</td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info">Soft</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">1</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">Snoozed</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-bell me-2 text-warning"></i>Send Reminder</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 7 — FUTURE / medium -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar7.webp" alt="">
+                            </div>
+                            Usman Baig
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-success-subtle text-success">
+                            <i class="fi fi-brands-whatsapp me-1"></i>WhatsApp
+                          </span>
+                        </td>
+                        <td data-order="2026-05-27">May 27, 2026</td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">Medium</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">2</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 8 — FUTURE / soft -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar8.webp" alt="">
+                            </div>
+                            Fatima Riaz
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">
+                            <i class="fi fi-rr-phone-call me-1"></i>Call
+                          </span>
+                        </td>
+                        <td data-order="2026-05-28">May 28, 2026</td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info">Soft</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">0</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 9 — FUTURE / strict -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar9.webp" alt="">
+                            </div>
+                            Kamran Shah
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-warning-subtle text-warning">
+                            <i class="fi fi-rr-bell me-1"></i>Reminder
+                          </span>
+                        </td>
+                        <td data-order="2026-05-28">May 28, 2026</td>
+                        <td>
+                          <span class="badge bg-danger-subtle text-danger">Strict</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">5</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-primary-subtle text-primary">Pending</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-bell me-2 text-warning"></i>Send Reminder</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <!-- 10 — FUTURE / soft / snoozed -->
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar avatar-xxs rounded-circle me-2">
+                              <img src="assets/images/avatar/avatar10.webp" alt="">
+                            </div>
+                            Iqra Siddiqui
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge bg-success-subtle text-success">
+                            <i class="fi fi-brands-whatsapp me-1"></i>WhatsApp
+                          </span>
+                        </td>
+                        <td data-order="2026-05-29">May 29, 2026</td>
+                        <td>
+                          <span class="badge bg-info-subtle text-info">Soft</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">1</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-secondary-subtle text-secondary">Snoozed</span>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fi fi-rr-menu-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-check me-2 text-success"></i>Log Done</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-snooze me-2 text-warning"></i>Snooze</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-user me-2"></i>View Lead</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer-wrapper bg-body">
+      <div class="container-fluid">
+        <div class="row g-2">
+          <div class="col-lg-6 col-md-7 text-center text-md-start">
+            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+          </div>
+          <div class="col-lg-6 col-md-5">
+            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
+              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'followups';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/app/crm-followups.js"></script>
+</body>
+</html>
