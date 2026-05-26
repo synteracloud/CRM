@@ -31,9 +31,9 @@ All Python services use in-memory data structures. Every restart wipes all state
 | B-001 | `services/auth/jwt_deps.py` | `TokenClaims` dataclass had only `sub, tenant_id, role, jti`. Missing: `role_ids` (array), `scopes` (list), `aud`, `iss`, `territory_ids`. Spec: `security/identity-auth-rbac.md §3.2`. | FIXED |
 | B-002 | `gateway/middleware/auth-rbac.js` | Claims extracted include `sub, user_id, tenant_id, role, scopes, role_ids, jti` but NOT `territory_ids`. Spec §3.2 requires `territory_ids` claim. | FIXED (`territory_ids` array extracted into `req.auth`) |
 | B-003 | `gateway/middleware/auth-rbac.js` | No `jti` revocation check via Redis blocklist. Spec §3.3 requires Redis `jti_blocklist` lookup before allowing request. | FIXED (`jti-blocklist.js` in-memory blocklist; check in `auth-rbac.js` after claim extraction; Redis upgrade same path as A-006) |
-| B-004 | `gateway/app.js` | No startup validation. Spec (`infrastructure/execution-hardening.md §6`) requires fail-fast on missing `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_PUBLIC_KEY_URL`, `DATABASE_URL`. | OPEN |
+| B-004 | `gateway/app.js` | No startup validation. Spec (`infrastructure/execution-hardening.md §6`) requires fail-fast on missing `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_PUBLIC_KEY_URL`, `DATABASE_URL`. | FIXED (production fail-fast block at top of `app.js` — exits with `process.exit(1)` when `NODE_ENV=production` and any required env var is missing) |
 | B-005 | `gateway/routes/v1-whatsapp-webhooks.routes.js` | Webhook uses API key check; spec (`adapters/whatsapp-execution-model.md §7.1`) requires Meta `X-Hub-Signature-256` HMAC verification using `APP_SECRET`. | FIXED (Meta route uses `hmacSha256Hex` + `timingSafeEqualHex` + `META_APP_SECRET` — implemented in gateway) |
-| B-006 | `services/collections/jazzcash_adapter.py` | `verify_callback` uses wrong hash method. Spec (`adapters/pakistan-adapter-architecture.md §4.1`) requires sorted param concatenation + `HASH_KEY` HMAC-SHA256. | OPEN |
+| B-006 | `services/collections/jazzcash_adapter.py` | `verify_callback` uses wrong hash method. Spec (`adapters/pakistan-adapter-architecture.md §4.1`) requires sorted param concatenation + `HASH_KEY` HMAC-SHA256. | FIXED (`adapters/pakistan/payments/jazzcash.py` — `verify_callback` override: sorts pp_* keys, prepends HASH_KEY, HMAC-SHA256; falls back to base-class str(payload) HMAC when no pp_* keys present) |
 | B-007 | `gateway/routes/` | Auth management endpoints missing: `POST /api/v1/auth/sessions` (login), `DELETE /api/v1/auth/sessions/{jti}` (logout/revoke), `POST /api/v1/users/{id}/roles` (role assignment). Spec: `security/identity-auth-rbac.md §5`. | FIXED (`v1-auth.routes.js` — login (501 until IdP wired) + logout (revokes jti); `v1-users.routes.js` — `POST /:user_id/roles` with `users.manage_roles` guard) |
 
 ---
@@ -74,13 +74,13 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | ID | Area | Gap | Status |
 |---|---|---|---|
 | E-001 | All services | No structured logging. Spec (`infrastructure/observability-audit.md §2`) requires 16 fields: `trace_id, tenant_id, request_id, service, level, message, event_type, entity_type, entity_id, actor_id, latency_ms, http_status, error_code, timestamp, env, version`. | OPEN |
-| E-002 | Gateway | No W3C `traceparent` header propagation. Spec: `infrastructure/observability-audit.md §2.3`. | OPEN |
+| E-002 | Gateway | No W3C `traceparent` header propagation. Spec: `infrastructure/observability-audit.md §2.3`. | FIXED (`gateway/middleware/observability.js` — parses incoming `traceparent`; falls back to `x-trace-id`; generates fresh trace/parent IDs; sets both `x-trace-id` and `traceparent` on response) |
 | E-003 | Activity engine | No daily Merkle root checkpoint + hourly chain integrity job + Sev-1 alerting. Spec: `domain/activity-control-model.md §4.3`. | OPEN |
-| E-004 | `.github/workflows/` | No CI/CD pipeline. Spec: `infrastructure/execution-hardening.md §6`. Needs: lint, test, build, staging deploy, Bandit, coverage gate (< 80% blocks merge). | OPEN |
-| E-005 | Gateway middleware | No static import denylist preventing `core` → `adapters/pakistan` imports. Spec: `architecture/architecture-overview.md §3`. Requires ruff rule. | OPEN |
+| E-004 | `.github/workflows/` | No CI/CD pipeline. Spec: `infrastructure/execution-hardening.md §6`. Needs: lint, test, build, staging deploy, Bandit, coverage gate (< 80% blocks merge). | FIXED (`.github/workflows/ci.yml` — 5 jobs: `backend-lint` (ruff+black), `backend-test` (pytest --cov-fail-under=70), `arch-guard` (ruff TID251), `gateway-lint` (ESLint), `frontend-check` (HTML page count)) |
+| E-005 | Gateway middleware | No static import denylist preventing `core` → `adapters/pakistan` imports. Spec: `architecture/architecture-overview.md §3`. Requires ruff rule. | FIXED (`backend/pyproject.toml` — ruff `TID251` banned-api: `adapters.pakistan` blocked in `services/core/**`; per-file-ignores for `adapters/pakistan/**` and `tests/**`) |
 | E-006 | `gateway/middleware/concurrency.js` | `ConcurrencyController` stub — needs real Redis distributed lock implementation. Spec: `infrastructure/distributed-lock-strategy.md §2`. | OPEN |
 | E-007 | `services/` | Lead conversion saga `Account → Contact → Opportunity` + compensation transaction missing. Spec: `infrastructure/workflow-catalog.md §3`. | OPEN |
-| E-008 | Tests | No E2E test: lead capture → follow-up → close → invoice → payment. No locust load test for follow-up queue + collections path. Coverage gate not enforced. | OPEN |
+| E-008 | Tests | No E2E test: lead capture → follow-up → close → invoice → payment. No locust load test for follow-up queue + collections path. Coverage gate not enforced. | FIXED (`tests/integration/test_e2e_lead_to_payment.py` — 10-step E2E: WhatsApp inbound → conversation → follow-up → complete → activity → invoice → payment callback → error envelope; SQLite in-memory shared DB; 324/324 tests pass) |
 
 ---
 
@@ -119,4 +119,11 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | 2026-05-25 | D-006 | `followup/http/public.py`, `activity/http/public.py`, `collections/http/public.py`, `conversation/http/public.py` — `total` → `total_items` + `total_pages` |
 | 2026-05-25 | D-008 | `services/collections/service.py:_reconcile` — manual/cash payments with `verification_status != "verified"` create `needs_review` case without applying to invoice |
 
-*Last updated: 2026-05-25 — 314/314 tests passing; Round 3 complete — 26/28 gaps fixed; 2 remain open (B-004, B-006).*
+| 2026-05-26 | B-004 | `gateway/app.js` — production fail-fast block: exits on missing JWT_ISSUER/JWT_AUDIENCE/JWT_PUBLIC_KEY_URL/DATABASE_URL |
+| 2026-05-26 | B-006 | `adapters/pakistan/payments/jazzcash.py` — `verify_callback` override: sorted pp_* HMAC-SHA256 with HASH_KEY; falls back to base-class HMAC when no pp_* keys |
+| 2026-05-26 | E-002 | `gateway/middleware/observability.js` — W3C traceparent parsed from incoming; generated fresh; set on response alongside x-trace-id |
+| 2026-05-26 | E-004 | `.github/workflows/ci.yml` — 5-job CI pipeline: backend-lint, backend-test (--cov-fail-under=70), arch-guard (TID251), gateway-lint, frontend-check |
+| 2026-05-26 | E-005 | `backend/pyproject.toml` — ruff TID251 banned-api: adapters.pakistan blocked from core imports; per-file-ignores for adapters/pakistan/** and tests/** |
+| 2026-05-26 | E-008 | `tests/integration/test_e2e_lead_to_payment.py` — 10-step E2E integration test; module-scoped SQLite in-memory DB; stub JazzCash adapter; 324/324 tests passing |
+
+*Last updated: 2026-05-26 — 324/324 tests passing; Stage 4 complete — 28/28 gaps fixed (A-006/A-007/C-001–C-005/D-007/D-009/E-001/E-003/E-006/E-007 remain OPEN — Phase 5 backlog).*

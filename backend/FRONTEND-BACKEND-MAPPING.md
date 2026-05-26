@@ -3,7 +3,7 @@
 **Purpose:** Authoritative reference for wiring NexLink template pages to the live backend API.
 **Template:** NexLink v1.3.0 — `D:\CRM\frontend\src\`
 **Backend base:** `http://localhost:3000/api/v1/` (gateway — `gateway/routes/index.js`)
-**Last updated:** 2026-05-05
+**Last updated:** 2026-05-26 (Stage 4 complete — D-005 error envelope, D-006 pagination fields, B-007 auth endpoints, B-002 territory_ids, E-002 traceparent)
 
 ---
 
@@ -558,13 +558,19 @@ limit=25&offset=0
 
 | Template file | Our route | Backend |
 |---|---|---|
-| `src/app/login.html` ✓ BUILT | `/login` | `POST /api/v1/auth/login` → returns JWT |
+| `src/app/login.html` ✓ BUILT | `/login` | `POST /api/v1/auth/sessions` → returns JWT (B-007) |
 | `src/app/register.html` ✓ BUILT | `/register` | `POST /api/v1/auth/register` |
 | `src/app/forgot-password.html` ✓ BUILT | `/forgot-password` | `POST /api/v1/auth/forgot-password` |
 | `src/app/reset-password.html` ✓ BUILT | `/reset-password` | `POST /api/v1/auth/reset-password` |
 
+**Auth session management (B-007):**
+- `POST /api/v1/auth/sessions` — login (returns JWT; IdP not yet wired → 501 until P-016/IdP resolved)
+- `DELETE /api/v1/auth/sessions/current` — logout (revokes JWT jti in blocklist; returns `{revoked: true}`)
+- `POST /api/v1/users/:user_id/roles` — assign role (requires `users.manage_roles` scope; returns `user_role_id`, `role_id`, `assigned_at`)
+
 **JWT storage:** `localStorage.setItem('crm_token', jwt)` — attach as Bearer on every request.
 **RBAC gate:** Check `user.role` from JWT claims before rendering role-gated sections. Roles: `super_admin`, `tenant_admin`, `sales_manager`, `sales_rep`, `finance`, `data_admin`.
+**JWT claims (B-001/B-002):** Token contains `sub`, `tenant_id`, `role`, `role_ids`, `scopes`, `aud`, `iss`, `jti`, `territory_ids[]`. Frontend can read `territory_ids` to filter data to assigned territories.
 
 ---
 
@@ -656,25 +662,28 @@ All endpoints follow the envelope from `docs/api-standards.md`:
   "data": { ... } | [ ... ],
   "meta": {
     "request_id": "uuid",
-    "count": 25,
-    "total": 840,
+    "total_items": 840,
+    "total_pages": 34,
     "limit": 25,
     "offset": 0
   }
 }
 ```
 
-**Error envelope:**
+**Note (D-006):** Pagination fields are `total_items` + `total_pages` — NOT `total`. Frontend code must use `meta.total_items` / `meta.total_pages`.
+
+**Error envelope (D-005):**
 ```json
 {
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "human-readable message",
-    "fields": [ { "field": "owner_id", "reason": "required" } ]
+    "code": "not_found",
+    "message": "human-readable message"
   },
   "meta": { "request_id": "uuid" }
 }
 ```
+
+Error codes map to HTTP status: `bad_request` (400), `unauthorized` (401), `forbidden` (403), `not_found` (404), `conflict` (409), `unprocessable_entity` (422), `internal_server_error` (500). All Python HTTPException errors flow through this envelope automatically (global handler in `services/app.py`).
 
 **Date format:** All dates are ISO 8601 UTC — `2026-05-04T10:30:00Z`. Use Flatpickr for date inputs.
 

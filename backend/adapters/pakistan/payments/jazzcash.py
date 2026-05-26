@@ -147,6 +147,25 @@ class JazzCashAdapter(PakistanPaymentAdapter):
             raw=raw,
         )
 
+    # ── Callback signature verification ──────────────────────────────────────
+
+    def verify_callback(self, signature: str, payload: dict[str, Any]) -> bool:
+        """Verify JazzCash callback using sorted pp_* param HMAC-SHA256.
+
+        Spec: adapters/pakistan-adapter-architecture.md §4.1
+        Format: HMAC-SHA256(HASH_KEY & sorted_pp_values) == pp_SecureHash
+
+        Falls back to base-class str(payload) HMAC when no pp_* keys are present
+        (e.g. normalised/test payloads that predate the JazzCash native format).
+        """
+        if not self._hash_key:
+            return False
+        pp_keys = {k: str(v) for k, v in payload.items() if k.startswith("pp_")}
+        if not pp_keys:
+            return super().verify_callback(signature, payload)
+        expected = _build_secure_hash(pp_keys, self._hash_key)
+        return hmac.compare_digest(signature.lower(), expected.lower())
+
     # ── Normalisation ──────────────────────────────────────────────────────────
 
     def normalize_transaction(self, payload: dict[str, Any]) -> dict[str, Any]:

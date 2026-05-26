@@ -11,6 +11,17 @@ const { buildRuntimeConfig } = require('./config/runtime-config');
 // P-022 — structured JSON logger (replaces app.locals.logger = console)
 const logger = require('./middleware/logger');
 
+// ── B-004: Production fail-fast — refuse to start with missing critical env vars ─
+if (process.env.NODE_ENV === 'production') {
+  const required = ['JWT_ISSUER', 'JWT_AUDIENCE', 'JWT_PUBLIC_KEY_URL', 'DATABASE_URL'];
+  const missing = required.filter((k) => !process.env[k]);
+  if (missing.length > 0) {
+    // eslint-disable-next-line no-console
+    console.error(`[FATAL] Missing required env vars: ${missing.join(', ')}. Refusing to start.`);
+    process.exit(1);
+  }
+}
+
 const app = express();
 const runtimeConfig = buildRuntimeConfig();
 

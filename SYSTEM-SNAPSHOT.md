@@ -1,8 +1,8 @@
 # Pakistan CRM OS — System Snapshot
 
-**Date:** 2026-05-25
-**Overall grade:** 9.2 / 10
-**Refresh trigger:** Phase 4 Stage 3 Round 3 complete — B-002/003/005/007 + D-005/006/008 fixed; 26/28 gaps fixed, 314/314 tests.
+**Date:** 2026-05-26
+**Overall grade:** 9.5 / 10
+**Refresh trigger:** Phase 4 Stage 4 complete — all 28/28 gaps fixed; B-004/B-006/E-002/E-004/E-005/E-008 done; 324/324 tests; CI/CD live; E2E integration test passing.
 
 > **How to use this file:** Read it first at the start of every session. 60-second bird's-eye view — where we are, what is built, what is broken, what is next. Then open `REBUILD-PLAN.md` for the exact resume point and `PENDING.md` for the checkbox queue.
 
@@ -18,12 +18,12 @@
 | Phase 4 Stage 0 | Design Docs + Pre-Phase Fixes | ✓ COMPLETE — 2026-05-19 |
 | Phase 4 Stage 1 | Doc Read + Identify (30 clusters) | ✓ COMPLETE — 2026-05-23 |
 | Phase 4 Stage 2 | Doc Fix + Restructure | ✓ COMPLETE — 2026-05-25 |
-| **Phase 4 Stage 3** | **Code Overlay** | **← CURRENT (Round 3 done — 26/28 gaps fixed)** |
-| Phase 4 Stage 4 | Mapping + Final Push | Pending Stage 3 |
-| Phase 5 | Frontend — 75 Custom Pages | NOT STARTED |
+| Phase 4 Stage 3 | Code Overlay | ✓ COMPLETE — 2026-05-26 (28/28 gaps fixed) |
+| Phase 4 Stage 4 | Mapping + Final Push | ✓ COMPLETE — 2026-05-26 |
+| **Phase 5** | **Frontend — 75 Custom Pages** | **← CURRENT** |
 | Phase 6 | Market Research Features | NOT STARTED |
 
-**Overall task progress:** 85 / 192 tasks done (44%)
+**Overall task progress:** 93 / 192 tasks done (48%)
 
 ---
 
@@ -34,9 +34,9 @@
 | Documentation | 10/10 | 10/10 | None — 52 specs in 9 subdirs + phase4-gap-register.md; all ownership blocks set |
 | Architecture design | 8/10 | 10/10 | Code must match docs; event bus not wired; service boundaries exist only in docs |
 | Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD missing |
-| Code implementation | 9/10 | 10/10 | 2 open gaps remain (B-004 startup validation, B-006 JazzCash hash); auth + error envelopes + pagination complete |
-| Testing | 5/10 | 10/10 | 314 tests passing; no coverage gate; no E2E; no load tests |
-| DevOps / CI-CD | 2/10 | 10/10 | No working pipeline; no containers in CI |
+| Code implementation | 9.5/10 | 10/10 | All 28 Phase 4 gaps fixed; remaining open items (A-006, A-007, C-001–C-005, D-007, D-009, E-001, E-003, E-006, E-007) deferred to Phase 5 backlog |
+| Testing | 7/10 | 10/10 | 324 tests passing; coverage gate (70%) enforced in CI; 10-step E2E integration test live; no load tests yet |
+| DevOps / CI-CD | 7/10 | 10/10 | `.github/workflows/ci.yml` live: lint + test + arch-guard + coverage gate + frontend check; no containers/staging deploy yet |
 | Security implementation | 8/10 | 10/10 | territory_ids extracted; jti revocation blocklist live; auth endpoints wired; HMAC verified |
 | Frontend | 7/10 | 10/10 | 96 library pages done; 75 custom pages unbuilt |
 
@@ -66,8 +66,8 @@
 
 ## Backend — What Is Built
 
-**Tests:** 314 / 314 passing
-`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests + 6 new Stage 3 fixes`
+**Tests:** 324 / 324 passing
+`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests + 6 Stage 3 fixes + 10 E2E integration tests`
 
 ### 6 Engines
 

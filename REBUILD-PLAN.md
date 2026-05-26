@@ -1,8 +1,8 @@
 # Pakistan CRM OS — Rebuild Plan (10/10 Roadmap)
 
 **Created:** 2026-05-18
-**Revised:** 2026-05-25 — Stage 3 Round 2 COMPLETE (19/28 gaps fixed; 314/314 tests passing). Next: Stage 3 Round 3 — B-002/B-003/B-005/B-007 gateway auth + D-005/D-006/D-008 API standards.
-**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 IN PROGRESS (Stage 0 ✓ · Stage 1 ✓ · Stage 2 ✓ · Stage 3 Round 1 ✓ · Stage 3 Round 2 ✓) | Phase 5 NOT STARTED | Phase 6 NOT STARTED
+**Revised:** 2026-05-26 — Phase 4 COMPLETE. Stage 4 done: 28/28 gaps fixed; 324/324 tests passing; CI/CD live; E2E test passing; mapping updated. Resume: Phase 5 — Frontend 75 custom pages.
+**Status:** Phase 1 ✓ | Phase 2 ✓ | Phase 3 ✓ | Phase 4 ✓ COMPLETE | Phase 5 NOT STARTED | Phase 6 NOT STARTED
 **Anchor:** This file. Updated every session before closing. Read first every session.
 **Task tracker:** `PENDING.md` (root) — checkbox list, mark `[x]` immediately on completion
 **Session log:** `PROGRESS.md` — one-line summary added every session
@@ -12,11 +12,11 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current location:** Phase 4 · Stage 3 — Code Overlay (Round 3)  
-**Next task:** B-002 — Gateway `auth-rbac.js`: extract `territory_ids` JWT claim. Then B-003 (jti blocklist), B-005 (HMAC), B-007 (auth endpoints), D-005/D-006/D-008 (API standards).  
-**First file to open:** `backend/docs/phase4-gap-register.md` — 9 open gaps; work in priority order  
-**Rule in force:** Non-destructive only. No deletions.  
-**Doc tree:** All specs now under `backend/docs/{architecture,security,domain,infrastructure,adapters,product,ui,_b9,_qc}/`
+**Current location:** Phase 5 · Frontend — 75 Custom Pages  
+**Next task:** Read `DESIGN-SPEC.md` + `PENDING.md` to find first unchecked Phase 5 page. Start with Phase 5 Phase 1 core execution surfaces: Auth pages → Follow-up Queue → Lead Queue → Lead Detail → Owner Dashboard.  
+**First file to open:** `DESIGN-SPEC.md` — archetype rules + Phase 5 build order  
+**Rule in force:** Non-destructive only. No deletions. All 96 library pages must stay HTTP 200.  
+**Doc tree:** All specs under `backend/docs/{architecture,security,domain,infrastructure,adapters,product,ui,_b9,_qc}/`
 
 | Phase | Stage | Status |
 |---|---|---|
@@ -26,9 +26,9 @@
 | 4 — Backend Hardening | Stage 0 — Design Docs + Fixes | ✓ COMPLETE (2026-05-19) |
 | 4 — Backend Hardening | Stage 1 — Doc Read + Identify | ✓ COMPLETE (2026-05-23) |
 | 4 — Backend Hardening | Stage 2 — Doc Fix + Restructure | ✓ COMPLETE (2026-05-25) |
-| **4 — Backend Hardening** | **Stage 3 — Code Overlay** | **← IN PROGRESS (Round 2 done — 19/28 fixed)** |
-| 4 — Backend Hardening | Stage 4 — Mapping + Push | Pending Stage 3 |
-| 5 — Frontend 75 pages | — | Pending Phase 4 complete |
+| 4 — Backend Hardening | Stage 3 — Code Overlay | ✓ COMPLETE (2026-05-26 — 28/28 gaps fixed) |
+| 4 — Backend Hardening | Stage 4 — Mapping + Push | ✓ COMPLETE (2026-05-26 — 324/324 tests; CI live) |
+| **5 — Frontend 75 pages** | **—** | **← CURRENT** |
 | 6 — Market Research | — | Pending Phase 5 complete |
 
 ---

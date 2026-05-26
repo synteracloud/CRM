@@ -4,21 +4,41 @@ function generateTraceId() {
   return crypto.randomBytes(16).toString('hex');
 }
 
+function generateParentId() {
+  return crypto.randomBytes(8).toString('hex');
+}
+
 function normalizeTraceId(incoming) {
   if (typeof incoming !== 'string') return null;
   const trace = incoming.trim().toLowerCase();
   return /^[a-f0-9]{32}$/.test(trace) ? trace : null;
 }
 
+// Parse W3C traceparent: 00-<trace-id>-<parent-id>-<flags>
+function parseTraceparent(header) {
+  if (typeof header !== 'string') return null;
+  const parts = header.trim().split('-');
+  if (parts.length !== 4 || parts[0] !== '00') return null;
+  const traceId = parts[1];
+  return /^[a-f0-9]{32}$/.test(traceId) ? traceId : null;
+}
+
 function observabilityMiddleware({ logger = console } = {}) {
   let inflight = 0;
   return function observe(req, res, next) {
     const startedAt = process.hrtime.bigint();
-    const incomingTrace = req.headers['x-trace-id'];
-    const traceId = normalizeTraceId(incomingTrace) || generateTraceId();
+
+    // E-002: accept W3C traceparent first, fall back to x-trace-id, then generate
+    const traceId = parseTraceparent(req.headers['traceparent'])
+      || normalizeTraceId(req.headers['x-trace-id'])
+      || generateTraceId();
+
+    const parentId = generateParentId();
+    const traceparent = `00-${traceId}-${parentId}-01`;
 
     req.trace_id = traceId;
     res.setHeader('x-trace-id', traceId);
+    res.setHeader('traceparent', traceparent);
     inflight += 1;
 
     res.on('finish', () => {
