@@ -158,8 +158,8 @@ router.get('/status', requestValidationMiddleware(), requireScopes([SCOPES.SYNC_
         counts[cmd.status] = (counts[cmd.status] || 0) + 1;
       }
       return respondSuccess(res, { tenant_id: tenantId, counts, checked_at: nowIso() });
-    } catch (err) {
-      return respondError(res, 500, 'DB_ERROR', err.message);
+    } catch (_err) {
+      // DB table may not exist yet — fall through to in-memory
     }
   }
 

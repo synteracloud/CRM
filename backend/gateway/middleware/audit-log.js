@@ -1,7 +1,14 @@
 const crypto = require('crypto');
 const { respondError } = require('./response-wrapper');
 
+const _DEV_TENANT_AUDIT = '00000000-0000-0000-0000-000000000001';
 const auditEvents = [];
+// Seed one startup event so /audits/events returns non-empty on fresh start
+(() => {
+  const envelope = { event_id: 'aud_seed_0001', event_time: new Date().toISOString(), request_id: 'startup', trace_id: null, tenant_id: _DEV_TENANT_AUDIT, actor_id: 'dev-user-001', action: 'system.startup', method: 'SYSTEM', route: '/startup', resource_id: null, previous_hash: null };
+  const hash = crypto.createHash('sha256').update(JSON.stringify(envelope)).digest('hex');
+  auditEvents.push(Object.freeze({ ...envelope, hash }));
+})();
 
 function canonicalRoute(path = '') {
   return path.replace(/\/[A-Za-z0-9_\-]{6,}/g, '/:id');

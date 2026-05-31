@@ -5,7 +5,7 @@ const { requireScopes } = require('../middleware/auth-rbac');
 
 const router = express.Router();
 
-router.get('/', requestValidationMiddleware(), requireScopes(['invoices.read']), (req, res) => {
+router.get('/', requestValidationMiddleware(), requireScopes(['collections.read']), (req, res) => {
   return respondSuccess(
     res,
     [
@@ -72,7 +72,7 @@ router.post(
 
 // ── GET /invoice-summaries/:invoice_id ───────────────────────────────────────
 // C-08 Invoice Detail: lookup a single invoice summary by invoice_number or id.
-router.get('/:invoice_id', requestValidationMiddleware(), requireScopes(['invoices.read']), (req, res) => {
+router.get('/:invoice_id', requestValidationMiddleware(), requireScopes(['collections.read']), (req, res) => {
   const id = req.params.invoice_id;
   const SEED = {
     invoice_summary_id: 'inv_01JINVOICE000000000000001',

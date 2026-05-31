@@ -62,11 +62,12 @@ const _SCORING_MODELS = [
   { model_key:'clv_estimate_v1',  model_type:'clv_estimate',  version:'1.0.0', algorithm:'rule_based', recompute_interval_hours:168, is_active:true,  description:'Historical revenue projection: avg_monthly × horizon × retention_rate.' },
 ];
 
-// Mutable copies for in-memory operations
-let leadScores      = [..._LEAD_SCORES];
-let churnPredictions = [..._CHURN_PREDICTIONS];
-let clvEstimates    = [..._CLV_ESTIMATES];
-let suggestions     = [..._COPILOT_SUGGESTIONS];
+// Mutable copies for in-memory operations — tenant_id 't-001' is the legacy seed; alias all for current dev UUID
+const _DEV_UUID = '00000000-0000-0000-0000-000000000001';
+let leadScores      = [..._LEAD_SCORES, ..._LEAD_SCORES.map(s => ({ ...s, score_id: s.score_id + '-u', tenant_id: _DEV_UUID }))];
+let churnPredictions = [..._CHURN_PREDICTIONS, ..._CHURN_PREDICTIONS.map(p => ({ ...p, tenant_id: _DEV_UUID }))];
+let clvEstimates    = [..._CLV_ESTIMATES, ..._CLV_ESTIMATES.map(c => ({ ...c, tenant_id: _DEV_UUID }))];
+let suggestions     = [..._COPILOT_SUGGESTIONS, ..._COPILOT_SUGGESTIONS.map(s => ({ ...s, tenant_id: _DEV_UUID }))];
 
 // ── Lead scores ──────────────────────────────────────────────────────────────
 

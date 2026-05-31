@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * Leads repository — DB-backed CRUD for lead_management.leads.
+ * Leads repository — DB-backed CRUD for lead_management_db.leads.
  *
  * Docs: docs/domain-model.md — Lead entity
  *       db/lead_management_db/schema.sql — table definition
  *
  * Schema: lead_management_db (PostgreSQL schema: lead_management)
- * Table:  lead_management.leads
+ * Table:  lead_management_db.leads
  *
  * This is the authoritative pattern for repository objects in this codebase.
  * All other domain repositories (opportunities, contacts, etc.) follow the
@@ -57,7 +57,7 @@ class LeadsRepository {
     } = data;
 
     const { rows } = await query(
-      `INSERT INTO lead_management.leads (
+      `INSERT INTO lead_management_db.leads (
          lead_id, tenant_id, owner_id, title, stage, status, priority, source,
          contact_name, contact_phone_e164, contact_email,
          estimated_value, currency, notes, metadata
@@ -77,7 +77,7 @@ class LeadsRepository {
 
   async findById(tenantId, leadId) {
     const { rows } = await query(
-      `SELECT * FROM lead_management.leads
+      `SELECT * FROM lead_management_db.leads
        WHERE tenant_id = $1 AND lead_id = $2 AND deleted_at IS NULL`,
       [tenantId, leadId],
     );
@@ -97,7 +97,7 @@ class LeadsRepository {
 
     params.push(limit, offset);
     const { rows } = await query(
-      `SELECT * FROM lead_management.leads
+      `SELECT * FROM lead_management_db.leads
        WHERE ${conditions.join(' AND ')}
        ORDER BY created_at DESC
        LIMIT $${p} OFFSET $${p + 1}`,
@@ -116,7 +116,7 @@ class LeadsRepository {
     if (owner_id) { conditions.push(`owner_id = $${p++}`); params.push(owner_id); }
 
     const { rows } = await query(
-      `SELECT COUNT(*)::int AS total FROM lead_management.leads WHERE ${conditions.join(' AND ')}`,
+      `SELECT COUNT(*)::int AS total FROM lead_management_db.leads WHERE ${conditions.join(' AND ')}`,
       params,
     );
     return rows[0].total;
@@ -137,7 +137,7 @@ class LeadsRepository {
     const values = fields.map((f) => (f === 'metadata' && patch[f] != null ? JSON.stringify(patch[f]) : patch[f]));
 
     const { rows } = await query(
-      `UPDATE lead_management.leads SET ${sets}
+      `UPDATE lead_management_db.leads SET ${sets}
        WHERE tenant_id = $1 AND lead_id = $2 AND deleted_at IS NULL
        RETURNING *`,
       [tenantId, leadId, ...values],
@@ -149,7 +149,7 @@ class LeadsRepository {
 
   async softDelete(tenantId, leadId) {
     const { rows } = await query(
-      `UPDATE lead_management.leads SET deleted_at = NOW()
+      `UPDATE lead_management_db.leads SET deleted_at = NOW()
        WHERE tenant_id = $1 AND lead_id = $2 AND deleted_at IS NULL
        RETURNING lead_id`,
       [tenantId, leadId],
@@ -162,7 +162,7 @@ class LeadsRepository {
   async appendHistory(client, { lead_id, tenant_id, changed_by, field_name, old_value, new_value }) {
     // Uses a passed-in transaction client to participate in the caller's UoW.
     await client.query(
-      `INSERT INTO lead_management.lead_history
+      `INSERT INTO lead_management_db.lead_history
          (tenant_id, lead_id, changed_by, field_name, old_value, new_value)
        VALUES ($1, $2, $3, $4, $5, $6)`,
       [tenant_id, lead_id, changed_by, field_name,
@@ -176,7 +176,7 @@ class LeadsRepository {
   async transitionStage(tenantId, leadId, { new_stage, changed_by }) {
     return withTransaction(async (client) => {
       const { rows: current } = await client.query(
-        `SELECT lead_id, stage FROM lead_management.leads
+        `SELECT lead_id, stage FROM lead_management_db.leads
          WHERE tenant_id = $1 AND lead_id = $2 AND deleted_at IS NULL FOR UPDATE`,
         [tenantId, leadId],
       );
@@ -184,7 +184,7 @@ class LeadsRepository {
 
       const old_stage = current[0].stage;
       const { rows: updated } = await client.query(
-        `UPDATE lead_management.leads SET stage = $3
+        `UPDATE lead_management_db.leads SET stage = $3
          WHERE tenant_id = $1 AND lead_id = $2
          RETURNING *`,
         [tenantId, leadId, new_stage],

@@ -1,6 +1,6 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-31 — **C0 Environment Seal COMPLETE.** .env.local + seal.ps1 created; npm/pip/Playwright all confirmed writing to D:; Chromium installed at D:\CRM\.playwright-browsers\chromium-1223; c-seal baseline recorded. C1 DB Wiring is next. 5 previously blocked pages (G-04, G-05, J-03, H-07, A-08) wired with inline gateway route stubs + JS drivers. External services (billing provider, integration APIs, governance service) are pluggable later — internal homework complete. Final Hardening (Component 3) is next. ✓ = full process complete + locked.
+**Last updated:** 2026-05-31 — **C1 DB Wiring COMPLETE.** PostgreSQL EDB pg16 running at D:\CRM\data\postgres on port 5432 (user=crm, db=crm_dev, 39 tables). Dev token fixed to UUID tenant_id. 10 missing DB columns added, all tenant_ref tables seeded. DB-backed routes wired: leads/contacts/accounts/opportunities/tasks/activities/payments/subscriptions/invoice-summaries/collections/feature-flags/followups. New routes wired: v1-tasks (activity_task_db.task), v1-activities (activity_task_db.activity). Scope registry expanded with 20 missing scopes. 44/44 GET endpoints return HTTP 200 + non-empty data. Data survives gateway restart. C2 Automated Test Suite is next.
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)

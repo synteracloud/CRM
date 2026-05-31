@@ -48,15 +48,16 @@ if (process.env.NODE_ENV !== 'production') {
   process.env.SKIP_JWT_VERIFICATION = 'true';
   const { SCOPES } = require('./config/rbac-scopes');
   const _th = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const DEV_TENANT_ID = '00000000-0000-0000-0000-000000000001';
   const _tp = Buffer.from(JSON.stringify({
-    sub: 'dev-user-001', tenant_id: 'tenant-dev-001',
+    sub: 'dev-user-001', tenant_id: DEV_TENANT_ID,
     iss: 'crm-dev', aud: 'crm-api', exp: 4102444800,
     role: 'tenant_admin', role_ids: ['role-admin'],
     territory_ids: [], scopes: Object.values(SCOPES),
   })).toString('base64url');
   const DEV_TOKEN = `${_th}.${_tp}.${Buffer.from('dev').toString('base64url')}`;
   app.get('/dev-token', (req, res) => {
-    res.json({ data: { token: DEV_TOKEN, tenant_id: 'tenant-dev-001' }, meta: {} });
+    res.json({ data: { token: DEV_TOKEN, tenant_id: DEV_TENANT_ID }, meta: {} });
   });
 }
 

@@ -295,7 +295,10 @@ router.get('/overdue', requestValidationMiddleware(), requireScopes([SCOPES.COLL
     try {
       // List open invoices whose due_date < today
       const rows = await repo.listInvoices(tenantId, { status: 'open', limit: 200, offset: 0 });
-      const overdue = rows.filter((i) => i.due_date < now);
+      const overdue = rows.filter((i) => {
+        const d = i.due_date instanceof Date ? i.due_date.toISOString().split('T')[0] : String(i.due_date).split('T')[0];
+        return d < now;
+      });
       return respondSuccess(res, overdue, { count: overdue.length });
     } catch (err) {
       return respondError(res, 500, 'DB_ERROR', err.message);

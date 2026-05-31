@@ -68,8 +68,12 @@ function canTransition(from, to) {
 }
 
 // ── In-memory stores (fallback when DB_DISABLED=true) ─────────────────────────
-let _caseSeq = 1;
-const _memCases       = [];
+let _caseSeq = 3;
+const DEV_TENANT = '00000000-0000-0000-0000-000000000001';
+const _memCases       = [
+  { case_id: 'case-001', tenant_id: DEV_TENANT, subject: 'CRM login issue',       status: 'open',        priority: 'high',   source: 'web_form', category: 'technical', contact_id: '00000000-0000-0000-0000-000000000030', account_id: '00000000-0000-0000-0000-000000000020', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { case_id: 'case-002', tenant_id: DEV_TENANT, subject: 'Invoice discrepancy',   status: 'in_progress', priority: 'medium', source: 'email',    category: 'billing',   contact_id: '00000000-0000-0000-0000-000000000031', account_id: '00000000-0000-0000-0000-000000000021', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+];
 const _memComments    = [];
 const _memEscalations = [];
 const _memQueues      = [

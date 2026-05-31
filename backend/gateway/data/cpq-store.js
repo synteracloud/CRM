@@ -4,6 +4,27 @@ const quotes = new Map();
 const orders = new Map();
 const orderByQuote = new Map();
 
+// Seed quotes for dev tenant
+const _DEV_TENANT = '00000000-0000-0000-0000-000000000001';
+quotes.set('qt-seed-001', {
+  quote_id: 'qt-seed-001', tenant_id: _DEV_TENANT,
+  opportunity_id: '00000000-0000-0000-0000-000000000050',
+  currency: 'PKR', status: 'draft', tax_percent: 0,
+  line_items: [{ product_id: 'prod-001', quantity: 1, list_price: 450000, discount_percent: 0, net_price: 450000 }],
+  subtotal: 450000, discount_total: 0, tax_amount: 0, total: 450000,
+  valid_until: '2026-12-31T23:59:59Z',
+  created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+});
+quotes.set('qt-seed-002', {
+  quote_id: 'qt-seed-002', tenant_id: _DEV_TENANT,
+  opportunity_id: '00000000-0000-0000-0000-000000000051',
+  currency: 'PKR', status: 'sent', tax_percent: 0,
+  line_items: [{ product_id: 'prod-002', quantity: 2, list_price: 125000, discount_percent: 5, net_price: 237500 }],
+  subtotal: 237500, discount_total: 12500, tax_amount: 0, total: 237500,
+  valid_until: '2026-09-30T23:59:59Z',
+  created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+});
+
 function nowIso() {
   return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 }

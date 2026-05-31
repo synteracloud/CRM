@@ -1,8 +1,14 @@
+'use strict';
+
 const express = require('express');
 const { requestValidationMiddleware } = require('../middleware/request-validation');
 const { respondError, respondSuccess } = require('../middleware/response-wrapper');
 const { requireScopes } = require('../middleware/auth-rbac');
 const { isRfc3339Utc } = require('../validators/common');
+const { CollectionsRepository } = require('../db/repositories/collections.repository');
+
+let _collectionsRepo = null;
+try { _collectionsRepo = new CollectionsRepository(); } catch (_e) { /* pg not available */ }
 
 const router = express.Router();
 
@@ -59,8 +65,20 @@ function runPaymentTransaction(work) {
   return result;
 }
 
-router.get('/', requestValidationMiddleware(), requireScopes(['payments.read']), (req, res) => {
+router.get('/', requestValidationMiddleware(), requireScopes(['payments.read']), async (req, res) => {
   const tenantId = req.auth.tenant_id;
+  if (_collectionsRepo) {
+    try {
+      const limit  = Math.min(Number(req.query.page_size || 25), 100);
+      const offset = (Math.max(Number(req.query.page || 1), 1) - 1) * limit;
+      const rows = await _collectionsRepo.listPayments(tenantId, { limit, offset });
+      return respondSuccess(res, rows, {
+        pagination: { page: Number(req.query.page || 1), page_size: limit, total_items: rows.length, total_pages: 1 },
+      });
+    } catch (err) {
+      req.app.locals.logger?.error?.({ event: 'payments.list.error', error: err.message });
+    }
+  }
   const filtered = payments.filter((payment) => payment.tenant_id === tenantId);
   return respondSuccess(res, filtered);
 });

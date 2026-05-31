@@ -113,6 +113,61 @@ const SCOPES = Object.freeze({
   AI_CLV_READ:       'ai.clv.read',          // view CLV estimates (manager+)
   AI_COPILOT:        'ai.copilot',           // copilot suggestions + query (all roles)
   AI_MODELS_READ:    'ai.models.read',       // model registry (manager+)
+
+  // Tasks & Activities
+  TASKS_READ:         'tasks.read',
+  TASKS_CREATE:       'tasks.create',
+  TASKS_UPDATE:       'tasks.update',
+  ACTIVITIES_READ:    'activities.read',
+  ACTIVITIES_CREATE:  'activities.create',
+
+  // Emails
+  EMAILS_READ:  'emails.read',
+  EMAILS_SEND:  'emails.send',
+  EMAILS_TRACK: 'emails.track',
+
+  // Forecasting
+  FORECASTS_READ: 'forecasts.read',
+
+  // Pricing / Price Books
+  PRICING_READ:   'pricing.read',
+  PRICING_CREATE: 'pricing.create',
+
+  // Billing
+  BILLING_READ:   'billing.read',
+  BILLING_CREATE: 'billing.create',
+  BILLING_MANAGE: 'billing.manage',
+
+  // Reports
+  REPORTS_READ:   'reports.read',
+  REPORTS_CREATE: 'reports.create',
+
+  // Integrations
+  INTEGRATIONS_READ:   'integrations.read',
+  INTEGRATIONS_MANAGE: 'integrations.manage',
+
+  // Compliance / Governance / Privacy
+  COMPLIANCE_READ:  'compliance.read',
+  PRIVACY_READ:     'privacy.read',
+  PRIVACY_MANAGE:   'privacy.manage',
+
+  // Marketing
+  MARKETING_READ:   'marketing.read',
+
+  // Audit Logs
+  AUDIT_LOGS_READ:  'audit.logs.read',
+
+  // Users (extended)
+  USERS_MANAGE_ROLES: 'users.manage_roles',
+
+  // Orders (extended)
+  ORDERS_CREATE: 'orders.create',
+
+  // Quotes (extended)
+  QUOTES_ACCEPT: 'quotes.accept',
+
+  // Invoices
+  INVOICES_CREATE: 'invoices.create',
 });
 
 // Role → granted scopes mapping.
@@ -142,6 +197,19 @@ const ROLE_SCOPES = Object.freeze({
     SCOPES.AI_SCORES_READ, SCOPES.AI_SCORES_RECOMPUTE,
     SCOPES.AI_PREDICTIONS_READ, SCOPES.AI_CLV_READ,
     SCOPES.AI_COPILOT, SCOPES.AI_MODELS_READ,
+    SCOPES.TASKS_READ, SCOPES.TASKS_CREATE, SCOPES.TASKS_UPDATE,
+    SCOPES.ACTIVITIES_READ, SCOPES.ACTIVITIES_CREATE,
+    SCOPES.EMAILS_READ, SCOPES.EMAILS_SEND, SCOPES.EMAILS_TRACK,
+    SCOPES.FORECASTS_READ,
+    SCOPES.PRICING_READ, SCOPES.PRICING_CREATE,
+    SCOPES.BILLING_READ, SCOPES.BILLING_CREATE, SCOPES.BILLING_MANAGE,
+    SCOPES.REPORTS_READ, SCOPES.REPORTS_CREATE,
+    SCOPES.INTEGRATIONS_READ, SCOPES.INTEGRATIONS_MANAGE,
+    SCOPES.COMPLIANCE_READ, SCOPES.PRIVACY_READ, SCOPES.PRIVACY_MANAGE,
+    SCOPES.MARKETING_READ,
+    SCOPES.AUDIT_LOGS_READ,
+    SCOPES.USERS_MANAGE_ROLES,
+    SCOPES.ORDERS_CREATE, SCOPES.QUOTES_ACCEPT, SCOPES.INVOICES_CREATE,
   ],
 
   manager: [

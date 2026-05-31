@@ -5,7 +5,7 @@ const { requireScopes } = require('../middleware/auth-rbac');
 
 const router = express.Router();
 
-router.get('/', requestValidationMiddleware(), requireScopes(['billing.read']), (req, res) => {
+router.get('/', requestValidationMiddleware(), requireScopes(['subscriptions.read']), (req, res) => {
   return respondSuccess(
     res,
     [
