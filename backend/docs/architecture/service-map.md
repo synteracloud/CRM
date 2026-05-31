@@ -43,6 +43,7 @@ DO NOT RE-DEFINE: Entity schemas; event payloads.
 | Domain | Billing & Subscription Service | Internal | Manage customer subscriptions, invoice state mirrors, and payment status for CRM context. | Accepted quote events, external billing webhooks, plan changes | Subscription status, invoice summaries, delinquency events | Payment Gateway (External), Organization & Tenant Service |
 | Domain | Territory & Assignment Service | Internal | Compute and apply ownership/territory assignment for leads, accounts, and opportunities. | Routing rules, rep capacity, geo/account attributes | Ownership assignments, reassignment events | Lead Management Service, Account Service, Opportunity Service |
 | Domain | Partner Management Service | Internal | Own partner profiles, relationships, attribution tracking, and commission ledger for referral/resell/channel motions. | Partner CRUD commands, attribution events from Opportunity Service, commission approval actions | Partner records, attribution events, commission ledger events | Opportunity Service; Account Service; Billing & Subscription Service |
+| Domain | AI & Predictive Models Service | Internal | Compute advisory-only lead scores, churn probability, CLV estimates, and copilot suggestions using rule-based v1 models. No auto-action — all outputs carry confidence_score and evidence_anchor. | Lead feature vectors, account risk signals, invoice history, copilot query text | LeadScore records, ChurnPrediction records, CLVEstimate records, CopilotSuggestion records, AI scoring events | Lead Management Service; Account Service; Billing & Subscription Service; Analytics & Reporting Service |
 | Domain | Analytics & Reporting Service | Internal | Produce curated operational/business metrics, dashboards, and scheduled reports (semantic metrics/reporting layer). | Domain events, query requests, reporting definitions | KPI datasets, dashboards, exported reports | Data Warehouse, Event Bus |
 | Platform | Event Bus | Internal | Provide asynchronous event transport with durable pub/sub semantics. | Domain events, integration events | Event streams, delivery acknowledgements, dead-letter events | Schema Registry |
 | Platform | Job Scheduler | Internal | Run delayed, recurring, and retryable background jobs (time-based execution engine only). | Job definitions, cron schedules, retry policies | Job execution events, task completions/failures | Event Bus |
@@ -89,6 +90,7 @@ DO NOT RE-DEFINE: Entity schemas; event payloads.
 | Template versioning/localization/rendering | Template Service |
 | Analytics storage marts and historical models | Data Warehouse |
 | KPI semantics, dashboards, and report delivery | Analytics & Reporting Service |
+| Advisory AI scoring (lead score, churn probability, CLV) and copilot suggestions | AI & Predictive Models Service |
 
 ## Boundary Summary
 

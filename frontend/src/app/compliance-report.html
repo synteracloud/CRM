@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Compliance Report</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Compliance Report</li>
+            </ol>
+          </nav>
+          <button type="button" class="btn btn-sm btn-primary waves-effect" id="complianceExportPdfBtn">
+            <i class="fi fi-rr-download me-1"></i> Export PDF
+          </button>
+        </div>
+
+        <!-- Period selector -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Reporting Period</h6>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-4">
+                    <label class="form-label text-muted small">Start Date</label>
+                    <input type="text" class="form-control" id="compliancePeriodStart" placeholder="YYYY-MM-DD">
+                  </div>
+                  <div class="col-sm-6 col-lg-4">
+                    <label class="form-label text-muted small">End Date</label>
+                    <input type="text" class="form-control" id="compliancePeriodEnd" placeholder="YYYY-MM-DD">
+                  </div>
+                  <div class="col-sm-6 col-lg-4">
+                    <label class="form-label text-muted small">Regulation</label>
+                    <select class="form-select" id="complianceRegulationSelect">
+                      <option value="pdpa">PDPA 2023 (Pakistan)</option>
+                      <option value="gdpr">GDPR (EU applicable)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Period summary KPI strip -->
+        <div class="row mb-3">
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3">
+                  <i class="fi fi-rr-shield-check"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Total Events</h6>
+                <h2 class="mb-1" id="complianceTotalEvents">—</h2>
+                <p class="mb-0 text-muted small">Audit log entries in period</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-action action-border-info">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-info-subtle text-info rounded-3">
+                  <i class="fi fi-rr-eye"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Data Access Events</h6>
+                <h2 class="mb-1" id="complianceAccessEvents">—</h2>
+                <p class="mb-0 text-muted small">Create / login / export actions</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3">
+                  <i class="fi fi-rr-user-shield"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Privileged Access</h6>
+                <h2 class="mb-1" id="compliancePrivilegedEvents">—</h2>
+                <p class="mb-0 text-muted small">Delete / export actions</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="card card-action action-border-danger">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-3">
+                  <i class="fi fi-rr-ban"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>SLA Breaches</h6>
+                <h2 class="mb-1 text-danger" id="complianceSlaBreaches">—</h2>
+                <p class="mb-0 text-muted small">Policy deny events</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance checklist -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">
+                  <i class="fi fi-rr-clipboard-list me-2 text-muted"></i>Compliance Checklist
+                </h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Control</th>
+                        <th class="text-center">Status</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody id="complianceChecklistBody">
+                      <tr>
+                        <td><strong>Data Classification</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>All PII fields identified and tagged</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Consent Management</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>Consent records collected for marketing communications</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Data Retention</strong></td>
+                        <td class="text-center"><span class="badge bg-warning text-dark">REVIEW</span></td>
+                        <td>Retention policy enforced; legacy data purge pending</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Access Control</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>Role-based access control enforced on all entities</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Audit Trail</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>Hash-chain verified for all audit events</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Encryption at Rest</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>All data encrypted with AES-256</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Data Subject Rights</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>Export and deletion workflows operational</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Incident Response</strong></td>
+                        <td class="text-center"><span class="badge bg-success">PASS</span></td>
+                        <td>Incident response plan documented and tested</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report footer -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body py-2 d-flex align-items-center gap-3">
+                <i class="fi fi-rr-time-check text-success fs-5"></i>
+                <div class="small text-muted">
+                  Report generated: <strong id="complianceGeneratedAt">—</strong> ·
+                  Signed and timestamped for regulatory submission. Export logged in audit trail.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'compliance-report';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+  <script src="assets/js/app/crm-compliance-report.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

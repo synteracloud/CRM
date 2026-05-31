@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Consent & Privacy Manager</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item">Settings</li>
+            <li class="breadcrumb-item active">Consent & Privacy</li>
+          </ol></nav>
+          <a href="app/data-governance.html" class="btn btn-sm btn-white waves-effect btn-shadow"><i class="fi fi-rr-arrow-left me-1"></i> Data Governance</a>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-consent-records" type="button">Consent Records</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-dsr" type="button">Data Subject Requests <span class="badge bg-secondary-subtle text-secondary ms-1" id="dsr-badge">0</span></button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-erasure" type="button">Deletion Workflows</button></li>
+                </ul>
+              </div>
+              <div class="tab-content card-body">
+
+                <!-- Consent Records -->
+                <div class="tab-pane fade show active" id="tab-consent-records">
+                  <p class="text-muted small mb-3">Per-contact consent status. <code>SERVICE_COMMUNICATION</code> auto-granted on inbound WhatsApp. <code>MARKETING</code> requires explicit opt-in. Revocation via STOP / بند کرو.</p>
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead class="table-light"><tr>
+                        <th class="text-center">Contact</th>
+                        <th class="text-center">Phone</th>
+                        <th class="text-center">Service Comms</th>
+                        <th class="text-center">Marketing</th>
+                        <th class="text-center">Last Updated</th>
+                      </tr></thead>
+                      <tbody id="consent-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Data Subject Requests -->
+                <div class="tab-pane fade" id="tab-dsr">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="text-muted small mb-0">30-day SLA per request. Status: pending / in_progress / completed / rejected.</p>
+                    <button class="btn btn-primary btn-sm waves-effect"><i class="fi fi-rr-plus me-1"></i> New Request</button>
+                  </div>
+                  <div id="dsr-list"><p class="text-muted small text-center py-3">No pending data subject requests</p></div>
+                </div>
+
+                <!-- Deletion Workflows -->
+                <div class="tab-pane fade" id="tab-erasure">
+                  <div class="alert alert-warning d-flex gap-2 align-items-start py-2 mb-3">
+                    <i class="fi fi-rr-exclamation fs-5 flex-shrink-0 mt-1"></i>
+                    <div class="small"><strong>Right-to-erasure (GDPR/PDPA 2023):</strong> PII fields in Contact, Lead, ActivityEvent, Message, InvoiceSummary, SessionToken are pseudonymised via SHA-256. Immutable audit logs retain structure with PII redacted.</div>
+                  </div>
+                  <div class="row g-3">
+                    <div class="col-sm-6">
+                      <label class="form-label">Contact ID or Email</label>
+                      <input type="text" class="form-control" placeholder="c-001 or email@example.com" id="erasure-contact">
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label">Reason <span class="text-danger">*</span></label>
+                      <select class="form-select" id="erasure-reason">
+                        <option value="">— Select reason —</option>
+                        <option>Customer right-to-erasure request</option>
+                        <option>Data retention policy expiry</option>
+                        <option>Test/demo data cleanup</option>
+                      </select>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-danger btn-sm waves-effect" id="btn-erasure-submit"><i class="fi fi-rr-trash me-1"></i> Submit Erasure Request</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'privacy';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-privacy.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

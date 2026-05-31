@@ -31,49 +31,49 @@ The Owner Dashboard aggregates across four operational domains:
 
 ## 3) Required Panels
 
+**Read model alignment note (updated 2026-05-28):** This document was originally authored using non-canonical read model names. All panel read model references have been updated to use the canonical names from `read-models.md`. The original names (LeadOwnershipReadModel, InvoiceAgingReadModel, etc.) do not exist — they are replaced below with the canonical RM entries.
+
 ### 3.1 Execution Health Panel
 
 Shows whether the team is executing correctly — not just activity volume.
 
-| Metric | Source Read Model | Alert Threshold |
+| Metric | Canonical Read Model (read-models.md) | Alert Threshold |
 |---|---|---|
-| Leads with no owner | `LeadOwnershipReadModel` | > 0 (always alert) |
-| Leads idle > threshold | `LeadIdlenessReadModel` | > threshold per config |
-| Open follow-ups overdue | `FollowUpStatusReadModel` | > 0 |
-| Escalations not acknowledged | `EscalationReadModel` | > 0 |
-| Deals with no activity in 7 days | `DealActivityReadModel` | Configurable |
+| Leads with no owner / idle leads | `LeadFunnelPerformanceRM` — `avg_assignment_latency_hours`, `source_counts` | > 0 (always alert) |
+| Open follow-ups overdue | `ActivityTaskOperationalRM` — `overdue_task_counts` | > 0 |
+| Escalations not acknowledged | `ActivityTaskOperationalRM` — `no_next_action_gaps` | > 0 |
+| Deals with no activity in 7 days | `OpportunityPipelineSnapshotRM` — `aging_buckets` | Configurable |
 
 ### 3.2 Revenue Pipeline Panel
 
-| Metric | Source Read Model |
+| Metric | Canonical Read Model (read-models.md) |
 |---|---|
-| Total pipeline value (all stages) | `OpportunityPipelineReadModel` |
-| Pipeline value by stage | `OpportunityPipelineReadModel` |
-| Booked revenue this period | `RevenueReadModel` |
-| Forecast (weighted by stage probability) | `ForecastReadModel` |
-| Win rate (won / (won + lost)) | `KpiWinRateReadModel` |
+| Total pipeline value (all stages) | `OpportunityPipelineSnapshotRM` — `total_pipeline_amount` (SalesDashboardReadModel shape) |
+| Pipeline value by stage | `OpportunityPipelineSnapshotRM` — `stage_counts`, `weighted_pipeline_amount` |
+| Booked revenue this period | `SubscriptionRevenueRetentionRM` — `monthly_trend.value` |
+| Forecast (weighted by stage probability) | `OpportunityPipelineSnapshotRM` — `weighted_pipeline_amount` |
+| Win rate (won / (won + lost)) | `OpportunityPipelineSnapshotRM` — computed from `won_opportunity_count` / `closed_opportunities` (see `kpi-data-pipelines.md §1.2`) |
 
 ### 3.3 Collections Panel
 
-| Metric | Source Read Model |
+| Metric | Canonical Read Model (read-models.md) |
 |---|---|
-| Total outstanding (PKR) | `InvoiceAgingReadModel` |
-| Overdue 1–7 days | `InvoiceAgingReadModel` |
-| Overdue 8–30 days | `InvoiceAgingReadModel` |
-| Overdue 31–60 days | `InvoiceAgingReadModel` |
-| Overdue 61+ days | `InvoiceAgingReadModel` |
-| Cash collected this period | `CashCollectedReadModel` |
-| DSO (days sales outstanding) | `DSOReadModel` |
-| Payment reminders sent this week | `ReminderActivityReadModel` |
+| Total outstanding (PKR) | `SubscriptionRevenueRetentionRM` — `delinquency_rates`, `collections_performance` |
+| Overdue aging buckets (1–7 / 8–30 / 31–60 / 61+ days) | `SubscriptionRevenueRetentionRM` — collections component. Aging bucket definitions: 1–7 / 8–30 / 31–60 / 61+ days per `collections-engine-model.md` (canonical there). |
+| Cash collected this period | `SubscriptionRevenueRetentionRM` — `monthly_trend` (collections component) |
+| DSO (days sales outstanding) | Computed from `kpi-data-pipelines.md` formulas against Invoice + Payment events |
+| Payment reminders sent this week | Direct from `Invoice.last_reminder_at` + `ReminderEvent` aggregate — not a named RM |
 
 ### 3.4 Employee Activity Panel
 
-| Metric | Source Read Model |
+| Metric | Canonical Read Model (read-models.md) |
 |---|---|
-| Activities logged per rep (today / this week) | `RepActivityReadModel` |
-| Follow-ups completed vs assigned | `RepFollowUpReadModel` |
-| Calls / messages initiated | `RepCommunicationReadModel` |
-| Deals advanced this week | `RepDealProgressReadModel` |
+| Activities logged per rep (today / this week) | `EmployeePerformanceRM` — `P-06 Daily Activity Count` |
+| Follow-ups completed vs assigned | `EmployeePerformanceRM` — `P-02 Follow-up Completion Rate` |
+| Calls / messages initiated | `EmployeePerformanceRM` — `P-01 Leads Captured` + activity breakdown |
+| Deals advanced this week | `EmployeePerformanceRM` — `P-05 Deals Won` + `OpportunityPipelineSnapshotRM` stage transitions |
+
+See `employee-performance.md` for P-01 through P-08 KPI formula definitions.
 
 This panel surfaces execution discipline at individual level. It is not a punitive tool but a signal for coaching.
 

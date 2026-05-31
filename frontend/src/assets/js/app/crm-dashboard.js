@@ -1,5 +1,124 @@
 /* Dashboard — seed-identical chart configs + todolist interactivity */
 
+var _d  = window.CRM_DUMMY  || {};
+var _cfg = window.CRM_CONFIG || {};
+
+/* ── KPI + posture render (works with live or dummy data) ───────────── */
+function _dashKpiRender(leads, followups, invoices) {
+  var today   = new Date().toISOString().slice(0, 10);
+  var weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+  /* Derived from leads */
+  var total     = leads.length;
+  var newWeek   = leads.filter(function (l) { return l.created_at && l.created_at.slice(0, 10) >= weekAgo; }).length;
+  var qualified = leads.filter(function (l) { return ['proposal','negotiation','won'].indexOf(l.stage) !== -1; }).length;
+  var won       = leads.filter(function (l) { return l.stage === 'won'; }).length;
+  var conversion = total > 0 ? (won / total * 100).toFixed(1) + '%' : '0%';
+
+  /* Derived from followups */
+  var overdue    = followups.filter(function (r) { return r.state === 'overdue'; });
+  var unassigned = leads.filter(function (l) { return !l.owner_id; });
+  var escalated  = overdue.filter(function (r) { return r.escalation_level && r.escalation_level !== 'none'; });
+
+  /* Derived from invoices */
+  var overdueInvCount = invoices.filter(function (inv) { return inv.is_overdue; }).length;
+
+  /* KPI h2 values */
+  var el;
+  el = document.getElementById('kpi-dash-contacts');
+  if (el) el.textContent = Number(total).toLocaleString('en-IN');
+
+  el = document.getElementById('kpi-dash-contacts-delta');
+  if (el) el.textContent = '+' + newWeek;
+
+  el = document.getElementById('kpi-dash-conversion');
+  if (el) el.textContent = conversion;
+
+  el = document.getElementById('kpi-dash-conversion-delta');
+  if (el) el.textContent = '—';
+
+  el = document.getElementById('kpi-dash-qualified');
+  if (el) el.textContent = Number(qualified).toLocaleString('en-IN');
+
+  el = document.getElementById('kpi-dash-qualified-delta');
+  if (el) el.textContent = '—';
+
+  el = document.getElementById('kpi-dash-retention');
+  if (el) el.textContent = '—';
+
+  el = document.getElementById('kpi-dash-retention-delta');
+  if (el) el.textContent = '—';
+
+  /* Posture strip */
+  var su = document.getElementById('posture-unassigned');
+  if (su) su.textContent = unassigned.length || overdue.length;
+  var so = document.getElementById('posture-overdue-inv');
+  if (so) so.textContent = overdueInvCount;
+  var se = document.getElementById('posture-escalations');
+  if (se) se.textContent = escalated.length;
+}
+
+/* ── KPI card population ─────────────────────────────────────────────── */
+(function () {
+  if (_cfg && !_cfg.DUMMY_MODE) {
+    Promise.all([
+      window.CRM_API.leads.list({ limit: 200 }).catch(function () { return { data: [] }; }),
+      window.CRM_API.followups.list({ limit: 200 }).catch(function () { return { data: [] }; }),
+      window.CRM_API.collections.list({ limit: 200 }).catch(function () { return { data: [] }; })
+    ]).then(function (results) {
+      _dashKpiRender(results[0].data || [], results[1].data || [], results[2].data || []);
+    });
+  } else {
+    /* Dummy fallback using pre-computed KPI objects where available */
+    var ck = _d.contactsKpi   || {};
+    var lk = _d.leadFunnelKpi || {};
+    var sk = _d.subscriptionKpi || {};
+    var el;
+
+    el = document.getElementById('kpi-dash-contacts');
+    if (el) el.textContent = ck.total ? Number(ck.total).toLocaleString('en-IN') : '—';
+
+    el = document.getElementById('kpi-dash-contacts-delta');
+    if (el && ck.new_this_month !== undefined) el.textContent = '+' + ck.new_this_month;
+
+    el = document.getElementById('kpi-dash-conversion');
+    if (el) el.textContent = lk.conversion_rate || '—';
+
+    el = document.getElementById('kpi-dash-conversion-delta');
+    if (el) el.textContent = lk.growth_delta || '—';
+
+    el = document.getElementById('kpi-dash-qualified');
+    if (el) el.textContent = lk.qualified ? Number(lk.qualified).toLocaleString('en-IN') : '—';
+
+    el = document.getElementById('kpi-dash-qualified-delta');
+    if (el && lk.growth_delta) el.textContent = lk.growth_delta;
+
+    el = document.getElementById('kpi-dash-retention');
+    if (el) el.textContent = (sk && sk.renewal_rate) ? sk.renewal_rate + '%' : '—';
+
+    el = document.getElementById('kpi-dash-retention-delta');
+    if (el) el.textContent = '—';
+
+    /* Posture strip — dummy */
+    if (_d.followups) {
+      var overdue    = (_d.followups.data || []).filter(function (r) { return r.state === 'overdue'; });
+      var unassigned = (_d.leads.data || []).filter(function (l) { return !l.owner_id; });
+      var escalated  = overdue.filter(function (r) { return r.escalation_level && r.escalation_level !== 'none'; });
+      var su = document.getElementById('posture-unassigned');
+      if (su) su.textContent = unassigned.length || overdue.length;
+      var so = document.getElementById('posture-overdue-inv');
+      if (so && _d.collectionsKpi) so.textContent = _d.collectionsKpi.overdue_count;
+      var se = document.getElementById('posture-escalations');
+      if (se) se.textContent = escalated.length;
+    }
+  }
+}());
+
+/* Apply data-pct widths on progress bars */
+document.querySelectorAll('.progress-bar[data-pct]').forEach(function (el) {
+  el.style.width = el.getAttribute('data-pct') + '%';
+});
+
 if ($('#dt_NewCustomers').length) {
 	const dt_NewCustomers = $('#dt_NewCustomers').DataTable({
 		searching: true,
@@ -25,10 +144,10 @@ if ($('#dt_NewCustomers').length) {
 			$('#dt_NewCustomers_Search .dt-search label').remove();
 			$('#dt_NewCustomers_wrapper > .row.mt-2.justify-content-between').first().remove();
 		},
-		columnDefs: [{
-			targets: [0],
-			orderable: false,
-		}]
+		columnDefs: [
+			{ targets: [0], orderable: false },
+			{ targets: '_all', className: 'dt-body-center' }
+		]
 	});
 }
 
@@ -58,10 +177,10 @@ if ($('#dt_CustomerList').length) {
 			$('#dt_CustomerList_Search .dt-search label').remove();
 			$('#dt_CustomerList_wrapper > .row.mt-2.justify-content-between').first().remove();
 		},
-		columnDefs: [{
-			targets: [0],
-			orderable: false,
-		}]
+		columnDefs: [
+			{ targets: [0], orderable: false },
+			{ targets: '_all', className: 'dt-body-center' }
+		]
 	});
 }
 
@@ -170,28 +289,7 @@ if (typeof chartTrafficSources !== undefined && chartTrafficSources !== null) {
 
 
 const chartOrderByTimeConfig = {
-	series: [
-		{
-			name: '8am',
-			data: [10, 12, 8, 15, 5, 7, 9]
-		},
-		{
-			name: '10am',
-			data: [20, 25, 18, 30, 12, 15, 10]
-		},
-		{
-			name: '12pm',
-			data: [30, 28, 22, 50, 25, 20, 18]
-		},
-		{
-			name: '2pm',
-			data: [15, 18, 12, 22, 28, 25, 14]
-		},
-		{
-			name: '4pm',
-			data: [10, 14, 9, 18, 20, 15, 12]
-		}
-	],
+	series: (_d.leadsByHour || []).map(function(h) { return { name: h.hour, data: h.data }; }),
 	chart: {
 		height: 250,
 		type: 'heatmap',
@@ -509,13 +607,12 @@ if (typeof statusChart !== undefined && statusChart !== null) {
 }
 
 
+var _revTrend = (_d.invoiceSummaries && _d.invoiceSummaries.monthly_trend) ? _d.invoiceSummaries.monthly_trend : [];
 const chartRevenueConfig = {
-	series: [
-		{
-			name: 'Revenue',
-			data: [120, 350, 450, 120, 200, 180, 300, 120, 250, 350, 250, 180]
-		}
-	],
+	series: [{
+		name: 'Revenue',
+		data: _revTrend.map(function(m) { return Math.round(m.revenue / 1000); })
+	}],
 	chart: {
 		type: 'bar',
 		height: 280,
@@ -539,7 +636,7 @@ const chartRevenueConfig = {
 		show: true,
 	},
 	xaxis: {
-		categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+		categories: _revTrend.map(function(m) { return m.month; }),
 		axisBorder: {
 			color: 'var(--bs-border-color)'
 		},

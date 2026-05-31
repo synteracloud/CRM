@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Audit Log</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Audit Log</li>
+            </ol>
+          </nav>
+          <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" id="auditExportBtn">
+            <i class="fi fi-rr-download me-1"></i> Export CSV
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body py-3">
+                <div class="row g-3 align-items-end">
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Date Range</label>
+                    <input type="text" class="form-control" id="auditDateRange" placeholder="Select dates">
+                  </div>
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Actor</label>
+                    <select class="form-select" id="auditActorFilter">
+                      <option value="">All Users</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Action</label>
+                    <select class="form-select" id="auditActionFilter">
+                      <option value="">All Actions</option>
+                      <option value="create">Create</option>
+                      <option value="update">Update</option>
+                      <option value="delete">Delete</option>
+                      <option value="login">Login</option>
+                      <option value="export">Export</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Resource</label>
+                    <select class="form-select" id="auditResourceFilter">
+                      <option value="">All Resources</option>
+                      <option value="Lead">Lead</option>
+                      <option value="Contact">Contact</option>
+                      <option value="Opportunity">Opportunity</option>
+                      <option value="Task">Task</option>
+                      <option value="User">User</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Result</label>
+                    <select class="form-select" id="auditResultFilter">
+                      <option value="">All</option>
+                      <option value="allow">Allow</option>
+                      <option value="deny">Deny</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6 col-lg-2">
+                    <label class="form-label text-muted small">Summary</label>
+                    <div class="d-flex gap-2 align-items-center mt-1">
+                      <span class="badge bg-primary-subtle text-primary" id="audit-total-badge">— events</span>
+                      <span class="badge bg-danger-subtle text-danger" id="audit-deny-badge">— denied</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explorer + Evidence split -->
+        <div class="row">
+
+          <!-- Event log -->
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">
+                  <i class="fi fi-rr-lock me-2 text-muted"></i>Immutable Event Log
+                </h6>
+              </div>
+              <div class="card-body p-0 pb-2">
+                <div class="table-responsive">
+                  <table id="dt_AuditLog" class="table table-sm display">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="dt-head-center">Timestamp</th>
+                        <th class="dt-head-center">Actor</th>
+                        <th class="dt-head-center">Action</th>
+                        <th class="dt-head-center">Resource</th>
+                        <th class="dt-head-center">Result</th>
+                        <th class="dt-head-center">Hash</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evidence panel -->
+          <div class="col-lg-4">
+            <div class="card" style="height:auto">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">
+                  <i class="fi fi-rr-shield-check me-2 text-muted"></i>Evidence Panel
+                </h6>
+              </div>
+              <div class="card-body small" style="max-height:520px;overflow-y:auto;">
+                <div id="auditEvidencePanel" class="text-muted">
+                  <div class="text-center py-4">
+                    <i class="fi fi-rr-cursor-finger fs-2 d-block mb-2 opacity-25"></i>
+                    <p class="mb-0 small">Select an event to view hash verification and chain details.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'audit-log';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+  <script src="assets/js/app/crm-audit-log.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

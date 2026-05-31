@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Invoice Detail</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item"><a href="app/invoices.html">Invoices</a></li>
+              <li class="breadcrumb-item active" id="inv-breadcrumb">Invoice Detail</li>
+            </ol>
+          </nav>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary waves-effect"><i class="fi fi-rr-download me-1"></i>Download PDF</button>
+            <button type="button" class="btn btn-sm btn-success waves-effect" id="btn-record-payment"><i class="fi fi-rr-hand-holding-usd me-1"></i>Record Payment</button>
+          </div>
+        </div>
+
+        <!-- Identity strip -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card mb-0" style="height:auto">
+              <div class="card-body py-3">
+                <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg rounded-3 bg-primary-subtle text-primary"><i class="fi fi-rr-file-invoice" style="font-size:1.5rem;"></i></div>
+                    <div>
+                      <h4 class="mb-0 fw-bold" id="inv-number">—</h4>
+                      <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
+                        <span class="text-muted small" id="inv-account-label">—</span>
+                        <span id="inv-status-badge"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <h3 class="fw-bold mb-0 text-danger" id="inv-balance-header">—</h3>
+                    <div class="text-muted small">Balance Due</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="card card-action action-border-primary" style="height:auto">
+              <div class="card-body py-3"><h6 class="text-muted small mb-1">Invoice Total</h6><h3 class="mb-0 fw-bold" id="inv-total">—</h3></div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card card-action action-border-success" style="height:auto">
+              <div class="card-body py-3"><h6 class="text-muted small mb-1">Amount Paid</h6><h3 class="mb-0 fw-bold text-success" id="inv-paid">—</h3></div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card card-action action-border-warning" style="height:auto">
+              <div class="card-body py-3"><h6 class="text-muted small mb-1">Due Date</h6><h3 class="mb-0 fw-bold" id="inv-due">—</h3></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-inv-details" type="button">Details</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-payments" type="button">Payment History</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-proof" type="button">Proof Attachments</button></li>
+                </ul>
+              </div>
+              <div class="tab-content card-body">
+                <div class="tab-pane fade show active" id="tab-inv-details">
+                  <div class="row g-3">
+                    <div class="col-sm-6"><span class="text-muted small d-block">Invoice Number</span><span class="fw-semibold" id="det-inv-number">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Account</span><span id="det-account">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Total Amount</span><span id="det-total">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Amount Paid</span><span id="det-paid">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Balance Due</span><span class="text-danger fw-semibold" id="det-balance">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Due Date</span><span id="det-due">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Status</span><span id="det-status">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Created</span><span id="det-created">—</span></div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="tab-payments">
+                  <div id="payment-history"></div>
+                </div>
+                <div class="tab-pane fade" id="tab-proof">
+                  <div class="alert alert-info small py-2 mb-0"><i class="fi fi-rr-info me-1"></i> Proof attachments are uploaded when recording a payment. No attachments on record yet.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card mb-3" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Reconciliation</h6></div>
+              <div class="card-body py-3">
+                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Status</span><span id="recon-status" class="badge bg-secondary-subtle text-secondary">Pending</span></div>
+                <div class="d-flex justify-content-between small"><span class="text-muted">Linked Opportunity</span><span id="recon-opp" class="fw-semibold">—</span></div>
+              </div>
+            </div>
+            <div class="card" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Quick Links</h6></div>
+              <div class="card-body py-2">
+                <a href="app/accounts-detail.html" class="d-flex align-items-center gap-2 py-1 text-decoration-none small"><i class="fi fi-rr-building text-primary"></i> Account Profile</a>
+                <a href="app/invoices.html" class="d-flex align-items-center gap-2 py-1 text-decoration-none small"><i class="fi fi-rr-file-invoice text-info"></i> Invoice Queue</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'invoices-detail';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-invoices-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

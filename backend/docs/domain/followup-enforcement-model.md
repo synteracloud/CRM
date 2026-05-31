@@ -98,14 +98,16 @@ Auto-task generation is mandatory and not user-disableable for active leads.
 - Reassignment events
 
 ### Task payload (minimum schema)
-- `task_id`
+- `task_id` (⚠️ **Gateway PK note:** the gateway identifies followup tasks by `task_id` at `/api/v1/followups/:task_id`. `domain-model.md` defines the entity PK as `followup_id` with `task_id` as a separate FK to the Task entity. Treat `task_id` as the canonical identifier at the API/frontend layer.)
 - `lead_id`
 - `owner_id`
-- `state` (`Pending|Overdue|Completed`)
+- `state` — canonical values (lowercase): `pending | overdue | completed | snoozed | failed`
 - `due_at`
-- `rule_type` (`TimeBased|ActivityBased|InactivityBased`)
-- `escalation_level` (`None|Reminder|Warning|Escalated|Reassigned`)
-- `generated_by` (`Scheduler|EscalationEngine|SystemRepair`)
+- `rule_type` — canonical values (lowercase): `time_based | activity_based | inactivity_based` (gateway uses PascalCase `TimeBased|ActivityBased|InactivityBased` — see note below)
+- `escalation_level` — canonical values (lowercase): `none | reminder | warning | escalated | reassigned`
+- `generated_by` (lowercase): `scheduler | escalation_engine | system_repair`
+
+**Casing note:** The gateway implementation returns `rule_type` in PascalCase (`TimeBased`, `ActivityBased`, `InactivityBased`). `domain-model.md` defines them in snake_case (`time_based`, `activity_based`, `inactivity_based`). Frontend code must handle both or normalise on read. The canonical spelling for documentation and spec purposes is **snake_case** (aligns with domain-model.md and platform naming conventions).
 
 ---
 

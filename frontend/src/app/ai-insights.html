@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Insights Dashboard — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">AI Insights</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <span class="badge advisory-badge" style="background:#ede9fe;color:#5955D1;border:1px solid #c4b5fd">Advisory Only</span>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- Advisory banner -->
+      <div class="alert d-flex align-items-center gap-2 mb-3" style="background:#ede9fe;border-color:#c4b5fd;color:#5955D1">
+        <i class="fi fi-rr-sparkles fs-5"></i>
+        <span>All predictions are advisory estimates from <code>src/predictive_models/</code>. Confidence scores shown. No auto-action on any insight.</span>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded" style="background:#ede9fe"><i class="fi fi-rr-trophy" style="color:#5955D1"></i></div>
+                <div><h6 class="mb-0 text-muted small">Avg Win Probability</h6><h3 class="mb-0 fw-bold" id="kpi-win">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-danger-subtle"><i class="fi fi-rr-user-minus text-danger"></i></div>
+                <div><h6 class="mb-0 text-muted small">Churn Risk Accounts</h6><h3 class="mb-0 fw-bold" id="kpi-churn">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-success-subtle"><i class="fi fi-rr-money text-success"></i></div>
+                <div><h6 class="mb-0 text-muted small">Avg CLV Estimate</h6><h3 class="mb-0 fw-bold" id="kpi-clv">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-info-subtle"><i class="fi fi-rr-chart-histogram text-info"></i></div>
+                <div><h6 class="mb-0 text-muted small">Model Accuracy</h6><h3 class="mb-0 fw-bold" id="kpi-accuracy">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="row g-3 mb-3">
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Win Probability Distribution</h6></div>
+            <div class="card-body"><div id="chart-win-prob"></div></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Churn Risk by Subscription</h6></div>
+            <div class="card-body"><div id="chart-churn"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLV Estimates -->
+      <div class="row g-3 mb-3">
+        <div class="col-lg-12">
+          <div class="card" style="height:auto">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h6 class="mb-0">CLV Estimates by Account</h6>
+              <span class="badge bg-secondary-subtle text-secondary">Model: lifetime_revenue_v1 · Confidence 74%</span>
+            </div>
+            <div class="card-body">
+              <div id="chart-clv"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Weight Inspector -->
+      <div class="card" style="height:auto">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h6 class="mb-0">Feature Weight Inspector <span class="small text-muted fw-normal">(Lead Scoring Model v1)</span></h6>
+          <span class="badge bg-info-subtle text-info border border-info-subtle">Read-only</span>
+        </div>
+        <div class="card-body">
+          <div class="row g-2" id="feature-weights"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'ai-insights';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="assets/js/app/crm-ai-insights.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

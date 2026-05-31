@@ -35,6 +35,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import json
+from datetime import date, datetime, timezone
 import logging
 import os
 import sys
@@ -117,6 +118,62 @@ from services.core.execution.control_plane import ExecutionControlPlane
 logger = logging.getLogger(__name__)
 
 
+# ── Background daily summary scheduler (MR-004) ───────────────────────────────
+
+async def _daily_summary_scheduler(stop_event: asyncio.Event) -> None:
+    """Background task: sends a WhatsApp daily activity summary to managers.
+
+    Fires once per day at DAILY_SUMMARY_UTC_HOUR (default 03:00 UTC = 08:00 PKT).
+    Uses a date-keyed sentinel to prevent duplicate sends within the same day.
+    Operates in dry-run mode (log only) when DAILY_SUMMARY_ENABLED=false or when
+    the messaging engine is not configured.
+    """
+    from services.summary.daily_summary import send_daily_summary
+
+    ENABLED       = os.getenv("DAILY_SUMMARY_ENABLED", "true").lower() != "false"
+    TARGET_HOUR   = int(os.getenv("DAILY_SUMMARY_UTC_HOUR", "3"))   # 08:00 PKT
+    OWNER_PHONE   = os.getenv("DAILY_SUMMARY_OWNER_PHONE", "")
+    TENANT_ID     = os.getenv("DAILY_SUMMARY_TENANT_ID",  "tenant-dev-001")
+    LANG          = os.getenv("DAILY_SUMMARY_LANG",       "en")
+
+    last_sent_date: date | None = None
+
+    while not stop_event.is_set():
+        await asyncio.sleep(60)
+        if stop_event.is_set():
+            break
+
+        if not ENABLED:
+            continue
+
+        now = datetime.now(timezone.utc)
+        if now.hour != TARGET_HOUR:
+            continue
+        if last_sent_date == now.date():
+            continue  # already sent today
+
+        logger.info("daily_summary_scheduler: firing for tenant=%s date=%s", TENANT_ID, now.date())
+        try:
+            from services.db import _get_engine
+            _, SessionLocal = _get_engine()
+            db = SessionLocal()
+            try:
+                sent = send_daily_summary(
+                    tenant_id=TENANT_ID,
+                    owner_phone=OWNER_PHONE,
+                    lang=LANG,
+                    db=db,
+                    messaging_engine=None,   # no live adapter wired in dev
+                )
+                if sent:
+                    last_sent_date = now.date()
+                    logger.info("daily_summary_scheduler: sent for date=%s", now.date())
+            finally:
+                db.close()
+        except Exception:
+            logger.exception("daily_summary_scheduler: error during send")
+
+
 # ── Background overdue scanner (P2-B) ─────────────────────────────────────────
 
 async def _overdue_scanner(stop_event: asyncio.Event) -> None:
@@ -184,13 +241,22 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     stop_scanner = asyncio.Event()
     scanner_task = asyncio.create_task(_overdue_scanner(stop_scanner))
 
+    # MR-004: start daily WhatsApp summary scheduler
+    stop_summary = asyncio.Event()
+    summary_task = asyncio.create_task(_daily_summary_scheduler(stop_summary))
+
     yield  # ── application runs here ──────────────────────────────────────────
 
-    # Stop background scanner cleanly
+    # Stop background tasks cleanly
     stop_scanner.set()
     scanner_task.cancel()
     with contextlib.suppress(asyncio.CancelledError, Exception):
         await scanner_task
+
+    stop_summary.set()
+    summary_task.cancel()
+    with contextlib.suppress(asyncio.CancelledError, Exception):
+        await summary_task
 
     logger.info("services.app: lifespan shutdown")
     shutdown(stop_fns)

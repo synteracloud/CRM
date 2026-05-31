@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — User Management</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item">Admin</li>
+              <li class="breadcrumb-item active" aria-current="page">User Management</li>
+            </ol>
+          </nav>
+          <button type="button" class="btn btn-primary btn-sm waves-effect" data-bs-toggle="modal" data-bs-target="#modal-invite-user">
+            <i class="fi fi-rr-user-add me-1"></i> Invite User
+          </button>
+        </div>
+
+        <!-- Posture strip: privilege / admin count -->
+        <div class="alert alert-warning d-flex align-items-center gap-2 py-2 mb-3" id="posture-strip" role="alert">
+          <i class="fi fi-rr-shield-exclamation"></i>
+          <span><strong id="posture-admin-count">—</strong> users with admin-level roles — review assignments regularly per security policy.</span>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="row">
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3"><i class="fi fi-rr-users"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Total Users</h6>
+                <h2 class="mb-1" id="kpi-total">—</h2>
+                <p class="mb-0 text-muted">All tenant users</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3"><i class="fi fi-rr-check-circle"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Active</h6>
+                <h2 class="mb-1" id="kpi-active">—</h2>
+                <p class="mb-0 text-muted">Active accounts</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3"><i class="fi fi-rr-employee-man"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Managers</h6>
+                <h2 class="mb-1" id="kpi-managers">—</h2>
+                <p class="mb-0 text-muted">Sales managers</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-danger">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-3"><i class="fi fi-rr-shield-check"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Admin Roles</h6>
+                <h2 class="mb-1" id="kpi-admins">—</h2>
+                <p class="mb-0 text-muted">Privileged access</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Management DataTable -->
+        <div class="row">
+          <div class="col-xxl-12">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">All Users</h6>
+                <div id="dt_UMgmt_Search"></div>
+              </div>
+
+              <!-- Filter chips -->
+              <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center gap-2">
+                <span class="text-muted small me-1">Role:</span>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="umgmt-filter-role" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="sales_rep">Sales Rep</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="sales_manager">Manager</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="admin">Admin</button></li>
+                </ul>
+                <div class="vr mx-1"></div>
+                <span class="text-muted small me-1">Status:</span>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="umgmt-filter-status" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="active">Active</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="suspended">Suspended</button></li>
+                </ul>
+              </div>
+
+              <div class="card-body px-1 pt-2 pb-2">
+                <div class="table-responsive">
+                  <table id="dt_UMgmt" class="table table-sm display table-row-rounded">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="dt-head-center">Name</th>
+                        <th class="dt-head-center">Role</th>
+                        <th class="dt-head-center">Status</th>
+                        <th class="dt-head-center">Joined</th>
+                        <th class="dt-head-center">Last Login</th>
+                        <th class="dt-head-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ── Invite User Modal (2-step wizard) ───────────────────────────── -->
+  <div class="modal fade" id="modal-invite-user" tabindex="-1" aria-labelledby="inviteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inviteUserModalLabel">Invite User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Step 1: Basic info -->
+        <div id="invite-step-1">
+          <div class="modal-body">
+            <p class="text-muted small mb-3">Step 1 of 2 — Enter the new user's details.</p>
+            <div class="mb-3">
+              <label class="form-label">Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="invite-name" placeholder="e.g. Fatima Sheikh">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" id="invite-email" placeholder="user@company.com">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary btn-sm waves-effect" id="btn-invite-next">Next <i class="fi fi-rr-angle-right ms-1"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 2: Role assignment -->
+        <div id="invite-step-2" class="d-none">
+          <div class="modal-body">
+            <p class="text-muted small mb-3">Step 2 of 2 — Assign a role. Role takes effect on first login.</p>
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <p class="form-control-plaintext fw-semibold" id="invite-review-name">—</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <p class="form-control-plaintext text-muted" id="invite-review-email">—</p>
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Role <span class="text-danger">*</span></label>
+              <select class="form-select" id="invite-role">
+                <option value="">— Select role —</option>
+                <option value="sales_rep">Sales Rep</option>
+                <option value="sales_manager">Sales Manager</option>
+                <option value="finance">Finance</option>
+                <option value="tenant_admin">Tenant Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-invite-back"><i class="fi fi-rr-angle-left me-1"></i> Back</button>
+            <button type="button" class="btn btn-primary btn-sm waves-effect" id="btn-invite-send">Send Invite</button>
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div id="invite-success" class="d-none">
+          <div class="modal-body text-center py-4">
+            <div class="avatar avatar-lg bg-success-subtle text-success rounded-circle mb-3 mx-auto">
+              <i class="fi fi-rr-check" style="font-size:1.5rem;"></i>
+            </div>
+            <h6>Invite Sent!</h6>
+            <p class="text-muted small mb-0">An invitation email has been sent to <strong id="invite-sent-email">—</strong>.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Edit Roles Modal ────────────────────────────────────────────── -->
+  <div class="modal fade" id="modal-edit-roles" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Role</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small">Changing role for <strong id="edit-role-user-name">—</strong>. Change takes effect on next login.</p>
+          <select class="form-select" id="edit-role-select">
+            <option value="sales_rep">Sales Rep</option>
+            <option value="sales_manager">Sales Manager</option>
+            <option value="finance">Finance</option>
+            <option value="tenant_admin">Tenant Admin</option>
+          </select>
+          <div class="alert alert-warning small mt-2 py-1 px-2 mb-0" id="edit-role-last-admin-warn" style="display:none;">
+            Cannot remove the last Tenant Admin from this tenant.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm waves-effect" id="btn-save-role">Save Role</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Suspend / Reset confirm modal ──────────────────────────────── -->
+  <div class="modal fade" id="modal-confirm-action" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirm-action-title">Confirm Action</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0" id="confirm-action-body">Are you sure?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm waves-effect" id="btn-confirm-action">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Script block ────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'user-management-crm';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/app/crm-user-management-crm.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

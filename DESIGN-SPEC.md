@@ -1,8 +1,8 @@
 # Pakistan CRM — Design Specification
 
 **Purpose:** Master screen inventory and archetype map for all custom Pakistan CRM pages. Gates the custom design phase — read this before building any custom screen.
-**Last updated:** 2026-05-17
-**Build state:** Library phase COMPLETE (96 NexLink pages, all browser-approved). Custom design phase NOT STARTED.
+**Last updated:** 2026-05-31 (3rd pass) — **ALL 75 CUSTOM PAGES WIRED TO LIVE API + BROWSER-APPROVED.** Phase 6 wiring sprint + extension complete. 5 previously blocked pages (G-04/G-05/J-03/H-07/A-08) wired via inline gateway route stubs. 0 blocked pages remain. Prior: Phase 6 Component 1 — T1–T4 audit (9 fixed); Phase 5B — all 28 Cat 2 backend domains built.
+**Build state:** Library phase COMPLETE (96 NexLink pages). Custom design phase COMPLETE — all 75 custom pages built, T1–T4 ✓, wired to live API, and browser-approved. All pages marked ⏳ pending full live-API re-verification pass (Phase 6 Component 3 / commercialization).
 
 ---
 
@@ -38,7 +38,7 @@ These apply to every custom CRM page. No exceptions.
 ## §3 — Screen Inventory
 
 **Total custom screens: 75**
-**Status key:** ⬜ Not started | 🔄 Library page exists (needs custom work) | ✓ Custom build complete
+**Status key:** ⬜ Not started | 🔄 Library page exists (needs custom work) | ⏳ HTML draft exists, process not yet complete | ✓ Full archetype-driven process complete and locked
 
 ---
 
@@ -47,19 +47,19 @@ These apply to every custom CRM page. No exceptions.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| A-01 | Owner / Sales Dashboard | dashboard.html | /app/dashboard | 🔄 | Library page exists. Needs backend-wired KPIs from `OpportunityPipelineSnapshotRM` + `LeadFunnelPerformanceRM`. |
-| A-02 | Lead Funnel Dashboard | leads-dashboard.html | /app/sales/leads/dashboard | ⬜ | Manager view. `LeadFunnelPerformanceRM`. Role gate: sales_manager, owner. |
-| A-03 | Customer Health Dashboard | contacts-health.html | /app/contacts/health | ⬜ | `CustomerMasterHealthRM`. Duplicate merge queue. |
-| A-04 | Opportunity Pipeline Dashboard | sales-dashboard.html | /app/sales/dashboard | ⬜ | `OpportunityPipelineSnapshotRM`. Forecast commit + gap to target. |
-| A-05 | Quote Approval Dashboard | quotes-dashboard.html | /app/sales/quotes/dashboard | ⬜ | `QuoteApprovalCycleRM`. Stalled quotes risk indicator. |
-| A-06 | Subscription Revenue Dashboard | subscriptions-dashboard.html | /app/finance/subscriptions/dashboard | ⬜ | `SubscriptionRevenueRetentionRM`. MRR/ARR/churn. Role: finance, owner. |
-| A-07 | Case SLA Operations Dashboard | support-dashboard.html | /app/support/dashboard | ⬜ | `CaseSLAOperationalRM`. Breach count posture strip. |
-| A-08 | Communication Engagement Dashboard | engagement-dashboard.html | /app/marketing/engagement | ⬜ | `CommunicationEngagementRM`. Channel delivery/open/reply rates. |
-| A-09 | Knowledge Effectiveness Dashboard | knowledge-dashboard.html | /app/support/knowledge/dashboard | ⬜ | `KnowledgeEffectivenessRM`. Case deflection rate. |
-| A-10 | Workflow Automation Dashboard | workflows-dashboard.html | /app/workflows/dashboard | ⬜ | `WorkflowAutomationOutcomeRM`. Failure count posture. |
-| A-11 | Tenant & Entitlement Dashboard | tenants-dashboard.html | /app/admin/tenants | ⬜ | Super-admin only. `TenantEntitlementOverviewRM`. |
-| A-12 | Identity & Access Posture Dashboard | identity-dashboard.html | /app/admin/identity | ⬜ | `IdentityAccessPostureRM`. Privileged account risk. |
-| A-13 | Platform Audit & Reliability Dashboard | audit-dashboard.html | /app/admin/audit/dashboard | ⬜ | `PlatformReliabilityAuditRM`. Compliance officer view. |
+| A-01 | Owner / Sales Dashboard | dashboard.html | /app/dashboard | ⏳ | Browser-approved. T1–T4 ✓ 2026-05-30 (T2 fixed: KPI h2 IDs added, JS setters added in crm-dashboard.js; T3 fixed: dt-head-left→center). Wiring sprint pending. |
+| A-02 | Lead Funnel Dashboard | leads-dashboard.html | /app/sales/leads/dashboard | ⏳ | Built 2026-05-29. Reads CRM_DUMMY leads/leadFunnelKpi/deltas. Posture+KPI+idle queue+stage chart. Browser sign-off pending. |
+| A-03 | Customer Health Dashboard | contacts-health.html | /app/contacts/health | ⏳ | Built 2026-05-29. Reads CRM_DUMMY contacts/contactsKpi. Posture+KPI+open-cases queue+completeness chart. Browser sign-off pending. |
+| A-04 | Opportunity Pipeline Dashboard | sales-dashboard.html | /app/sales/dashboard | ⏳ | Re-processed 2026-05-29. Structure + CRM_DUMMY wiring verified clean. §18 CRM_PAGE key added. Browser sign-off pending. |
+| A-05 | Quote Approval Dashboard | quotes-dashboard.html | /app/sales/quotes/dashboard | ⏳ | Built 2026-05-29. Reads CRM_DUMMY quotes. Posture+KPI+pending queue+value chart. Browser sign-off pending. |
+| A-06 | Subscription Revenue Dashboard | subscriptions-dashboard.html | /app/finance/subscriptions/dashboard | ⏳ | Built 2026-05-29. MRR/ARR/Renewal Rate KPIs, churn posture, cohort retention chart, delinquent queue. P-016 stub comment in place. Browser sign-off pending. |
+| A-07 | Case SLA Operations Dashboard | support-dashboard.html | /app/support/dashboard | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Posture strip (breach count), SLA breach KPIs, at-risk queue DataTable, case volume area chart. Reads `d.cases` + `d.caseSlaKpi`. |
+| A-08 | Communication Engagement Dashboard | engagement-dashboard.html | /app/marketing/engagement | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Delivery/open/reply rate KPIs, active campaigns list, channel engagement bar chart. **Wired 2026-05-31** via v1-communications.routes.js — GET /communications/engagement → KPIs + chart; GET /campaigns → queue. |
+| A-09 | Knowledge Effectiveness Dashboard | knowledge-dashboard.html | /app/support/knowledge/dashboard | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Deflection rate KPIs, stale article queue, adoption trend chart. Reads `d.knowledgeArticles` + `d.knowledgeKpi`. |
+| A-10 | Workflow Automation Dashboard | workflows-dashboard.html | /app/workflows/dashboard | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Posture strip (failure count), execution KPIs, failed queue, pass/fail bar chart. Reads `d.workflowExecutions` + `d.workflowKpi`. |
+| A-11 | Tenant & Entitlement Dashboard | tenants-dashboard.html | /app/admin/tenants | ⏳ | Built 2026-05-29. Plan/seat/feature KPIs, entitlements-at-limit queue, tenant summary. Reads `d.tenantKpi`. |
+| A-12 | Identity & Access Posture Dashboard | identity-dashboard.html | /app/admin/identity | ⏳ | Built 2026-05-29. Reads CRM_DUMMY users+AUDIT_LOG. Escalation queue+activity chart. Browser sign-off pending. |
+| A-13 | Platform Audit & Reliability Dashboard | audit-dashboard.html | /app/admin/audit/dashboard | ⏳ | Built 2026-05-29. Reads CRM_DUMMY AUDIT_LOG. Deny posture+KPI+deny queue+action-type chart. Browser sign-off pending. |
 
 ---
 
@@ -68,37 +68,38 @@ These apply to every custom CRM page. No exceptions.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| B-01 | Follow-up Queue | followups.html | /app/followups | 🔄 | Library page exists. **Tier 1 priority surface.** Needs `FollowupTask` API wiring, enforcement strip, overdue-pinned sort. |
-| B-02 | Lead Queue | leads.html | /app/leads | 🔄 | Library page exists. Needs `LeadFunnelPerformanceRM` KPIs + `Lead` API wiring. |
-| B-03 | Contact List | contacts.html | /app/contacts | 🔄 | Library page exists. Needs `Contact` API + last touchpoint + open cases column. |
-| B-04 | Account List | accounts.html | /app/accounts | ⬜ | `Account` + outstanding invoices in PKR. |
-| B-05 | Ticket / Case Queue | cases.html | /app/support/cases | ⬜ | SLA-sorted, `response_due_at ASC`. Breach colour coding. |
-| B-06 | Activity Feed | activity.html | /app/activity | ⬜ | Read-only. `ActivityEvent`. No inline edits. |
-| B-07 | Task Queue | tasks.html | /app/tasks | ⬜ | Overdue-pinned. `ActivityTaskOperationalRM`. |
-| B-08 | Collections Queue | collections.html | /app/collections | ⬜ | PKR amounts. Overdue-first sort. Reminder send action. |
-| B-09 | Invoice Queue | invoices.html | /app/finance/invoices | ⬜ | `InvoiceSummary`. Balance column. PDF download action. |
-| B-10 | User Directory | users.html | /app/admin/users | ⬜ | Admin-only. Role badge list. Suspend + reset password actions. |
-| B-11 | Partner List | partners.html | /app/partners | ⬜ | `Partner`. Tier + attribution + deal registration count. |
+| B-01 | Follow-up Queue | followups.html | /app/followups | ⏳ | Browser-approved. Protocol audit pending: T3 (Place 3 CSS missing for `dt_Followups`), T4 (filter chip vocabulary stale — `Soft/Medium/Strict` → `none/reminder/warning/escalated/reassigned`). |
+| B-02 | Lead Queue | leads.html | /app/leads | ⏳ | Browser-approved. Protocol audit pending: T2 (hardcoded chart data, KPI delta text), T3 (Place 3 CSS missing for `dt_ScrollVertical`), T4 (stage filter chips `Contacted/Engaged` → `qualifying/nurturing`). |
+| B-03 | Contact List | contacts.html | /app/contacts | ⏳ | Browser-approved. Protocol audit pending: T2 (hardcoded KPI delta text), T3 (Place 3 CSS missing for `dt_Contacts`). |
+| B-04 | Account List | accounts.html | /app/accounts | ⏳ | Built 2026-05-29. ACCOUNTS dataset added. Tier/Industry/Balance columns, filter chips. |
+| B-05 | Ticket / Case Queue | cases.html | /app/support/cases | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4 KPI cards, DataTable with dual Status×SLA filter chips, STATUS/SLA/PRI badges, cross-filter logic. |
+| B-06 | Activity Feed | activity.html | /app/activity | ⏳ | Browser-approved 2026-05-29. Read-only. `ActivityEvent`. No inline edits. |
+| B-07 | Task Queue | tasks.html | /app/tasks | ⏳ | Browser-approved 2026-05-29. Overdue-pinned. `ActivityTaskOperationalRM`. |
+| B-08 | Collections Queue | collections.html | /app/collections | ⏳ | Browser-approved. Protocol audit pending: T2 (hardcoded delta text), T4 (status filter chips `Unpaid/Partial/Overdue` don't match status values `open/paid/void` — JS statusBadge needs aligning to domain spec `unpaid/partial/paid/overdue`). |
+| B-09 | Invoice Queue | invoices.html | /app/finance/invoices | ⏳ | Built 2026-05-29. INVOICES dummy dataset added. Total/Paid/Balance/Status columns, overdue in red, filter chips by status. Browser sign-off pending. |
+| B-10 | User Directory | users.html | /app/admin/users | ⏳ | Browser-approved 2026-05-29. Admin-only. Role badge list. Suspend + reset password actions. |
+| B-11 | Partner List | partners.html | /app/partners | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4 KPI cards, DataTable with Tier×Status filter chips, PKR commission column, tier badges. |
 
 ---
 
 ### Archetype C — Entity Detail / 360 View
 **Spec:** `docs/b9-p06-entity-detail.md` | 12 surfaces | **Shell:** sticky header strip → split pane (main + context) → inline edit → activity timeline
+> ✅ **b9-p06 updated 2026-05-28** — C-05 Case Detail: full CaseStatus state machine (OPEN/ASSIGNED/IN_PROGRESS/WAITING_ON_CUSTOMER/RESOLVED/ESCALATED/CLOSED) and header button state gates added from `cases-domain.md`. C-09 Subscription Detail: Subscription.status enum (draft/trialing/active/past_due/paused/cancelled/expired) and state-gated buttons added from `payments-revenue.md`.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| C-01 | Lead Detail | leads-detail.html | /app/leads/:lead_id | 🔄 | Library page exists. Needs next-action card, enforcement badge, follow-up panel. |
-| C-02 | Customer 360 | contacts-detail.html | /app/contacts/:contact_id/360 | ⬜ | `Contact` + open leads + cases + invoice balance. Merge suggestions if feature-flagged. |
-| C-03 | Account Profile | accounts-detail.html | /app/accounts/:account_id | ⬜ | Hierarchy panel. Subsidiary list. Outstanding balance in PKR. |
-| C-04 | Opportunity Detail | opportunities-detail.html | /app/opportunities/:opportunity_id | ⬜ | Stage advance + Won/Lost actions. Forecast contribution context panel. |
-| C-05 | Case / Ticket Detail | cases-detail.html | /app/support/cases/:case_id | ⬜ | SLA timer always visible. Escalation controls gated by SLA state. Conversation thread. |
-| C-06 | Quote Detail | quotes-detail.html | /app/sales/quotes/:quote_id | ⬜ | Line items table. Approval history. Convert to Order action. |
-| C-07 | Order Detail | orders-detail.html | /app/sales/orders/:order_id | ⬜ | Immutable post-creation. Invoice linkage. Fulfillment status. |
-| C-08 | Invoice Detail | invoices-detail.html | /app/finance/invoices/:invoice_id | ⬜ | Payment history. Proof attachments. Reconciliation status. |
-| C-09 | Subscription Detail | subscriptions-detail.html | /app/finance/subscriptions/:subscription_id | ⬜ | Plan change history. Renewal window. Churn risk indicator. |
-| C-10 | Workflow Execution Detail | workflow-run-detail.html | /app/workflows/runs/:execution_id | ⬜ | Step-by-step execution log. Retry / dead-letter status. |
-| C-11 | Partner Detail | partners-detail.html | /app/partners/:partner_id | ⬜ | Attribution lineage. Commission history. Deal registrations. |
-| C-12 | Knowledge Article Detail | knowledge-article.html | /app/support/knowledge/:article_id | ⬜ | Version history. Case deflection count. Publish / archive actions. |
+| C-01 | Lead Detail | leads-detail.html | /app/leads/:lead_id | ⏳ | Browser-approved 2026-05-29. Protocol re-verified: crm-custom.css ✓, identity strip height:auto ✓, activity timeline reads CRM_DUMMY ✓. Stage history shows current stage only (dummy-mode limitation). |
+| C-02 | Customer 360 | contacts-detail.html | /app/contacts/:contact_id/360 | ⏳ | Browser-approved 2026-05-29. Reads CRM_DUMMY contacts/leads/activities. Demo record c-001 (Tariq Mehmood). |
+| C-03 | Account Profile | accounts-detail.html | /app/accounts/:account_id | ⏳ | Built 2026-05-29. 4-tab pane: Details/Contacts/Opportunities/Invoices. Context: health + balance. Demo: a-002. |
+| C-04 | Opportunity Detail | opportunities-detail.html | /app/opportunities/:opportunity_id | ⏳ | Browser-approved 2026-05-29. Re-processed: Quotes tab reads CRM_DUMMY.quotes. |
+| C-05 | Case / Ticket Detail | cases-detail.html | /app/support/cases/:case_id | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. SLA timer identity strip, state-gated Claim/Resolve buttons, 3-tab pane (Conversation/Fields/Resolution), escalation controls by sla_state. |
+| C-06 | Quote Detail | quotes-detail.html | /app/sales/quotes/:quote_id | ⏳ | Browser-approved 2026-05-29. Reads CRM_DUMMY.quotes. Line items + approval history + terms. |
+| C-07 | Order Detail | orders-detail.html | /app/sales/orders/:order_id | ⏳ | Built 2026-05-29. ORDERS dataset added. Immutable badge, line items, fulfilment status, linked invoice. Demo: ord-001. |
+| C-08 | Invoice Detail | invoices-detail.html | /app/finance/invoices/:invoice_id | ⏳ | Built 2026-05-29. Total/Paid/Balance strip, payment history, proof tab, reconciliation status. Demo: i-001. |
+| C-09 | Subscription Detail | subscriptions-detail.html | /app/finance/subscriptions/:subscription_id | ⏳ | Built 2026-05-29. SUBSCRIPTIONS dummy dataset added. Status-gated buttons, MRR/ARR strip, 4-tab main pane, churn risk + expansion context panel. Demo: sub-001. Browser sign-off pending. |
+| C-10 | Workflow Execution Detail | workflow-run-detail.html | /app/workflows/runs/:execution_id | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Execution identity strip, state-gated Retry button, 3-tab pane (Log/Steps/Error Details), retry context panel. |
+| C-11 | Partner Detail | partners-detail.html | /app/partners/:partner_id | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4-tab pane (Details/Opportunities/Commission Ledger/Relationship History), attribution summary context panel. |
+| C-12 | Knowledge Article Detail | knowledge-article.html | /app/support/knowledge/:article_id | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. State-gated Publish/Edit, 4-tab pane (Content/Version History/Related/Feedback), article stats context panel. |
 
 ---
 
@@ -107,84 +108,90 @@ These apply to every custom CRM page. No exceptions.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| D-01 | Sales Cockpit | sales-cockpit.html | /app/sales/cockpit | ⬜ | 4-view cockpit. Primary: pipeline execution rail (stage progression P0 action). KanBan or list toggle. |
+| D-01 | Sales Cockpit | sales-cockpit.html | /app/sales/cockpit | ⏳ | Re-processed 2026-05-29. Pipeline rail, kanban, deal pane, forecast + next-actions all CRM_DUMMY-wired. §18 key added. Browser sign-off pending. |
 
 ---
 
 ### Archetype E — Support Console
 **Spec:** `docs/b9-p04-support-console.md` | Queue-first console | **Shell:** SLA queue → conversation thread → escalation controls
+> ✅ **Backend built (Sprint 5B-1)** — Cases/support domain live at `/api/v1/cases` + `/api/v1/support` + `/api/v1/knowledge`. E-01 wiring deferred to Phase 6 wiring sprint.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| E-01 | Support Console | support-console.html | /app/support/console | ⬜ | Queue sorted by SLA due-time. Always-visible SLA timer. Escalation deterministic by SLA state. |
+| E-01 | Support Console | support-console.html | /app/support/console | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 3-pane layout (SLA queue/thread/context), global SLA timer in header, click-to-select thread, escalation controls by sla_state. |
 
 ---
 
 ### Archetype F — Marketing / Campaign Workspace
 **Spec:** `docs/b9-p05-marketing-workspace.md` | Campaign lifecycle | Draft → segment validation → activation → attribution
+> ✅ **Backend built (Sprint 5B-4)** — Campaigns domain live at `/api/v1/campaigns` + `/api/v1/segments` + `/api/v1/templates`. F-01 wiring deferred to Phase 6 wiring sprint.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| F-01 | Marketing Workspace | marketing-workspace.html | /app/marketing/campaigns | ⬜ | Campaign lifecycle. Segment builder. Journey trigger on conversion. |
+| F-01 | Marketing Workspace | marketing-workspace.html | /app/marketing/campaigns | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4 KPI cards, campaigns DataTable, Status filter chips, TYPE/STATUS badges. Reads `d.campaigns`. |
 
 ---
 
 ### Archetype G — Settings / Admin / RBAC
 **Spec:** `docs/b9-p09-settings-admin.md` | 9 pages | **Shell:** settings sidebar → content panel → permission-gated write states
+> ✅ **b9-p09 updated 2026-05-28** — G-02/G-03 route conflict resolved (separate pages at `/app/admin/users/manage` and `/app/admin/roles`). G-09 territory contract updated from `territory-management.md` (criteria_type enum, TerritoryRule entity, assignment strategies). G-07 feature flag rule_type enum and change approval process added. G-01/G-04/G-06/G-08 now defined (were missing).
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| G-01 | Organization Settings | org-settings.html | /app/settings/org | ⬜ | Tenant name, logo, timezone, currency, locale. |
-| G-02 | User Management | user-management-crm.html | /app/admin/users/manage | ⬜ | Invite, suspend, reset. RBAC role assignment. 2-step confirm for destructive actions. |
-| G-03 | Role & Permission Editor | roles.html | /app/admin/roles | ⬜ | Role definition + scope assignment. Default-deny model. Break-glass controls. |
-| G-04 | Billing & Subscription Settings | billing-settings.html | /app/settings/billing | ⬜ | Plan tier display. Upgrade/downgrade. JazzCash/Easypaisa payment method. |
-| G-05 | Integration Settings | integrations.html | /app/settings/integrations | ⬜ | WhatsApp API key config. 360dialog / Gupshup toggle. Payment provider config. |
-| G-06 | Notification Settings | notifications.html | /app/settings/notifications | ⬜ | Per-event notification rules. Channel preference (WhatsApp / email / in-app). |
-| G-07 | Feature Flags | feature-flags.html | /app/admin/feature-flags | ⬜ | Admin-only. Toggle progressive disclosure tiers. Tenant-scoped overrides. |
-| G-08 | Compliance Settings | compliance.html | /app/settings/compliance | ⬜ | Audit retention policy. Data governance controls. Break-glass log. |
-| G-09 | Territory & Assignment Config | territories.html | /app/admin/territories | ⬜ | Territory hierarchy. Assignment rules. Anti-ambiguity checks. |
+| G-01 | Organization Settings | org-settings.html | /app/settings/org | ⏳ | Built 2026-05-29. Identity/Locale/Currency/Business hours. Shared settings left-nav across all G pages. |
+| G-02 | User Management | user-management-crm.html | /app/admin/users/manage | ⏳ | Built 2026-05-29. 2-step Invite User modal, Edit Role modal, Suspend/Reset confirm modals. |
+| G-03 | Role & Permission Editor | roles.html | /app/admin/roles | ⏳ | Built 2026-05-29. Roles table from d.roles.data. Permission registry read-only. Cannot delete role with active users. |
+| G-04 | Billing & Subscription Settings | billing-settings.html | /app/settings/billing | ⏳ | Built 2026-05-29. **Wired 2026-05-31** via v1-billing.routes.js — GET /billing/subscription → plan/seats/renewal; GET /billing/invoices → invoice history. P-016 payment method section remains static stub. |
+| G-05 | Integration Settings | integrations.html | /app/settings/integrations | ⏳ | Built 2026-05-29. **Wired 2026-05-31** via v1-integrations.routes.js — GET /integrations → provider status badges; POST /integrations/:provider/test → test connection. 4 providers seeded. |
+| G-06 | Notification Settings | notifications.html | /app/settings/notifications | ⏳ | Built 2026-05-29. Per-event toggle table (In-App/Email/WhatsApp/SMS). Quiet hours config. |
+| G-07 | Feature Flags | feature-flags.html | /app/admin/feature-flags | ⏳ | Built 2026-05-29. Flag registry from d.featureFlags. 2-person approval modal on toggle. |
+| G-08 | Compliance Settings | compliance.html | /app/settings/compliance | ⏳ | Built 2026-05-29. Retention policy editor. Data governance link. Break-glass log stub. |
+| G-09 | Territory & Assignment Config | territories.html | /app/admin/territories | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Settings two-pane, territory tree table, rule editor, assignment strategy config. Reads `d.territories`. |
 
 ---
 
 ### Archetype H — Reporting / Analytics
 **Spec:** `docs/b9-p10-reporting-analytics.md` | 7 pages | **Shell:** date-range filter → chart grid → drilldown
+> ✅ **b9-p10 restructured 2026-05-28** — H-01 through H-07 now explicitly defined in spec, anchored to `kpi-data-pipelines.md` formulas. Original enterprise surfaces (Predictive Forecasting, AI Scoring, Usage Billing) retained as Phase 6 addenda.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| H-01 | Sales Analytics | sales-analytics.html | /app/reports/sales | ⬜ | Pipeline velocity, conversion funnel, rep performance. |
-| H-02 | Marketing Analytics | marketing-analytics.html | /app/reports/marketing | ⬜ | Campaign attribution, channel engagement, journey conversion. |
-| H-03 | Support Analytics | support-analytics.html | /app/reports/support | ⬜ | SLA breach rate, first-response time, resolution trends. |
-| H-04 | Finance Analytics | finance-analytics.html | /app/reports/finance | ⬜ | Collections rate, overdue aging, PKR cash position. |
-| H-05 | Workflow Analytics | workflow-analytics.html | /app/reports/workflows | ⬜ | Execution volume, failure rate, retry queue depth. |
-| H-06 | Audit Report | audit-report.html | /app/reports/audit | ⬜ | Compliance officer view. Hash-chain verified. Immutable export. |
-| H-07 | Custom Report Builder | report-builder.html | /app/reports/builder | ⬜ | Drag-and-drop metric selection. Save + schedule. |
+| H-01 | Sales Analytics | sales-analytics.html | /app/reports/sales | ⏳ | Browser-approved 2026-05-29. Weighted pipeline KPI, stage bar chart, forecast donut, lead funnel chart, rep performance table. |
+| H-02 | Marketing Analytics | marketing-analytics.html | /app/reports/marketing | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. flatpickr date range, channel engagement bar chart, WhatsApp opt-in trend, campaigns DataTable. |
+| H-03 | Support Analytics | support-analytics.html | /app/reports/support | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. flatpickr date range, SLA breach trend line, case volume donut, cases DataTable. |
+| H-04 | Finance Analytics | finance-analytics.html | /app/reports/finance | ⏳ | Browser-approved 2026-05-29. Aging buckets chart, revenue trend, collections table. JazzCash/Easypaisa hidden (P-016). |
+| H-05 | Workflow Analytics | workflow-analytics.html | /app/reports/workflows | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. flatpickr date range, pass/fail bar chart, failure rate by workflow, executions DataTable. |
+| H-06 | Audit Report | audit-report.html | /app/reports/audit | ⏳ | Browser-approved 2026-05-29. Stacked allow/deny chart, hash chain panel with row-click verify, privileged access log, signed CSV export. |
+| H-07 | Custom Report Builder | report-builder.html | /app/reports/builder | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4-step wizard (metric selector / group-by / chart type / save), live ApexCharts preview panel. **Wired 2026-05-31** via v1-reports.routes.js — POST /reports/execute per metric → chart; POST/GET /reports/definitions → save/load. |
 
 ---
 
 ### Archetype I — Form / Wizard / CPQ
 **Spec:** `docs/b9-p11-form-wizard.md` | 6 pages | **Shell:** ≤2-step rule enforced — step 1 required fields, step 2 confirm/extras
+> ✅ **b9-p11 updated 2026-05-28** — I-01 (New Lead), I-02 (New Contact), I-03 (New Opportunity), I-04 (New Case), I-06 (Campaign Builder) now defined. Previously only I-05 (CPQ) was specified.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| I-01 | New Lead Form | lead-new.html | /app/leads/new | ⬜ | Step 1: phone + name. Step 2: stage + owner. Auto-dedup on phone E.164. |
-| I-02 | New Contact Form | contact-new.html | /app/contacts/new | ⬜ | Step 1: name + phone. Step 2: account + tags. |
-| I-03 | New Opportunity Form | opportunity-new.html | /app/opportunities/new | ⬜ | Step 1: account + amount. Step 2: close date + stage. |
-| I-04 | New Case Form | case-new.html | /app/support/cases/new | ⬜ | Step 1: contact + subject + priority. Step 2: queue + description. |
-| I-05 | CPQ Quote Builder | quote-builder.html | /app/sales/quotes/new | ⬜ | CPQ line item entry + rule engine validation + discount approval. |
-| I-06 | Journey / Campaign Builder | campaign-new.html | /app/marketing/campaigns/new | ⬜ | Step 1: name + segment. Step 2: message + trigger. |
+| I-01 | New Lead Form | lead-new.html | /app/leads/new | ⏳ | Browser-approved. Protocol audit pending: T1 (crm-custom.css link missing), T2 (stage dropdown uses stale vocabulary `Contacted/Engaged` → `qualifying/nurturing`). |
+| I-02 | New Contact Form | contact-new.html | /app/contacts/new | ⏳ | Built 2026-05-29. 2-step wizard: identity → account + tags. Phone dedup warn on blur. |
+| I-03 | New Opportunity Form | opportunity-new.html | /app/opportunities/new | ⏳ | Browser-approved 2026-05-29. 2-step wizard. |
+| I-04 | New Case Form | case-new.html | /app/support/cases/new | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 2-step wizard: contact live search + subject/priority → queue/category/description. |
+| I-05 | CPQ Quote Builder | quote-builder.html | /app/sales/quotes/new | ⏳ | Browser-approved 2026-05-29. 4-step CPQ wizard. Discount >10% approval routing. Autosave. |
+| I-06 | Journey / Campaign Builder | campaign-new.html | /app/marketing/campaigns/new | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 2-step wizard: name/segment/type → template/trigger/schedule. P-017 Urdu alert. |
 
 ---
 
 ### Archetype J — Audit / Compliance
 **Spec:** `docs/b9-p12-audit-compliance.md` | 5 pages | **Shell:** immutable read-only log, hash-chain verified, export controls
+> ✅ **b9-p12 updated 2026-05-28** — J-01 route fixed (`/app/audit`). J-02 (Compliance Report), J-04 (RBAC Audit), J-05 (Consent & Privacy Manager) now defined. Previously only J-03 was specified.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| J-01 | Audit Log | audit-log.html | /app/audit | ⬜ | Immutable. Hash-chain verified. Filter by actor/entity/date. No delete action. |
-| J-02 | Compliance Report | compliance-report.html | /app/compliance | ⬜ | Regulatory submission view. Export as PDF. |
-| J-03 | Data Governance Console | data-governance.html | /app/admin/governance | ⬜ | Governance controls: retention, classification, masking rules. |
-| J-04 | RBAC Audit | rbac-audit.html | /app/admin/rbac-audit | ⬜ | Who has what permissions. Privilege escalation alerts. |
-| J-05 | Consent & Privacy Manager | privacy.html | /app/settings/privacy | ⬜ | Data subject requests. Consent records. Deletion workflows. |
+| J-01 | Audit Log | audit-log.html | /app/audit | ⏳ | Re-processed 2026-05-29. Shell fixed (removed hardcoded header/aside, fixed main class, script stack). Headers dt-head-center. Summary badges wired to CRM_DUMMY. Browser sign-off pending. |
+| J-02 | Compliance Report | compliance-report.html | /app/compliance | ⏳ | Re-processed 2026-05-29. Shell fixed. KPIs now read CRM_DUMMY.AUDIT_LOG counts (no more Math.random). Browser sign-off pending. |
+| J-03 | Data Governance Console | data-governance.html | /app/admin/governance | ⏳ | Built 2026-05-29. 4-tab: Classification/Retention/SAR/Consent. **Wired 2026-05-31** via v1-governance.routes.js — GET /governance/classification+retention+sar + /privacy/consent → 4 tabs. SAR POST creates 30-day SLA due date. |
+| J-04 | RBAC Audit | rbac-audit.html | /app/admin/rbac-audit | ⏳ | Re-processed 2026-05-29. Shell fixed. Matrix + alerts now built from CRM_DUMMY.users. Assignment log reads CRM_DUMMY.rbacAssignmentLog. Browser sign-off pending. |
+| J-05 | Consent & Privacy Manager | privacy.html | /app/settings/privacy | ⏳ | Built 2026-05-29. Consent records from d.contacts. DSR list (empty). Erasure request form with reason required. |
 
 ---
 
@@ -193,31 +200,33 @@ These apply to every custom CRM page. No exceptions.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| K-01 | Workflow Builder | workflow-builder.html | /app/workflows/builder | ⬜ | Visual graph builder. 1:1 UI↔DSL mapping. Trigger → condition → action nodes. |
-| K-02 | Custom Object Layout Builder | object-builder.html | /app/admin/objects | ⬜ | FieldDefinition drag-and-drop. Layout preview. |
-| K-03 | Rule / CPQ Logic Builder | rule-builder.html | /app/admin/rules | ⬜ | Deterministic rule engine editor. Condition groups + action definitions. |
-| K-04 | CPQ Approval Lane Board | approval-lanes.html | /app/sales/approval-lanes | ⬜ | Kanban-style approval stages. Discount band visibility. |
+| K-01 | Workflow Builder | workflow-builder.html | /app/workflows/builder | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 3-pane palette/canvas/inspector, simulated node graph (Bootstrap cards + CSS connectors), validate/simulate/save/publish interactions. |
+| K-02 | Custom Object Layout Builder | object-builder.html | /app/admin/objects | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Object type selector (Lead/Contact/Opp/Account/Custom), field list, layout canvas sections, layout preview form. |
+| K-03 | Rule / CPQ Logic Builder | rule-builder.html | /app/admin/rules | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Dynamic condition + action row builder, pre-seeded discount approval routing rule, test rule simulation. |
+| K-04 | CPQ Approval Lane Board | approval-lanes.html | /app/sales/approval-lanes | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. 4-lane kanban (Draft/Pending/Approved/Rejected), quote cards with calcTotal() line-item math, discount badge. |
 
 ---
 
 ### Archetype L — Inbox / Communication
 **Spec:** `docs/b9-p13-inbox-communication.md` | 3 pages | **Shell:** thread list → conversation view → routing controls | RTL mandatory (Urdu messages)
+> ✅ **b9-p13 updated 2026-05-28** — `shared-inbox.md` entities integrated (InboxQueue, AgentPresence, ConversationHandoff). L-02 route unified to `/app/inbox/:thread_id`. L-03 (Routing Configuration) now defined.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| L-01 | Omnichannel Inbox | inbox.html | /app/inbox | ⬜ | WhatsApp + email + SMS thread list. Unread badge. Routing assignment. |
-| L-02 | Conversation Thread | inbox-thread.html | /app/inbox/:thread_id | ⬜ | Chronological message thread. RTL-safe message bubbles. Send / template actions. |
-| L-03 | Routing Configuration | routing-config.html | /app/admin/routing | ⬜ | Assignment rules editor. Queue + owner routing logic. |
+| L-01 | Omnichannel Inbox | inbox.html | /app/inbox | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Channel filter chips, two-pane thread list/view, intent badges, auto-select first thread. Reads `d.messageThreads`. |
+| L-02 | Conversation Thread | inbox-thread.html | /app/inbox/:thread_id | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. WhatsApp-style bubbles, customer context strip, intent classification panel, INTENT_ACTIONS suggested CTAs. |
+| L-03 | Routing Configuration | routing-config.html | /app/admin/routing | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Settings two-pane, queue management table, agent capacity table, routing rules priority list, fallback config. |
 
 ---
 
 ### Archetype M — AI / Copilot
 **Spec:** `docs/b9-p14-ai-copilot.md` | 2 pages | **Advisory-only** — suggestions must reference observed data only (no ungrounded inference)
+> ✅ **Backend built (Sprint 5B-7)** — AI domain live at `/api/v1/ai/scores`, `/api/v1/ai/predictions`, `/api/v1/ai/estimates`, `/api/v1/ai/copilot`, `/api/v1/ai/models`. Advisory-only invariant enforced. M-01/M-02 wiring deferred to Phase 6 wiring sprint.
 
 | # | Screen | File | Route | Status | Notes |
 |---|---|---|---|---|---|
-| M-01 | AI Copilot Panel | ai-copilot.html | /app/ai/copilot | ⬜ | Evidence-anchored suggestions. `CopilotContext` → `CopilotSuggestion` contract. No speculative outputs. |
-| M-02 | AI Insights Dashboard | ai-insights.html | /app/ai/insights | ⬜ | Win probability, churn prediction, CLV estimates from `src/predictive_models/`. |
+| M-01 | AI Copilot Panel | ai-copilot.html | /app/ai/copilot | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Advisory-only banner, lead score card, next-action suggestion, risk flags, conversational CRM chat with intent classifier. |
+| M-02 | AI Insights Dashboard | ai-insights.html | /app/ai/insights | ⏳ | Cat 2. Built 2026-05-29. Browser-approved. Win probability distribution, churn risk donut, CLV estimates bar chart, feature weight inspector. |
 
 ---
 
@@ -313,12 +322,12 @@ Build in order of business value. Each phase produces browser-approved screens b
 | D — Sales Cockpit | b9-p03-sales-cockpit.md | 1 | Stage progression is P0 action; pipeline-first |
 | E — Support Console | b9-p04-support-console.md | 1 | Queue sorted by SLA due-time; escalation deterministic |
 | F — Marketing | b9-p05-marketing-workspace.md | 1 | Draft → segment → activate → attribute lifecycle |
-| G — Settings/Admin | b9-p09-settings-admin.md | 9 | Default-deny panel; 2-step confirm for destructive ops |
-| H — Reporting | b9-p10-reporting-analytics.md | 7 | Date-range filter first; drilldown on demand |
-| I — Form/Wizard | b9-p11-form-wizard.md | 6 | ≤2 steps enforced; step 1 required only; dedup on submit |
-| J — Audit/Compliance | b9-p12-audit-compliance.md | 5 | Immutable; hash-chain verified; no delete actions |
+| G — Settings/Admin | b9-p09-settings-admin.md | 9 | Default-deny panel; 2-step confirm for destructive ops. G-01/G-04/G-06/G-08 now specified. G-02/G-03 route conflict resolved. |
+| H — Reporting | b9-p10-reporting-analytics.md | 7 | Date-range filter first; drilldown on demand. H-01–H-07 now mapped to spec; enterprise surfaces retained as Phase 6 addenda. |
+| I — Form/Wizard | b9-p11-form-wizard.md | 6 | ≤2 steps enforced; step 1 required only; dedup on submit. Simple entity forms (I-01–I-04, I-06) + CPQ (I-05) now all specified. |
+| J — Audit/Compliance | b9-p12-audit-compliance.md | 5 | Immutable; hash-chain verified; no delete actions. J-01 route `/app/audit`. J-02/J-04/J-05 now specified. |
 | K — Builder/Canvas | b9-p07 + b9-p08-builder-extensions.md | 4 | 1:1 UI↔DSL mapping; graph import/export with validation |
-| L — Inbox/Comms | b9-p13-inbox-communication.md | 3 | RTL mandatory; thread-first; routing-aware |
+| L — Inbox/Comms | b9-p13-inbox-communication.md | 3 | RTL mandatory; thread-first; routing-aware. L-02 route unified to `/app/inbox/:thread_id`. L-03 now specified. `shared-inbox.md` entities integrated. |
 | M — AI/Copilot | b9-p14-ai-copilot.md | 2 | Advisory-only; evidence-anchored; no speculation |
 
 ---

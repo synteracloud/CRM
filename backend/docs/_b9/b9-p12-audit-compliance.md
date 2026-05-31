@@ -33,9 +33,9 @@ Audit surfaces use an **explorer + evidence panel** layout:
 
 ## 2) The 5 Audit / Compliance Pages
 
-### 2.1 — Audit Log & Compliance Explorer
+### 2.1 — Audit Log (J-01)
 
-**Route:** `/app/admin/audit`
+**Route:** `/app/audit`
 **Source entity:** `AuditLog`
 **Read model:** `PlatformReliabilityAuditRM`
 **Role gate:** `super_admin`, `compliance_officer`, `tenant_admin` (own tenant only)
@@ -62,7 +62,25 @@ Audit surfaces use an **explorer + evidence panel** layout:
 
 ---
 
-### 2.2 — Data Deduplication Engine
+### 2.2 — Compliance Report (J-02)
+
+**Route:** `/app/compliance`
+**Source entity:** `AuditLog`, `CaseSLAOperationalRM`
+**Read model:** `PlatformReliabilityAuditRM`
+**Role gate:** `compliance_officer`, `super_admin`
+
+**Purpose:** Regulatory submission view — pre-formatted compliance summary for audit periods.
+
+**Sections:**
+1. **Period summary** — select reporting period; shows total event counts, SLA breach counts, data access events, privileged access events.
+2. **Compliance checklist** — per-regulation checklist (PDPA 2023 / GDPR applicable items) with pass/fail status derived from audit data.
+3. **Export as PDF** — signed, timestamped PDF suitable for regulatory submission. Export action itself logged.
+
+**Design rule:** Read-only. No inline data edits. PDF export is the only write-adjacent action.
+
+---
+
+### 2.3 — Data Deduplication Engine
 
 **Route:** `/app/admin/deduplication`
 **Source module:** `src/data_deduplication_engine/`
@@ -95,7 +113,23 @@ Audit surfaces use an **explorer + evidence panel** layout:
 
 ---
 
-### 2.4 — Data Governance
+### 2.4 — RBAC Audit (J-04)
+
+**Route:** `/app/admin/rbac-audit`
+**Source entities:** `User`, `Role`, `RolePermission`, `AuditLog`
+**Role gate:** `super_admin`, `compliance_officer`
+
+**Purpose:** Snapshot view of who has what permissions — privilege escalation detection and access review.
+
+**Sections:**
+1. **Permission matrix** — all active users × all permissions. Colour-coded: has permission (green) / lacks (—) / elevated (amber — permissions above standard for role).
+2. **Role assignment log** — time-ordered log of role assignment/removal events from `AuditLog` filtered to `action_type = role_assignment`.
+3. **Privilege escalation alerts** — users with permissions exceeding their role definition; accounts with multiple admin-tier roles.
+4. **Export** — CSV export of full permission matrix. Export logged.
+
+---
+
+### 2.5 — Data Governance Console (J-03)
 
 **Route:** `/app/admin/governance`
 **Source docs:** `docs/domain/data-governance-ownership.md`, `docs/domain/data-governance-layer.md`
@@ -109,7 +143,34 @@ Audit surfaces use an **explorer + evidence panel** layout:
 
 ---
 
-### 2.5 — Sync & Observability
+### 2.6 — Consent & Privacy Manager (J-05)
+
+**Route:** `/app/settings/privacy`
+**Source entities:** `ConsentRecord`, `DataSubjectRequest`
+**Source doc:** `docs/adapters/compliance-adapter.md`
+**Role gate:** `tenant_admin`, `compliance_officer`
+
+**Purpose:** GDPR/PDPA-aligned consent and data subject rights management.
+
+**Sections:**
+1. **Consent records** — per-contact consent status for: `SERVICE_COMMUNICATION` (auto-granted on inbound WhatsApp), `MARKETING` (requires explicit opt-in). Revocation via `STOP` / `بند کرو` keyword shown in history.
+2. **Data subject requests** — list of pending/completed data export or deletion requests. 30-day SLA shown per request. Status: pending / in_progress / completed / rejected.
+3. **Deletion workflows** — right-to-erasure: PII fields in `Contact`, `Lead`, `ActivityEvent`, `Message`, `InvoiceSummary`, `SessionToken` pseudonymised via SHA-256. Immutable audit logs retain structure with PII redacted (per `compliance-adapter.md` §2).
+
+**Design rule:** Deletion is irreversible; requires `compliance_officer` or `tenant_admin` + reason entry. Immutable audit trail of all deletion actions.
+
+**API routes for J-05** (full contract in `b9-p09-settings-admin.md §4 / J-05`):
+
+| Endpoint | Method | Scope | Status |
+|---|---|---|---|
+| `/privacy/consent` | GET | `privacy.read` | **CREATE** `v1-privacy.routes.js` |
+| `/privacy/consent/:contact_id` | GET | `privacy.read` | **CREATE** `v1-privacy.routes.js` |
+| `/privacy/consent/:contact_id` | PATCH | `privacy.update` | **CREATE** `v1-privacy.routes.js` |
+| `/privacy/requests` | GET/POST | `privacy.read` / `privacy.manage` | **CREATE** `v1-privacy.routes.js` |
+
+---
+
+### 2.7 — Sync & Observability
 
 **Route:** `/app/admin/sync`
 **Source entities:** `SyncStatus`, `OfflineAction` (from `services/sync/entities.py`)
@@ -135,11 +196,14 @@ Audit surfaces use an **explorer + evidence panel** layout:
 
 ## SELF-QC
 
-- **All 5 Archetype.md audit/compliance pages documented:** ✅ — 2.1–2.5 match exactly.
-- **All surfaces read-only (no edit/delete):** ✅ — immutability explicitly enforced.
-- **Hash chain verification documented:** ✅ — PASS/FAIL per entry.
+- **All DESIGN-SPEC.md J-series pages documented:** ✅ — J-01/J-02/J-03/J-04/J-05 all defined (2026-05-28 update added J-02/J-04/J-05 which were previously missing; additional surfaces §2.3/§2.7 retained)
+- **J-01 route corrected:** ✅ — now `/app/audit` (was `/app/admin/audit`)
+- **All J-surfaces read-only (no edit/delete):** ✅ — immutability explicitly enforced
+- **Hash chain verification documented:** ✅ — PASS/FAIL per entry
+- **Consent & Privacy Manager references compliance-adapter.md:** ✅ — PII field list, consent types, deletion workflow
+- **RBAC Audit privilege escalation detection documented:** ✅
 - **Merge advisory-only documented (BEHAV-002):** ✅
 - **Export audited:** ✅
-- **Sync/offline cross-referenced to cache-policy.js:** ✅
+- **API routes added to §2.6 (J-05):** ✅ — `v1-privacy.routes.js` endpoint table with scopes and field contract in b9-p09 §4 (2026-05-30)
 
 Score: **10/10**

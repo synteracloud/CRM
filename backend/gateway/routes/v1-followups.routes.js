@@ -78,7 +78,7 @@ router.post(
   requestValidationMiddleware(['lead_id', 'owner_id', 'due_at']),
   requireScopes([SCOPES.FOLLOWUPS_CREATE]),
   async (req, res) => {
-    const { lead_id, owner_id, due_at, rule_type, generated_by, is_canonical } = req.body;
+    const { lead_id, owner_id, due_at, rule_type, generated_by, is_canonical, action_type, attempts_count } = req.body;
     const tenantId = req.auth.tenant_id;
 
     if (isNaN(Date.parse(due_at)))
@@ -92,10 +92,12 @@ router.post(
           owner_id,
           state:            'pending',
           due_at,
-          rule_type:        rule_type    || 'TimeBased',
+          rule_type:        rule_type      || 'TimeBased',
           escalation_level: 'none',
-          generated_by:     generated_by || 'Scheduler',
-          is_canonical:     is_canonical !== false,
+          generated_by:     generated_by   || 'Scheduler',
+          is_canonical:     is_canonical   !== false,
+          action_type:      action_type    || null,
+          attempts_count:   attempts_count || 0,
         });
         return res.status(201).json({ data: task, meta: { request_id: req.request_id } });
       } catch (err) {
@@ -111,9 +113,11 @@ router.post(
       owner_id,
       state:            'pending',
       due_at,
-      rule_type:        rule_type || 'TimeBased',
+      rule_type:        rule_type      || 'TimeBased',
       escalation_level: 'none',
       is_canonical:     true,
+      action_type:      action_type    || null,
+      attempts_count:   attempts_count || 0,
       completed_at:     null,
       created_at:       ts,
       updated_at:       ts,

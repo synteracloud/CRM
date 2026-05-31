@@ -81,7 +81,20 @@ The design covers invoice generation, payment tracking, WhatsApp reminders, part
 - `total_amount`
 - `amount_paid`
 - `amount_outstanding`
-- `state` ∈ {`unpaid`, `partial`, `paid`, `overdue`}
+- `state` ∈ {`unpaid`, `partial`, `paid`, `overdue`} — **domain canonical vocabulary**
+
+**⚠️ OPEN CONFLICT — decision required (logged 2026-05-28):** The gateway (`v1-collections.routes.js`) returns `status`: `draft | open | paid | void | uncollectible` — a different vocabulary from the domain spec above. Only `paid` overlaps. This creates a split:
+- Source 3 (this doc): `unpaid/partial/paid/overdue`
+- Backend gateway reality: `draft/open/paid/void/uncollectible`
+- Frontend HTML filter chips (b9-p02 §2.8): `Unpaid/Partial/Overdue/Paid` — aligned to domain spec
+- Frontend JS statusBadge (crm-collections.js): `draft/open/paid/void/uncollectible` — aligned to gateway
+
+**Resolution options:**
+1. Update the gateway to use domain vocabulary (`unpaid/partial/paid/overdue`) — aligns code to spec
+2. Update this spec to match the gateway — aligns spec to existing code
+3. Add a domain→gateway vocabulary mapping table here — documents the split explicitly
+
+**This conflict must be resolved before B-08 collections.html can be legitimately wired to the live backend.** The current page has filter chips that will return 0 results for Unpaid/Partial/Overdue because the gateway does not return those status values.
 - `overdue_days`
 - `reminder_policy_id`
 - `escalation_level`

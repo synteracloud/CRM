@@ -45,7 +45,7 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | ID | Area | Gap | Status |
 |---|---|---|---|
 | C-001 | Tasks | `GET/POST /api/v1/tasks`, `POST /tasks/{id}/reschedule` — routing exists in gateway but Python task service needs verification. Spec: `domain/activities-tasks.md`. | OPEN |
-| C-002 | Cases | `GET/POST /api/v1/cases`, `PATCH /cases/{id}`, `POST /cases/{id}/escalate`, `GET /cases/{id}/sla` — routing exists but Python cases service needs verification. Spec: `domain/cases-domain.md`. | OPEN |
+| C-002 | Cases | `GET/POST /api/v1/cases`, `PATCH /cases/{id}`, `POST /cases/{id}/escalate`, `GET /cases/{id}/sla` — routing exists but Python cases service needs verification. Spec: `domain/cases-domain.md`. | FIXED (Sprint 5B-1 — full Python cases service + ORM models + migration 0004 built 2026-05-30) |
 | C-003 | Opportunities | `GET/POST /api/v1/opportunities`, stage transitions, mark-won/lost — routing exists. Stage probability data may be incomplete. Spec: `domain/opportunities-pipeline.md`. | OPEN |
 | C-004 | Forecasts | `GET /api/v1/forecasts` — routing exists. Revenue rollup + pipeline coverage calculations need verification. Spec: `infrastructure/kpi-data-pipelines.md`. | OPEN |
 | C-005 | Audit query | `GET /api/v1/audits/events`, export, `GET /api/v1/activities/chain-integrity` — routes exist; chain-integrity endpoint duplicates audit-verify purpose. Spec: `infrastructure/observability-audit.md`. | OPEN |
@@ -126,4 +126,4 @@ Routes exist in `gateway/routes/index.js` but Python backing may be incomplete.
 | 2026-05-26 | E-005 | `backend/pyproject.toml` — ruff TID251 banned-api: adapters.pakistan blocked from core imports; per-file-ignores for adapters/pakistan/** and tests/** |
 | 2026-05-26 | E-008 | `tests/integration/test_e2e_lead_to_payment.py` — 10-step E2E integration test; module-scoped SQLite in-memory DB; stub JazzCash adapter; 324/324 tests passing |
 
-*Last updated: 2026-05-26 — 324/324 tests passing; Stage 4 complete — 28/28 gaps fixed (A-006/A-007/C-001–C-005/D-007/D-009/E-001/E-003/E-006/E-007 remain OPEN — Phase 5 backlog).*
+*Last updated: 2026-05-30 — ~500+ tests passing; Stage 4 complete — 28/28 gaps fixed. C-002 (Cases) additionally FIXED by Sprint 5B-1 (2026-05-30). Remaining OPEN items (A-006/A-007/C-001/C-003–C-005/D-007/D-009/E-001/E-003/E-006/E-007) formally deferred to Phase 6.*

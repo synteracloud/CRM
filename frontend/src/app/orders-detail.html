@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Order Detail</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item active" id="ord-breadcrumb">Order Detail</li>
+            </ol>
+          </nav>
+          <a href="app/accounts.html" class="btn btn-sm btn-white waves-effect btn-shadow"><i class="fi fi-rr-arrow-left me-1"></i> Back</a>
+        </div>
+
+        <!-- Identity strip — immutable after activation -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card mb-0" style="height:auto">
+              <div class="card-body py-3">
+                <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg rounded-3 bg-success-subtle text-success"><i class="fi fi-rr-shopping-cart" style="font-size:1.5rem;"></i></div>
+                    <div>
+                      <h4 class="mb-0 fw-bold" id="ord-number">—</h4>
+                      <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
+                        <span class="text-muted small" id="ord-account-label">—</span>
+                        <span id="ord-status-badge"></span>
+                        <span id="ord-fulfillment-badge"></span>
+                        <span class="badge bg-warning-subtle text-warning"><i class="fi fi-rr-lock me-1"></i>Immutable after activation</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 class="fw-bold mb-0 text-end" id="ord-total">—</h3>
+                    <div class="text-muted small text-end">Order Total</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-lines" type="button">Line Items</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-addresses" type="button">Addresses</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-invoices-ord" type="button">Invoices</button></li>
+                </ul>
+              </div>
+              <div class="tab-content card-body">
+                <div class="tab-pane fade show active" id="tab-lines">
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead class="table-light">
+                        <tr>
+                          <th class="text-center">Product</th>
+                          <th class="text-center">Qty</th>
+                          <th class="text-center">Unit Price</th>
+                          <th class="text-center">Discount</th>
+                          <th class="text-center">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody id="ord-line-items"></tbody>
+                    </table>
+                  </div>
+                  <div class="text-end pt-2 border-top">
+                    <span class="text-muted small me-2">Order Total:</span>
+                    <span class="fw-bold" id="ord-total-footer">—</span>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="tab-addresses">
+                  <div class="row g-3">
+                    <div class="col-sm-6"><h6 class="small text-muted">Billing Address</h6><p id="billing-addr" class="mb-0">—</p></div>
+                    <div class="col-sm-6"><h6 class="small text-muted">Shipping Address</h6><p id="shipping-addr" class="mb-0">—</p></div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="tab-invoices-ord">
+                  <div id="ord-invoices-list"><p class="text-muted small text-center py-3">No linked invoices</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card mb-3" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Linked Quote</h6></div>
+              <div class="card-body py-3">
+                <a href="app/quotes-detail.html" class="text-decoration-none d-flex align-items-center gap-2">
+                  <i class="fi fi-rr-document text-primary"></i>
+                  <span class="fw-semibold small" id="ctx-quote">—</span>
+                </a>
+              </div>
+            </div>
+            <div class="card mb-3" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Fulfilment</h6></div>
+              <div class="card-body py-3">
+                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Status</span><span id="ctx-fulfil">—</span></div>
+                <div class="d-flex justify-content-between small"><span class="text-muted">Created</span><span id="ctx-created">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'orders-detail';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-orders-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

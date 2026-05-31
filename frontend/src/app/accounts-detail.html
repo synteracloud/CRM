@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Account Profile</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item"><a href="app/accounts.html">Accounts</a></li>
+              <li class="breadcrumb-item active" id="acc-breadcrumb">Account Profile</li>
+            </ol>
+          </nav>
+          <a href="app/accounts.html" class="btn btn-sm btn-white waves-effect btn-shadow"><i class="fi fi-rr-arrow-left me-1"></i> Back</a>
+        </div>
+
+        <!-- Identity strip -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card mb-0" style="height:auto">
+              <div class="card-body py-3">
+                <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg rounded-3 bg-primary-subtle text-primary"><i class="fi fi-rr-building" style="font-size:1.5rem;"></i></div>
+                    <div>
+                      <h4 class="mb-0 fw-bold" id="acc-name">—</h4>
+                      <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
+                        <span class="text-muted small" id="acc-city-label">—</span>
+                        <span id="acc-tier-badge"></span>
+                        <span id="acc-industry-badge"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <a href="app/opportunity-new.html" class="btn btn-sm btn-outline-primary waves-effect"><i class="fi fi-rr-chart-pie-alt me-1"></i>New Opportunity</a>
+                    <button type="button" class="btn btn-sm btn-white waves-effect btn-shadow"><i class="fi fi-rr-user-add me-1"></i>New Contact</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Split pane -->
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-details" type="button">Details</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-contacts" type="button">Contacts</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-opportunities" type="button">Opportunities</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-invoices" type="button">Invoices</button></li>
+                </ul>
+              </div>
+              <div class="tab-content card-body">
+                <div class="tab-pane fade show active" id="tab-details">
+                  <div class="row g-3">
+                    <div class="col-sm-6"><span class="text-muted small d-block">Account Name</span><span class="fw-semibold" id="det-name">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Industry</span><span id="det-industry">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Tier</span><span id="det-tier">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">City</span><span id="det-city">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Owner</span><span id="det-owner">—</span></div>
+                    <div class="col-sm-6"><span class="text-muted small d-block">Outstanding Balance</span><span id="det-balance" class="text-danger fw-semibold">—</span></div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="tab-contacts">
+                  <div id="contacts-list"></div>
+                </div>
+                <div class="tab-pane fade" id="tab-opportunities">
+                  <div id="opps-list"></div>
+                </div>
+                <div class="tab-pane fade" id="tab-invoices">
+                  <div id="invoices-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Context panel -->
+          <div class="col-lg-4">
+            <div class="card mb-3" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Account Health</h6></div>
+              <div class="card-body py-3">
+                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Open Opportunities</span><span class="fw-semibold" id="ctx-open-opps">—</span></div>
+                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Outstanding Balance</span><span class="fw-semibold text-danger" id="ctx-balance">—</span></div>
+                <div class="d-flex justify-content-between small"><span class="text-muted">Contacts</span><span class="fw-semibold" id="ctx-contacts">—</span></div>
+              </div>
+            </div>
+            <div class="card" style="height:auto">
+              <div class="card-header py-2 border-bottom"><h6 class="card-title mb-0 small">Quick Links</h6></div>
+              <div class="card-body py-2">
+                <a href="app/invoices.html" class="d-flex align-items-center gap-2 py-1 text-decoration-none small"><i class="fi fi-rr-file-invoice text-primary"></i> View Invoices</a>
+                <a href="app/contacts.html" class="d-flex align-items-center gap-2 py-1 text-decoration-none small"><i class="fi fi-rr-users text-info"></i> View Contacts</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'accounts-detail';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-accounts-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

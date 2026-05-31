@@ -72,6 +72,47 @@ const SCOPES = Object.freeze({
   SUBSCRIPTIONS_READ:   'subscriptions.read',
   SUBSCRIPTIONS_CREATE: 'subscriptions.create',
   SUBSCRIPTIONS_UPDATE: 'subscriptions.update',
+
+  // Cases / Support Tickets (Sprint 5B-1)
+  CASES_READ:   'cases.read',
+  CASES_CREATE: 'cases.create',
+  CASES_UPDATE: 'cases.update',
+  CASES_ADMIN:  'cases.admin',   // assign, force-close, escalate, queue management
+
+  // Knowledge Base (Sprint 5B-1)
+  KNOWLEDGE_READ:   'knowledge.read',
+  KNOWLEDGE_MANAGE: 'knowledge.manage',  // create, publish, archive articles
+
+  // Shared Inbox (Sprint 5B-2)
+  INBOX_READ:  'inbox.read',   // view conversations + presence board
+  INBOX_WRITE: 'inbox.write',  // claim, send messages, update own presence
+  INBOX_ADMIN: 'inbox.admin',  // handoff any conversation, manage queues
+
+  // Territories (Sprint 5B-3)
+  TERRITORIES_READ:  'territories.read',   // list + view + performance
+  TERRITORIES_WRITE: 'territories.write',  // manual reassignment
+  TERRITORIES_ADMIN: 'territories.admin',  // create, update, deactivate, manage rules
+
+  // Marketing / Campaigns (Sprint 5B-4)
+  CAMPAIGNS_READ:   'campaigns.read',    // view campaigns, segments, templates
+  CAMPAIGNS_MANAGE: 'campaigns.manage',  // create, edit, activate, pause, cancel
+
+  // Partners (Sprint 5B-5)
+  PARTNERS_READ:   'partners.read',    // view partners, deal registrations
+  PARTNERS_MANAGE: 'partners.manage',  // create, edit, approve/reject deals, approve commission
+  PARTNERS_ADMIN:  'partners.admin',   // pay commission, change tier/status
+
+  // Workflows (Sprint 5B-6)
+  WORKFLOWS_READ:   'workflows.read',    // view definitions, executions, stats
+  WORKFLOWS_MANAGE: 'workflows.manage',  // create, publish, retry, cancel executions
+
+  // AI / Predictive Models (Sprint 5B-7)
+  AI_SCORES_READ:    'ai.scores.read',       // view lead scores
+  AI_SCORES_RECOMPUTE: 'ai.scores.recompute', // force-recompute a score (manager+)
+  AI_PREDICTIONS_READ: 'ai.predictions.read', // view churn predictions (manager+)
+  AI_CLV_READ:       'ai.clv.read',          // view CLV estimates (manager+)
+  AI_COPILOT:        'ai.copilot',           // copilot suggestions + query (all roles)
+  AI_MODELS_READ:    'ai.models.read',       // model registry (manager+)
 });
 
 // Role → granted scopes mapping.
@@ -91,6 +132,16 @@ const ROLE_SCOPES = Object.freeze({
     SCOPES.SYNC_WRITE, SCOPES.SYNC_READ,
     SCOPES.USERS_READ, SCOPES.USERS_CREATE, SCOPES.USERS_UPDATE,
     SCOPES.SUBSCRIPTIONS_READ, SCOPES.SUBSCRIPTIONS_CREATE, SCOPES.SUBSCRIPTIONS_UPDATE,
+    SCOPES.CASES_READ, SCOPES.CASES_CREATE, SCOPES.CASES_UPDATE, SCOPES.CASES_ADMIN,
+    SCOPES.KNOWLEDGE_READ, SCOPES.KNOWLEDGE_MANAGE,
+    SCOPES.INBOX_READ, SCOPES.INBOX_WRITE, SCOPES.INBOX_ADMIN,
+    SCOPES.TERRITORIES_READ, SCOPES.TERRITORIES_WRITE, SCOPES.TERRITORIES_ADMIN,
+    SCOPES.CAMPAIGNS_READ, SCOPES.CAMPAIGNS_MANAGE,
+    SCOPES.PARTNERS_READ, SCOPES.PARTNERS_MANAGE, SCOPES.PARTNERS_ADMIN,
+    SCOPES.WORKFLOWS_READ, SCOPES.WORKFLOWS_MANAGE,
+    SCOPES.AI_SCORES_READ, SCOPES.AI_SCORES_RECOMPUTE,
+    SCOPES.AI_PREDICTIONS_READ, SCOPES.AI_CLV_READ,
+    SCOPES.AI_COPILOT, SCOPES.AI_MODELS_READ,
   ],
 
   manager: [
@@ -104,6 +155,16 @@ const ROLE_SCOPES = Object.freeze({
     SCOPES.QUOTES_READ, SCOPES.QUOTES_CREATE, SCOPES.QUOTES_UPDATE, SCOPES.ORDERS_READ,
     SCOPES.SYNC_WRITE, SCOPES.SYNC_READ,
     SCOPES.USERS_READ,
+    SCOPES.CASES_READ, SCOPES.CASES_CREATE, SCOPES.CASES_UPDATE, SCOPES.CASES_ADMIN,
+    SCOPES.KNOWLEDGE_READ, SCOPES.KNOWLEDGE_MANAGE,
+    SCOPES.INBOX_READ, SCOPES.INBOX_WRITE, SCOPES.INBOX_ADMIN,
+    SCOPES.TERRITORIES_READ, SCOPES.TERRITORIES_WRITE,
+    SCOPES.CAMPAIGNS_READ, SCOPES.CAMPAIGNS_MANAGE,
+    SCOPES.PARTNERS_READ, SCOPES.PARTNERS_MANAGE,
+    SCOPES.WORKFLOWS_READ, SCOPES.WORKFLOWS_MANAGE,
+    SCOPES.AI_SCORES_READ, SCOPES.AI_SCORES_RECOMPUTE,
+    SCOPES.AI_PREDICTIONS_READ, SCOPES.AI_CLV_READ,
+    SCOPES.AI_COPILOT, SCOPES.AI_MODELS_READ,
   ],
 
   agent: [
@@ -116,6 +177,14 @@ const ROLE_SCOPES = Object.freeze({
     SCOPES.ACCOUNTS_READ,
     SCOPES.QUOTES_READ, SCOPES.QUOTES_CREATE,
     SCOPES.SYNC_WRITE, SCOPES.SYNC_READ,
+    SCOPES.CASES_READ, SCOPES.CASES_CREATE, SCOPES.CASES_UPDATE,
+    SCOPES.KNOWLEDGE_READ,
+    SCOPES.INBOX_READ, SCOPES.INBOX_WRITE,
+    SCOPES.TERRITORIES_READ,
+    SCOPES.CAMPAIGNS_READ,
+    SCOPES.PARTNERS_READ,
+    SCOPES.WORKFLOWS_READ,
+    SCOPES.AI_SCORES_READ, SCOPES.AI_COPILOT,
   ],
 
   analyst: [
@@ -129,6 +198,9 @@ const ROLE_SCOPES = Object.freeze({
     SCOPES.QUOTES_READ, SCOPES.ORDERS_READ,
     SCOPES.SUBSCRIPTIONS_READ,
     SCOPES.SYNC_READ,
+    SCOPES.CASES_READ,
+    SCOPES.KNOWLEDGE_READ,
+    SCOPES.AI_SCORES_READ, SCOPES.AI_PREDICTIONS_READ, SCOPES.AI_CLV_READ, SCOPES.AI_MODELS_READ,
   ],
 
   auditor: [

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Campaign — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/marketing-workspace.html">Marketing</a></li>
+            <li class="breadcrumb-item active">New Campaign</li>
+          </ol>
+        </nav>
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+      </div>
+
+      <!-- P-017 Urdu sign-off notice -->
+      <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+        <i class="fi fi-rr-info"></i>
+        <span>P-017: Urdu template strings require native speaker sign-off before customer-facing sends are enabled.</span>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="card" style="height:auto">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2" id="step-1-ind">
+                  <div class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width:32px;height:32px">1</div>
+                  <span class="fw-semibold">Campaign Setup</span>
+                </div>
+                <div class="flex-grow-1 border-top"></div>
+                <div class="d-flex align-items-center gap-2 opacity-50" id="step-2-ind">
+                  <div class="avatar avatar-sm rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold" style="width:32px;height:32px">2</div>
+                  <span class="fw-semibold">Message &amp; Trigger</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 1 -->
+            <div id="step-1" class="card-body">
+              <h6 class="mb-3 text-muted">Step 1 of 2 — Campaign Setup</h6>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Campaign Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="campaign-name" placeholder="e.g. Eid Offer 2026">
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Segment <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fi fi-rr-search"></i></span>
+                  <input type="text" class="form-control" id="segment-search" placeholder="Search segments by contact tags or attributes…">
+                </div>
+                <div class="mt-2 d-flex flex-wrap gap-2" id="segment-suggestions">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" data-seg="All Active Leads">All Active Leads</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" data-seg="SMB Prospects">SMB Prospects</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" data-seg="Idle Contacts 30d">Idle Contacts 30d</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" data-seg="Enterprise Tier">Enterprise Tier</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" data-seg="Karachi Contacts">Karachi Contacts</button>
+                </div>
+                <div id="selected-segment" class="mt-2 small text-muted">No segment selected</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Campaign Type <span class="text-danger">*</span></label>
+                <select class="form-select" id="campaign-type">
+                  <option value="whatsapp_broadcast" selected>WhatsApp Broadcast</option>
+                  <option value="email">Email</option>
+                  <option value="sms">SMS</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-between">
+                <a href="app/marketing-workspace.html" class="btn btn-outline-secondary">Cancel</a>
+                <button class="btn btn-primary" id="btn-next-1">Next <i class="fi fi-rr-arrow-right ms-1"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step-2" class="card-body" style="display:none">
+              <h6 class="mb-3 text-muted">Step 2 of 2 — Message &amp; Trigger</h6>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Message Template</label>
+                <select class="form-select form-select-sm mb-2" id="template-select">
+                  <option value="">Select from approved templates…</option>
+                  <option value="eid_offer">Eid Mubarak Offer (WhatsApp)</option>
+                  <option value="product_launch">Product Launch Announcement</option>
+                  <option value="reengagement">Re-engagement Message</option>
+                  <option value="payment_reminder">Payment Reminder</option>
+                </select>
+                <div class="bg-light border rounded p-3 small" id="template-preview">
+                  Select a template to preview the message.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Trigger Condition</label>
+                <select class="form-select" id="trigger-condition">
+                  <option value="immediate" selected>Immediate (send now)</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="event_based">Event-based</option>
+                </select>
+              </div>
+              <div class="mb-3" id="schedule-field" style="display:none">
+                <label class="form-label fw-semibold">Schedule Date &amp; Time</label>
+                <input type="text" class="form-control" id="schedule-dt" placeholder="Select date and time">
+              </div>
+              <div class="alert alert-warning small p-2">
+                <i class="fi fi-rr-triangle-warning me-1"></i>
+                P-017: Urdu templates require native speaker sign-off. Customer-facing sends blocked until approved.
+              </div>
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" id="btn-back-2"><i class="fi fi-rr-arrow-left me-1"></i>Back</button>
+                <button class="btn btn-success" id="btn-submit">Create Campaign (Draft)</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'campaign-new';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+<script src="assets/js/app/crm-campaign-new.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

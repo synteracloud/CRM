@@ -3,7 +3,15 @@
 ## Scope
 
 Defines the **Inbox / Communication Thread** archetype — 3 named communication surfaces.
-Anchored to `docs/adapters/whatsapp-execution-model.md`, `docs/adapters/pakistan-adapter-architecture.md`, `adapters/pakistan/messaging/`.
+Anchored to `docs/adapters/whatsapp-execution-model.md`, `docs/adapters/pakistan-adapter-architecture.md`, `docs/domain/shared-inbox.md`, `adapters/pakistan/messaging/`.
+
+**Key entities** (from `shared-inbox.md`):
+- `InboxQueue` — tenant-scoped queue (`routing_strategy`: `round_robin` / `least_loaded` / `claim_first` / `skill_based`; `auto_assign` flag; `team_id` scope)
+- `AgentPresence` — per-agent availability (`status`: `online` / `away` / `busy` / `offline`; `max_concurrent` open conversations)
+- `ConversationHandoff` — immutable handoff audit record (from_agent, to_agent, reason, note, triggered_at)
+- `Conversation` extended fields: `assigned_agent_id`, `queue_id`, `assignment_reason`, `handoff_count`
+
+**Assignment invariant** (from `shared-inbox.md §1.2`): Every conversation has exactly one active assigned agent. Reassignment is atomic — old agent loses write access the moment new agent is assigned. Unassigned conversations are visible to all agents in pool and claimable by any.
 
 ---
 
@@ -57,15 +65,24 @@ Communication surfaces use a **thread list + thread view** shell:
 - Intent badge (from `services/conversation/intent.py`): `lead_inquiry` / `payment_query` / `follow_up_response` / `support_request` / `out_of_scope`
 
 **Routing integration:**
-- Inbound messages classified by `ConversationalCRMService` → `RoutingDecision` drives assignment
-- Unrouted threads show in "Unassigned" bucket
-- Manual reassignment via `[Assign]` on thread header
+- Inbound messages classified by `ConversationalCRMService` → `InboxQueue` routing strategy determines assignment
+- Queue routing strategies: `round_robin` / `least_loaded` / `claim_first` (agent-initiated claim) / `skill_based`
+- If `auto_assign = false`: conversation enters pool as unassigned; agents claim via `[Claim]` button
+- If `auto_assign = true`: system assigns to eligible agent per routing strategy
+- Agent eligibility: `AgentPresence.status IN (online, away)` AND `open_conversation_count < max_concurrent`
+- Manual reassignment via `[Reassign]` on thread header — creates `ConversationHandoff` record
+- Unrouted threads show in "Unassigned" bucket; visible to all pool agents and supervisor
 
 ---
 
-### 2.2 — Email Engagement Thread
+### 2.2 — Conversation Thread (L-02)
 
-**Route:** `/app/inbox/email/:thread_id`
+**Route:** `/app/inbox/:thread_id`
+**Channel-specific rendering:** thread view adapts to `MessageThread.channel` — email threads render email-style; WhatsApp threads render bubble-style. Single route, channel-aware component.
+
+#### Email threads (`channel = email`)
+
+**Route pattern:** `/app/inbox/:thread_id` (where `MessageThread.channel = email`)
 **Source entities:** `MessageThread`, `Message` (channel = `email`)
 
 **Purpose:** Email-specific thread view with engagement tracking (open / click / reply).
@@ -85,9 +102,9 @@ Communication surfaces use a **thread list + thread view** shell:
 
 ---
 
-### 2.3 — WhatsApp / Messaging Thread
+#### WhatsApp / Messaging threads (`channel = whatsapp`)
 
-**Route:** `/app/inbox/whatsapp/:thread_id`
+**Route pattern:** `/app/inbox/:thread_id` (where `MessageThread.channel = whatsapp`)
 **Source entities:** `MessageThread`, `Message` (channel = `whatsapp`)
 **Source doc:** `docs/adapters/whatsapp-execution-model.md` §10 (intent detection) + §11 (anti-lead-loss)
 **Adapters:** `adapters/pakistan/messaging/` (dialog360, gupshup, meta, twilio)
@@ -113,6 +130,25 @@ Communication surfaces use a **thread list + thread view** shell:
 
 ---
 
+### 2.3 — Routing Configuration (L-03)
+
+**Route:** `/app/admin/routing`
+**Role gate:** `tenant_admin`, `sales_manager`
+**Source entities:** `InboxQueue`, `AgentPresence`, `Team`
+**Entity contract:** `docs/domain/shared-inbox.md`
+
+**Purpose:** Configure inbox queues, routing strategies, and agent availability defaults.
+
+**Sections:**
+1. **Queue management** — create/edit `InboxQueue` records. Set `routing_strategy`, `auto_assign` flag, `team_id` scope, `skill_tags` for skill-based routing.
+2. **Agent capacity** — per-agent `max_concurrent` open conversations. Default: 10. Override per agent.
+3. **Routing rules** — conditions that route an inbound conversation to a specific queue (e.g., keyword match → billing queue; contact.account_tier = enterprise → VIP queue).
+4. **Fallback config** — what happens when no rule matches: default queue name, default assignment, overflow behaviour.
+
+**Design rule:** Changes to routing config take effect immediately for new conversations; active conversations are not rerouted.
+
+---
+
 ## 3) Interaction Patterns
 
 1. **Unified compose:** Same compose bar pattern across all channels — only template picker and attachment options differ.
@@ -124,13 +160,69 @@ Communication surfaces use a **thread list + thread view** shell:
 
 ---
 
+## 4) API Routes
+
+All endpoints below exist in `backend/gateway/routes/v1-inbox.routes.js`. No backend work needed before building L-01 or L-02.
+
+### L-01 — Omnichannel Inbox (page load)
+
+| Endpoint | Method | Scope | CRM_API call | Notes |
+|---|---|---|---|---|
+| `/inbox/conversations` | GET | `inbox.read` | `CRM_API.inbox.conversations.list({ limit:50 })` | Returns `MessageThread[]` sorted by last_message_at DESC |
+| `/inbox/presence` | GET | `inbox.read` | `CRM_API.inbox.presence.list()` | Returns agent presence status array |
+| `/inbox/queues` | GET | `inbox.read` | `CRM_API.inbox.queues.list()` | Returns queue names for filter chips |
+
+### L-01 — Omnichannel Inbox (user actions)
+
+| Endpoint | Method | Scope | CRM_API call | Trigger |
+|---|---|---|---|---|
+| `/inbox/conversations/:id/claim` | POST | `inbox.write` | `CRM_API.inbox.conversations.claim(id)` | `[Claim]` button on unassigned thread |
+| `/inbox/conversations/:id/handoff` | POST | `inbox.write` | `CRM_API.inbox.conversations.handoff(id, { to_agent_id, reason })` | `[Reassign]` on thread header |
+| `/inbox/conversations/:id/messages` | POST | `inbox.write` | `CRM_API.inbox.conversations.sendMessage(id, text)` | Compose bar `[Send]` |
+| `/inbox/presence` | PATCH | `inbox.write` | `CRM_API.inbox.presence.update(status)` | Presence status toggle |
+
+### L-02 — Conversation Thread (page load)
+
+| Endpoint | Method | Scope | CRM_API call | Notes |
+|---|---|---|---|---|
+| `/inbox/conversations/:id` | GET | `inbox.read` | `CRM_API.inbox.conversations.get(id)` | Thread ID from URL param `?id=` |
+
+### L-02 — Conversation Thread (user actions)
+
+| Endpoint | Method | CRM_API call | Trigger |
+|---|---|---|---|
+| `/inbox/conversations/:id/messages` | POST | `CRM_API.inbox.conversations.sendMessage(id, text)` | Compose bar `[Send]` |
+| `/inbox/conversations/:id/handoff` | POST | `CRM_API.inbox.conversations.handoff(id, body)` | `[Reassign]` / `[Close]` |
+
+### MessageThread entity shape (from `v1-inbox.routes.js`)
+
+| Field | Type | Notes |
+|---|---|---|
+| `conversation_id` | string | PK |
+| `contact_name` | string | Display name |
+| `contact_phone` | string | E.164 |
+| `channel` | enum | `whatsapp` / `email` / `sms` |
+| `status` | enum | `open` / `assigned` / `closed` |
+| `assigned_agent_id` | string? | Null = unassigned |
+| `queue_id` | string? | Routing queue |
+| `last_message_preview` | string | 80-char truncation |
+| `last_message_at` | ISO-8601 | Sort key |
+| `unread_count` | number | Badge |
+| `intent` | string | Classifier output |
+
+---
+
 ## SELF-QC
 
-- **All 3 Archetype.md inbox pages documented:** ✅ — 2.1–2.3 match exactly.
-- **Anti-lead-loss integration documented:** ✅ — banner + one-tap lead creation.
-- **Intent classification integration documented:** ✅ — badge + contextual actions.
-- **RTL layout documented:** ✅ — `isRtl()` applied.
+- **All DESIGN-SPEC.md L-series pages documented:** ✅ — L-01/L-02/L-03 all defined (2026-05-28 update added L-03; L-02 route unified to `/app/inbox/:thread_id`)
+- **shared-inbox.md entities integrated:** ✅ — InboxQueue, AgentPresence, ConversationHandoff, assignment invariants
+- **L-02 route conflict resolved:** ✅ — single `/app/inbox/:thread_id` route with channel-aware rendering (was split into email/:id and whatsapp/:id)
+- **Anti-lead-loss integration documented:** ✅ — banner + one-tap lead creation
+- **Intent classification integration documented:** ✅ — badge + contextual actions
+- **RTL layout documented:** ✅ — `isRtl()` applied
 - **Delivery status icons defined for all channels:** ✅
 - **Offline compose queue cross-referenced:** ✅
+- **API routes section added (§4) for L-01 and L-02:** ✅ — all inbox endpoints documented, all exist in `v1-inbox.routes.js`, no backend work needed (2026-05-30)
+- **MessageThread entity shape documented in §4:** ✅
 
 Score: **10/10**

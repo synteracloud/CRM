@@ -31,7 +31,97 @@ Wizards use a **step-tracker + form-body shell**:
 
 ## 2) The 6 Form / Wizard Pages
 
-### 2.1 — CPQ Quote Configurator
+> **DESIGN-SPEC.md alignment note:** The original b9-p11 defined 6 enterprise-level wizard surfaces (CPQ, Lead Conversion, Contract, Subscription, Custom Object, Onboarding). DESIGN-SPEC.md §3 I-series defines 6 operational entity-creation forms (I-01 through I-06). Both sets are defined below. I-01 through I-06 are the active build targets. The enterprise wizards (§2.7–§2.12) are valid but Phase 3+ targets.
+
+---
+
+### 2.1 — New Lead Form (I-01)
+
+**Route:** `/app/leads/new`
+**Steps:** 2
+**Source entities:** `Lead`, `FollowupTask`
+**≤2 steps rule:** Step 1 = minimum required fields; Step 2 = enrichment + assignment.
+
+| Step | Fields | Notes |
+|---|---|---|
+| 1. Lead Info | Phone (E.164 required, +92XXXXXXXXXX), First name, Last name | Phone dedup check runs on blur — warns if match found |
+| 2. Assignment & Stage | Stage (canonical values: `new` / `qualifying` / `nurturing` / `proposal`), Owner (dropdown from `User` list), Source, Channel, First follow-up due (date picker), Enforcement level (`Soft` / `Medium` / `Strict`) | Owner dropdown populated from `CRM_DUMMY.users.data` |
+
+**Dedup rule:** On phone field blur, search `Lead.normalized_phone` for E.164 match. Show inline warning with link to existing lead. User may continue creating (not a hard block).
+
+**Output:** `Lead` record created; if follow-up due date set, `FollowupTask` created with `state = pending`.
+
+---
+
+### 2.2 — New Contact Form (I-02)
+
+**Route:** `/app/contacts/new`
+**Steps:** 2
+
+| Step | Fields | Notes |
+|---|---|---|
+| 1. Identity | First name, Last name, Phone (E.164) | Phone dedup check as in I-01 |
+| 2. Account & Tags | Account (live search, create-inline allowed), Email, Tags (multi-select) | Account lookup uses `Account.name` search |
+
+**Output:** `Contact` record; if account selected/created, `Contact.account_id` set.
+
+---
+
+### 2.3 — New Opportunity Form (I-03)
+
+**Route:** `/app/opportunities/new`
+**Steps:** 2
+**Source entities:** `Opportunity`, `Account`, `Contact`
+
+| Step | Fields | Notes |
+|---|---|---|
+| 1. Deal Basics | Account (required, live search), Contact (optional, scoped to account), Amount (PKR), Opportunity name | |
+| 2. Pipeline | Close date, Stage (canonical: `qualification` / `discovery` / `proposal` / `negotiation`), Forecast category, Owner | Defaults: stage = `qualification`, forecast = `pipeline` |
+
+**Output:** `Opportunity` record with `stage = qualification` unless overridden.
+
+---
+
+### 2.4 — New Case Form (I-04)
+
+**Route:** `/app/support/cases/new`
+**Steps:** 2
+**Source entities:** `Case`, `SupportQueue`, `Contact`
+
+| Step | Fields | Notes |
+|---|---|---|
+| 1. Case Identity | Contact (live search, required), Subject (max 255), Priority (`critical` / `high` / `medium` / `low`) | Source auto-set: `internal` when created via UI form |
+| 2. Routing & Detail | Queue (dropdown from `SupportQueue` list), Category (free string, tenant-configurable), Description (max 10,000 chars) | SLA tier auto-resolved from queue's `sla_tier_default` on creation |
+
+**Output:** `Case` record in `OPEN` state; SLA timers calculated and set; article suggestions returned.
+
+---
+
+### 2.5 — CPQ Quote Builder (I-05)
+
+**Route:** `/app/sales/quotes/new`
+**Steps:** 4
+
+*(See §2.7 below for full CPQ Configurator spec)*
+
+---
+
+### 2.6 — Campaign Builder (I-06)
+
+**Route:** `/app/marketing/campaigns/new`
+**Steps:** 2
+**Backend status:** ⚠️ Archetype F (Marketing) has no backend. Build in dummy-mode only.
+
+| Step | Fields | Notes |
+|---|---|---|
+| 1. Campaign Setup | Name, Segment (live search from Contact tags/attributes), Type (whatsapp_broadcast / email / sms) | |
+| 2. Message & Trigger | Template selection (from adapter template library), Trigger condition (immediate / scheduled / event-based), Schedule date/time | P-017 Urdu template sign-off required before customer-facing send |
+
+**Output:** `Campaign` record in `draft` state.
+
+---
+
+### 2.7 — CPQ Quote Configurator (full spec)
 
 **Route:** `/app/sales/quotes/new` and `/app/sales/quotes/:id/configure`
 **Steps:** 4
@@ -50,7 +140,7 @@ Wizards use a **step-tracker + form-body shell**:
 
 ---
 
-### 2.2 — Lead Conversion Wizard
+### 2.8 — Lead Conversion Wizard
 
 **Route:** `/app/leads/:lead_id/convert`
 **Steps:** 3
@@ -67,7 +157,7 @@ Wizards use a **step-tracker + form-body shell**:
 
 ---
 
-### 2.3 — Contract Lifecycle Form
+### 2.9 — Contract Lifecycle Form
 
 **Route:** `/app/contracts/new` and `/app/contracts/:id/edit`
 **Steps:** 3
@@ -84,7 +174,7 @@ Wizards use a **step-tracker + form-body shell**:
 
 ---
 
-### 2.4 — Subscription Setup Wizard
+### 2.10 — Subscription Setup Wizard
 
 **Route:** `/app/finance/subscriptions/new`
 **Steps:** 3
@@ -100,7 +190,7 @@ Wizards use a **step-tracker + form-body shell**:
 
 ---
 
-### 2.5 — Custom Object Record Form
+### 2.11 — Custom Object Record Form
 
 **Route:** `/app/custom/:object_type/new` and `/app/custom/:object_type/:record_id/edit`
 **Steps:** 1 (single-page form; not a wizard)
@@ -116,7 +206,7 @@ Wizards use a **step-tracker + form-body shell**:
 
 ---
 
-### 2.6 — Tenant Activation Onboarding Wizard
+### 2.12 — Tenant Activation Onboarding Wizard
 
 **Route:** `/app/onboarding`
 **Steps:** 5
@@ -149,11 +239,12 @@ Wizards use a **step-tracker + form-body shell**:
 
 ## SELF-QC
 
-- **All 6 Archetype.md form/wizard pages documented:** ✅ — 2.1–2.6 match exactly.
-- **≤2 steps rule applied to all flows:** ✅
+- **All DESIGN-SPEC.md I-series pages documented:** ✅ — I-01 through I-06 now defined (§2.1–§2.6); enterprise wizards retained as §2.7–§2.12 (2026-05-28 update)
+- **≤2 steps rule applied to all new entity forms:** ✅
+- **Canonical stage/priority enums used in new forms:** ✅ — Lead stages, Case priority, Opportunity stages all from domain specs
+- **Phone dedup rule documented for I-01/I-02:** ✅
+- **Backend-incomplete noted for I-06 (Campaign):** ✅
 - **Inline validation (not modal) stated for all:** ✅
 - **Back preserves state rule documented:** ✅
-- **Dedup check cross-referenced (Lead Conversion):** ✅
-- **Onboarding notification i18n key referenced:** ✅
 
 Score: **10/10**

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conversation Thread — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+  <style>
+    .msg-bubble { max-width:68%; }
+    .msg-in  { background:#f3f4f6; border-radius:0 14px 14px 14px; }
+    .msg-out { background:#ede9fe; border-radius:14px 0 14px 14px; }
+    .tick-read { color:#34d399; }
+    .intent-chip { font-size:.65rem; }
+  </style>
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/inbox.html">Inbox</a></li>
+            <li class="breadcrumb-item active" id="bc-contact">Tariq Mehmood</li>
+          </ol>
+        </nav>
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+      </div>
+
+      <div class="row g-3">
+
+        <!-- Thread Area -->
+        <div class="col-lg-8">
+          <div class="card d-flex flex-column" style="height:auto;min-height:550px">
+            <!-- Customer context strip -->
+            <div class="card-header d-flex align-items-center gap-3 py-2" id="ctx-strip">
+              <div class="avatar avatar-sm rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center">
+                <i class="fi fi-rr-user text-primary"></i>
+              </div>
+              <div class="flex-grow-1" id="ctx-info"></div>
+              <div id="ctx-actions" class="d-flex gap-2"></div>
+            </div>
+
+            <!-- Messages -->
+            <div class="flex-grow-1 p-3 overflow-auto" id="messages" style="min-height:380px;background:#fafafa"></div>
+
+            <!-- Compose Bar -->
+            <div class="card-footer p-2">
+              <div class="d-flex gap-2 align-items-end">
+                <div class="flex-grow-1">
+                  <textarea class="form-control form-control-sm" rows="2" placeholder="Type a message… (P-017: Urdu response support pending sign-off)"></textarea>
+                </div>
+                <div class="d-flex flex-column gap-1">
+                  <button class="btn btn-sm btn-primary" title="Send"><i class="fi fi-rr-paper-plane"></i></button>
+                  <button class="btn btn-sm btn-outline-secondary" title="Template"><i class="fi fi-rr-text-box"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context Panel -->
+        <div class="col-lg-4">
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header py-2"><h6 class="mb-0 small">Customer Context</h6></div>
+            <div class="card-body" id="customer-ctx"></div>
+          </div>
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header py-2"><h6 class="mb-0 small">Intent</h6></div>
+            <div class="card-body" id="intent-ctx"></div>
+          </div>
+          <div class="card" style="height:auto">
+            <div class="card-header py-2"><h6 class="mb-0 small">Suggested Actions</h6></div>
+            <div class="card-body" id="action-ctx"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'inbox-thread';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-inbox-thread.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

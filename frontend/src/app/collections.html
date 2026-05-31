@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Collections Queue — NexLink CRM</title>
+  <title>Pakistan CRM — Collections Queue</title>
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
   <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
   <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
-  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
   <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css?v=4">
 </head>
 <body>
   <div class="page-layout">
@@ -48,7 +48,7 @@
               <i class="fi fi-rr-triangle-warning fs-5 flex-shrink-0"></i>
               <div>
                 <strong id="overdue-invoice-count">3</strong> invoice<span id="overdue-invoice-plural">s are</span> overdue.
-                Total overdue value: <strong>PKR 2,60,000</strong>.
+                Total overdue value: <strong id="overdue-total-value">PKR 2,60,000</strong>.
                 <a href="javascript:void(0);" class="alert-link ms-2" id="show-overdue-invoices">Show overdue only →</a>
               </div>
             </div>
@@ -67,7 +67,7 @@
               </div>
               <div class="card-body">
                 <h6>Total Outstanding</h6>
-                <h2 class="mb-1 text-danger">PKR 7,23,500</h2>
+                <h2 class="mb-1 text-danger" id="kpi-total-outstanding">PKR 7,23,500</h2>
                 <p class="mb-0 text-muted">Across 9 open invoices</p>
               </div>
             </div>
@@ -97,9 +97,9 @@
               </div>
               <div class="card-body">
                 <h6>Paid This Month</h6>
-                <h2 class="mb-1">PKR 2,45,000</h2>
+                <h2 class="mb-1" id="kpi-paid-this-month">PKR 2,45,000</h2>
                 <p class="mb-0">
-                  <span class="text-success">+12%</span> vs last month
+                  <span id="kpi-paid-delta" class="text-success">—</span> vs last month
                 </p>
               </div>
             </div>
@@ -114,9 +114,9 @@
               </div>
               <div class="card-body">
                 <h6>Collection Rate</h6>
-                <h2 class="mb-1">73%</h2>
+                <h2 class="mb-1" id="kpi-collection-rate">73%</h2>
                 <p class="mb-0">
-                  <span class="text-danger">-3%</span> vs last month
+                  <span id="kpi-rate-delta" class="text-danger">—</span> vs last month
                 </p>
               </div>
             </div>
@@ -137,21 +137,21 @@
               <!-- Filter chips -->
               <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center gap-2">
                 <span class="text-muted small me-1">Status:</span>
-                <div class="btn-group btn-group-sm" id="coll-filter-status" role="group">
-                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Unpaid">Unpaid</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Partial">Partial</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Overdue">Overdue</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Paid">Paid</button>
-                </div>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="coll-filter-status" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Unpaid">Unpaid</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Partial">Partial</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Overdue">Overdue</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Paid">Paid</button></li>
+                </ul>
                 <div class="vr mx-1"></div>
                 <span class="text-muted small me-1">Amount:</span>
-                <div class="btn-group btn-group-sm" id="coll-filter-amount" role="group">
-                  <button type="button" class="btn btn-outline-secondary active" data-min="0" data-max="999999999">All</button>
-                  <button type="button" class="btn btn-outline-secondary" data-min="0" data-max="50000">&lt; 50K</button>
-                  <button type="button" class="btn btn-outline-secondary" data-min="50000" data-max="100000">50K–100K</button>
-                  <button type="button" class="btn btn-outline-secondary" data-min="100000" data-max="999999999">&gt; 100K</button>
-                </div>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="coll-filter-amount" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-min="0" data-max="999999999">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-min="0" data-max="50000">&lt; 50K</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-min="50000" data-max="100000">50K–100K</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-min="100000" data-max="999999999">&gt; 100K</button></li>
+                </ul>
                 <div class="vr mx-1"></div>
                 <button type="button" class="btn btn-sm btn-outline-danger" id="coll-filter-overdue">
                   <i class="fi fi-rr-clock me-1"></i>Overdue Only
@@ -171,272 +171,16 @@
                   <table id="dt_Collections" class="table table-sm display table-row-rounded data-row-checkbox">
                     <thead class="table-light">
                       <tr>
-                        <th>Invoice #</th>
-                        <th>Account / Contact</th>
-                        <th>Amount (PKR)</th>
-                        <th>Status</th>
-                        <th>Due Date</th>
-                        <th>Last Reminder</th>
-                        <th>Action</th>
+                        <th class="dt-head-center">Invoice #</th>
+                        <th class="dt-head-center">Account / Contact</th>
+                        <th class="dt-head-center">Amount (PKR)</th>
+                        <th class="dt-head-center">Status</th>
+                        <th class="dt-head-center">Due Date</th>
+                        <th class="dt-head-center">Last Reminder</th>
+                        <th class="dt-head-center">Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-
-                      <!-- 1 — OVERDUE -->
-                      <tr data-overdue="1" data-amount="45000">
-                        <td class="fw-semibold">INV-001</td>
-                        <td>
-                          <div class="fw-semibold">Ahmed Raza</div>
-                          <div class="text-muted small">Individual · South Pakistan</div>
-                        </td>
-                        <td class="fw-semibold text-danger">PKR 45,000</td>
-                        <td><span class="badge bg-danger-subtle text-danger">Overdue</span></td>
-                        <td data-order="2026-04-15">
-                          <span class="text-danger fw-semibold">Apr 15, 2026</span>
-                        </td>
-                        <td class="text-muted small">3 days ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 2 — OVERDUE -->
-                      <tr data-overdue="1" data-amount="120000">
-                        <td class="fw-semibold">INV-002</td>
-                        <td>
-                          <div class="fw-semibold">Sara Enterprises</div>
-                          <div class="text-muted small">SMB · Tier 2</div>
-                        </td>
-                        <td class="fw-semibold text-danger">PKR 1,20,000</td>
-                        <td><span class="badge bg-danger-subtle text-danger">Overdue</span></td>
-                        <td data-order="2026-04-20">
-                          <span class="text-danger fw-semibold">Apr 20, 2026</span>
-                        </td>
-                        <td class="text-muted small">1 day ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 3 — OVERDUE -->
-                      <tr data-overdue="1" data-amount="95000">
-                        <td class="fw-semibold">INV-005</td>
-                        <td>
-                          <div class="fw-semibold">Hassan Traders</div>
-                          <div class="text-muted small">SMB · Tier 1</div>
-                        </td>
-                        <td class="fw-semibold text-danger">PKR 95,000</td>
-                        <td><span class="badge bg-danger-subtle text-danger">Overdue</span></td>
-                        <td data-order="2026-04-25">
-                          <span class="text-danger fw-semibold">Apr 25, 2026</span>
-                        </td>
-                        <td class="text-muted small">4 hrs ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 4 — Partial -->
-                      <tr data-amount="78500">
-                        <td class="fw-semibold">INV-003</td>
-                        <td>
-                          <div class="fw-semibold">Bilal &amp; Sons</div>
-                          <div class="text-muted small">SMB · Tier 2</div>
-                        </td>
-                        <td class="fw-semibold">PKR 78,500</td>
-                        <td><span class="badge bg-info-subtle text-info">Partial</span></td>
-                        <td data-order="2026-05-05">May 5, 2026</td>
-                        <td class="text-muted small">5 hrs ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 5 — Unpaid -->
-                      <tr data-amount="32000">
-                        <td class="fw-semibold">INV-004</td>
-                        <td>
-                          <div class="fw-semibold">Zainab Trading</div>
-                          <div class="text-muted small">Individual</div>
-                        </td>
-                        <td class="fw-semibold">PKR 32,000</td>
-                        <td><span class="badge bg-warning-subtle text-warning">Unpaid</span></td>
-                        <td data-order="2026-05-10">May 10, 2026</td>
-                        <td class="text-muted small">2 days ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 6 — Unpaid -->
-                      <tr data-amount="55000">
-                        <td class="fw-semibold">INV-006</td>
-                        <td>
-                          <div class="fw-semibold">Nadia Enterprises</div>
-                          <div class="text-muted small">SMB · Tier 1</div>
-                        </td>
-                        <td class="fw-semibold">PKR 55,000</td>
-                        <td><span class="badge bg-warning-subtle text-warning">Unpaid</span></td>
-                        <td data-order="2026-05-15">May 15, 2026</td>
-                        <td class="text-muted small">Yesterday</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 7 — Partial -->
-                      <tr data-amount="88000">
-                        <td class="fw-semibold">INV-007</td>
-                        <td>
-                          <div class="fw-semibold">Usman Corp</div>
-                          <div class="text-muted small">Enterprise · Tier 1</div>
-                        </td>
-                        <td class="fw-semibold">PKR 88,000</td>
-                        <td><span class="badge bg-info-subtle text-info">Partial</span></td>
-                        <td data-order="2026-05-18">May 18, 2026</td>
-                        <td class="text-muted small">6 hrs ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 8 — Unpaid -->
-                      <tr data-amount="42000">
-                        <td class="fw-semibold">INV-008</td>
-                        <td>
-                          <div class="fw-semibold">Fatima Industries</div>
-                          <div class="text-muted small">SMB · Tier 2</div>
-                        </td>
-                        <td class="fw-semibold">PKR 42,000</td>
-                        <td><span class="badge bg-warning-subtle text-warning">Unpaid</span></td>
-                        <td data-order="2026-05-20">May 20, 2026</td>
-                        <td class="text-muted small">2 hrs ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 9 — Unpaid -->
-                      <tr data-amount="165000">
-                        <td class="fw-semibold">INV-009</td>
-                        <td>
-                          <div class="fw-semibold">Kamran Ltd</div>
-                          <div class="text-muted small">Enterprise · Tier 1</div>
-                        </td>
-                        <td class="fw-semibold">PKR 1,65,000</td>
-                        <td><span class="badge bg-warning-subtle text-warning">Unpaid</span></td>
-                        <td data-order="2026-05-22">May 22, 2026</td>
-                        <td class="text-muted small">30 min ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-dollar me-2 text-success"></i>Record Payment</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-megaphone me-2 text-warning"></i>Send Reminder</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-shield-exclamation me-2 text-danger"></i>Escalate</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 10 — Paid -->
-                      <tr data-amount="28500">
-                        <td class="fw-semibold">INV-010</td>
-                        <td>
-                          <div class="fw-semibold">Iqra Group</div>
-                          <div class="text-muted small">SMB · Tier 2</div>
-                        </td>
-                        <td class="fw-semibold text-success">PKR 28,500</td>
-                        <td><span class="badge bg-success-subtle text-success">Paid</span></td>
-                        <td data-order="2026-05-15">May 15, 2026</td>
-                        <td class="text-muted small">3 days ago</td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-eye me-2"></i>View Receipt</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                    </tbody>
+                    <tbody></tbody>
                   </table>
                 </div>
               </div>
@@ -449,22 +193,6 @@
 
     </main>
 
-    <footer class="footer-wrapper bg-body">
-      <div class="container-fluid">
-        <div class="row g-2">
-          <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
-          </div>
-          <div class="col-lg-6 col-md-5">
-            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
-              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <!-- ── Script block ─────────────────────────────────────────────────── -->
@@ -478,5 +206,7 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/libs/datatables/datatables.min.js"></script>
   <script src="assets/js/app/crm-collections.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
 </body>
 </html>
+

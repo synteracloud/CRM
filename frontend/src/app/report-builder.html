@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Custom Report Builder — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">Custom Report Builder</li>
+          </ol>
+        </nav>
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+      </div>
+
+      <div class="row g-3">
+        <!-- Builder Form -->
+        <div class="col-lg-4">
+
+          <!-- Step 1: Metric Selector -->
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header">
+              <h6 class="mb-0"><span class="badge bg-primary me-2">1</span>Select Metrics</h6>
+            </div>
+            <div class="card-body">
+              <p class="small text-muted">Choose from canonical KPIs and read model fields.</p>
+              <div class="d-flex flex-wrap gap-2" id="metric-chips">
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="weighted_pipeline" checked> Weighted Pipeline
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="lead_conversion_rate"> Lead Conversion Rate
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="collection_rate" checked> Collection Rate
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="sla_breach_rate"> SLA Breach Rate
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="mrr"> MRR
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="avg_deal_cycle"> Avg Deal Cycle
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="follow_up_completion"> Follow-up Completion
+                </label>
+                <label class="d-flex align-items-center gap-1 border rounded px-2 py-1 small cursor-pointer">
+                  <input type="checkbox" class="form-check-input m-0" data-metric="won_deals"> Won Deals
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Dimension Picker -->
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header">
+              <h6 class="mb-0"><span class="badge bg-primary me-2">2</span>Group By</h6>
+            </div>
+            <div class="card-body">
+              <select class="form-select form-select-sm">
+                <option selected>Period (Month)</option>
+                <option>Owner / Rep</option>
+                <option>Stage</option>
+                <option>Source / Channel</option>
+                <option>Territory</option>
+                <option>Queue</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Step 3: Chart Type -->
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header">
+              <h6 class="mb-0"><span class="badge bg-primary me-2">3</span>Chart Type</h6>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-wrap gap-2">
+                <label class="d-flex flex-column align-items-center gap-1 border rounded p-2 small cursor-pointer bg-primary-subtle border-primary" style="cursor:pointer;min-width:70px">
+                  <input type="radio" name="chart-type" value="bar" class="form-check-input m-0" checked>
+                  <i class="fi fi-rr-chart-histogram fs-4 text-primary"></i>
+                  <span>Bar</span>
+                </label>
+                <label class="d-flex flex-column align-items-center gap-1 border rounded p-2 small cursor-pointer" style="cursor:pointer;min-width:70px">
+                  <input type="radio" name="chart-type" value="line" class="form-check-input m-0">
+                  <i class="fi fi-rr-chart-line-up fs-4 text-muted"></i>
+                  <span>Line</span>
+                </label>
+                <label class="d-flex flex-column align-items-center gap-1 border rounded p-2 small cursor-pointer" style="cursor:pointer;min-width:70px">
+                  <input type="radio" name="chart-type" value="pie" class="form-check-input m-0">
+                  <i class="fi fi-rr-chart-pie fs-4 text-muted"></i>
+                  <span>Pie</span>
+                </label>
+                <label class="d-flex flex-column align-items-center gap-1 border rounded p-2 small cursor-pointer" style="cursor:pointer;min-width:70px">
+                  <input type="radio" name="chart-type" value="table" class="form-check-input m-0">
+                  <i class="fi fi-rr-table fs-4 text-muted"></i>
+                  <span>Table</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: Save & Schedule -->
+          <div class="card" style="height:auto">
+            <div class="card-header">
+              <h6 class="mb-0"><span class="badge bg-primary me-2">4</span>Save &amp; Schedule</h6>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Report Name</label>
+                <input type="text" class="form-control form-control-sm" placeholder="e.g. Monthly Pipeline Summary">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Schedule</label>
+                <select class="form-select form-select-sm">
+                  <option selected>No schedule (manual only)</option>
+                  <option>Weekly — Monday 08:00</option>
+                  <option>Monthly — 1st, 08:00</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Deliver To</label>
+                <input type="text" class="form-control form-control-sm" placeholder="Email or WhatsApp number">
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-primary" disabled title="Dummy mode">Save Report</button>
+                <button class="btn btn-sm btn-outline-secondary" id="btn-preview">Preview</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="col-lg-8">
+          <div class="card" style="height:auto">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h6 class="mb-0">Report Preview</h6>
+              <span class="badge bg-secondary-subtle text-secondary">Live preview (dummy data)</span>
+            </div>
+            <div class="card-body">
+              <div id="report-preview-chart"></div>
+              <div id="report-preview-summary" class="mt-3"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'report-builder';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+<script src="assets/js/app/crm-report-builder.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

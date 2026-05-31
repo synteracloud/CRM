@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workflow Builder — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+  <style>
+    .canvas-node { cursor:pointer; border:2px solid transparent; transition:border-color .15s; }
+    .canvas-node:hover, .canvas-node.selected { border-color:#5955D1; }
+    .canvas-node .node-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+    .canvas-connector { border-left:2px dashed #d1d5db; margin-left:58px; height:24px; }
+    .palette-item { cursor:grab; border:1px solid #e5e7eb; border-radius:6px; padding:8px 10px; font-size:.8rem; margin-bottom:6px; background:#f9fafb; }
+    .palette-item:hover { background:#ede9fe; border-color:#5955D1; }
+    .problems-panel { background:#fffbeb; border-top:1px solid #fde68a; }
+  </style>
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/workflows-dashboard.html">Workflows</a></li>
+            <li class="breadcrumb-item active">Builder</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" id="btn-validate"><i class="fi fi-rr-check me-1"></i>Validate</button>
+          <button class="btn btn-sm btn-outline-primary" id="btn-simulate"><i class="fi fi-rr-play me-1"></i>Simulate</button>
+          <button class="btn btn-sm btn-outline-secondary" id="btn-save">Save Draft</button>
+          <button class="btn btn-sm btn-success" id="btn-publish" disabled title="Fix validation errors first">Publish</button>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- Workflow Identity Bar -->
+      <div class="card mb-3" style="height:auto">
+        <div class="card-body py-2">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+              <input type="text" class="form-control form-control-sm" value="lead_followup_enforcement" placeholder="workflow_key (snake_case)">
+            </div>
+            <div class="col-md-2">
+              <input type="text" class="form-control form-control-sm" value="1.0.0" placeholder="version">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control form-control-sm" value="Lead Follow-up Enforcement" placeholder="metadata.name">
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm">
+                <option selected>followups</option>
+                <option>collections</option>
+                <option>notifications</option>
+                <option>leads</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <span class="badge bg-success-subtle text-success border border-success-subtle">0 Errors · 1 Warning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Three-Pane Builder -->
+      <div class="row g-3" style="min-height:500px">
+
+        <!-- Left Pane: Palette -->
+        <div class="col-lg-2">
+          <div class="card" style="height:auto">
+            <div class="card-header py-2"><h6 class="mb-0 small">Authoring Primitives</h6></div>
+            <div class="card-body py-2">
+              <div class="small text-muted mb-2">Triggers</div>
+              <div class="palette-item"><i class="fi fi-rr-bolt text-warning me-1"></i>Event Trigger</div>
+              <div class="palette-item"><i class="fi fi-rr-clock text-info me-1"></i>Schedule Trigger</div>
+              <div class="palette-item"><i class="fi fi-rr-cursor-finger text-primary me-1"></i>Manual Trigger</div>
+              <div class="small text-muted mt-3 mb-2">Conditions</div>
+              <div class="palette-item"><i class="fi fi-rr-filter text-success me-1"></i>Condition Block</div>
+              <div class="small text-muted mt-3 mb-2">Actions</div>
+              <div class="palette-item"><i class="fi fi-rr-paper-plane text-primary me-1"></i>emit_event</div>
+              <div class="palette-item"><i class="fi fi-rr-call-history text-success me-1"></i>call_service</div>
+              <div class="palette-item"><i class="fi fi-rr-bell text-warning me-1"></i>notify</div>
+              <div class="palette-item"><i class="fi fi-rr-pen-square text-info me-1"></i>mutate_state</div>
+              <div class="palette-item"><i class="fi fi-rr-time-add text-secondary me-1"></i>wait</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Pane: Canvas -->
+        <div class="col-lg-7">
+          <div class="card" style="height:auto">
+            <div class="card-header py-2 d-flex align-items-center justify-content-between">
+              <h6 class="mb-0 small">Canvas</h6>
+              <div class="d-flex gap-2">
+                <span class="small text-muted">Strategy:</span>
+                <select class="form-select form-select-sm" style="width:auto">
+                  <option selected>linear</option>
+                  <option>branching</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body" id="workflow-canvas">
+
+              <!-- Start Node (virtual) -->
+              <div class="d-flex align-items-center gap-3 mb-1">
+                <div class="node-icon bg-secondary-subtle"><i class="fi fi-rr-play text-secondary"></i></div>
+                <div class="fw-semibold small text-muted">START</div>
+              </div>
+              <div class="canvas-connector"></div>
+
+              <!-- Step Node 1: Check Idle -->
+              <div class="card mb-1 canvas-node selected" style="height:auto">
+                <div class="card-body py-2">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="node-icon bg-info-subtle"><i class="fi fi-rr-filter text-info"></i></div>
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold small">check_idle_threshold</div>
+                      <div class="small text-muted">Condition · filter</div>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">✓</span>
+                  </div>
+                </div>
+              </div>
+              <div class="canvas-connector"></div>
+
+              <!-- Step Node 2: Load Lead -->
+              <div class="card mb-1 canvas-node" style="height:auto">
+                <div class="card-body py-2">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="node-icon bg-primary-subtle"><i class="fi fi-rr-call-history text-primary"></i></div>
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold small">load_lead_record</div>
+                      <div class="small text-muted">call_service · leads.getById</div>
+                    </div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">✓</span>
+                  </div>
+                </div>
+              </div>
+              <div class="canvas-connector"></div>
+
+              <!-- Step Node 3: Escalate (warning) -->
+              <div class="card mb-1 canvas-node" style="height:auto">
+                <div class="card-body py-2">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="node-icon bg-warning-subtle"><i class="fi fi-rr-bell text-warning"></i></div>
+                    <div class="flex-grow-1">
+                      <div class="fw-semibold small">escalate_to_manager</div>
+                      <div class="small text-muted">notify · manager</div>
+                    </div>
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">⚠ 1 warning</span>
+                  </div>
+                </div>
+              </div>
+              <div class="canvas-connector"></div>
+
+              <!-- End Node (virtual) -->
+              <div class="d-flex align-items-center gap-3">
+                <div class="node-icon bg-secondary-subtle"><i class="fi fi-rr-stop text-secondary"></i></div>
+                <div class="fw-semibold small text-muted">END</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Pane: Inspector -->
+        <div class="col-lg-3">
+          <div class="card" style="height:auto">
+            <div class="card-header py-2"><h6 class="mb-0 small">Inspector — check_idle_threshold</h6></div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Step ID</label>
+                <input type="text" class="form-control form-control-sm" value="check_idle_threshold">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Action Reference</label>
+                <input type="text" class="form-control form-control-sm" value="check_idle">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Guard Expression (when)</label>
+                <input type="text" class="form-control form-control-sm" placeholder="e.g. lead.idle_days >= 7">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Timeout (ms)</label>
+                <input type="number" class="form-control form-control-sm" value="5000">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Retries</label>
+                <input type="number" class="form-control form-control-sm" value="3">
+              </div>
+              <hr>
+              <div class="small text-muted mb-2">DSL Preview (read-only)</div>
+              <pre class="bg-light rounded p-2 small mb-0" style="font-size:0.7rem">{"id":"check_idle_threshold",
+"action":"check_idle",
+"when":"lead.idle_days >= 7",
+"timeout":5000,
+"retries":3}</pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Problems Panel -->
+      <div class="card mt-3 problems-panel" style="height:auto">
+        <div class="card-header py-2 d-flex align-items-center justify-content-between">
+          <h6 class="mb-0 small">Problems</h6>
+          <span class="badge bg-warning text-dark">1 Warning</span>
+        </div>
+        <div class="card-body py-2">
+          <div class="d-flex align-items-center gap-2 small text-warning">
+            <i class="fi fi-rr-triangle-warning"></i>
+            <span><strong>escalate_to_manager</strong>: SMTP notification service response timeout may cause step failure. Consider increasing timeout or adding fallback.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'workflow-builder';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-workflow-builder.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

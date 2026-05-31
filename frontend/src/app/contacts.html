@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Contact List — NexLink CRM</title>
+  <title>Pakistan CRM — Contact List</title>
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
   <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
 </head>
 <body>
   <div class="page-layout">
@@ -53,8 +54,8 @@
               </div>
               <div class="card-body">
                 <h6>Total Contacts</h6>
-                <h2 class="mb-1">1,248</h2>
-                <p class="mb-0"><span class="text-success">+34</span> this month</p>
+                <h2 class="mb-1" id="kpi-total-contacts">1,248</h2>
+                <p class="mb-0"><span class="text-success" id="kpi-contacts-new-month">—</span> this month</p>
               </div>
             </div>
           </div>
@@ -68,8 +69,8 @@
               </div>
               <div class="card-body">
                 <h6>Active via WhatsApp</h6>
-                <h2 class="mb-1">843</h2>
-                <p class="mb-0 text-muted">67.5% of contacts</p>
+                <h2 class="mb-1" id="kpi-whatsapp-active">843</h2>
+                <p class="mb-0 text-muted"><span id="kpi-whatsapp-pct">—</span>% of contacts</p>
               </div>
             </div>
           </div>
@@ -83,8 +84,8 @@
               </div>
               <div class="card-body">
                 <h6>Open Cases</h6>
-                <h2 class="mb-1">47</h2>
-                <p class="mb-0 text-muted">Across 31 contacts</p>
+                <h2 class="mb-1" id="kpi-open-cases">47</h2>
+                <p class="mb-0 text-muted">Across <span id="kpi-cases-contact-count">—</span> contacts</p>
               </div>
             </div>
           </div>
@@ -98,7 +99,7 @@
               </div>
               <div class="card-body">
                 <h6>Idle &gt; 7 Days</h6>
-                <h2 class="mb-1 text-warning">18</h2>
+                <h2 class="mb-1 text-warning" id="kpi-idle-7d">18</h2>
                 <p class="mb-0 text-muted">No touchpoint in 7d+</p>
               </div>
             </div>
@@ -127,12 +128,12 @@
                 </button>
                 <div class="vr mx-1"></div>
                 <span class="text-muted small me-1">Tag:</span>
-                <div class="btn-group btn-group-sm" id="contact-filter-tag" role="group">
-                  <button type="button" class="btn btn-outline-secondary active" data-filter="">All</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Lead">Lead</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="Customer">Customer</button>
-                  <button type="button" class="btn btn-outline-secondary" data-filter="VIP">VIP</button>
-                </div>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="contact-filter-tag" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Lead">Lead</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Customer">Customer</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="VIP">VIP</button></li>
+                </ul>
               </div>
 
               <div class="card-body px-1 pt-2 pb-2">
@@ -140,352 +141,16 @@
                   <table id="dt_Contacts" class="table table-sm display table-row-rounded data-row-checkbox">
                     <thead class="table-light">
                       <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Account</th>
-                        <th>Last Touchpoint</th>
-                        <th>Open Cases</th>
-                        <th>Tags</th>
-                        <th>Action</th>
+                        <th class="dt-head-center">Name</th>
+                        <th class="dt-head-center">Phone</th>
+                        <th class="dt-head-center">Account</th>
+                        <th class="dt-head-center">Last Touchpoint</th>
+                        <th class="dt-head-center">Open Cases</th>
+                        <th class="dt-head-center">Tags</th>
+                        <th class="dt-head-center">Action</th>
                       </tr>
                     </thead>
-                    <tbody>
-
-                      <!-- 1 -->
-                      <tr data-open-cases="2" data-idle="0" data-tags="WhatsApp Lead">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar1.webp" alt="">
-                            </div>
-                            Ahmed Raza
-                          </div>
-                        </td>
-                        <td>+92 300 123 4567</td>
-                        <td>Ahmed Enterprises</td>
-                        <td class="text-muted small">5 hrs ago</td>
-                        <td>
-                          <span class="badge bg-danger-subtle text-danger">2</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-success-subtle text-success me-1">WhatsApp</span>
-                          <span class="badge bg-primary-subtle text-primary">Lead</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 2 -->
-                      <tr data-open-cases="0" data-idle="0" data-tags="Customer">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar2.webp" alt="">
-                            </div>
-                            Sara Khan
-                          </div>
-                        </td>
-                        <td>+92 321 987 6543</td>
-                        <td>Khan Industries</td>
-                        <td class="text-muted small">Today</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-info-subtle text-info">Customer</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 3 -->
-                      <tr data-open-cases="1" data-idle="1" data-tags="Lead Hot">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar3.webp" alt="">
-                            </div>
-                            Bilal Malik
-                          </div>
-                        </td>
-                        <td>+92 333 456 7890</td>
-                        <td>Malik &amp; Sons</td>
-                        <td class="text-muted small">1 day ago</td>
-                        <td>
-                          <span class="badge bg-warning-subtle text-warning">1</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-primary-subtle text-primary me-1">Lead</span>
-                          <span class="badge bg-danger-subtle text-danger">Hot</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 4 -->
-                      <tr data-open-cases="0" data-idle="0" data-tags="WhatsApp">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar4.webp" alt="">
-                            </div>
-                            Zainab Iqbal
-                          </div>
-                        </td>
-                        <td>+92 311 234 5678</td>
-                        <td>Iqbal Trading</td>
-                        <td class="text-muted small">3 hrs ago</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-success-subtle text-success">WhatsApp</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 5 -->
-                      <tr data-open-cases="1" data-idle="0" data-tags="Lead">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar5.webp" alt="">
-                            </div>
-                            Hassan Qureshi
-                          </div>
-                        </td>
-                        <td>+92 345 678 9012</td>
-                        <td>Qureshi Ltd</td>
-                        <td class="text-muted small">30 min ago</td>
-                        <td>
-                          <span class="badge bg-warning-subtle text-warning">1</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-primary-subtle text-primary">Lead</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 6 -->
-                      <tr data-open-cases="0" data-idle="0" data-tags="Customer VIP">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar6.webp" alt="">
-                            </div>
-                            Nadia Ali
-                          </div>
-                        </td>
-                        <td>+92 302 345 6789</td>
-                        <td>Ali Corp</td>
-                        <td class="text-muted small">4 hrs ago</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-info-subtle text-info me-1">Customer</span>
-                          <span class="badge bg-warning-subtle text-warning">VIP</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 7 -->
-                      <tr data-open-cases="0" data-idle="0" data-tags="Lead">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar7.webp" alt="">
-                            </div>
-                            Usman Baig
-                          </div>
-                        </td>
-                        <td>+92 315 789 0123</td>
-                        <td>Baig Enterprises</td>
-                        <td class="text-muted small">1 hr ago</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-primary-subtle text-primary">Lead</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 8 -->
-                      <tr data-open-cases="2" data-idle="1" data-tags="Customer">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar8.webp" alt="">
-                            </div>
-                            Fatima Riaz
-                          </div>
-                        </td>
-                        <td>+92 322 456 7891</td>
-                        <td>Riaz Group</td>
-                        <td class="text-muted small">6 hrs ago</td>
-                        <td>
-                          <span class="badge bg-danger-subtle text-danger">2</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-info-subtle text-info">Customer</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 9 -->
-                      <tr data-open-cases="0" data-idle="0" data-tags="Lead New">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar9.webp" alt="">
-                            </div>
-                            Kamran Shah
-                          </div>
-                        </td>
-                        <td>+92 334 567 8902</td>
-                        <td>Shah Industries</td>
-                        <td class="text-muted small">45 min ago</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-primary-subtle text-primary me-1">Lead</span>
-                          <span class="badge bg-success-subtle text-success">New</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <!-- 10 -->
-                      <tr data-open-cases="0" data-idle="1" data-tags="Customer">
-                        <td>
-                          <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xxs rounded-circle me-2">
-                              <img src="assets/images/avatar/avatar10.webp" alt="">
-                            </div>
-                            Iqra Siddiqui
-                          </div>
-                        </td>
-                        <td>+92 301 890 1234</td>
-                        <td>Siddiqui &amp; Co</td>
-                        <td class="text-muted small">2 days ago</td>
-                        <td>
-                          <span class="badge bg-secondary-subtle text-secondary">0</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-info-subtle text-info">Customer</span>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-subtle-primary btn-sm btn-shadow btn-icon dropdown-toggle" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-menu-dots"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-phone-call me-2 text-primary"></i>Call</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-brands-whatsapp me-2 text-success"></i>Send WhatsApp</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);"><i class="fi fi-rr-arrow-right me-2"></i>Open Detail</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-
-                    </tbody>
+                    <tbody></tbody>
                   </table>
                 </div>
               </div>
@@ -498,22 +163,6 @@
 
     </main>
 
-    <footer class="footer-wrapper bg-body">
-      <div class="container-fluid">
-        <div class="row g-2">
-          <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
-          </div>
-          <div class="col-lg-6 col-md-5">
-            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
-              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <!-- ── Script block ─────────────────────────────────────────────────── -->
@@ -527,5 +176,7 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/libs/datatables/datatables.min.js"></script>
   <script src="assets/js/app/crm-contacts.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
 </body>
 </html>
+

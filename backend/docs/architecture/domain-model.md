@@ -108,6 +108,7 @@ DO NOT RE-DEFINE: Entity field lists anywhere outside this file; add a pointer t
 ### User
 - **Owner service:** Identity & Access Service
 - **Fields:** `user_id (PK)`, `tenant_id (FK->Tenant)`, `email`, `display_name`, `status`, `last_login_at`, `created_at`, `updated_at`
+- **⚠️ Gateway field name note:** The gateway (`v1-users.routes.js`) returns `id` not `user_id` as the primary key field. Frontend code must use `id` when referencing users from gateway responses. `userMap` in CRM_DUMMY must be keyed by `id`. See `backend/FRONTEND-BACKEND-MAPPING.md` Section 1.12 and Phase M G-013 fix.
 - **Relationships:**
   - `Tenant` 1-N `User`
   - `User` N-N `Role` (via `UserRole`)
@@ -180,6 +181,22 @@ DO NOT RE-DEFINE: Entity field lists anywhere outside this file; add a pointer t
   - See `docs/domain/followup-enforcement-model.md` for enforcement rules per status.
 - **Tenant isolation fields:** `tenant_id`
 
+**⚠️ Gateway API surface divergence (verified 2026-05-28):** The Node.js gateway (`v1-leads.routes.js`) exposes a richer Lead shape than the domain entity definition above. Frontend code must consume the gateway shape, not the raw domain entity. Key differences:
+
+| Domain field | Gateway field | Note |
+|---|---|---|
+| `owner_user_id` | `owner_id` | Shortened at gateway layer |
+| `status` (stage values) | `stage` | Gateway separates stage from status |
+| (absent) | `status` | Gateway adds: `open \| working \| idle \| closed` |
+| `phone` | `contact_phone_e164` | E.164 format enforced at gateway |
+| `email` | `contact_email` | Renamed at gateway layer |
+| (absent) | `contact_name` | Added at gateway layer |
+| (absent) | `title` | Added at gateway layer |
+| `score` | `priority` | Renamed at gateway: `hot \| warm \| cold` |
+| (absent) | `estimated_value`, `currency`, `notes`, `metadata` | Added at gateway layer |
+
+Full gateway schema: see `backend/FRONTEND-BACKEND-MAPPING.md` Section 1.1.
+
 ### LeadAssignment
 - **Owner service:** Territory & Assignment Service
 - **Fields:** `lead_assignment_id (PK)`, `tenant_id (FK->Tenant)`, `lead_id (FK->Lead, UNIQUE)`, `assigned_user_id (FK->User)`, `assignment_rule`, `assigned_at`
@@ -190,9 +207,11 @@ DO NOT RE-DEFINE: Entity field lists anywhere outside this file; add a pointer t
 - **Owner service:** Lead Management Service
 - **Fields:** `followup_id (PK)`, `tenant_id (FK->Tenant)`, `lead_id (FK->Lead)`, `task_id (FK->Task, nullable)`, `owner_user_id (FK->User)`, `state`, `rule_type`, `escalation_level`, `generated_by`, `due_at`, `completed_at (nullable)`, `snoozed_until (nullable)`, `created_at`, `updated_at`
 - **state values:** `pending | overdue | completed | snoozed | failed`
-- **rule_type values:** `time_based | activity_based | inactivity_based`
+- **rule_type values:** `time_based | activity_based | inactivity_based` (canonical snake_case; gateway returns PascalCase `TimeBased|ActivityBased|InactivityBased` — see `followup-enforcement-model.md` casing note)
 - **escalation_level values:** `none | reminder | warning | escalated | reassigned`
 - **generated_by values:** `scheduler | escalation_engine | system_repair`
+
+**⚠️ Gateway PK note:** The gateway (`v1-followups.routes.js`) uses `task_id` as the URL parameter and entity identifier (`/followups/:task_id`). This `task_id` corresponds to the FK field in this entity definition, NOT `followup_id`. The gateway treats the linked Task's ID as the primary identifier. Frontend code must use `task_id` when calling gateway endpoints. See `backend/FRONTEND-BACKEND-MAPPING.md` Section 1.3.
 - **Relationships:**
   - `Lead` 1-N `FollowUp`
   - `FollowUp` 0..1-1 `Task` (optional linked action task)
@@ -578,6 +597,147 @@ DO NOT RE-DEFINE: Entity field lists anywhere outside this file; add a pointer t
 - **Owner service:** Automation Journey Service
 - **Status values:** `running | waiting | completed | failed | stopped`
 - **Fields:** `instance_id (PK)`, `tenant_id`, `journey_id (FK->JourneyDefinition)`, `trigger_event`, `trigger_event_id`, `status (InstanceStatus)`, `current_step_index`, `started_at`, `waiting_until (nullable)`, `completed_at (nullable)`, `error_message (nullable)`, `execution_log`
+- **Tenant isolation fields:** `tenant_id`
+
+---
+
+## AI / Predictive Models Entities (Sprint 5B-7)
+
+*Spec: `backend/docs/domain/ai-predictive-models.md`. All outputs are advisory-only — no model result triggers an automatic action.*
+
+### LeadScore
+
+- **Owner service:** AI & Predictive Models Service
+- **Fields:** `score_id (PK)`, `tenant_id`, `lead_id (FK→Lead)`, `model_id` (e.g. `lead_score_v1`), `score` (int 0–100), `score_band` (hot|warm|cold|disqualified), `trend` (rising|stable|falling), `trend_delta (nullable)`, `top_drivers (JSON FeatureContribution[])`, `confidence_score (decimal 3,2)`, `is_stale (bool)`, `computed_at`, `created_at`
+- **score_band thresholds:** hot ≥75 · warm 50–74 · cold 25–49 · disqualified 0–24
+- **Advisory constraint:** score is surfaced to humans with [Take Action]/[Dismiss]; never triggers automatic mutations
+- **Tenant isolation fields:** `tenant_id`
+
+### ChurnPrediction
+
+- **Owner service:** AI & Predictive Models Service
+- **Fields:** `prediction_id (PK)`, `tenant_id`, `account_id (FK→Account)`, `model_id`, `churn_probability (decimal 4,3; 0.000–1.000)`, `risk_band` (high|medium|low), `top_drivers (JSON)`, `recommended_action (str)`, `confidence_score`, `evidence_anchor (str, required)`, `is_stale`, `computed_at`, `created_at`
+- **risk_band thresholds:** high ≥0.65 · medium 0.35–0.64 · low <0.35
+- **Algorithm:** Rule-based risk factor accumulation (churn_predict_v1); ML upgrade Phase 6+
+- **Tenant isolation fields:** `tenant_id`
+
+### CLVEstimate
+
+- **Owner service:** AI & Predictive Models Service
+- **Fields:** `estimate_id (PK)`, `tenant_id`, `account_id (FK→Account)`, `model_id`, `estimated_clv (decimal 18,2; PKR)`, `clv_horizon_months (int, default 24)`, `confidence_score`, `evidence_anchor (str, required)`, `is_stale`, `computed_at`, `created_at`
+- **Formula:** `avg_monthly_revenue × clv_horizon_months × (1 − churn_probability)`
+- **Minimum history:** 3 months of paid invoices; if insufficient → `confidence_score = 0.30`
+- **Tenant isolation fields:** `tenant_id`
+
+### CopilotSuggestion
+
+- **Owner service:** AI & Predictive Models Service
+- **Advisory-only invariant:** Every suggestion must carry `evidence_anchor` (the specific CRM data point driving it); suggestions with no evidence_anchor are rejected at service layer (422)
+- **Fields:** `suggestion_id (PK)`, `tenant_id`, `target_user_id (FK→User)`, `suggestion_type` (next_action|risk_flag|deal_nudge|follow_up_overdue|sla_breach_alert|stale_deal), `priority` (urgent|high|medium|low), `title (str 100)`, `body (str 500)`, `action_label`, `action_href`, `evidence_anchor (str 500, required)`, `entity_type`, `entity_id`, `confidence_score`, `is_dismissed (bool)`, `dismissed_at (nullable)`, `is_actioned (bool)`, `actioned_at (nullable)`, `expires_at (nullable)`, `created_at`, `updated_at`
+- **Tenant isolation fields:** `tenant_id`
+
+### ScoringModel (in-memory registry, not persisted)
+
+- **Owner service:** AI & Predictive Models Service (model catalog — read-only via API)
+- **Fields:** `model_key (PK; e.g. lead_score_v1)`, `model_type` (lead_score|churn_predict|clv_estimate), `version`, `description`, `algorithm` (rule_based — v1; logistic_regression/gradient_boost Phase 6+), `feature_weights (JSON)`, `recompute_interval_hours`, `is_active`
+- **Active models:** `lead_score_v1` (6h recompute), `churn_predict_v1` (24h), `clv_estimate_v1` (168h/weekly)
+- **Model registry is read-only via API** — no PATCH/POST/DELETE; model version bump required for any weight change
+
+### FeatureContribution (embedded sub-entity)
+
+- **Embedded in:** `LeadScore.top_drivers`, `ChurnPrediction.top_drivers`
+- **Fields:** `feature_key`, `feature_label`, `contribution (int 0–100)`, `direction` (positive|negative), `value (str — actual observed value)`
+- **Max:** 5 contributions per score/prediction; sorted by contribution descending
+
+---
+
+## Phase 5B Supporting Entities (Sprints 5B-1 through 5B-6)
+
+*Entity definitions added 2026-05-30. Specs: cases-domain.md, shared-inbox.md, territory-management.md, marketing-campaigns.md, partners.md, workflow-dsl.md.*
+
+### SupportQueue *(Sprint 5B-1)*
+
+- **Owner service:** Case Management Service
+- **Fields:** `queue_id (PK)`, `tenant_id`, `name (str 128)`, `description (nullable)`, `routing_strategy` (round_robin|least_loaded|skill_based|manual), `skill_tags (JSON list)`, `sla_tier_default`, `team_id (FK→Team, nullable)`, `is_active (bool)`, `created_at`, `updated_at`
+- **Purpose:** Named case intake queue with routing strategy; each case is assigned to a queue on creation.
+- **Tenant isolation fields:** `tenant_id`
+
+### SLAPolicy *(Sprint 5B-1)*
+
+- **Owner service:** Case Management Service
+- **Fields:** `policy_id (PK)`, `tenant_id`, `sla_tier` (tier_1_critical|tier_2_high|tier_3_standard|tier_4_low), `first_response_hours (int)`, `resolution_hours (int)`, `business_hours_only (bool; default true)`, `pause_on_waiting_customer (bool; default true)`, `created_at`, `updated_at`
+- **Business hours:** PKT UTC+5, Mon–Sat 09:00–19:00
+- **Tenant isolation fields:** `tenant_id`
+
+### CaseEscalation *(Sprint 5B-1)*
+
+- **Owner service:** Case Management Service
+- **Immutability:** append-only escalation audit record; no UPDATE after insert
+- **Fields:** `escalation_id (PK)`, `case_id (FK→Case)`, `tenant_id`, `escalation_level (int)`, `escalation_reason` (sla_first_response_breach|sla_resolution_breach|customer_request|manager_override), `escalated_by (FK→User, nullable)`, `escalated_to (FK→User, nullable)`, `escalated_to_team (FK→Team, nullable)`, `note (nullable)`, `triggered_at`, `resolved_at (nullable)`
+- **Tenant isolation fields:** `tenant_id`
+
+### InboxQueue *(Sprint 5B-2)*
+
+- **Owner service:** Communication Service (Shared Inbox extension)
+- **Fields:** `queue_id (PK)`, `tenant_id`, `name (str 128)`, `routing_strategy` (round_robin|least_loaded|claim_first|skill_based), `skill_tags (JSON, nullable)`, `team_id (FK→Team, nullable)`, `auto_assign (bool; default true)`, `is_active (bool)`, `created_at`, `updated_at`
+- **Relationship:** `MessageThread` N-1 `InboxQueue` (via `queue_id` field on conversations extension)
+- **Tenant isolation fields:** `tenant_id`
+
+### AgentPresence *(Sprint 5B-2)*
+
+- **Owner service:** Communication Service (Shared Inbox extension)
+- **Fields:** `agent_id (PK; FK→User)`, `tenant_id`, `status` (online|away|busy|offline; default offline), `open_conversation_count (int; default 0)`, `max_concurrent (int; default 10)`, `last_seen_at (nullable)`, `updated_at`
+- **Invariant:** `open_conversation_count ≤ max_concurrent` before auto-assign accepts a new thread for this agent.
+- **Tenant isolation fields:** `tenant_id`
+
+### ConversationHandoff *(Sprint 5B-2)*
+
+- **Owner service:** Communication Service (Shared Inbox extension)
+- **Immutability:** append-only handoff audit; no UPDATE after insert
+- **Fields:** `handoff_id (PK)`, `conversation_id (FK→MessageThread)`, `tenant_id`, `from_agent_id (FK→User, nullable)`, `to_agent_id (FK→User, nullable)`, `handoff_reason` (agent_unavailable|capacity_exceeded|skill_match|manual|escalation), `note (nullable)`, `initiated_by (FK→User)`, `created_at`
+- **Tenant isolation fields:** `tenant_id`
+
+### MessageTemplate *(Sprint 5B-4)*
+
+- **Owner service:** Campaign Service
+- **Not to be confused with:** `NotificationTemplate` (owned by Template Service — system notifications). This entity is exclusively for campaign outreach messages.
+- **Fields:** `template_id (PK)`, `tenant_id`, `name (str 255)`, `channel` (whatsapp_broadcast|email|sms), `language (str 8; default 'en')`, `subject (nullable)`, `body (Text)`, `footer (nullable)`, `cta_label (nullable ≤20 chars)`, `cta_url (nullable)`, `meta_template_name (nullable)`, `meta_template_status` (pending|approved|rejected|paused; nullable), `is_urdu (bool)`, `created_by (FK→User)`, `created_at`, `updated_at`
+- **P-017 guard:** Templates where `is_urdu=true` require `Campaign.urdu_approved_by` to be set before activation.
+- **Tenant isolation fields:** `tenant_id`
+
+### CampaignSend *(Sprint 5B-4)*
+
+- **Owner service:** Campaign Service
+- **Fields:** `send_id (PK)`, `campaign_id (FK→Campaign)`, `tenant_id`, `contact_id (FK→Contact)`, `contact_phone (nullable)`, `contact_email (nullable)`, `channel`, `status` (queued|sent|delivered|read|replied|failed|skipped), `skip_reason` (not_opted_in|no_channel|duplicate|opted_out; nullable), `sent_at`, `delivered_at`, `read_at`, `replied_at`, `failed_at`, `failure_reason (nullable)`, `idempotency_key (str 512)`, `created_at`
+- **Idempotency key:** `campaign_{campaign_id}_contact_{contact_id}` — prevents duplicate sends
+- **Tenant isolation fields:** `tenant_id`
+
+### CampaignConversion *(Sprint 5B-4)*
+
+- **Owner service:** Campaign Service
+- **Fields:** `conversion_id (PK)`, `campaign_id (FK→Campaign)`, `tenant_id`, `contact_id (FK→Contact)`, `conversion_type` (lead_created|opportunity_created|opportunity_won), `entity_id (FK to the converted entity)`, `attributed_at`, `created_at`
+- **Attribution window:** default 30 days from campaign start (configurable via `Campaign.attribution_window_days`)
+- **Tenant isolation fields:** `tenant_id`
+
+### DealRegistration *(Sprint 5B-5)*
+
+- **Owner service:** Partner Management Service
+- **Fields:** `registration_id (PK)`, `partner_id (FK→Partner)`, `tenant_id`, `opportunity_id (FK→Opportunity, nullable)`, `prospect_name (str 255)`, `prospect_phone (nullable)`, `prospect_email (nullable)`, `estimated_value (decimal 18,2)`, `expected_close_date (date, nullable)`, `status` (submitted|approved|rejected|linked|expired), `submitted_at`, `reviewed_at (nullable)`, `reviewed_by (FK→User, nullable)`, `rejection_reason (nullable)`, `expiry_date (date, nullable)`, `notes (nullable)`, `created_at`, `updated_at`
+- **Protection window:** approved registrations block other partners from attributing the same opportunity until `expiry_date`
+- **Tenant isolation fields:** `tenant_id`
+
+### PartnerActivityLog *(Sprint 5B-5)*
+
+- **Owner service:** Partner Management Service
+- **Immutability:** append-only activity audit; no UPDATE after insert
+- **Fields:** `log_id (PK)`, `partner_id (FK→Partner)`, `tenant_id`, `event_type (str 64)`, `description (str 1000)`, `actor_id (FK→User, nullable)`, `entity_id (str, nullable)`, `created_at`
+- **Tenant isolation fields:** `tenant_id`
+
+### WorkflowStep *(Sprint 5B-6)*
+
+- **Owner service:** Workflow Automation Service
+- **Fields:** `step_record_id (PK)`, `execution_id (FK→WorkflowExecution)`, `workflow_id (FK→WorkflowDefinition)`, `tenant_id`, `step_index (int)`, `step_name (str 128)`, `step_type` (action|condition|wait|emit; default action), `status` (pending|running|succeeded|failed|skipped), `input_data (JSON)`, `output_data (JSON, nullable)`, `error_message (nullable)`, `duration_ms (int, nullable)`, `started_at (nullable)`, `completed_at (nullable)`
+- **Relationship:** `WorkflowExecution` 1-N `WorkflowStep` (ordered by `step_index`)
 - **Tenant isolation fields:** `tenant_id`
 
 ---

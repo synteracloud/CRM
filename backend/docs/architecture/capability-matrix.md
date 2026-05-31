@@ -32,6 +32,7 @@ Coverage rules applied:
 | Workflow automation & scheduled jobs | Workflow Automation Service; Job Scheduler; Event Bus | Event Bus; Notification Orchestrator; Job Scheduler; Schema Registry |
 | Search & discovery | Search Index Service; Lead Management Service; Contact Service; Account Service; Case Management Service; Knowledge Base Service; Billing & Subscription Service | Event Bus; Job Scheduler |
 | Analytics, dashboards, and BI | Analytics & Reporting Service; Data Warehouse | Event Bus; Data Warehouse |
+| AI lead scoring, churn prediction, CLV estimation, and copilot | AI & Predictive Models Service; Analytics & Reporting Service | Lead Management Service; Account Service; Billing & Subscription Service |
 | Audit, compliance, and governance | Audit & Compliance Service; Identity & Access Service; Approval Service; Billing & Subscription Service | Identity & Access Service; Event Bus |
 
 ## Coverage Checklist
@@ -43,3 +44,4 @@ Coverage rules applied:
 - Support: covered (`Case management & SLA`, `Knowledge base...`).
 - Communications: covered (`Communication tracking`, `Notifications & templating`).
 - Platform capabilities: covered (`Workflow automation...`, `Search & discovery`, `Analytics...`).
+- AI / Predictive: covered (`AI lead scoring, churn prediction, CLV estimation, and copilot` — Sprint 5B-7).

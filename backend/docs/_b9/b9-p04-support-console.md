@@ -3,9 +3,18 @@
 ## Goal
 Build a **ticket-first support workspace** aligned to:
 - Read model: `CaseSLAOperationalRM` from `docs/ui/read-models.md`
+- Entity contract: `docs/domain/cases-domain.md` — canonical field names, state machine, SLA rules
 - Workflow: **Case management & SLA** from `docs/infrastructure/workflow-catalog.md`
 
 The console keeps SLA state visible at all times while minimizing ambiguity in ticket handling.
+
+**`CaseStatus` enum** (from `cases-domain.md §3.1`):
+`OPEN` → `ASSIGNED` → `IN_PROGRESS` → `WAITING_ON_CUSTOMER` → `RESOLVED` → `CLOSED` / `ESCALATED`
+
+**`sla_state` values** — derived at query time from SLA timers (not a stored DB field):
+- `healthy` — no breach imminent
+- `at_risk` — ≤20% of resolution window remaining
+- `breached` — `sla_resolution_due_at` has passed with status not in (RESOLVED, CLOSED)
 
 ## Support Console Structure
 

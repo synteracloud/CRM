@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Quote Detail</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css?v=2">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="app/sales-cockpit.html">Sales Cockpit</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page" id="quote-breadcrumb">Quote Detail</li>
+            </ol>
+          </nav>
+          <a href="app/sales-cockpit.html" class="btn btn-sm btn-white waves-effect btn-shadow">
+            <i class="fi fi-rr-arrow-left me-1"></i> Back to Cockpit
+          </a>
+        </div>
+
+        <!-- ── Quote identity strip ─────────────────────────────────────── -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card mb-0" style="height:auto">
+              <div class="card-body py-3">
+                <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
+
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg bg-primary-subtle text-primary rounded-3">
+                      <i class="fi fi-rr-file-invoice fs-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="mb-0 fw-bold" id="quote-number">—</h4>
+                      <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
+                        <span class="text-muted small" id="quote-account-label">
+                          <i class="fi fi-rr-building me-1"></i>—
+                        </span>
+                        <span id="quote-status-badge"></span>
+                        <span class="text-muted small" id="quote-expiry-label"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="text-end me-2">
+                      <div class="text-muted small">Grand Total</div>
+                      <h5 class="mb-0 fw-bold text-primary" id="quote-grand-total">—</h5>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary waves-effect" id="btn-send-approval">
+                      <i class="fi fi-rr-paper-plane me-1"></i>Send for Approval
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success waves-effect" id="btn-convert-order">
+                      <i class="fi fi-rr-box-check me-1"></i>Convert to Order
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" id="btn-download-pdf">
+                      <i class="fi fi-rr-download me-1"></i>Download PDF
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Split pane ──────────────────────────────────────────────────── -->
+        <div class="row">
+
+          <!-- Context panel (left) -->
+          <div class="col-lg-4 col-sm-12">
+            <div class="row">
+
+              <!-- Approval status card -->
+              <div class="col-12">
+                <div class="card border border-warning border-2" id="approval-status-card">
+                  <div class="card-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar avatar-sm bg-warning-subtle text-warning rounded-3">
+                        <i class="fi fi-rr-shield-check"></i>
+                      </div>
+                      <h6 class="card-title mb-0">Approval Status</h6>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">Status</span>
+                      <span id="ctx-approval-status-badge"></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">Approver</span>
+                      <strong id="ctx-approver">—</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-0">
+                      <span class="text-muted small">Submitted</span>
+                      <span class="text-muted small" id="ctx-submitted-at">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discount context card -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar avatar-sm bg-info-subtle text-info rounded-3">
+                        <i class="fi fi-rr-percentage"></i>
+                      </div>
+                      <h6 class="card-title mb-0">Discount Summary</h6>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">List Total (PriceBook)</span>
+                      <strong id="ctx-list-total">—</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">Total Discount</span>
+                      <strong class="text-danger" id="ctx-discount-total">—</strong>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between mb-0">
+                      <span class="text-muted small">Net (Grand Total)</span>
+                      <strong class="text-primary" id="ctx-net-total">—</strong>
+                    </div>
+                    <div class="progress mt-2" style="height: 5px;">
+                      <div class="progress-bar bg-danger" id="ctx-discount-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                      <small class="text-muted">Discount rate</small>
+                      <small class="text-muted" id="ctx-discount-pct">0%</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Linked opportunity card -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header border-0 pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6 class="card-title mb-0">Linked Opportunity</h6>
+                      <a href="app/opportunities-detail.html" class="btn btn-white btn-sm btn-shadow btn-icon waves-effect">
+                        <i class="fi fi-rr-link"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="card-body pt-2">
+                    <div class="mb-3">
+                      <span class="text-muted small">Deal Name</span>
+                      <p class="fw-semibold mb-0" id="ctx-opp-name">—</p>
+                    </div>
+                    <div class="mb-3">
+                      <span class="text-muted small">Stage</span>
+                      <p class="fw-semibold mb-0" id="ctx-opp-stage">—</p>
+                    </div>
+                    <div class="mb-0">
+                      <span class="text-muted small">Deal Value</span>
+                      <p class="fw-semibold mb-0 text-primary" id="ctx-opp-amount">—</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Main pane (right) -->
+          <div class="col-lg-8 col-sm-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <ul class="nav nav-tabs card-header-tabs" id="quote-detail-tabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pane-quote-fields" type="button" role="tab">
+                      <i class="fi fi-rr-document me-1"></i>Quote Fields
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-line-items" type="button" role="tab">
+                      <i class="fi fi-rr-list me-1"></i>Line Items
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-approval-history" type="button" role="tab">
+                      <i class="fi fi-rr-shield-check me-1"></i>Approval History
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-terms" type="button" role="tab">
+                      <i class="fi fi-rr-file-contract me-1"></i>Terms
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="card-body">
+                <div class="tab-content" id="quote-detail-tab-content">
+
+                  <!-- Tab 1: Quote Fields -->
+                  <div class="tab-pane fade show active" id="pane-quote-fields" role="tabpanel">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Quote Number</label>
+                        <input type="text" class="form-control" id="field-quote-number" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Status</label>
+                        <input type="text" class="form-control text-capitalize" id="field-status" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Account</label>
+                        <input type="text" class="form-control" id="field-account" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Linked Opportunity</label>
+                        <input type="text" class="form-control" id="field-opportunity" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Expiry Date</label>
+                        <input type="text" class="form-control" id="field-expiry" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Currency</label>
+                        <input type="text" class="form-control" id="field-currency" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Created By</label>
+                        <input type="text" class="form-control" id="field-created-by" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Created At</label>
+                        <input type="text" class="form-control" id="field-created-at" readonly>
+                      </div>
+                      <div class="col-12 text-end">
+                        <a href="app/quote-builder.html" class="btn btn-sm btn-outline-primary waves-effect">
+                          <i class="fi fi-rr-edit me-1"></i>Edit Quote
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tab 2: Line Items -->
+                  <div class="tab-pane fade" id="pane-line-items" role="tabpanel">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-light">
+                          <tr>
+                            <th>Product</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Unit Price (PKR)</th>
+                            <th class="text-center">Disc %</th>
+                            <th class="text-end">Net Price (PKR)</th>
+                          </tr>
+                        </thead>
+                        <tbody id="detail-line-items-body"></tbody>
+                        <tfoot class="table-light">
+                          <tr>
+                            <td colspan="4" class="text-end fw-semibold small text-muted">Subtotal</td>
+                            <td class="text-end fw-semibold" id="detail-subtotal">—</td>
+                          </tr>
+                          <tr>
+                            <td colspan="4" class="text-end small text-muted">Total Discount</td>
+                            <td class="text-end text-danger small" id="detail-discount-total">—</td>
+                          </tr>
+                          <tr>
+                            <td colspan="4" class="text-end fw-bold">Grand Total</td>
+                            <td class="text-end fw-bold text-primary" id="detail-grand-total">—</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Tab 3: Approval History -->
+                  <div class="tab-pane fade" id="pane-approval-history" role="tabpanel">
+                    <div class="timeline-wrapper" id="approval-history-timeline">
+                      <!-- populated by crm-quotes-detail.js -->
+                    </div>
+                  </div>
+
+                  <!-- Tab 4: Terms -->
+                  <div class="tab-pane fade" id="pane-terms" role="tabpanel">
+                    <div class="row g-3">
+                      <div class="col-sm-6">
+                        <label class="form-label text-muted small">Payment Terms</label>
+                        <input type="text" class="form-control" id="field-payment-terms" readonly>
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label text-muted small">Delivery Terms</label>
+                        <input type="text" class="form-control" id="field-delivery-terms" readonly>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label text-muted small">Notes / Special Conditions</label>
+                        <textarea class="form-control" id="field-terms-notes" rows="4" readonly></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'quotes-detail';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-quotes-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

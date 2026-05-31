@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Customer 360</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="app/contacts.html">Contacts</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page" id="contact-breadcrumb">—</li>
+            </ol>
+          </nav>
+          <a href="app/contacts.html" class="btn btn-sm btn-white waves-effect btn-shadow">
+            <i class="fi fi-rr-arrow-left me-1"></i> Back to Contacts
+          </a>
+        </div>
+
+        <!-- ── Contact identity strip ──────────────────────────────────── -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card mb-0" style="height:auto">
+              <div class="card-body py-3">
+                <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
+
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="avatar avatar-lg rounded-circle">
+                      <img src="assets/images/avatar/avatar1.webp" alt="Contact" id="contact-avatar">
+                    </div>
+                    <div>
+                      <h4 class="mb-0 fw-bold" id="contact-name">—</h4>
+                      <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
+                        <span class="text-muted small">
+                          <i class="fi fi-rr-phone-call me-1"></i><span id="contact-phone">—</span>
+                        </span>
+                        <span class="text-muted small">
+                          <i class="fi fi-rr-building me-1"></i><span id="contact-account-strip">—</span>
+                        </span>
+                        <span id="contact-tags"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-sm btn-success waves-effect">
+                      <i class="fi fi-brands-whatsapp me-1"></i>Send WhatsApp
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning waves-effect">
+                      <i class="fi fi-rr-ticket me-1"></i>New Case
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary waves-effect">
+                      <i class="fi fi-rr-briefcase me-1"></i>New Opportunity
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Split pane ─────────────────────────────────────────────── -->
+        <div class="row">
+
+          <!-- Context panel (left) -->
+          <div class="col-lg-4 col-sm-12">
+            <div class="row">
+
+              <!-- Contact Health card -->
+              <div class="col-12">
+                <div class="card border border-2 border-primary">
+                  <div class="card-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-3">
+                        <i class="fi fi-rr-heart-rate"></i>
+                      </div>
+                      <h6 class="card-title mb-0">Contact Health</h6>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                      <h2 class="mb-0 fw-bold text-primary" id="ctx-completeness">—</h2>
+                      <div class="small text-muted">/ 100 completeness</div>
+                    </div>
+                    <div class="progress progress-sm mb-3">
+                      <div class="progress-bar bg-primary" id="ctx-completeness-bar" style="width:0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">Open Cases</span>
+                      <strong id="ctx-open-cases">—</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted small">Last Touchpoint</span>
+                      <strong id="ctx-last-touch">—</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="text-muted small">7-Day Idle</span>
+                      <span id="ctx-idle-badge">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Actions card -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header border-0 pb-0">
+                    <h6 class="card-title mb-0">Quick Actions</h6>
+                  </div>
+                  <div class="card-body pt-2 d-flex flex-column gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary waves-effect w-100 text-start">
+                      <i class="fi fi-rr-coins me-2"></i>Record Payment
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning waves-effect w-100 text-start">
+                      <i class="fi fi-rr-bell me-2"></i>Send Reminder
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary waves-effect w-100 text-start">
+                      <i class="fi fi-rr-envelope me-2"></i>Send Email
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Detail card -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header border-0 pb-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6 class="card-title mb-0">Details</h6>
+                      <button type="button" class="btn btn-white btn-sm btn-shadow btn-icon waves-effect">
+                        <i class="fi fi-rr-pencil"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body pt-2">
+                    <div class="mb-3">
+                      <span class="text-muted small">Email</span>
+                      <p class="fw-semibold mb-0 small text-break" id="ctx-email">—</p>
+                    </div>
+                    <div class="mb-3">
+                      <span class="text-muted small">Account</span>
+                      <p class="fw-semibold mb-0" id="ctx-account-name">—</p>
+                    </div>
+                    <div class="mb-3">
+                      <span class="text-muted small">Contact ID</span>
+                      <p class="text-muted small mb-0" id="ctx-contact-id">—</p>
+                    </div>
+                    <div class="mb-0">
+                      <span class="text-muted small">Added</span>
+                      <p class="fw-semibold mb-0" id="ctx-created-at">—</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Main pane (right) -->
+          <div class="col-lg-8 col-sm-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pane-contact-fields" type="button" role="tab">
+                      <i class="fi fi-rr-user me-1"></i>Contact Info
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-account-link" type="button" role="tab">
+                      <i class="fi fi-rr-building me-1"></i>Account
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-related" type="button" role="tab">
+                      <i class="fi fi-rr-link me-1"></i>Related
+                    </button>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-contact-activity" type="button" role="tab">
+                      <i class="fi fi-rr-clock me-1"></i>Activity
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="card-body">
+                <div class="tab-content">
+
+                  <!-- ── Tab 1: Contact Info ── -->
+                  <div class="tab-pane fade show active" id="pane-contact-fields" role="tabpanel">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Full Name</label>
+                        <input type="text" class="form-control" id="field-display-name" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Phone (E.164)</label>
+                        <input type="tel" class="form-control" id="field-phone-e164" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Email</label>
+                        <input type="email" class="form-control" id="field-email" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Account</label>
+                        <input type="text" class="form-control" id="field-account" readonly>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label text-muted small">Tags</label>
+                        <div class="d-flex gap-2 flex-wrap mt-1" id="field-tags"></div>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label text-muted small">Notes</label>
+                        <textarea class="form-control" rows="3" placeholder="Add notes about this contact…"></textarea>
+                      </div>
+                      <div class="col-12 text-end">
+                        <button type="button" class="btn btn-success btn-sm waves-effect">
+                          <i class="fi fi-rr-check me-1"></i>Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ── Tab 2: Account Linkage ── -->
+                  <div class="tab-pane fade" id="pane-account-link" role="tabpanel">
+                    <h6 class="mb-3">Account Details</h6>
+                    <div class="row g-3" id="account-fields">
+                      <!-- populated by crm-contacts-detail.js -->
+                    </div>
+                  </div>
+
+                  <!-- ── Tab 3: Related Entities ── -->
+                  <div class="tab-pane fade" id="pane-related" role="tabpanel">
+
+                    <div class="mb-4">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Open Leads</h6>
+                        <span class="badge bg-primary-subtle text-primary" id="related-leads-count">0</span>
+                      </div>
+                      <div id="related-leads-list">
+                        <p class="text-muted small">No open leads.</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">Open Cases</h6>
+                        <span class="badge bg-warning-subtle text-warning" id="related-cases-count">0</span>
+                      </div>
+                      <div id="related-cases-list">
+                        <p class="text-muted small">No open cases.</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- ── Tab 4: Activity Timeline ── -->
+                  <div class="tab-pane fade" id="pane-contact-activity" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h6 class="mb-0">Activity Timeline</h6>
+                      <button type="button" class="btn btn-sm btn-outline-secondary waves-effect">
+                        <i class="fi fi-rr-plus me-1"></i>Log Activity
+                      </button>
+                    </div>
+                    <div id="contact-activity-timeline">
+                      <!-- populated by crm-contacts-detail.js -->
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'contacts-detail';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-contacts-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

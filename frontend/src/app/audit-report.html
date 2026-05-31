@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Audit Report</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item active">Audit Report</li>
+            </ol>
+          </nav>
+          <div class="d-flex align-items-center gap-2">
+            <select class="form-select form-select-sm" id="h06-period" style="width:auto;">
+              <option value="all">All Time</option>
+              <option value="month">This Month</option>
+              <option value="week">This Week</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-primary waves-effect" id="h06-export-btn">
+              <i class="fi fi-rr-download me-1"></i> Export Signed CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="row mb-3">
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3"><i class="fi fi-rr-list-check"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Total Audit Entries</h6>
+                <h2 class="mb-1 text-primary" id="h06-total-entries">—</h2>
+                <p class="mb-0 text-muted small">Hash-chain verified events</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-danger">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-3"><i class="fi fi-rr-ban"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Policy Denies</h6>
+                <h2 class="mb-1 text-danger" id="h06-deny-count">—</h2>
+                <p class="mb-0 text-muted small"><span id="h06-deny-rate">—</span> of all events</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3"><i class="fi fi-rr-shield-exclamation"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Privileged Actions</h6>
+                <h2 class="mb-1 text-warning" id="h06-privileged-count">—</h2>
+                <p class="mb-0 text-muted small">Export + delete events</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance summary chart + Hash verify panel -->
+        <div class="row mb-3">
+          <div class="col-xxl-8">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Compliance Summary — Events by Action &amp; Result</h6>
+                <small class="text-muted">Distribution across action types. Source: <code>PlatformReliabilityAuditRM</code></small>
+              </div>
+              <div class="card-body pb-0">
+                <div id="H06ComplianceChart"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4">
+            <div class="card h-100">
+              <div class="card-header border-0 pb-0">
+                <div class="d-flex align-items-center justify-content-between">
+                  <h6 class="card-title mb-0">Hash Chain Verification</h6>
+                  <span class="badge bg-success" id="h06-chain-badge">Chain Valid</span>
+                </div>
+              </div>
+              <div class="card-body small" id="h06-hash-panel">
+                <p class="text-muted">Click any row in the privileged access log below to verify its hash.</p>
+                <div class="mb-2">
+                  <span class="text-muted">Chain entries:</span>
+                  <strong id="h06-chain-count">—</strong>
+                </div>
+                <div class="mb-2">
+                  <span class="text-muted">First hash:</span><br>
+                  <code class="text-break" id="h06-first-hash">—</code>
+                </div>
+                <div>
+                  <span class="text-muted">Latest hash:</span><br>
+                  <code class="text-break" id="h06-latest-hash">—</code>
+                </div>
+                <div class="mt-3 p-2 rounded-3 d-none" id="h06-verify-result"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privileged access log -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="card-title mb-0">Privileged Access Log</h6>
+                    <small class="text-muted">Filtered to: login · export · delete · admin actions. Read-only — immutable.</small>
+                  </div>
+                  <a href="app/audit-log.html" class="btn btn-sm btn-outline-secondary waves-effect">
+                    Full Audit Log →
+                  </a>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="text-center">Timestamp</th>
+                        <th class="text-center">Actor</th>
+                        <th class="text-center">Action</th>
+                        <th class="text-center">Resource</th>
+                        <th class="text-center">Result</th>
+                        <th class="text-center">Hash</th>
+                      </tr>
+                    </thead>
+                    <tbody id="h06-priv-log-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'audit-report';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/app/crm-audit-report.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

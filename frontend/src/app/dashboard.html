@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard — NexLink CRM</title>
+  <title>Pakistan CRM — Dashboard</title>
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
   <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
 </head>
 <body>
   <div class="page-layout">
@@ -85,8 +86,8 @@
                   </div>
                   <div class="card-body py-0 d-flex align-items-start justify-content-between">
                     <div class="d-flex align-items-center gap-2">
-                      <h2 class="mb-0">5,758</h2>
-                      <span class="badge badge-sm bg-success-subtle text-success">+2.57%</span>
+                      <h2 class="mb-0" id="kpi-dash-contacts">—</h2>
+                      <span class="badge badge-sm bg-success-subtle text-success" id="kpi-dash-contacts-delta">—</span>
                     </div>
                     <div id="chartContacts" class="mb-n4 mt-n3"></div>
                   </div>
@@ -123,8 +124,8 @@
                   </div>
                   <div class="card-body pt-0">
                     <div class="d-flex align-items-center gap-2">
-                      <h2 class="mb-0">70</h2>
-                      <span class="badge badge-sm bg-danger-subtle text-danger">-2.57%</span>
+                      <h2 class="mb-0" id="kpi-dash-conversion">—</h2>
+                      <span class="badge badge-sm bg-danger-subtle text-danger" id="kpi-dash-conversion-delta">—</span>
                     </div>
                   </div>
                   <div class="card-footer border-0 p-0">
@@ -143,7 +144,7 @@
                         <span class="text-2xs">Tasks Done <span class="text-primary fw-semibold">25</span></span>
                       </div>
                       <div class="progress progress-sm" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 70%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" data-pct="70"></div>
                       </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between">
@@ -187,8 +188,8 @@
                   </div>
                   <div class="card-body pt-0">
                     <div class="d-flex align-items-center gap-2">
-                      <h2 class="mb-0">1,249</h2>
-                      <span class="badge badge-sm bg-success-subtle text-success">+2.57%</span>
+                      <h2 class="mb-0" id="kpi-dash-qualified">—</h2>
+                      <span class="badge badge-sm bg-success-subtle text-success" id="kpi-dash-qualified-delta">—</span>
                     </div>
                   </div>
                   <div class="card-footer border-0 pt-0">
@@ -320,8 +321,8 @@
                   </div>
                   <div class="card-body pb-0 pt-0">
                     <div class="d-flex gap-2 align-items-center">
-                      <h2 class="mb-0">92%</h2>
-                      <span>+15% vs last month</span>
+                      <h2 class="mb-0" id="kpi-dash-retention">—</h2>
+                      <span id="kpi-dash-retention-delta">—</span>
                     </div>
                   </div>
                   <div class="card-footer border-0 pb-0 pt-1 px-1">
@@ -676,22 +677,22 @@
                 <div class="progress progress-primary progress-overlap mb-1" role="progressbar" aria-label="Leads">
                   <div class="progress-label">Leads</div>
                   <div class="progress-value">120</div>
-                  <div class="progress-bar" style="width: 85%"></div>
+                  <div class="progress-bar" data-pct="85"></div>
                 </div>
                 <div class="progress progress-success progress-overlap mb-1" role="progressbar" aria-label="Prospects">
                   <div class="progress-label">Prospects</div>
                   <div class="progress-value">85</div>
-                  <div class="progress-bar" style="width: 60%"></div>
+                  <div class="progress-bar" data-pct="60"></div>
                 </div>
                 <div class="progress progress-info progress-overlap mb-1" role="progressbar" aria-label="Opportunities">
                   <div class="progress-label">Opportunities</div>
                   <div class="progress-value">40</div>
-                  <div class="progress-bar" style="width: 40%"></div>
+                  <div class="progress-bar" data-pct="40"></div>
                 </div>
                 <div class="progress progress-danger progress-overlap mb-1" role="progressbar" aria-label="Closed Deals">
                   <div class="progress-label">Closed Deals</div>
                   <div class="progress-value">20</div>
-                  <div class="progress-bar" style="width: 25%"></div>
+                  <div class="progress-bar" data-pct="25"></div>
                 </div>
               </div>
               <div class="card-footer bg-primary bg-opacity-05 py-2 d-flex justify-content-between align-items-center">
@@ -719,12 +720,12 @@
                   <thead class="table-light">
                     <tr>
                       <th class="pe-0"><div class="form-check"><input class="form-check-input" data-row-checkbox type="checkbox"></div></th>
-                      <th class="minw-200px">Name</th>
-                      <th class="minw-150px">Phone</th>
-                      <th class="minw-150px">Email</th>
-                      <th class="minw-125px">Days</th>
-                      <th>Status</th>
-                      <th>Action</th>
+                      <th class="dt-head-center minw-200px">Name</th>
+                      <th class="dt-head-center minw-150px">Phone</th>
+                      <th class="dt-head-center minw-150px">Email</th>
+                      <th class="dt-head-center minw-125px">Days</th>
+                      <th class="dt-head-center">Status</th>
+                      <th class="dt-head-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -944,22 +945,6 @@
       </div><!-- /container-fluid -->
     </main>
 
-    <footer class="footer-wrapper bg-body">
-      <div class="container-fluid">
-        <div class="row g-2">
-          <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
-          </div>
-          <div class="col-lg-6 col-md-5">
-            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
-              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <script src="assets/libs/global/global.min.js"></script>
@@ -976,5 +961,6 @@
   <script src="assets/libs/datatables/datatables.min.js"></script>
   <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
   <script src="assets/js/app/crm-dashboard.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lead Detail — NexLink CRM</title>
+  <title>Pakistan CRM — Lead Detail</title>
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,9 +16,8 @@
   <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
   <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
   <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
-  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
-  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
   <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css?v=2">
 </head>
 <body>
   <div class="page-layout">
@@ -36,7 +35,7 @@
               <li class="breadcrumb-item">
                 <a href="app/leads.html">Lead Queue</a>
               </li>
-              <li class="breadcrumb-item active" aria-current="page">Ahmed Raza</li>
+              <li class="breadcrumb-item active" aria-current="page" id="lead-breadcrumb">—</li>
             </ol>
           </nav>
           <a href="app/leads.html" class="btn btn-sm btn-white waves-effect btn-shadow">
@@ -47,21 +46,23 @@
         <!-- ── Lead identity strip ─────────────────────────────────────── -->
         <div class="row mb-3">
           <div class="col-12">
-            <div class="card mb-0">
+            <div class="card mb-0" style="height:auto">
               <div class="card-body py-3">
                 <div class="d-flex flex-wrap align-items-center gap-3 justify-content-between">
 
                   <div class="d-flex align-items-center gap-3">
                     <div class="avatar avatar-lg rounded-circle">
-                      <img src="assets/images/avatar/avatar1.webp" alt="Ahmed Raza">
+                      <img src="assets/images/avatar/avatar1.webp" alt="Lead" id="lead-avatar-img">
                     </div>
                     <div>
-                      <h4 class="mb-0 fw-bold">Ahmed Raza</h4>
+                      <h4 class="mb-0 fw-bold" id="lead-name">—</h4>
                       <div class="d-flex flex-wrap gap-2 align-items-center mt-1">
-                        <span class="text-muted small"><i class="fi fi-rr-phone-call me-1"></i>+92 300 123 4567</span>
-                        <span class="badge bg-primary-subtle text-primary" id="lead-stage-badge">New</span>
-                        <span class="badge bg-success-subtle text-success"><i class="fi fi-brands-whatsapp me-1"></i>WhatsApp</span>
-                        <span class="badge bg-danger-subtle text-danger" id="enforcement-badge"><i class="fi fi-rr-shield-exclamation me-1"></i>Strict</span>
+                        <span class="text-muted small" id="lead-phone-label">
+                          <i class="fi fi-rr-phone-call me-1"></i>—
+                        </span>
+                        <span id="lead-stage-badge"></span>
+                        <span id="lead-source-badge"></span>
+                        <span id="enforcement-badge"></span>
                       </div>
                     </div>
                   </div>
@@ -93,30 +94,22 @@
 
               <!-- Next Action card -->
               <div class="col-12">
-                <div class="card border border-danger border-2">
+                <div class="card border border-2" id="next-action-card">
                   <div class="card-header border-0 pb-0">
                     <div class="d-flex align-items-center gap-2">
-                      <div class="avatar avatar-sm bg-danger-subtle text-danger rounded-3">
+                      <div class="avatar avatar-sm rounded-3" id="next-action-icon-wrap">
                         <i class="fi fi-rr-bolt"></i>
                       </div>
-                      <h6 class="card-title mb-0 text-danger">Next Action</h6>
+                      <h6 class="card-title mb-0" id="next-action-title">Next Action</h6>
                     </div>
                   </div>
-                  <div class="card-body">
-                    <p class="mb-2">
-                      <strong>Send WhatsApp follow-up</strong> — task is overdue by 2 days.
-                    </p>
-                    <p class="text-muted small mb-3">
-                      Enforcement level: <strong class="text-danger">Strict</strong>. Escalation will trigger automatically if not actioned today.
-                    </p>
-                    <button type="button" class="btn btn-sm btn-danger waves-effect w-100">
-                      <i class="fi fi-brands-whatsapp me-1"></i>Send WhatsApp Now
-                    </button>
+                  <div class="card-body" id="next-action-body">
+                    <!-- populated by crm-leads-detail.js -->
                   </div>
                 </div>
               </div>
 
-              <!-- Lead identity fields -->
+              <!-- Lead Info card -->
               <div class="col-12">
                 <div class="card">
                   <div class="card-header border-0 pb-0">
@@ -130,44 +123,42 @@
                   <div class="card-body pt-2">
                     <div class="mb-3">
                       <span class="text-muted small">Full Name</span>
-                      <p class="fw-semibold mb-0">Ahmed Raza</p>
+                      <p class="fw-semibold mb-0" id="info-full-name">—</p>
                     </div>
                     <div class="mb-3">
                       <span class="text-muted small">Phone</span>
-                      <p class="fw-semibold mb-0">+92 300 123 4567</p>
+                      <p class="fw-semibold mb-0" id="info-phone">—</p>
                     </div>
                     <div class="mb-3">
                       <span class="text-muted small">Source</span>
-                      <p class="fw-semibold mb-0">WhatsApp</p>
+                      <p class="fw-semibold mb-0 text-capitalize" id="info-source">—</p>
                     </div>
                     <div class="mb-3">
                       <span class="text-muted small">Stage</span>
-                      <p class="mb-0">
-                        <span class="badge bg-primary-subtle text-primary">New</span>
-                      </p>
+                      <p class="mb-0" id="info-stage-badge">—</p>
                     </div>
                     <div class="mb-3">
                       <span class="text-muted small">Owner</span>
                       <div class="d-flex align-items-center mt-1 gap-2">
                         <div class="avatar avatar-xxs rounded-circle">
-                          <img src="assets/images/avatar/avatar5.webp" alt="">
+                          <img src="assets/images/avatar/avatar1.webp" alt="" id="info-owner-avatar">
                         </div>
-                        <span class="fw-semibold">Khalid Ahmed</span>
+                        <span class="fw-semibold" id="info-owner-name">—</span>
                       </div>
                     </div>
                     <div class="mb-3">
                       <span class="text-muted small">Created</span>
-                      <p class="fw-semibold mb-0">May 22, 2026</p>
+                      <p class="fw-semibold mb-0" id="info-created-at">—</p>
                     </div>
                     <div class="mb-0">
-                      <span class="text-muted small">Last Activity</span>
-                      <p class="fw-semibold mb-0">5 hrs ago</p>
+                      <span class="text-muted small">Est. Value</span>
+                      <p class="fw-semibold mb-0 text-primary" id="info-estimated-value">—</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Lead score -->
+              <!-- Lead Score card — populated by crm-leads-detail.js -->
               <div class="col-12">
                 <div class="card">
                   <div class="card-header border-0 pb-0">
@@ -175,26 +166,14 @@
                   </div>
                   <div class="card-body pt-2">
                     <div class="d-flex align-items-center gap-3 mb-2">
-                      <h2 class="mb-0 fw-bold text-primary">72</h2>
+                      <h2 class="mb-0 fw-bold text-primary" id="lead-score-value">—</h2>
                       <div class="small text-muted">/ 100</div>
+                      <span class="badge badge-sm" id="lead-score-band"></span>
                     </div>
                     <div class="progress progress-sm mb-3">
-                      <div class="progress-bar bg-primary" style="width: 72%"></div>
+                      <div class="progress-bar bg-primary" id="lead-score-bar" style="width:0%"></div>
                     </div>
-                    <div class="row text-center g-2">
-                      <div class="col-4">
-                        <div class="small text-muted">Engagement</div>
-                        <div class="fw-semibold">High</div>
-                      </div>
-                      <div class="col-4">
-                        <div class="small text-muted">Recency</div>
-                        <div class="fw-semibold text-warning">Low</div>
-                      </div>
-                      <div class="col-4">
-                        <div class="small text-muted">Fit</div>
-                        <div class="fw-semibold text-success">Good</div>
-                      </div>
-                    </div>
+                    <div id="lead-score-drivers" class="small text-muted"></div>
                   </div>
                 </div>
               </div>
@@ -206,7 +185,6 @@
           <div class="col-lg-8 col-sm-12">
             <div class="card">
               <div class="card-header border-0 pb-0">
-                <!-- Nav tabs -->
                 <ul class="nav nav-tabs card-header-tabs" id="lead-detail-tabs" role="tablist">
                   <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="tab-contact" data-bs-toggle="tab" data-bs-target="#pane-contact" type="button" role="tab">
@@ -221,7 +199,7 @@
                   <li class="nav-item" role="presentation">
                     <button class="nav-link position-relative" id="tab-followups" data-bs-toggle="tab" data-bs-target="#pane-followups" type="button" role="tab">
                       <i class="fi fi-rr-list-check me-1"></i>Follow-ups
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">2</span>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="followup-count-badge" style="font-size:0.6rem;display:none;"></span>
                     </button>
                   </li>
                   <li class="nav-item" role="presentation">
@@ -240,27 +218,27 @@
                     <div class="row g-3">
                       <div class="col-md-6">
                         <label class="form-label text-muted small">Full Name</label>
-                        <input type="text" class="form-control" value="Ahmed Raza">
+                        <input type="text" class="form-control" id="field-full-name" readonly>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label text-muted small">Phone (E.164)</label>
-                        <input type="tel" class="form-control" value="+92 300 123 4567">
+                        <input type="tel" class="form-control" id="field-phone" readonly>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Email</label>
+                        <input type="email" class="form-control" id="field-email" readonly>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label text-muted small">Source</label>
-                        <input type="text" class="form-control" value="WhatsApp" readonly>
+                        <input type="text" class="form-control text-capitalize" id="field-source" readonly>
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label text-muted small">Channel</label>
-                        <input type="text" class="form-control" value="Inbound" readonly>
+                        <label class="form-label text-muted small">Priority</label>
+                        <input type="text" class="form-control text-capitalize" id="field-priority" readonly>
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label text-muted small">City</label>
-                        <input type="text" class="form-control" value="Karachi">
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label text-muted small">Territory</label>
-                        <input type="text" class="form-control" value="South Pakistan" readonly>
+                        <label class="form-label text-muted small">Est. Value (PKR)</label>
+                        <input type="text" class="form-control" id="field-est-value" readonly>
                       </div>
                       <div class="col-12">
                         <label class="form-label text-muted small">Notes</label>
@@ -278,46 +256,12 @@
                   <div class="tab-pane fade" id="pane-pipeline" role="tabpanel">
                     <h6 class="mb-3">Stage Progression</h6>
 
-                    <!-- Stage progress stepper -->
-                    <div class="d-flex align-items-center gap-2 flex-wrap mb-4">
-                      <div class="d-flex flex-column align-items-center">
-                        <div class="avatar avatar-sm bg-primary text-white rounded-circle mb-1">
-                          <i class="fi fi-rr-check text-2xs"></i>
-                        </div>
-                        <small class="text-primary fw-semibold">New</small>
-                      </div>
-                      <div class="flex-grow-1 border-top border-2 border-primary" style="min-width:30px;"></div>
-                      <div class="d-flex flex-column align-items-center">
-                        <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle mb-1">
-                          <i class="fi fi-rr-phone-call text-2xs"></i>
-                        </div>
-                        <small class="text-muted">Contacted</small>
-                      </div>
-                      <div class="flex-grow-1 border-top border-2 border-secondary opacity-25" style="min-width:30px;"></div>
-                      <div class="d-flex flex-column align-items-center">
-                        <div class="avatar avatar-sm bg-secondary-subtle text-secondary rounded-circle mb-1">
-                          <i class="fi fi-rr-handshake text-2xs"></i>
-                        </div>
-                        <small class="text-muted">Engaged</small>
-                      </div>
-                      <div class="flex-grow-1 border-top border-2 border-secondary opacity-25" style="min-width:30px;"></div>
-                      <div class="d-flex flex-column align-items-center">
-                        <div class="avatar avatar-sm bg-secondary-subtle text-secondary rounded-circle mb-1">
-                          <i class="fi fi-rr-badge-check text-2xs"></i>
-                        </div>
-                        <small class="text-muted">Qualified</small>
-                      </div>
-                      <div class="flex-grow-1 border-top border-2 border-secondary opacity-25" style="min-width:30px;"></div>
-                      <div class="d-flex flex-column align-items-center">
-                        <div class="avatar avatar-sm bg-secondary-subtle text-secondary rounded-circle mb-1">
-                          <i class="fi fi-rr-trophy text-2xs"></i>
-                        </div>
-                        <small class="text-muted">Converted</small>
-                      </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap mb-4" id="stage-stepper">
+                      <!-- populated by crm-leads-detail.js -->
                     </div>
 
-                    <button type="button" class="btn btn-primary btn-sm waves-effect mb-4">
-                      <i class="fi fi-rr-arrow-right me-1"></i>Advance to Contacted
+                    <button type="button" class="btn btn-primary btn-sm waves-effect mb-4" id="btn-advance-stage">
+                      <i class="fi fi-rr-arrow-right me-1"></i>Advance Stage
                     </button>
 
                     <h6 class="mb-2 mt-2">Stage Transition History</h6>
@@ -331,13 +275,8 @@
                             <th>Duration</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <td><span class="badge bg-primary-subtle text-primary">New</span></td>
-                            <td>May 22, 2026</td>
-                            <td>System (WhatsApp)</td>
-                            <td class="text-muted">4 days (current)</td>
-                          </tr>
+                        <tbody id="stage-history-body">
+                          <!-- populated by crm-leads-detail.js -->
                         </tbody>
                       </table>
                     </div>
@@ -351,162 +290,16 @@
                         <i class="fi fi-rr-plus me-1"></i>New Task
                       </button>
                     </div>
-
-                    <!-- Task 1 — OVERDUE -->
-                    <div class="card bg-danger-subtle border-0 mb-2">
-                      <div class="card-body py-3">
-                        <div class="d-flex align-items-start justify-content-between gap-2">
-                          <div class="d-flex align-items-start gap-2">
-                            <div class="avatar avatar-sm bg-danger text-white rounded-3 flex-shrink-0">
-                              <i class="fi fi-brands-whatsapp text-xs"></i>
-                            </div>
-                            <div>
-                              <div class="fw-semibold">Send WhatsApp follow-up</div>
-                              <div class="small">
-                                <span class="text-danger fw-semibold">Due May 24, 2026 — OVERDUE</span>
-                                · <span class="badge bg-danger-subtle text-danger">Strict</span>
-                                · 3 attempts
-                              </div>
-                            </div>
-                          </div>
-                          <div class="btn-group flex-shrink-0">
-                            <button type="button" class="btn btn-sm btn-danger waves-effect">
-                              <i class="fi fi-rr-check me-1"></i>Log Done
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-angle-down"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);">Snooze</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);">Escalate</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Task 2 — UPCOMING -->
-                    <div class="card border mb-2">
-                      <div class="card-body py-3">
-                        <div class="d-flex align-items-start justify-content-between gap-2">
-                          <div class="d-flex align-items-start gap-2">
-                            <div class="avatar avatar-sm bg-warning-subtle text-warning rounded-3 flex-shrink-0">
-                              <i class="fi fi-rr-bell text-xs"></i>
-                            </div>
-                            <div>
-                              <div class="fw-semibold">WhatsApp reminder</div>
-                              <div class="small">
-                                <span class="text-muted">Due May 28, 2026</span>
-                                · <span class="badge bg-warning-subtle text-warning">Medium</span>
-                                · 1 attempt
-                              </div>
-                            </div>
-                          </div>
-                          <div class="btn-group flex-shrink-0">
-                            <button type="button" class="btn btn-sm btn-outline-success waves-effect">
-                              <i class="fi fi-rr-check me-1"></i>Log Done
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" data-bs-toggle="dropdown">
-                              <i class="fi fi-rr-angle-down"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="javascript:void(0);">Snooze</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Task 3 — COMPLETED -->
-                    <div class="card border mb-0 opacity-75">
-                      <div class="card-body py-3">
-                        <div class="d-flex align-items-start justify-content-between gap-2">
-                          <div class="d-flex align-items-start gap-2">
-                            <div class="avatar avatar-sm bg-success-subtle text-success rounded-3 flex-shrink-0">
-                              <i class="fi fi-rr-check text-xs"></i>
-                            </div>
-                            <div>
-                              <div class="fw-semibold text-decoration-line-through text-muted">Email follow-up</div>
-                              <div class="small text-muted">Completed May 20, 2026 · Soft · 1 attempt</div>
-                            </div>
-                          </div>
-                          <span class="badge bg-success-subtle text-success">Done</span>
-                        </div>
-                      </div>
+                    <div id="followup-tasks-list">
+                      <!-- populated by crm-leads-detail.js -->
                     </div>
                   </div>
 
                   <!-- ── Tab 4: Activity Timeline ── -->
                   <div class="tab-pane fade" id="pane-activity" role="tabpanel">
                     <h6 class="mb-3">Activity Timeline</h6>
-                    <div class="timeline-list">
-
-                      <div class="d-flex gap-3 mb-3">
-                        <div class="d-flex flex-column align-items-center">
-                          <div class="avatar avatar-sm bg-success-subtle text-success rounded-circle flex-shrink-0">
-                            <i class="fi fi-brands-whatsapp text-xs"></i>
-                          </div>
-                          <div class="border-start border-2 flex-grow-1 mt-1" style="width:2px;min-height:20px;"></div>
-                        </div>
-                        <div class="pb-3">
-                          <div class="fw-semibold">WhatsApp message received</div>
-                          <div class="text-muted small">May 26, 2026 · 10:30 AM · Inbound</div>
-                          <div class="small mt-1 text-muted">"Interested in your services, please call back"</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex gap-3 mb-3">
-                        <div class="d-flex flex-column align-items-center">
-                          <div class="avatar avatar-sm bg-primary-subtle text-primary rounded-circle flex-shrink-0">
-                            <i class="fi fi-rr-user-add text-xs"></i>
-                          </div>
-                          <div class="border-start border-2 flex-grow-1 mt-1" style="width:2px;min-height:20px;"></div>
-                        </div>
-                        <div class="pb-3">
-                          <div class="fw-semibold">Lead created from WhatsApp</div>
-                          <div class="text-muted small">May 26, 2026 · 10:28 AM · Automatic</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex gap-3 mb-3">
-                        <div class="d-flex flex-column align-items-center">
-                          <div class="avatar avatar-sm bg-warning-subtle text-warning rounded-circle flex-shrink-0">
-                            <i class="fi fi-rr-calendar-plus text-xs"></i>
-                          </div>
-                          <div class="border-start border-2 flex-grow-1 mt-1" style="width:2px;min-height:20px;"></div>
-                        </div>
-                        <div class="pb-3">
-                          <div class="fw-semibold">Follow-up scheduled</div>
-                          <div class="text-muted small">May 26, 2026 · 10:00 AM · Khalid Ahmed</div>
-                          <div class="small mt-1">Due: May 24, 2026 · Level: Strict</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex gap-3 mb-3">
-                        <div class="d-flex flex-column align-items-center">
-                          <div class="avatar avatar-sm bg-danger-subtle text-danger rounded-circle flex-shrink-0">
-                            <i class="fi fi-rr-phone-call text-xs"></i>
-                          </div>
-                          <div class="border-start border-2 flex-grow-1 mt-1" style="width:2px;min-height:20px;"></div>
-                        </div>
-                        <div class="pb-3">
-                          <div class="fw-semibold">Call attempted — no answer</div>
-                          <div class="text-muted small">May 24, 2026 · 2:00 PM · Khalid Ahmed</div>
-                        </div>
-                      </div>
-
-                      <div class="d-flex gap-3 mb-0">
-                        <div class="d-flex flex-column align-items-center">
-                          <div class="avatar avatar-sm bg-info-subtle text-info rounded-circle flex-shrink-0">
-                            <i class="fi fi-rr-user text-xs"></i>
-                          </div>
-                        </div>
-                        <div>
-                          <div class="fw-semibold">Lead assigned to Khalid Ahmed</div>
-                          <div class="text-muted small">May 22, 2026 · 9:15 AM · System</div>
-                        </div>
-                      </div>
-
+                    <div class="timeline-list" id="activity-timeline-list">
+                      <!-- populated by crm-leads-detail.js -->
                     </div>
                   </div>
 
@@ -520,23 +313,6 @@
       </div>
 
     </main>
-
-    <footer class="footer-wrapper bg-body">
-      <div class="container-fluid">
-        <div class="row g-2">
-          <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
-          </div>
-          <div class="col-lg-6 col-md-5">
-            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
-              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <!-- ── Script block ─────────────────────────────────────────────────── -->
@@ -549,5 +325,6 @@
   <script src="assets/js/appSettings.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/app/crm-leads-detail.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
 </body>
 </html>

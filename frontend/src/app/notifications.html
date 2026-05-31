@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Notification Settings</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid pb-4">
+        <div class="app-page-head">
+          <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item">Settings</li>
+            <li class="breadcrumb-item active">Notifications</li>
+          </ol></nav>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-4 mb-3">
+            <div class="card" style="height:auto"><div class="card-body p-2"><div class="list-group list-group-flush">
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/org-settings.html"><i class="fi fi-rr-building"></i> Organization</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/user-management-crm.html"><i class="fi fi-rr-users"></i> Users</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/roles.html"><i class="fi fi-rr-shield-check"></i> Roles & Permissions</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/billing-settings.html"><i class="fi fi-rr-credit-card"></i> Billing</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/integrations.html"><i class="fi fi-rr-plug"></i> Integrations</a>
+              <a class="list-group-item list-group-item-action active d-flex align-items-center gap-2 py-2" href="app/notifications.html"><i class="fi fi-rr-bell"></i> Notifications</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/feature-flags.html"><i class="fi fi-rr-flag"></i> Feature Flags</a>
+              <a class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" href="app/compliance.html"><i class="fi fi-rr-document-signed"></i> Compliance</a>
+            </div></div></div>
+          </div>
+          <div class="col-lg-9 col-md-8">
+            <div class="card mb-3" style="height:auto">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Per-Event Notification Rules</h6>
+                <button class="btn btn-primary btn-sm waves-effect">Save</button>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                  <thead class="table-light"><tr>
+                    <th class="text-center">Event</th>
+                    <th class="text-center">In-App</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">WhatsApp</th>
+                    <th class="text-center">SMS</th>
+                  </tr></thead>
+                  <tbody id="notif-rules-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card" style="height:auto">
+              <div class="card-header"><h6 class="card-title mb-0">Quiet Hours</h6></div>
+              <div class="card-body">
+                <div class="alert alert-info small py-2 mb-3"><i class="fi fi-rr-info me-1"></i> Notifications are suppressed during quiet hours. Respects PKT timezone.</div>
+                <div class="row g-3">
+                  <div class="col-sm-4"><label class="form-label">Quiet Start</label><input type="time" class="form-control" value="22:00"></div>
+                  <div class="col-sm-4"><label class="form-label">Quiet End</label><input type="time" class="form-control" value="08:00"></div>
+                  <div class="col-sm-4 d-flex align-items-end"><div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="quiet-enabled" checked><label class="form-check-label" for="quiet-enabled">Enable quiet hours</label></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'notifications';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-notifications.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

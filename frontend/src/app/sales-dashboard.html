@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Opportunity Pipeline Dashboard</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Pipeline Dashboard</li>
+            </ol>
+          </nav>
+          <a href="app/sales-cockpit.html" class="btn btn-primary btn-sm waves-effect">
+            <i class="fi fi-rr-layers me-1"></i> Open Cockpit
+          </a>
+        </div>
+
+        <!-- Zone: Posture — idle deals -->
+        <div class="row mb-2" id="pipeline-posture-row">
+          <div class="col-12">
+            <div class="alert alert-warning d-flex align-items-center gap-2 mb-0 py-2" role="alert">
+              <i class="fi fi-rr-triangle-warning fs-5 flex-shrink-0"></i>
+              <div>
+                <strong id="idle-deal-count">0</strong> active deal<span id="idle-deal-plural">s have</span> had no activity in the last 7 days.
+                <a href="app/sales-cockpit.html" class="alert-link ms-2">Review in cockpit →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone: Primary KPI cards -->
+        <div class="row mb-3">
+
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3">
+                  <i class="fi fi-rr-chart-histogram"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Weighted Pipeline</h6>
+                <h2 class="mb-1 text-primary" id="kpi-weighted-pipeline">—</h2>
+                <p class="mb-0 text-muted">Active opportunities weighted by probability</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3">
+                  <i class="fi fi-rr-badge-check"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Closed Won — This Period</h6>
+                <h2 class="mb-1 text-success" id="kpi-closed-won">—</h2>
+                <p class="mb-0 text-muted" id="kpi-closed-won-count">0 deals closed</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-info">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-info-subtle text-info rounded-3">
+                  <i class="fi fi-rr-hand-holding-usd"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Forecast Commit</h6>
+                <h2 class="mb-1" id="kpi-commit">—</h2>
+                <p class="mb-0 text-muted" id="kpi-commit-count">0 deals committed</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Zone: Execution queue + Risk anomaly -->
+        <div class="row mb-3">
+
+          <!-- Execution queue: overdue close dates -->
+          <div class="col-xxl-8">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="card-title mb-0">Execution Queue — Overdue Close Dates</h6>
+                  <small class="text-muted">Deals that have passed their close date and require immediate action</small>
+                </div>
+                <span class="badge bg-danger" id="overdue-close-badge">0 overdue</span>
+              </div>
+              <div class="card-body p-0">
+                <div id="overdue-deals-list">
+                  <!-- populated by crm-sales-dashboard.js -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk anomaly: gap to target -->
+          <div class="col-xxl-4">
+            <div class="card h-100">
+              <div class="card-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="avatar bg-danger-subtle text-danger rounded-3">
+                    <i class="fi fi-rr-bullseye-arrow"></i>
+                  </div>
+                  <h6 class="card-title mb-0">Gap to Target</h6>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <small class="text-muted">Period Target</small>
+                  <p class="fw-bold mb-0" id="gap-target-value">—</p>
+                </div>
+                <div class="mb-3">
+                  <small class="text-muted">Closed Won</small>
+                  <p class="fw-bold text-success mb-0" id="gap-closed-value">—</p>
+                </div>
+                <hr class="my-2">
+                <div class="mb-3">
+                  <small class="text-muted">Remaining Gap</small>
+                  <h4 class="fw-bold text-danger mb-1" id="gap-remaining">—</h4>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" id="gap-progress-bar" style="width: 0%;"></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-1">
+                    <small class="text-muted">Achieved</small>
+                    <small class="text-muted" id="gap-pct-label">0%</small>
+                  </div>
+                </div>
+                <div class="pt-2 border-top">
+                  <small class="text-muted">Best case coverage</small>
+                  <p class="fw-semibold mb-0" id="gap-best-case">—</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Zone: Trend diagnostic — Stage velocity chart -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="card-title mb-0">Stage Velocity</h6>
+                  <small class="text-muted">Active deal distribution across pipeline stages</small>
+                </div>
+                <a href="app/sales-cockpit.html" class="btn btn-sm btn-outline-primary waves-effect">
+                  View in Cockpit →
+                </a>
+              </div>
+              <div class="card-body pb-0">
+                <div id="StageVelocityChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'sales-dashboard';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/app/crm-sales-dashboard.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

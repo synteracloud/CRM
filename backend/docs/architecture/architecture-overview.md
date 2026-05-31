@@ -80,12 +80,12 @@ Six platform-owned engines are available to all domains. No domain may reimpleme
 
 ## 4) Service Architecture
 
-39 services organized in three tiers:
+40 services organized in three tiers (updated 2026-05-30: AI & Predictive Models Service added for Sprint 5B-7):
 
 | Tier | Count | Examples |
 |---|---|---|
 | **Core** | ~6 | API Gateway, Identity & Access, Organization & Tenant, Workflow Automation |
-| **Domain** | ~15 | Lead Management, Contact, Opportunity, Quote, Billing & Subscription, Case Management |
+| **Domain** | ~16 | Lead Management, Contact, Opportunity, Quote, Billing & Subscription, Case Management, AI & Predictive Models |
 | **Platform** | ~12 | Event Bus, Job Scheduler, Feature Flag, Audit & Compliance, Data Warehouse |
 
 Ownership is non-overlapping: each capability has exactly one owning service.

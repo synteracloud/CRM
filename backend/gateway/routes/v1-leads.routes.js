@@ -353,4 +353,110 @@ router.get(
   },
 );
 
+// ── GET /leads/export ────────────────────────────────────────────────────────
+// MR-005: Export all tenant leads as CSV (RFC 4180)
+router.get('/export', requestValidationMiddleware(), requireScopes([SCOPES.LEADS_READ]), async (req, res) => {
+  const tenantId = req.auth.tenant_id;
+  let leads;
+  if (repo) {
+    try {
+      leads = await repo.findAll(tenantId, { limit: 10000, offset: 0 });
+    } catch (_err) {
+      leads = _memLeads.filter((l) => l.tenant_id === tenantId);
+    }
+  } else {
+    leads = _memLeads.filter((l) => l.tenant_id === tenantId);
+  }
+
+  const HEADERS = ['lead_id', 'contact_name', 'contact_phone_e164', 'contact_email', 'stage', 'status', 'priority', 'source', 'owner_id', 'estimated_value', 'currency', 'notes', 'created_at'];
+  const csvRows = [HEADERS.join(',')];
+  leads.forEach((l) => {
+    csvRows.push(HEADERS.map((h) => {
+      const v = l[h] == null ? '' : String(l[h]);
+      return v.includes(',') || v.includes('"') || v.includes('\n') ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(','));
+  });
+
+  const csv = csvRows.join('\r\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="leads-export.csv"');
+  res.send(csv);
+});
+
+// ── POST /leads/import ────────────────────────────────────────────────────────
+// MR-005: Import leads from CSV. Body: text/csv or application/json array.
+// Returns { data: { created, skipped, errors }, meta: {} }
+router.post('/import', requestValidationMiddleware(), requireScopes([SCOPES.LEADS_CREATE]), async (req, res) => {
+  const tenantId = req.auth.tenant_id;
+  let rows = [];
+
+  try {
+    if (req.is('text/csv') || req.is('text/plain')) {
+      const text   = req.body.toString ? req.body.toString() : String(req.body);
+      const lines  = text.trim().split(/\r?\n/);
+      const headers= lines[0].split(',').map((h) => h.trim().replace(/^"(.*)"$/, '$1'));
+      rows = lines.slice(1).map((line) => {
+        const vals = line.split(',').map((v) => v.trim().replace(/^"(.*)"$/, '$1'));
+        const row  = {};
+        headers.forEach((h, i) => { row[h] = vals[i] || ''; });
+        return row;
+      });
+    } else {
+      rows = Array.isArray(req.body) ? req.body : (req.body.leads || []);
+    }
+  } catch (_err) {
+    return respondError(res, 422, 'PARSE_ERROR', 'Could not parse import body. Expected CSV or JSON array.');
+  }
+
+  let created = 0, skipped = 0;
+  const errors = [];
+
+  for (const row of rows) {
+    const contact_name = row.contact_name || row['Contact Name'] || row['Name'] || '';
+    const contact_phone = row.contact_phone_e164 || row.phone || row['Phone'] || '';
+
+    if (!contact_name && !contact_phone) { skipped++; continue; }
+
+    // Dedup check: exact phone match
+    const exists = _memLeads.some((l) => l.tenant_id === tenantId && l.contact_phone_e164 === contact_phone && contact_phone);
+    if (exists) { skipped++; continue; }
+
+    const now    = new Date().toISOString();
+    const lead   = {
+      lead_id:            randomUUID(),
+      tenant_id:          tenantId,
+      owner_id:           row.owner_id || req.auth.user_id || 'import',
+      contact_name:       contact_name,
+      contact_phone_e164: contact_phone,
+      contact_email:      row.contact_email || row.email || null,
+      stage:              VALID_STAGES.includes(row.stage) ? row.stage : 'new',
+      status:             'open',
+      priority:           VALID_PRIORITIES.includes(row.priority) ? row.priority : 'warm',
+      source:             row.source || 'import',
+      estimated_value:    Number(row.estimated_value) || 0,
+      currency:           row.currency || 'PKR',
+      notes:              row.notes || '',
+      metadata:           {},
+      created_at:         now,
+      updated_at:         now,
+    };
+
+    if (repo) {
+      try {
+        await repo.create(lead);
+      } catch (err) {
+        errors.push({ row: contact_name || contact_phone, reason: err.message });
+        continue;
+      }
+    }
+    _memLeads.push(lead);
+    created++;
+  }
+
+  return respondSuccess(res, { created, skipped, errors }, {
+    total_rows:  rows.length,
+    import_source: 'csv',
+  });
+});
+
 module.exports = router;

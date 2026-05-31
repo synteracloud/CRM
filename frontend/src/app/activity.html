@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Activity Feed</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <!-- header + sidebar injected by crm-shell.js -->
+    <main class="app-wrapper">
+
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item">
+                <a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Activity Feed</li>
+            </ol>
+          </nav>
+          <button type="button" class="btn btn-primary btn-sm waves-effect">
+            <i class="fi fi-rr-plus me-1"></i> Log Activity
+          </button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="row">
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3">
+                  <i class="fi fi-rr-pulse"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Total Activities</h6>
+                <h2 class="mb-1" id="kpi-total-activities">—</h2>
+                <p class="mb-0 text-muted">All recorded events</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-info">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-info-subtle text-info rounded-3">
+                  <i class="fi fi-rr-phone"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Calls</h6>
+                <h2 class="mb-1" id="kpi-calls">—</h2>
+                <p class="mb-0 text-muted">Outbound &amp; inbound</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3">
+                  <i class="fi fi-rr-calendar"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Meetings</h6>
+                <h2 class="mb-1" id="kpi-meetings">—</h2>
+                <p class="mb-0 text-muted">In-person &amp; virtual</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3">
+                  <i class="fi fi-rr-trophy"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h6>Deals Won</h6>
+                <h2 class="mb-1" id="kpi-deals-won">—</h2>
+                <p class="mb-0 text-muted">Closed this period</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Activity Feed DataTable -->
+        <div class="row">
+          <div class="col-xxl-12">
+            <div class="card">
+
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Activity Feed</h6>
+                <div id="dt_Activities_Search"></div>
+              </div>
+
+              <!-- Filter chips -->
+              <div class="px-3 py-2 border-bottom d-flex flex-wrap align-items-center gap-2">
+                <span class="text-muted small me-1">Type:</span>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="activity-filter-type" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="call">Call</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="email">Email</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="whatsapp">WhatsApp</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="meeting">Meeting</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="note">Note</button></li>
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="deal_won">Deal Won</button></li>
+                </ul>
+                <div class="vr mx-1"></div>
+                <span class="text-muted small me-1">Actor:</span>
+                <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="activity-filter-actor" role="tablist">
+                  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+                </ul>
+              </div>
+
+              <div class="card-body px-1 pt-2 pb-2">
+                <div class="table-responsive">
+                  <table id="dt_Activities" class="table table-sm display table-row-rounded data-row-checkbox">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="dt-head-center">Event Type</th>
+                        <th class="dt-head-center">Description</th>
+                        <th class="dt-head-center">Actor</th>
+                        <th class="dt-head-center">Linked Record</th>
+                        <th class="dt-head-center">When</th>
+                        <th class="dt-head-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Script block ─────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'activities';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/datatables/datatables.min.js"></script>
+  <script src="assets/js/app/crm-activity.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

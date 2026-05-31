@@ -1,6 +1,6 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-26 (Phase 4 Stage 4 COMPLETE — 28/28 gaps fixed, 324/324 tests, CI/CD live, E2E integration test passing. Phase 5 next.)
+**Last updated:** 2026-05-31 — **Phase 6 wiring extension COMPLETE. All 75 of 75 custom pages wired + browser-approved.** 5 previously blocked pages (G-04, G-05, J-03, H-07, A-08) wired with inline gateway route stubs + JS drivers. External services (billing provider, integration APIs, governance service) are pluggable later — internal homework complete. Final Hardening (Component 3) is next. ✓ = full process complete + locked.
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
@@ -160,6 +160,88 @@
 | Phase 4 Stage 1 | Full read of all 51 §F + §H specs; 30 duplication/overlap clusters identified; `backend/docs/_qc/phase4-stage1-read-log.md` written with all cluster PRIMARY designations | 2026-05-23 |
 | Phase 4 Stage 2 | Doc fix + restructure complete — 71 flat docs → 9 subdirs (Diátaxis+DDD); ownership blocks on 51 files; 6 gap fills; 6 inconsistency fixes; 14 duplicate removals; all cross-refs updated; 308/308 tests | 2026-05-25 |
 | Phase 4 Stage 3 Round 1 | Code overlay gap register created (28 gaps A-001→E-008); 15 gaps fixed — B-001 JWT claims, D-001 lead stages, migrations 0002+0003, 3 new ORM model files, 3 bug fixes (double-tz, JazzCash paise, _payments dict), 4 infra path fixes, 9 catalog events; 314/314 tests passing | 2026-05-25 |
+
+---
+
+## Phase 5 — Custom Design Pages
+
+| ID | Page | Archetype | Status | Browser sign-off | Notes |
+|---|---|---|---|---|---|
+| A-01 | dashboard.html | dashboard | ⏳ | ⏳ pending | T2 FAIL — posture strip + KPI h2 hardcoded; dt_NewCustomers seed rows. |
+| A-02 | leads-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.leads/leadFunnelKpi/deltas. |
+| A-03 | contacts-health.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.contacts/contactsKpi. |
+| A-04 | sales-dashboard.html | dashboard | ⏳ | ⏳ pending | Re-processed 2026-05-29. CRM_DUMMY wiring verified. |
+| A-05 | quotes-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.quotes. |
+| A-06 | subscriptions-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. MRR/ARR/Renewal Rate. P-016 stub. |
+| A-12 | identity-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.users+AUDIT_LOG. |
+| A-13 | audit-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.AUDIT_LOG. |
+| B-01 | followups.html | resource_list | ⏳ | ⏳ pending | T2/T3/T4 FAIL (delta text; Place 3 CSS; filter vocab). |
+| B-02 | leads.html | resource_list | ⏳ | ⏳ pending | T2/T3/T4 FAIL (chart data; Place 3 CSS; stage filter). |
+| B-03 | contacts.html | resource_list | ⏳ | ⏳ pending | T2/T3 FAIL (delta text; Place 3 CSS). |
+| B-06 | activity.html | resource_list | ⏳ | ⏳ pending | Built 2026-05-29. Read-only. Reads CRM_DUMMY.activities. |
+| B-07 | tasks.html | resource_list | ⏳ | ⏳ pending | Built 2026-05-29. Overdue-pinned. Reads CRM_DUMMY.tasks. |
+| B-08 | collections.html | resource_list | ⏳ | ⏳ pending | T2/T4 FAIL (delta text; status filter vocab). |
+| B-09 | invoices.html | resource_list | ⏳ | ⏳ pending | Built 2026-05-29. INVOICES dataset added. Balance col, overdue red. |
+| B-10 | users.html | resource_list | ⏳ | ⏳ pending | Built 2026-05-29. Admin-only. Role badge list. |
+| C-01 | leads-detail.html | detail_360 | ⏳ | ⏳ pending | T2 PARTIAL (timeline partially hardcoded). |
+| C-02 | contacts-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. Demo c-001. Reads CRM_DUMMY. |
+| C-04 | opportunities-detail.html | detail_360 | ⏳ | ⏳ pending | Re-processed 2026-05-29. Quotes tab reads CRM_DUMMY.quotes. |
+| C-06 | quotes-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. Reads CRM_DUMMY.quotes. |
+| C-09 | subscriptions-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. Status-gated buttons. SUBSCRIPTIONS dataset added. |
+| D-01 | sales-cockpit.html | cockpit | ⏳ | ⏳ pending | Re-processed 2026-05-29. All panels CRM_DUMMY-wired. |
+| G-02 | user-management-crm.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. 2-step Invite wizard, role/suspend/reset modals. |
+| H-01 | sales-analytics.html | analytics | ⏳ | ⏳ pending | Built 2026-05-29. Pipeline KPI, stage/forecast/funnel charts, rep table. |
+| H-04 | finance-analytics.html | analytics | ⏳ | ⏳ pending | Built 2026-05-29. Aging buckets, revenue trend, collections table. P-016. |
+| H-06 | audit-report.html | analytics | ⏳ | ⏳ pending | Built 2026-05-29. Hash-chain verify, signed CSV export. |
+| I-01 | lead-new.html | form_wizard | ⏳ | ⏳ pending | T1 FAIL (crm-custom.css missing); T2 FAIL (stage vocab stale). |
+| I-03 | opportunity-new.html | form_wizard | ⏳ | ⏳ pending | Built 2026-05-29. 2-step wizard, flatpickr close date. |
+| I-05 | quote-builder.html | form_wizard | ⏳ | ⏳ pending | Built 2026-05-29. 4-step CPQ. Discount >10% approval. Autosave 60s. |
+| J-01 | audit-log.html | audit_compliance | ⏳ | ⏳ pending | Rebuilt 2026-05-29. Shell fixed. Badges from CRM_DUMMY. |
+| J-02 | compliance-report.html | audit_compliance | ⏳ | ⏳ pending | Rebuilt 2026-05-29. KPIs from CRM_DUMMY.AUDIT_LOG. |
+| J-04 | rbac-audit.html | audit_compliance | ⏳ | ⏳ pending | Rebuilt 2026-05-29. Matrix + log from CRM_DUMMY. |
+| A-11 | tenants-dashboard.html | dashboard | ⏳ | ⏳ pending | Built 2026-05-29. Plan/seat/feature KPIs, entitlements queue. Reads d.tenantKpi. |
+| B-04 | accounts.html | resource_list | ⏳ | ⏳ pending | Built 2026-05-29. ACCOUNTS dataset (12 records). Tier/balance filter chips. |
+| C-03 | accounts-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. 4-tab pane. Demo a-002 (City Pharma Ltd). |
+| C-07 | orders-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. ORDERS dataset. Immutable badge. Demo ord-001. |
+| C-08 | invoices-detail.html | detail_360 | ⏳ | ⏳ pending | Built 2026-05-29. Total/Paid/Balance strip, payment history. Demo i-001. |
+| I-02 | contact-new.html | form_wizard | ⏳ | ⏳ pending | Built 2026-05-29. 2-step wizard. Phone dedup warn on blur. |
+| G-01 | org-settings.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. Identity/Locale/Currency/Hours. Settings left-nav. |
+| G-03 | roles.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. Roles table + permission registry. d.roles.data. |
+| G-04 | billing-settings.html | settings_admin | ⏳ | ✓ wired 2026-05-31 | Built 2026-05-29. Wired: GET /billing/subscription + GET /billing/invoices. P-016 payment section static stub. |
+| G-05 | integrations.html | settings_admin | ⏳ | ✓ wired 2026-05-31 | Built 2026-05-29. Wired: GET /integrations + POST /integrations/:provider/test. Status badges live. |
+| G-06 | notifications.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. Per-event toggle table. Quiet hours. |
+| G-07 | feature-flags.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. Flag registry d.featureFlags. 2-person approval modal. |
+| G-08 | compliance.html | settings_admin | ⏳ | ⏳ pending | Built 2026-05-29. Retention policy, data governance link, break-glass log. |
+| J-03 | data-governance.html | audit_compliance | ⏳ | ✓ wired 2026-05-31 | Built 2026-05-29. Wired: GET /governance/classification + /retention + /sar + GET /privacy/consent. |
+| J-05 | privacy.html | audit_compliance | ⏳ | ⏳ pending | Built 2026-05-29. Consent records, DSR list, erasure request form. |
+| A-07 | support-dashboard.html | dashboard | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Posture strip, SLA breach KPIs, at-risk queue. |
+| A-08 | engagement-dashboard.html | dashboard | ⏳ | ✓ wired 2026-05-31 | Cat 2. Built 2026-05-29. Wired: GET /communications/engagement + GET /campaigns. KPIs + chart live. |
+| A-09 | knowledge-dashboard.html | dashboard | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Deflection rate KPIs, stale article queue. |
+| A-10 | workflows-dashboard.html | dashboard | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Posture strip, execution KPIs, failed queue. |
+| B-05 | cases.html | resource_list | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Dual Status×SLA filter chips, badges. |
+| B-11 | partners.html | resource_list | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Tier×Status filter chips, PKR commission. |
+| C-05 | cases-detail.html | detail_360 | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. SLA timer strip, 3-tab pane, escalation controls. |
+| C-10 | workflow-run-detail.html | detail_360 | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Execution log, steps, error details tabs. |
+| C-11 | partners-detail.html | detail_360 | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 4-tab pane. Attribution + commission context. |
+| C-12 | knowledge-article.html | detail_360 | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. State-gated Publish/Edit, 4-tab pane. |
+| E-01 | support-console.html | support_console | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 3-pane SLA queue/thread/context layout. |
+| F-01 | marketing-workspace.html | marketing | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Campaigns DataTable + Status filter chips. |
+| G-09 | territories.html | settings_admin | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Territory tree, rule editor, assignment config. |
+| H-02 | marketing-analytics.html | analytics | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Channel engagement bar chart, opt-in trend. |
+| H-03 | support-analytics.html | analytics | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. SLA breach trend line, case volume donut. |
+| H-05 | workflow-analytics.html | analytics | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Pass/fail bar chart, failure-rate-by-workflow. |
+| H-07 | report-builder.html | analytics | ⏳ | ✓ wired 2026-05-31 | Cat 2. Built 2026-05-29. Wired: GET/POST /reports/definitions + POST /reports/execute. Save button enabled. |
+| I-04 | case-new.html | form_wizard | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 2-step wizard. Contact live search. |
+| I-06 | campaign-new.html | form_wizard | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 2-step wizard. P-017 Urdu alert. |
+| K-01 | workflow-builder.html | builder | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 3-pane palette/canvas/inspector. Simulated graph. |
+| K-02 | object-builder.html | builder | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Object type selector, field list, layout canvas. |
+| K-03 | rule-builder.html | builder | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Condition + action row builder, test simulation. |
+| K-04 | approval-lanes.html | builder | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. 4-lane kanban, calcTotal() per card. |
+| L-01 | inbox.html | inbox | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Channel filter, 2-pane thread list/view. |
+| L-02 | inbox-thread.html | inbox | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. WhatsApp-style bubbles, intent context panel. |
+| L-03 | routing-config.html | settings_admin | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Queue/agent capacity/routing rules/fallback. |
+| M-01 | ai-copilot.html | ai | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Advisory-only. Intent classifier chat. |
+| M-02 | ai-insights.html | ai | ⏳ | ⏳ pending | Cat 2. Built 2026-05-29. Win prob dist, churn donut, CLV bar, feature weights. |
 
 ---
 

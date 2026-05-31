@@ -33,116 +33,178 @@ All reporting surfaces share a **chart-first layout**:
 
 ## 2) The 7 Reporting / Analytics Pages
 
-### 2.1 — Reporting Dashboards
-
-**Route:** `/app/reports`
-**Purpose:** Entry point — aggregated cross-domain executive summary.
-**Role gate:** `sales_manager`, `owner`, `finance`
-
-**Panels on this page:**
-- Pipeline summary tile → drills to Opportunity Pipeline (dashboard 2.5 in `b9-p01`)
-- Collections summary tile → drills to Collections Queue
-- Lead funnel summary tile → drills to Lead Queue
-- Case SLA summary tile → drills to Ticket Queue
-
-This is a **navigation hub** — not a stand-alone report. Clicking any tile navigates to the domain-specific dashboard. No duplicate data displayed here vs individual dashboards.
+> **Note on mapping:** The original b9-p10 content defined enterprise intelligence surfaces (Predictive Forecasting, AI Scoring, Usage Billing Analytics) that are Phase 6+ features. The DESIGN-SPEC.md §3 H-series defines operational reporting surfaces for the current build queue. Both sets are documented below — H-01 through H-07 are the active build targets; enterprise surfaces are retained as Phase 6 addenda.
 
 ---
 
-### 2.2 — Predictive Forecasting
+### 2.1 — Sales Analytics (H-01)
 
-**Route:** `/app/reports/forecast`
-**Read model:** `OpportunityPipelineSnapshotRM` + `forecast_snapshots` table (from `db/intelligence_db/schema.sql`)
-**Role gate:** `sales_manager`, `owner`
-**Source module:** `src/predictive_forecasting/`
-
-**Views:**
-1. **Forecast summary** — weighted pipeline vs commit vs best-case vs quota. Period: current quarter.
-2. **Cohort waterfall** — deals moved in/out of period forecast. Stage velocity chart.
-3. **Prediction confidence** — AI model confidence scores per deal (when `ai_scoring` enabled).
-4. **Historical accuracy** — rolling 4-quarter forecast accuracy vs actual.
-
-**Drilldown:** Clicking any forecast bar → filtered Opportunity List for that stage/category.
-
----
-
-### 2.3 — AI Scoring
-
-**Route:** `/app/reports/ai-scoring`
-**Source entities:** `scoring_models`, `lead_scores`, `score_history` (from `db/intelligence_db/schema.sql`)
-**Source module:** `src/ai_scoring/`
+**Route:** `/app/reports/sales`
+**Read model:** `OpportunityPipelineSnapshotRM`, `LeadFunnelPerformanceRM`
 **Role gate:** `sales_manager`, `owner`
 
 **Views:**
-1. **Score distribution** — histogram of current lead/opportunity scores (0–100).
-2. **Score trend** — how average score moved over time per stage.
-3. **Top scored records** — ranked list of leads/opportunities by score, with score explanation.
-4. **Feature weight inspector** — which model features (from `model_feature_weights`) drive the score (read-only).
+1. **Pipeline velocity** — stage-by-stage conversion rates and average time-in-stage. Source: `OpportunityPipelineSnapshotRM`.
+2. **Lead funnel** — lead volume by stage, source breakdown, conversion rate by source. Source: `LeadFunnelPerformanceRM`.
+3. **Rep performance** — per-rep: leads owned, follow-up completion rate, deals won, avg deal cycle time. Source: `EmployeePerformanceRM` (P-01 through P-08 from `employee-performance.md`).
+4. **Forecast summary** — weighted pipeline vs commit vs best-case vs quota. Source: `OpportunityPipelineSnapshotRM.by_category`.
 
-**Design rule:** Scores are advisory — no auto-action is triggered by score alone.
+**KPI formulas** (from `kpi-data-pipelines.md`): Lead Conversion Rate, Opportunity Win Rate, Pipeline Value, Average Deal Cycle Time.
+
+**Drilldown:** Stage bar → filtered Lead Queue or Opportunity List.
 
 ---
 
-### 2.4 — Predictive Models
+### 2.2 — Marketing Analytics (H-02)
 
-**Route:** `/app/reports/models`
-**Source entities:** `scoring_models`, `model_runs`, `model_feature_weights`
-**Source module:** `src/predictive_models/`
-**Role gate:** `admin`, `data_scientist` (if role defined)
+**Route:** `/app/reports/marketing`
+**Read model:** `CommunicationEngagementRM`
+**Role gate:** `sales_manager`, `owner`
+**Backend status:** ⚠️ Archetype F (Marketing) has no backend. Build in dummy-mode only until marketing service added to gateway.
 
 **Views:**
-1. **Model registry** — list of scoring models with version, status (active/archived), last run.
-2. **Model run history** — per-run: started_at, completed_at, records scored, error count.
-3. **Feature weight editor** — adjust feature weights per model (writes to `model_feature_weights`).
-4. **Model comparison** — compare two model versions on same dataset.
+1. **Campaign attribution** — leads generated per campaign, conversion rate, cost per lead.
+2. **Channel engagement** — delivery / open / reply rates per channel (WhatsApp / Email / SMS).
+3. **Journey conversion** — step-by-step funnel for active journeys.
+4. **WhatsApp reach** — opted-in contacts vs total, opt-out rate trend.
 
 ---
 
-### 2.5 — Revenue Recognition
+### 2.3 — Support Analytics (H-03)
 
-**Route:** `/app/reports/revenue`
+**Route:** `/app/reports/support`
+**Read model:** `CaseSLAOperationalRM`
+**Role gate:** `sales_manager`, `owner`, `tenant_admin`
+
+**Views:**
+1. **SLA breach rate** — first-response and resolution SLA breach % by period. Source: `CaseSLAOperationalRM`.
+2. **First response time** — average and P95 first response time by queue and agent.
+3. **Resolution trends** — average time-to-resolution by priority and category.
+4. **Case volume** — new / open / resolved / closed per period. Breakdown by source (WhatsApp / web_form / email / phone).
+
+**KPI formulas** (from `kpi-data-pipelines.md`): SLA breach rate derived from `case.sla.first_response_breached.v1` and `case.sla.resolution_breached.v1` events.
+
+---
+
+### 2.4 — Finance Analytics (H-04)
+
+**Route:** `/app/reports/finance`
 **Read model:** `SubscriptionRevenueRetentionRM`, `QuoteApprovalCycleRM`
 **Role gate:** `finance`, `owner`
 
 **Views:**
-1. **MRR / ARR waterfall** — new, expansion, contraction, churn breakdown. Period: monthly.
-2. **Invoice aging buckets** — outstanding receivables by age (0–30, 31–60, 61–90, 90+).
-3. **Quote acceptance funnel** — quote sent → approved → converted to order.
-4. **Payment collection rate** — invoices issued vs collected by period.
+1. **Collections rate** — invoices issued vs paid per period. `Invoice Collection Rate` formula from `kpi-data-pipelines.md`: `(paid invoices / issued invoices) × 100`.
+2. **Overdue aging** — outstanding receivables in buckets: 0–30 / 31–60 / 61–90 / 90+ days (from `collections-engine-model.md` aging model).
+3. **Cash collected** — `Booked Revenue` + `Cash Collected` KPIs from `kpi-data-pipelines.md`.
+4. **Payment method split** — cash / JazzCash / Easypaisa / bank transfer. Pakistan note: JazzCash/Easypaisa hidden when `stub_mode=true` (P-016 blocked).
+5. **MRR / ARR waterfall** — new, expansion, contraction, churn. Source: `SubscriptionRevenueRetentionRM`.
 
-**Drilldown:** Invoice aging bucket → filtered Invoice Queue for that bucket.
-
----
-
-### 2.6 — Usage Billing Analytics
-
-**Route:** `/app/reports/usage`
-**Source entities:** `usage_events`, `usage_aggregates`, `billing_meters` (from `db/transaction_db/migrations/0004_add_usage_billing.up.sql`)
-**Source module:** `src/usage_billing/`
-**Role gate:** `finance`, `tenant_admin`
-
-**Views:**
-1. **Meter usage trend** — per meter_code, usage volume over time. Compare vs limits.
-2. **Usage by tenant** — cross-tenant usage breakdown (super_admin only).
-3. **Billing period summary** — total billable events per period, by meter.
-4. **Threshold alerts** — meters approaching or breached limits.
+**Drilldown:** Aging bucket → filtered Invoice Queue.
 
 ---
 
-### 2.7 — Payments Analytics
+### 2.5 — Workflow Analytics (H-05)
 
-**Route:** `/app/reports/payments`
-**Read model:** `SubscriptionRevenueRetentionRM`
-**Source entities:** `PaymentEvent`
-**Role gate:** `finance`, `owner`
+**Route:** `/app/reports/workflows`
+**Source entities:** `WorkflowExecution`, `WorkflowDefinition`
+**Source doc:** `docs/infrastructure/workflow-catalog.md`, `docs/infrastructure/workflow-dsl.md`
+**Role gate:** `tenant_admin`, `admin`
 
 **Views:**
-1. **Payment method breakdown** — cash / JazzCash / Easypaisa / bank transfer split.
-2. **Collection performance** — reminder sent → paid conversion rate by tone tier (polite/firm/urgent).
-3. **DSO (Days Sales Outstanding)** — rolling average with trend.
-4. **Failed payment events** — list of failed/reversed events with reason codes.
+1. **Execution volume** — workflow runs per definition per period. Pass/fail counts.
+2. **Failure rate** — top failing workflow definitions. Error breakdown by step.
+3. **Retry queue depth** — pending retries per workflow type. Alert if depth > threshold.
+4. **DLQ events** — dead-lettered workflow events. Links to Event Bus Monitor (J-archetype).
 
-**Pakistan note:** JazzCash and Easypaisa appear only when `stub_mode=false` (P-016 unblocked). In stub mode, these rows are hidden or marked "pending integration".
+---
+
+### 2.6 — Audit Report (H-06)
+
+**Route:** `/app/reports/audit`
+**Source entity:** `AuditLog`
+**Read model:** `PlatformReliabilityAuditRM`
+**Role gate:** `compliance_officer`, `super_admin`
+
+**Views:**
+1. **Compliance summary** — audit event counts by action type and result for selected period.
+2. **Hash chain verification** — spot-check or full-chain verification. PASS/FAIL per entry.
+3. **Privileged access log** — filter to `login`, `export`, `admin_override` action types.
+4. **Export** — signed CSV with full entries + hashes. Export action itself logged to `AuditLog`.
+
+**Design rule:** All content read-only. No edit or delete controls. Per `b9-p12-audit-compliance.md` immutability rule.
+
+---
+
+### 2.7 — Custom Report Builder (H-07)
+
+**Route:** `/app/reports/builder`
+**Role gate:** `sales_manager`, `finance`, `owner`
+
+**Views:**
+1. **Metric selector** — drag-and-drop selection from the 8 canonical KPIs in `kpi-data-pipelines.md` plus read model fields.
+2. **Dimension picker** — group by: period / owner / stage / source / territory / queue.
+3. **Chart type** — bar / line / table / pie. Chart type selection bound to metric type (monetary → bar/line; percentage → pie/line; count → bar/table).
+4. **Save & schedule** — save report definition; schedule as recurring email/WhatsApp export to team.
+
+**Design rule:** Only fields defined in named read models or `kpi-data-pipelines.md` may be used as metrics — no ad-hoc queries against write models.
+
+**API Routes for H-07:**
+
+| Endpoint | Method | Scope | Notes | Status |
+|---|---|---|---|---|
+| `/reports/definitions` | GET | `reports.read` | Returns list of saved report definitions for tenant | **CREATE in `v1-reports.routes.js`** |
+| `/reports/definitions` | POST | `reports.create` | Save a new report definition | **CREATE in `v1-reports.routes.js`** |
+| `/reports/execute` | POST | `reports.read` | Execute report — accepts `metric_key`, `group_by`, `period`; returns 6-month time-series array | **CREATE in `v1-reports.routes.js`** |
+
+**Report definition shape:**
+```json
+{
+  "report_id": "string",
+  "name": "string",
+  "metrics": ["weighted_pipeline"],
+  "group_by": "period",
+  "chart_type": "bar",
+  "created_by": "user_id",
+  "created_at": "ISO-8601"
+}
+```
+
+**Valid `metric_key` values** (from `kpi-data-pipelines.md`): `lead_conversion_rate`, `opportunity_win_rate`, `open_pipeline_value`, `quote_acceptance_rate`, `booked_revenue`, `cash_collected`, `invoice_collection_rate`, `subscription_churn_rate`. Plus read model fields: `weighted_pipeline`, `mrr`, `arr`, `collection_rate`.
+
+**`/reports/execute` response shape:**
+```json
+{
+  "metric_key": "weighted_pipeline",
+  "group_by": "period",
+  "series": [
+    { "label": "Dec", "value": 2800000 },
+    { "label": "Jan", "value": 3100000 }
+  ],
+  "currency": "PKR"
+}
+```
+
+---
+
+## Phase 6 / Enterprise Addenda
+
+*The following surfaces are retained from the original b9-p10 specification. They are Phase 6 build targets, not in the current H-series build queue.*
+
+### Addendum A — Predictive Forecasting
+**Route:** `/app/reports/forecast` · **Read model:** `OpportunityPipelineSnapshotRM` + `forecast_snapshots`
+Weighted pipeline vs commit vs best-case vs quota; cohort waterfall; AI model confidence scores; rolling 4-quarter forecast accuracy.
+
+### Addendum B — AI Scoring
+**Route:** `/app/reports/ai-scoring` · **Source:** `scoring_models`, `lead_scores`
+Score distribution histogram; score trend; top-scored records; feature weight inspector (read-only).
+
+### Addendum C — Predictive Models Registry
+**Route:** `/app/reports/models` · **Role gate:** `admin`, `data_scientist`
+Model registry; run history; feature weight editor; model comparison.
+
+### Addendum D — Usage Billing Analytics
+**Route:** `/app/reports/usage` · **Role gate:** `finance`, `tenant_admin`
+Meter usage trend; cross-tenant usage breakdown; billing period summary; threshold alerts.
 
 ---
 
@@ -158,11 +220,13 @@ This is a **navigation hub** — not a stand-alone report. Clicking any tile nav
 
 ## SELF-QC
 
-- **All 7 Archetype.md reporting pages documented:** ✅ — 2.1–2.7 match exactly.
-- **Every page bound to a named read model or DB entity:** ✅
+- **All 7 DESIGN-SPEC.md H-series pages documented:** ✅ — H-01 through H-07 (2026-05-28 restructure; original enterprise surfaces retained as Phase 6 addenda)
+- **Every H-page bound to a named read model or DB entity:** ✅
+- **KPI formulas referenced from kpi-data-pipelines.md:** ✅
 - **Drilldown targets defined for all pages:** ✅
-- **Pakistan payment stub-mode documented:** ✅
-- **No ad-hoc query UI:** ✅ — all metrics from named read model fields.
+- **Pakistan payment stub-mode documented:** ✅ — Finance Analytics (H-04)
+- **No ad-hoc query UI:** ✅ — all metrics from named read model fields or kpi-data-pipelines.md formulas
 - **Export defined for all views:** ✅
+- **Marketing Analytics (H-02) backend-incomplete noted:** ✅
 
 Score: **10/10**

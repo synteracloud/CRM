@@ -2,7 +2,7 @@
 
 **Purpose:** Durable checklist tracking which docs have been fully read line-by-line.  
 **Key:** ✓ = fully read | ⬜ = pending | W = written/maintained by us (content known, not independently re-read)  
-**Last updated:** 2026-05-22 — Step 6 catalogue merge: removed DOC-CATALOGUE-OPS.md + DOC-CATALOGUE-TECH.md (merged and deleted); added deployment-pipelines.md ✓, DOC-READ-LOG.md W, CATALOGUE-MERGE-PLAN.md W. Running total: 101 ✓ / 2 W / 0 ⬜ / 103 total. (Prior: Batch 4 complete — 102 ✓ / 0 ⬜.)
+**Last updated:** 2026-05-31 — COMMERCIALISATION-PLAN.md added to §A as [W]. Running total: 105 ✓ / 4 W / 0 ⬜ / 109 total. (Prior: 105 ✓ / 3 W / 0 ⬜ / 108.)
 
 ---
 
@@ -24,6 +24,10 @@
 - [✓] deployment-pipelines.md *(archived — read during Step 6 workspace scan 2026-05-22)*
 - [W] DOC-READ-LOG.md *(this file — maintained by us)*
 - [W] CATALOGUE-MERGE-PLAN.md *(written by us 2026-05-22)*
+- [✓] PAGE-BUILD-PROTOCOL.md *(read 2026-05-31)*
+- [W] SESSION-HANDOFF.md *(written/maintained by us — updated each session)*
+- [✓] MAPPING-TRACKER.md *(read 2026-05-27 — Phase M complete)*
+- [W] COMMERCIALISATION-PLAN.md *(written by us 2026-05-31 — active anchor)*
 
 ---
 
@@ -162,11 +166,19 @@
 
 ---
 
+## §M — Phase 5B Domain Specs (added 2026-05-30)
+
+- [✓] marketing-campaigns.md *(read as anchor doc for Sprint 5B-4)*
+- [✓] partners.md *(read as anchor doc for Sprint 5B-5)*
+- [✓] ai-predictive-models.md *(read as anchor doc for Sprint 5B-7)*
+
+---
+
 ## Summary
 
 | Status | Count |
 |---|---|
-| ✓ Fully read | 101 |
+| ✓ Fully read | 104 |
 | W Written/maintained | 2 |
 | ⬜ Pending | 0 |
-| **Total** | **103** |
+| **Total** | **106** |

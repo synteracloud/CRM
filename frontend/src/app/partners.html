@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partner List — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">Partners</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-primary" disabled title="Backend not wired">
+            <i class="fi fi-rr-plus me-1"></i>Add Partner
+          </button>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-primary-subtle"><i class="fi fi-rr-handshake text-primary"></i></div>
+                <div><h6 class="mb-0 text-muted small">Total Partners</h6><h3 class="mb-0 fw-bold" id="kpi-total">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-success-subtle"><i class="fi fi-rr-star text-success"></i></div>
+                <div><h6 class="mb-0 text-muted small">Active Partners</h6><h3 class="mb-0 fw-bold" id="kpi-active">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-info-subtle"><i class="fi fi-rr-briefcase text-info"></i></div>
+                <div><h6 class="mb-0 text-muted small">Open Opportunities</h6><h3 class="mb-0 fw-bold" id="kpi-opps">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-warning-subtle"><i class="fi fi-rr-money text-warning"></i></div>
+                <div><h6 class="mb-0 text-muted small">Commission Due</h6><h3 class="mb-0 fw-bold" id="kpi-commission">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter chips + Table -->
+      <div class="card" style="height:auto">
+        <div class="card-header d-flex flex-wrap align-items-center gap-3">
+          <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5 mb-0" id="filter-tier" role="tablist">
+            <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All Tiers</button></li>
+            <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Platinum">Platinum</button></li>
+            <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Gold">Gold</button></li>
+            <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="Silver">Silver</button></li>
+          </ul>
+          <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5 mb-0" id="filter-status" role="tablist">
+            <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All Status</button></li>
+            <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="active">Active</button></li>
+            <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="inactive">Inactive</button></li>
+          </ul>
+        </div>
+        <div class="card-body p-0">
+          <table id="dt_Partners" class="table table-hover mb-0 w-100">
+            <thead>
+              <tr>
+                <th class="dt-head-center">Partner</th>
+                <th class="dt-head-center">Tier</th>
+                <th class="dt-head-center">Region</th>
+                <th class="dt-head-center">Contact</th>
+                <th class="dt-head-center">Open Opps</th>
+                <th class="dt-head-center">Commission Due</th>
+                <th class="dt-head-center">Status</th>
+                <th class="dt-head-center">Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'partners';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/libs/datatables/datatables.min.js"></script>
+<script src="assets/js/app/crm-partners.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

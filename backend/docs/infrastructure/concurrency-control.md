@@ -237,6 +237,36 @@ This deterministic ordering prevents deadlocks.
   - Decision (`approved|rejected`) is exactly-once; first successful decision wins.
   - Late duplicate decisions are rejected as conflict with prior decision snapshot.
 
+## E) Partner Channel (PartnerCommission, DealRegistration) — Sprint 5B-5
+
+### PartnerCommission
+
+- Mode: OCC for edits; **hard immutability on `status = paid`**.
+- Safe rules:
+  - Once `status` transitions to `paid`, no field on the record may be updated (enforced at gateway route layer — 409 returned regardless of version_no).
+  - Dispute (`status = disputed`) is allowed before `paid`; after `paid` any dispute must create a separate reversal record.
+  - `amount` and `rate` are set once on creation; subsequent edits rejected if commission is already `approved` or `paid`.
+
+### DealRegistration
+
+- Mode: OCC via `updated_at` timestamp.
+- Safe rules:
+  - `status` transitions: `submitted → approved/rejected`, `approved → linked/expired`. No reverse.
+  - Approved registrations create an exclusivity window (`expiry_date`); concurrent registration attempts for the same opportunity are rejected with 409.
+
+---
+
+## F) AI Outputs (CopilotSuggestion) — Sprint 5B-7
+
+### CopilotSuggestion
+
+- Mode: conditional UPDATE for dismiss/action flags (no `version_no`).
+- Safe rules:
+  - `is_dismissed` and `is_actioned` are monotonic boolean flags — once `true` they cannot revert to `false`.
+  - Concurrent dismiss and action on the same suggestion are both allowed; they set independent flags.
+  - `evidence_anchor` is immutable after creation; no UPDATE is accepted that changes it.
+  - **Advisory-only invariant:** setting `is_actioned = true` records user intent only; it never triggers an autonomous backend mutation.
+
 ---
 
 ## Concurrent Mutation Conflict Handling

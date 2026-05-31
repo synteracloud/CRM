@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Finance Analytics</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item active">Finance Analytics</li>
+            </ol>
+          </nav>
+          <div class="d-flex align-items-center gap-2">
+            <select class="form-select form-select-sm" id="h04-period" style="width:auto;">
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" id="h04-export-btn">
+              <i class="fi fi-rr-download me-1"></i> Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="row mb-3">
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-danger">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-danger-subtle text-danger rounded-3"><i class="fi fi-rr-hand-holding-usd"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Total Outstanding</h6>
+                <h2 class="mb-1 text-danger" id="h04-total-outstanding">—</h2>
+                <p class="mb-0 text-muted small">Unpaid invoices (PKR)</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3"><i class="fi fi-rr-time-past"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Overdue Value</h6>
+                <h2 class="mb-1 text-warning" id="h04-overdue-value">—</h2>
+                <p class="mb-0 text-muted small"><span id="h04-overdue-count">0</span> overdue invoices</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3"><i class="fi fi-rr-coins"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Collected This Month</h6>
+                <h2 class="mb-1 text-success" id="h04-paid-month">—</h2>
+                <p class="mb-0 text-muted small">Payments received</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3"><i class="fi fi-rr-chart-pie-alt"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Collection Rate</h6>
+                <h2 class="mb-1 text-primary" id="h04-collection-rate">—</h2>
+                <p class="mb-0 text-muted small">Paid / total invoiced</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary charts row -->
+        <div class="row mb-3">
+          <div class="col-xxl-8">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Overdue Aging Buckets</h6>
+                <small class="text-muted">Outstanding value per aging band — 0–30 / 31–60 / 61–90 / 90+ days</small>
+              </div>
+              <div class="card-body pb-0">
+                <div id="H04AgingChart"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4">
+            <div class="card h-100">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Revenue Trend</h6>
+                <small class="text-muted">7-month revenue vs expenses</small>
+              </div>
+              <div class="card-body pb-0">
+                <div id="H04RevenueTrendChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collections detail table -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="card-title mb-0">Collections Queue Detail</h6>
+                    <small class="text-muted">All open invoices · sorted by overdue status</small>
+                  </div>
+                  <a href="app/collections.html" class="btn btn-sm btn-outline-primary waves-effect">
+                    Open Collections Queue →
+                  </a>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="text-center">Invoice #</th>
+                        <th class="text-center">Account</th>
+                        <th class="text-center">Amount Due (PKR)</th>
+                        <th class="text-center">Due Date</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Last Reminder</th>
+                      </tr>
+                    </thead>
+                    <tbody id="h04-collections-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'finance-analytics';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/app/crm-finance-analytics.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

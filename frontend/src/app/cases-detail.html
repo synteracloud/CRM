@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case Detail — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/cases.html">Cases</a></li>
+            <li class="breadcrumb-item active" id="bc-case-num">CS-2026-001</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- Identity Strip -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="card mb-0" style="height:auto">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <h5 class="mb-0 fw-bold" id="case-number">CS-2026-001</h5>
+                    <span id="status-badge"></span>
+                    <span id="sla-badge"></span>
+                    <span id="priority-badge"></span>
+                  </div>
+                  <p class="mb-0 text-muted" id="case-subject">—</p>
+                  <div class="d-flex gap-3 mt-1 small text-muted">
+                    <span><i class="fi fi-rr-user me-1"></i><span id="contact-name">—</span></span>
+                    <span><i class="fi fi-rr-building me-1"></i><span id="account-name">—</span></span>
+                    <span><i class="fi fi-rr-layers me-1"></i><span id="case-queue">—</span></span>
+                  </div>
+                </div>
+                <!-- SLA Timer -->
+                <div class="text-center px-3 py-2 border rounded" id="sla-timer-box">
+                  <div class="small text-muted mb-0">Response Due</div>
+                  <div class="fw-bold fs-6" id="sla-timer">—</div>
+                </div>
+                <!-- Action buttons (state-gated in JS) -->
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-primary" id="btn-claim" style="display:none">Claim</button>
+                  <button class="btn btn-sm btn-outline-secondary" id="btn-reassign">Reassign</button>
+                  <button class="btn btn-sm btn-outline-warning" id="btn-escalate">Escalate</button>
+                  <button class="btn btn-sm btn-success" id="btn-resolve" style="display:none">Resolve</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Pane -->
+      <div class="row g-3">
+        <!-- Main Pane -->
+        <div class="col-lg-8">
+          <div class="card" style="height:auto">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs" id="case-tabs">
+                <li class="nav-item"><a class="nav-link active" href="#tab-thread" data-bs-toggle="tab">Conversation</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab-fields" data-bs-toggle="tab">Case Fields</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab-resolution" data-bs-toggle="tab">Resolution</a></li>
+              </ul>
+            </div>
+            <div class="card-body tab-content">
+              <!-- Conversation Thread -->
+              <div class="tab-pane fade show active" id="tab-thread">
+                <div class="d-flex flex-column gap-3" id="conversation-thread">
+                  <!-- Messages rendered by JS -->
+                </div>
+                <div class="mt-3 border-top pt-3">
+                  <textarea class="form-control mb-2" rows="3" placeholder="Type your reply..."></textarea>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-primary">Send Reply</button>
+                    <button class="btn btn-sm btn-outline-secondary">Internal Note</button>
+                  </div>
+                </div>
+              </div>
+              <!-- Case Fields -->
+              <div class="tab-pane fade" id="tab-fields">
+                <div class="row g-3" id="case-fields-content"></div>
+              </div>
+              <!-- Resolution -->
+              <div class="tab-pane fade" id="tab-resolution">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Resolution Notes</label>
+                  <textarea class="form-control" rows="4" placeholder="Describe the resolution..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Linked Knowledge Article</label>
+                  <input type="text" class="form-control" placeholder="Search articles...">
+                </div>
+                <button class="btn btn-success">Mark Resolved</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context Panel -->
+        <div class="col-lg-4">
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Customer Context</h6></div>
+            <div class="card-body" id="context-customer"></div>
+          </div>
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Escalation Controls</h6></div>
+            <div class="card-body" id="context-escalation"></div>
+          </div>
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Related Cases</h6></div>
+            <div class="card-body p-0" id="related-cases"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'cases-detail';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-cases-detail.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

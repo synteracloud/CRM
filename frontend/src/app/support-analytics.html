@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Analytics — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="assets/libs/datatables/datatables.min.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">Support Analytics</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2 align-items-center">
+          <input type="text" class="form-control form-control-sm" id="date-range-picker" placeholder="Date range" style="width:200px">
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="row g-3 mb-3">
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-primary-subtle"><i class="fi fi-rr-ticket text-primary"></i></div>
+                <div><h6 class="mb-0 text-muted small">Open Cases</h6><h3 class="mb-0 fw-bold" id="kpi-open">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-danger-subtle"><i class="fi fi-rr-exclamation text-danger"></i></div>
+                <div><h6 class="mb-0 text-muted small">SLA Breach Rate</h6><h3 class="mb-0 fw-bold" id="kpi-breach">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-success-subtle"><i class="fi fi-rr-time-fast text-success"></i></div>
+                <div><h6 class="mb-0 text-muted small">Avg First Response</h6><h3 class="mb-0 fw-bold" id="kpi-response">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card" style="height:auto">
+            <div class="card-body py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="flex-shrink-0 avatar avatar-sm rounded bg-warning-subtle"><i class="fi fi-rr-check-circle text-warning"></i></div>
+                <div><h6 class="mb-0 text-muted small">Resolved</h6><h3 class="mb-0 fw-bold" id="kpi-resolved">—</h3></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="row g-3 mb-3">
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">SLA Breach Rate Trend</h6></div>
+            <div class="card-body"><div id="chart-breach"></div></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Case Volume by Source</h6></div>
+            <div class="card-body"><div id="chart-source"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cases table -->
+      <div class="card" style="height:auto">
+        <div class="card-header"><h6 class="mb-0">Case Summary</h6></div>
+        <div class="card-body p-0">
+          <table id="dt_SupportCases" class="table table-hover mb-0 w-100">
+            <thead>
+              <tr>
+                <th class="dt-head-center">Case #</th>
+                <th class="dt-head-center">Subject</th>
+                <th class="dt-head-center">Priority</th>
+                <th class="dt-head-center">Status</th>
+                <th class="dt-head-center">SLA</th>
+                <th class="dt-head-center">Source</th>
+                <th class="dt-head-center">Created</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'support-analytics';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/libs/datatables/datatables.min.js"></script>
+<script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+<script src="assets/js/app/crm-support-analytics.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

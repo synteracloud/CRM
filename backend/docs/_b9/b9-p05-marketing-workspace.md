@@ -3,6 +3,9 @@
 ## Inputs used
 - `docs/ui/read-models.md`
 - `docs/infrastructure/workflow-catalog.md`
+- `docs/domain/marketing-campaigns.md` — **backend domain spec** (canonical entity schemas, state machine, segment rules, dispatch logic, delivery tracking, attribution model, API endpoints). Read before implementing any F-series or I-06 page.
+
+**Read model:** `CommunicationEngagementRM` (engagement rates) — see `backend/docs/ui/read-models.md`.
 
 ## Marketing workspace structure
 

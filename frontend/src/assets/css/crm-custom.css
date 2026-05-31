@@ -1,0 +1,105 @@
+/* Pakistan CRM — custom overrides */
+
+/* ApexCharts: prevent chart SVG from overflowing Bootstrap flex columns.
+   Root cause: flex items have min-width:auto by default; ApexCharts measures
+   the container before flex layout settles and may receive a large width.
+   Capping the canvas + SVG at 100% of the parent fixes all chart pages. */
+.apexcharts-canvas { max-width: 100% !important; overflow: hidden !important; }
+.apexcharts-canvas > svg { max-width: 100% !important; }
+
+/* DataTables v2 wraps <th> content in div.dt-column-header (display:flex,
+   justify-content:space-between). text-align on <th> is ignored entirely.
+   These rules match DT's specificity so they win per alignment class. */
+table.dataTable thead > tr > th.dt-head-left   div.dt-column-header { justify-content: flex-start; }
+table.dataTable thead > tr > th.dt-head-center div.dt-column-header { justify-content: center; }
+table.dataTable thead > tr > th.dt-head-right  div.dt-column-header { justify-content: flex-end; }
+
+/* Dashboard dt_NewCustomers uses static HTML rows — DataTables does not
+   apply columnDef className to pre-existing <td> elements, so force it. */
+#dt_NewCustomers.dataTable tbody > tr > td {
+  text-align: center;
+}
+#dt_NewCustomers.dataTable tbody > tr > td:nth-child(2) {
+  text-align: left;
+}
+
+/* Collections Queue — explicit body-cell alignment per column. */
+#dt_Collections.dataTable tbody > tr > td { text-align: center !important; }
+
+/* Sales Cockpit Pipeline table — all columns centre. */
+#dt_Pipeline.dataTable tbody > tr > td { text-align: center !important; }
+
+/* Audit Log table — timestamp/result/hash centre; actor/action/resource left. */
+#dt_AuditLog.dataTable tbody > tr > td { text-align: left !important; }
+#dt_AuditLog.dataTable tbody > tr > td:nth-child(1) { text-align: center !important; }
+#dt_AuditLog.dataTable tbody > tr > td:nth-child(5) { text-align: center !important; }
+#dt_AuditLog.dataTable tbody > tr > td:nth-child(6) { text-align: center !important; }
+
+/* RBAC Audit Assignment Log — date centre; user/action/role/by left. */
+#dt_RbacAssignmentLog.dataTable tbody > tr > td { text-align: left !important; }
+#dt_RbacAssignmentLog.dataTable tbody > tr > td:nth-child(1) { text-align: center !important; }
+
+/* Task Queue — task title + linked record left; owner/due/status/action centre. */
+#dt_Tasks.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Tasks.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+#dt_Tasks.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+
+/* Activity Feed — description + linked record left; type/actor/when/action centre. */
+#dt_Activities.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Activities.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+#dt_Activities.dataTable tbody > tr > td:nth-child(4) { text-align: left !important; }
+
+/* User Directory — all columns centre. */
+#dt_Users.dataTable tbody > tr > td { text-align: center !important; }
+
+/* User Management Admin (G-02) — all columns centre. */
+#dt_UMgmt.dataTable tbody > tr > td { text-align: center !important; }
+
+/* Invoice Queue (B-09) — all columns centre. */
+#dt_Invoices.dataTable tbody > tr > td { text-align: center !important; }
+
+/* Account List (B-04) — all columns centre. */
+#dt_Accounts.dataTable tbody > tr > td { text-align: center !important; }
+
+/* Support Dashboard SLA Queue (A-07) — subject left; rest centre. */
+#dt_SlaQueue.dataTable tbody > tr > td { text-align: center !important; }
+#dt_SlaQueue.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+
+/* Case List (B-05) — subject left; rest centre. */
+#dt_Cases.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Cases.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+
+/* Partner List (B-11) — partner name left; rest centre; commission right. */
+#dt_Partners.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Partners.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+#dt_Partners.dataTable tbody > tr > td:nth-child(6) { text-align: right !important; }
+
+/* Marketing Analytics campaigns (H-02) — name left; rates/numbers centre. */
+#dt_MarketingCampaigns.dataTable tbody > tr > td { text-align: center !important; }
+#dt_MarketingCampaigns.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+
+/* Support Analytics cases (H-03) — subject left; rest centre. */
+#dt_SupportCases.dataTable tbody > tr > td { text-align: center !important; }
+#dt_SupportCases.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+
+/* Workflow Analytics executions (H-05) — workflow name left; rest centre. */
+#dt_WorkflowExec.dataTable tbody > tr > td { text-align: center !important; }
+#dt_WorkflowExec.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+
+/* Marketing Workspace campaigns (F-01) — name left; rest centre. */
+#dt_Campaigns.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Campaigns.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+
+/* Follow-up Queue (B-01) — lead/contact name left; rest centre. */
+#dt_Followups.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Followups.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+
+/* Leads list (B-02) dt_ScrollVertical — contact name left; stage/score/owner/action centre. */
+#dt_ScrollVertical.dataTable tbody > tr > td { text-align: center !important; }
+#dt_ScrollVertical.dataTable tbody > tr > td:nth-child(2) { text-align: left !important; }
+#dt_ScrollVertical.dataTable tbody > tr > td:nth-child(3) { text-align: left !important; }
+
+/* Contacts list (B-03) — name/email left; phone/status/action centre. */
+#dt_Contacts.dataTable tbody > tr > td { text-align: center !important; }
+#dt_Contacts.dataTable tbody > tr > td:nth-child(1) { text-align: left !important; }
+#dt_Contacts.dataTable tbody > tr > td:nth-child(3) { text-align: left !important; }

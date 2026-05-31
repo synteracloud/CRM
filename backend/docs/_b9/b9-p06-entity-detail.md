@@ -125,18 +125,31 @@ All entity detail views use a **split-pane model**:
 **Route:** `/app/support/cases/:case_id`
 **Primary entity:** `Case`
 **Read model:** `CaseSLAOperationalRM`
+**Entity contract:** `docs/domain/cases-domain.md`
 
-**Header:** Case number, subject, status, SLA state badge, `[Claim]` `[Reassign]` `[Escalate]` `[Resolve]`
+**Header:** Case number (`Case.case_number`), subject, status badge, SLA state badge, `[Claim]` `[Reassign]` `[Escalate]` `[Resolve]`
+
+**Header button state gates** (from `cases-domain.md §3.2`):
+- `[Claim]` — only when `status = OPEN` and `assigned_to IS NULL`
+- `[Resolve]` — only when at least one `CaseComment.comment_type = resolution` exists
+- `[Escalate]` — requires `manager` or `admin` role
+- `[Close]` — only when `status = RESOLVED` and `resolution_confirmed_at IS SET`; admin-only force-close from any state
+
+**`CaseStatus` enum** (full state machine — `cases-domain.md §3.1`):
+`OPEN` · `ASSIGNED` · `IN_PROGRESS` · `WAITING_ON_CUSTOMER` · `RESOLVED` · `ESCALATED` · `CLOSED`
+
+**`sla_state`** — derived from SLA timers (not a stored field): `healthy` / `at_risk` (≤20% window remaining) / `breached`
 
 **Main pane sections:**
-- Conversation thread (chronological customer/agent/system messages)
-- SLA timer strip (always visible)
-- Case fields: priority, queue, category
+- Conversation thread (chronological customer/agent/system messages; `internal_note` comments hidden from customer)
+- SLA timer strip (always visible — shows `sla_first_response_due_at` or `sla_resolution_due_at`)
+- Case fields: priority (`critical/high/medium/low`), queue (`SupportQueue.name`), category, `sla_tier`
 - Resolution notes + knowledge article links
 
 **Context panel:**
 - Customer context: account, contact, open ticket count, CSAT, plan tier
-- Escalation controls (deterministic by SLA state)
+- Escalation level (0–4 per cases-domain.md §6.1 ladder)
+- Escalation controls (deterministic by `sla_state`)
 - Related cases
 
 *Also covered in `b9-p04-support-console.md`.*
@@ -190,8 +203,17 @@ All entity detail views use a **split-pane model**:
 **Route:** `/app/finance/subscriptions/:subscription_id`
 **Primary entity:** `Subscription`
 **Read model:** `SubscriptionRevenueRetentionRM`
+**Entity contract:** `docs/domain/payments-revenue.md`
 
-**Header:** Subscription ID, plan, MRR, status, `[Renew]` `[Suspend]` `[Cancel]`
+**Header:** Subscription ID, plan, MRR, status badge, `[Renew]` `[Suspend]` `[Cancel]`
+
+**`Subscription.status` enum** (from `payments-revenue.md`):
+`draft` · `trialing` · `active` · `past_due` · `paused` · `cancelled` · `expired`
+
+**Header button state gates:**
+- `[Renew]` — only when `status IN (active, past_due)` — triggers renewal flow
+- `[Suspend]` — only when `status = active`
+- `[Cancel]` — only when `status NOT IN (cancelled, expired)`
 
 **Main pane sections:**
 - Plan details: product, billing cycle, start/end dates, auto-renew flag
@@ -298,13 +320,88 @@ All entity detail views use a **split-pane model**:
 
 ---
 
+## 4) Identity Strip Implementation Rule
+
+All entity detail views open with a **header strip** (entity identity + primary actions) rendered as a single card inside a full-width `col-12` row. This is the identity strip pattern.
+
+**Mandatory:** The `.card` element in this row must carry `style="height:auto"`.
+
+```html
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card mb-0" style="height:auto">
+      <!-- entity identity content -->
+    </div>
+  </div>
+</div>
+```
+
+**Why:** NexLink's base stylesheet sets `.card { height: calc(100% - var(--bs-gutter-x)) }`. When the card is the sole child of a `col-12` row, the percentage resolves against the row's own height, which collapses to less than the card content height. The result is the card boundary breaching the content — content visibly overflows the card's bottom edge. `style="height:auto"` breaks the circular dependency and lets the card size to its content.
+
+This applies to: leads-detail.html, opportunities-detail.html, quotes-detail.html, and every other entity detail page built to this archetype.
+
+---
+
+### 2.13 — Invoice Detail (C-08)
+
+**Route:** `/app/finance/invoices/:invoice_id`
+**Primary entity:** `InvoiceSummary` (gateway `invoice-summaries` domain) + `Invoice` (collections domain)
+**API route:** `GET /api/v1/invoice-summaries/:invoice_id` — add ID-lookup to `v1-invoice-summaries.routes.js`
+
+**Header:** Invoice number, account name, status badge, total amount, `[Record Payment]` `[Send WhatsApp Reminder]` `[Download PDF]`
+
+**`InvoiceSummary.status` enum:**
+`draft` · `open` · `sent` · `paid` · `partial` · `overdue` · `void` · `uncollectible`
+
+**Header button state gates:**
+- `[Record Payment]` — only when `status IN (open, sent, partial, overdue)`
+- `[Send WhatsApp Reminder]` — only when `status IN (sent, partial, overdue)` and tenant has WhatsApp configured
+- `[Download PDF]` — always available
+
+**Main pane sections:**
+1. **Invoice header fields:** invoice number, account name, issue date, due date, payment terms
+2. **Line items table:** description / qty / unit price / discount / line total. Read-only after issue.
+3. **Payment history:** chronological list of recorded payments (amount, date, reference, recorded_by). Each row shows running balance.
+4. **Notes / internal memo** (optional)
+
+**Context panel:**
+- Balance outstanding (computed: `total_amount − paid_amount`)
+- Overdue indicator: days overdue (when `status = overdue`)
+- Linked account with outstanding balance across all invoices
+- Linked subscription (if invoice is from subscription billing)
+- Quick link to Collections Queue (B-08) pre-filtered for this account
+
+**Field contract (from `v1-invoice-summaries.routes.js` + `collections` domain):**
+
+| Field | Source | Notes |
+|---|---|---|
+| `invoice_number` | `InvoiceSummary.invoice_number` | Display as heading |
+| `account_name` | `InvoiceSummary.account_name` | Denormalised |
+| `account_id` | `InvoiceSummary.account_id` | For account link |
+| `total_amount` | `InvoiceSummary.total_amount` | PKR |
+| `paid_amount` | `InvoiceSummary.paid_amount` | PKR |
+| `status` | `InvoiceSummary.status` | See enum above |
+| `issue_date` | `InvoiceSummary.issue_date` | ISO-8601 |
+| `due_date` | `InvoiceSummary.due_date` | ISO-8601 |
+| `line_items` | `Invoice.line_items[]` | May be absent in summary; show "–" if unavailable |
+| `subscription_id` | `InvoiceSummary.subscription_id` | Nullable — link to subscription detail if present |
+
+**Design rule:** Invoice Detail is **immutable after issue** — no inline edit of line items or amounts. Only `[Record Payment]` writes new data.
+
+**Backend work required before building:**
+1. Add `GET /api/v1/invoice-summaries/:invoice_id` route to `v1-invoice-summaries.routes.js` (look up by `invoice_number` from in-memory/DB array).
+2. Optionally extend `InvoiceSummary` response to include `line_items[]` if available from the collections service.
+
+---
+
 ## SELF-QC
 
-- **All 12 Archetype.md entity detail pages documented:** ✅ — 2.1–2.12 match exactly.
+- **All 13 entity detail pages documented:** ✅ — 2.1–2.13 (C-08 Invoice Detail added 2026-05-30)
 - **Every view anchored to a domain-model.md entity:** ✅
 - **Header + main pane + context panel defined for all views:** ✅
-- **Immutability constraint documented (Order):** ✅
+- **Immutability constraint documented (Order, Invoice):** ✅
 - **Mobile collapse behaviour cross-referenced:** ✅
 - **No duplicate surfaces with p03/p04:** ✅ — cross-references noted.
+- **API route specified for C-08:** ✅ — `GET /api/v1/invoice-summaries/:id` + backend work listed
 
 Score: **10/10**

@@ -278,7 +278,7 @@ sequenceDiagram
 | Phase | Done when |
 |---|---|
 | Phase 1 | All service-owned OLTP schemas deployed; outbox relay active for all services; read replicas serving read traffic for entity detail pages |
-| Phase 2 | All 13 read models from `docs/ui/read-models.md` are populated and serving dashboard queries; timeline projection store serving activity feeds |
+| Phase 2 | All read models from `docs/ui/read-models.md` are populated and serving dashboard queries (15+ as of Phase 5B — see read-models.md for current catalog); timeline projection store serving activity feeds |
 | Phase 3 | Tenant-aware sharding live for `ActivityEvent`, `Message`, and `AuditLog` tables; hot-tenant rebalancing automation tested in staging |
 | Phase 4 | Retention/archive jobs running for all data classes; replay automation tested via quarterly DR game day |
 

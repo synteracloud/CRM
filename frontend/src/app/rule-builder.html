@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rule / CPQ Logic Builder — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">Rule Builder</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" id="btn-test-rule">Test Rule</button>
+          <button class="btn btn-sm btn-primary" disabled title="Dummy mode">Save Rule</button>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- Rule Identity -->
+      <div class="card mb-3" style="height:auto">
+        <div class="card-body py-2">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+              <label class="form-label small mb-0 fw-semibold">Rule Name</label>
+              <input type="text" class="form-control form-control-sm" value="discount_approval_routing">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small mb-0 fw-semibold">Rule Type</label>
+              <select class="form-select form-select-sm">
+                <option selected>CPQ / Discount</option>
+                <option>Lead Assignment</option>
+                <option>SLA Policy</option>
+                <option>Price Override</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small mb-0 fw-semibold">Priority</label>
+              <input type="number" class="form-control form-control-sm" value="10">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small mb-0 fw-semibold">Status</label>
+              <select class="form-select form-select-sm"><option selected>Active</option><option>Draft</option><option>Archived</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <!-- Condition Groups -->
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header d-flex align-items-center justify-content-between py-2">
+              <h6 class="mb-0 small">Conditions</h6>
+              <div class="d-flex align-items-center gap-2">
+                <span class="small text-muted">Match:</span>
+                <select class="form-select form-select-sm" style="width:auto">
+                  <option selected>ALL (AND)</option>
+                  <option>ANY (OR)</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-body" id="condition-rows">
+              <!-- Condition rows rendered by JS -->
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-sm btn-outline-primary" id="btn-add-condition"><i class="fi fi-rr-plus me-1"></i>Add Condition</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-lg-6">
+          <div class="card" style="height:auto">
+            <div class="card-header py-2">
+              <h6 class="mb-0 small">Actions (when conditions met)</h6>
+            </div>
+            <div class="card-body" id="action-rows">
+              <!-- Action rows rendered by JS -->
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-sm btn-outline-primary" id="btn-add-action"><i class="fi fi-rr-plus me-1"></i>Add Action</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Output -->
+      <div class="card mt-3" id="test-output" style="height:auto;display:none">
+        <div class="card-header py-2"><h6 class="mb-0 small">Test Result</h6></div>
+        <div class="card-body" id="test-result"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'rule-builder';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-rule-builder.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

@@ -125,7 +125,7 @@ D:\CRM\
 | [`REBUILD-PLAN.md`](REBUILD-PLAN.md) | 10/10 roadmap — phases, grades, deliverables |
 | [`backend/README.md`](backend/README.md) | Backend system identity and module map |
 | [`backend/docs/architecture-overview.md`](backend/docs/architecture-overview.md) | Layer model, engine registry, service architecture |
-| [`backend/docs/domain-model.md`](backend/docs/domain-model.md) | 58 canonical domain entities |
+| [`backend/docs/domain-model.md`](backend/docs/domain-model.md) | 79 canonical domain entities (incl. all Phase 5B supporting entities) |
 | [`backend/CONSTRAINTS.md`](backend/CONSTRAINTS.md) | 17 non-negotiable build constraints |
 | [`backend/PENDING.md`](backend/PENDING.md) | Blocked items (P-016 credentials, P-017 Urdu) |
 | [`DOC-CATALOGUE.md`](DOC-CATALOGUE.md) | Index of all 90+ project documents |

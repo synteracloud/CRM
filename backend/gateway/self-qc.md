@@ -51,3 +51,23 @@
 - ✅ Activities/task resources use canonical `/api/v1/...` patterns and scope checks (`activities.*`, `tasks.*`).
 - ✅ Task scheduling guard enforces `due_at >= starts_at` through service validation.
 - ✅ Activity/task entity links are constrained to supported timeline entities to avoid orphan records.
+
+---
+
+## Phase 5B Route Coverage Note (2026-05-30)
+
+Phase 5B (Sprints 5B-1 through 5B-7) added 12 new route files to `gateway/routes/`:
+
+| Sprint | Route files | Prefixes |
+|---|---|---|
+| 5B-1 | v1-cases.routes.js, v1-knowledge.routes.js | `/cases`, `/support`, `/knowledge` |
+| 5B-2 | v1-inbox.routes.js | `/inbox` |
+| 5B-3 | v1-territories.routes.js | `/territories` |
+| 5B-4 | v1-campaigns.routes.js, v1-segments.routes.js, v1-templates.routes.js | `/campaigns`, `/segments`, `/templates` |
+| 5B-5 | v1-partners.routes.js | `/partners`, `/deal-registrations` |
+| 5B-6 | v1-workflows.routes.js | `/workflows` |
+| 5B-7 | v1-ai.routes.js | `/ai/*` |
+
+These routes follow the same standards as B2-P02 (snake_case, `{data, meta.request_id}` envelope, tenant isolation, RBAC scope guard). A formal QC pass against api-standards.md for all Phase 5B routes is deferred to the **commercialization phase** (API contract test suite). Until that pass completes, Phase 5B routes are covered by in-memory fallback tests only.
+
+**Phase 6 extension (2026-05-31):** 5 additional inline route files added — v1-billing, v1-integrations, v1-governance, v1-reports, v1-communications. These follow the same standards and are included in the commercialization-phase contract test scope. Gateway total: 42 routes.

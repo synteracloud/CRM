@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Case — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/cases.html">Cases</a></li>
+            <li class="breadcrumb-item active">New Case</li>
+          </ol>
+        </nav>
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="card" style="height:auto">
+            <div class="card-header">
+              <!-- Step progress -->
+              <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2" id="step-1-indicator">
+                  <div class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width:32px;height:32px">1</div>
+                  <span class="fw-semibold">Case Identity</span>
+                </div>
+                <div class="flex-grow-1 border-top"></div>
+                <div class="d-flex align-items-center gap-2 opacity-50" id="step-2-indicator">
+                  <div class="avatar avatar-sm rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold" style="width:32px;height:32px">2</div>
+                  <span class="fw-semibold">Routing &amp; Detail</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 1: Case Identity -->
+            <div id="step-1" class="card-body">
+              <h6 class="mb-3 text-muted">Step 1 of 2 — Case Identity</h6>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Contact <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fi fi-rr-search"></i></span>
+                  <input type="text" class="form-control" id="contact-search" placeholder="Search contact by name or phone…">
+                </div>
+                <div class="mt-1 border rounded" id="contact-suggestions" style="display:none"></div>
+                <div id="selected-contact" class="mt-2" style="display:none"></div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Subject <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="case-subject" placeholder="Brief description (max 255 chars)" maxlength="255">
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Priority <span class="text-danger">*</span></label>
+                <select class="form-select" id="case-priority">
+                  <option value="">Select priority…</option>
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-between">
+                <a href="app/cases.html" class="btn btn-outline-secondary">Cancel</a>
+                <button class="btn btn-primary" id="btn-next-1">Next <i class="fi fi-rr-arrow-right ms-1"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 2: Routing & Detail -->
+            <div id="step-2" class="card-body" style="display:none">
+              <h6 class="mb-3 text-muted">Step 2 of 2 — Routing &amp; Detail</h6>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Queue</label>
+                <select class="form-select" id="case-queue">
+                  <option value="Tier 1 Support" selected>Tier 1 Support</option>
+                  <option value="Tier 2 Support">Tier 2 Support</option>
+                  <option value="Billing">Billing</option>
+                  <option value="Escalation">Escalation</option>
+                </select>
+                <div class="form-text">SLA tier will be resolved from queue settings on creation.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Category</label>
+                <input type="text" class="form-control" id="case-category" placeholder="e.g. billing, technical, general">
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Description</label>
+                <textarea class="form-control" id="case-description" rows="5" maxlength="10000" placeholder="Detailed description of the issue (max 10,000 chars)…"></textarea>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" id="btn-back-2"><i class="fi fi-rr-arrow-left me-1"></i>Back</button>
+                <button class="btn btn-success" id="btn-submit">Create Case</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'case-new';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-case-new.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

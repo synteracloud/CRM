@@ -48,7 +48,10 @@ All list/queue views share a common shell:
 | Follow-up due | `FollowupTask.due_at` | Red when overdue |
 | Last activity | `Lead.updated_at` | Relative time |
 
-**Filter chips:** Stage, Owner, Source, Follow-up overdue (toggle), Idle > N days
+**Canonical `Lead.stage` values** (from `domain-model.md`):
+`new` · `qualifying` · `nurturing` · `proposal` · `negotiation` · `won` · `lost` · `disqualified`
+
+**Filter chips:** Stage (`new` / `qualifying` / `nurturing` / `proposal` / `negotiation`), Owner, Source, Follow-up overdue (toggle), Idle > N days
 **Quick actions:** `Assign`, `Schedule follow-up`, `Open detail`
 **Bulk actions:** `Reassign`, `Add to campaign`, `Export`
 
@@ -171,13 +174,16 @@ Design rule: activity feed is **read-only** — no inline edits, no delete.
 | Column | Source | Notes |
 |---|---|---|
 | Lead / contact name | `Lead.contact_name` | |
-| Action type | `FollowupTask.action_type` | call / whatsapp / reminder |
+| Action type | `FollowupTask.action_type` | `Call` / `WhatsApp` / `Reminder` |
 | Due | `FollowupTask.due_at` | |
-| Enforcement level | `FollowupTask.enforcement_level` | soft / medium / strict |
-| Attempts | `FollowupTask.attempt_count` | Badge |
-| Status | `FollowupTask.status` | |
+| Escalation level | `FollowupTask.escalation_level` | see canonical values below |
+| Attempts | `FollowupTask.attempts_count` | Badge |
+| State | `FollowupTask.state` | `pending` / `overdue` / `completed` / `snoozed` / `failed` |
 
-**Filter chips:** Action type, Enforcement level, Overdue (toggle), Owner
+**Canonical `FollowupTask.escalation_level` values** (from `followup-enforcement-model.md`):
+`none` · `reminder` · `warning` · `escalated` · `reassigned`
+
+**Filter chips:** Action type (`Call` / `WhatsApp` / `Reminder`), Escalation level (`none` / `reminder` / `warning` / `escalated` / `reassigned`), Overdue (toggle), Owner
 **Quick actions:** `Log done`, `Snooze`, `Send WhatsApp`, `Call`
 **Bulk actions:** `Snooze selected`, `Reassign`
 
@@ -193,8 +199,8 @@ Design rule: activity feed is **read-only** — no inline edits, no delete.
 |---|---|---|
 | Invoice # | `Invoice.invoice_number` | |
 | Account / contact | `Account.name` / `Contact.name` | |
-| Amount | `Invoice.total_amount` | PKR formatted |
-| Status | `Invoice.status` | unpaid / partial / paid / overdue |
+| Amount | `Invoice.amount_due` | PKR formatted |
+| Status | `Invoice.status` | `unpaid` / `partial` / `paid` / `overdue` |
 | Due date | `Invoice.due_date` | |
 | Last reminder | derived from `ReminderEvent` | |
 
@@ -281,15 +287,43 @@ Design rule: activity feed is **read-only** — no inline edits, no delete.
 
 ---
 
+## 4) DataTable Implementation Rules
+
+All list/queue surfaces use DataTables. The following rules are non-negotiable — verified against production bugs 2026-05-27:
+
+**Column alignment — three places required:**
+
+1. **HTML `<thead>`** — every `<th>` must carry an explicit alignment class:
+   - `dt-head-left` — names, IDs, long text
+   - `dt-head-center` — badges, dates, status, short codes, action buttons
+   - `dt-head-right` — PKR/monetary amounts, numeric totals
+
+2. **JS column definition** — every column entry must carry `className`:
+   ```javascript
+   { data: 'field', className: 'dt-body-center' }
+   ```
+
+3. **`crm-custom.css` with `!important`** — DataTables' own stylesheet overrides `className` at runtime regardless of specificity. Always add explicit per-table CSS rules:
+   ```css
+   #dt_TableName.dataTable tbody > tr > td { text-align: center !important; }
+   #dt_TableName.dataTable tbody > tr > td:nth-child(N) { text-align: left !important; }
+   ```
+   Without `!important` these rules lose to DataTables' internal stylesheet.
+
+**Filter chips:** All tab-style filter strips must use `nav-pills nav-pills-custom p-1 bg-light rounded-5` — never `btn-group`.
+
+---
+
 ## SELF-QC
 
 - **All 11 Archetype.md list pages documented:** ✅ — 2.1–2.11 match exactly.
 - **Every list anchored to a source entity in domain-model.md:** ✅
 - **Default sort defined for all lists:** ✅
-- **Filter chips defined for all lists:** ✅
+- **Filter chips defined for all lists:** ✅ — vocabularies aligned to normalized backend (2026-05-28 update)
 - **Quick actions ≤3 per row:** ✅ — overflow rule stated.
 - **≤2 steps rule respected:** ✅ — primary action is single tap.
 - **Offline + empty states covered:** ✅
+- **Canonical stage / escalation / status enums added:** ✅ — Lead.stage, FollowupTask.escalation_level, Invoice.status aligned to domain specs (2026-05-28)
 
 Score: **10/10**
 

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Subscription Revenue Dashboard</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item">Finance</li>
+              <li class="breadcrumb-item active">Subscription Revenue</li>
+            </ol>
+          </nav>
+          <a href="app/subscriptions-detail.html" class="btn btn-primary btn-sm waves-effect">
+            <i class="fi fi-rr-layer-plus me-1"></i> View Subscription
+          </a>
+        </div>
+
+        <!-- Posture strip: churn-risk count -->
+        <div class="row mb-2">
+          <div class="col-12">
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-0 py-2" role="alert" id="posture-strip">
+              <i class="fi fi-rr-chart-line-up fs-5 flex-shrink-0"></i>
+              <div>
+                <strong id="posture-churn-count">0</strong> subscription<span id="posture-plural">s</span> flagged as churn risk.
+                <a href="app/subscriptions-detail.html" class="alert-link ms-2">Review subscriptions →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary KPI cards -->
+        <div class="row mb-3">
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3"><i class="fi fi-rr-money-bill-wave"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>MRR</h6>
+                <h2 class="mb-1" id="kpi-mrr">—</h2>
+                <p class="mb-0 text-muted">Monthly recurring revenue</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3"><i class="fi fi-rr-chart-pie-alt"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>ARR</h6>
+                <h2 class="mb-1" id="kpi-arr">—</h2>
+                <p class="mb-0 text-muted">Annual recurring revenue</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4 col-md-6">
+            <div class="card card-action action-border-info">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-info-subtle text-info rounded-3"><i class="fi fi-rr-refresh"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Renewal Rate</h6>
+                <h2 class="mb-1" id="kpi-renewal-rate">—</h2>
+                <p class="mb-0 text-muted">Rolling 12-month renewals</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row: Cohort chart + Execution queue -->
+        <div class="row mb-3">
+
+          <!-- Cohort retention line chart -->
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Revenue Cohort Retention</h6>
+                <span class="badge bg-info-subtle text-info small">Rolling 6-month</span>
+              </div>
+              <div class="card-body">
+                <div id="chart-cohort-retention"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Execution queue: delinquent accounts -->
+          <div class="col-lg-4">
+            <div class="card h-100">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <h6 class="card-title mb-0">Delinquent Accounts</h6>
+                <span class="badge bg-danger-subtle text-danger" id="delinquency-badge">0</span>
+              </div>
+              <div class="card-body p-0">
+                <div id="delinquent-list" class="list-group list-group-flush">
+                  <div class="list-group-item text-muted small py-3">No delinquent accounts</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row: Status breakdown + Risk anomaly -->
+        <div class="row">
+
+          <!-- Subscription status breakdown -->
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="card-title mb-0">Active Subscriptions</h6>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="text-center">Account</th>
+                        <th class="text-center">Plan</th>
+                        <th class="text-center">MRR</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Renewal</th>
+                        <th class="text-center">Churn Risk</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sub-status-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk anomaly: expansion vs churn delta -->
+          <div class="col-lg-4">
+            <div class="card" style="height:auto">
+              <div class="card-header">
+                <h6 class="card-title mb-0">Expansion vs Churn</h6>
+              </div>
+              <div class="card-body">
+                <div class="text-center py-2">
+                  <div class="avatar avatar-xxl rounded-circle bg-success-subtle text-success mx-auto mb-2" id="expansion-churn-icon">
+                    <i class="fi fi-rr-chart-line-up" style="font-size:1.8rem;"></i>
+                  </div>
+                  <h2 class="fw-bold mb-1" id="expansion-churn-delta">—</h2>
+                  <p class="text-muted small mb-0" id="expansion-churn-label">Net expansion this period</p>
+                </div>
+                <hr>
+                <div class="row text-center small">
+                  <div class="col-6">
+                    <div class="text-muted">Active</div>
+                    <div class="fw-semibold" id="delta-active-count">—</div>
+                  </div>
+                  <div class="col-6">
+                    <div class="text-muted">Churned</div>
+                    <div class="fw-semibold text-danger" id="delta-churned-count">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- P-016 stub — payment method hidden until credentials received -->
+            <!-- JazzCash/Easypaisa payment method config shown here when JAZZCASH_STUB_MODE=false -->
+
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ── Script block ────────────────────────────────────────────────── -->
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'subscriptions-dashboard';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/app/crm-subscriptions-dashboard.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

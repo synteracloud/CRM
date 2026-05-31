@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Sales Analytics</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+              <li class="breadcrumb-item active">Sales Analytics</li>
+            </ol>
+          </nav>
+          <div class="d-flex align-items-center gap-2">
+            <select class="form-select form-select-sm" id="h01-period" style="width:auto;">
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-outline-secondary waves-effect" id="h01-export-btn">
+              <i class="fi fi-rr-download me-1"></i> Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="row mb-3">
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-primary">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-primary-subtle text-primary rounded-3"><i class="fi fi-rr-chart-histogram"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Weighted Pipeline</h6>
+                <h2 class="mb-1 text-primary" id="h01-weighted-pipeline">—</h2>
+                <p class="mb-0 text-muted small">Active opps × probability</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-success">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-success-subtle text-success rounded-3"><i class="fi fi-rr-trophy"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Win Rate</h6>
+                <h2 class="mb-1 text-success" id="h01-win-rate">—</h2>
+                <p class="mb-0 text-muted small" id="h01-win-rate-sub">Won / closed</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-info">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-info-subtle text-info rounded-3"><i class="fi fi-rr-funnel-alt"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Lead Conversion</h6>
+                <h2 class="mb-1" id="h01-lead-conversion">—</h2>
+                <p class="mb-0 text-muted small" id="h01-lead-conversion-sub">Leads → opportunities</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-3 col-md-6">
+            <div class="card card-action action-border-warning">
+              <div class="card-header border-0 pb-0">
+                <div class="avatar bg-warning-subtle text-warning rounded-3"><i class="fi fi-rr-clock"></i></div>
+              </div>
+              <div class="card-body">
+                <h6>Open Opportunities</h6>
+                <h2 class="mb-1" id="h01-open-opps">—</h2>
+                <p class="mb-0 text-muted small" id="h01-open-opps-sub">Active in pipeline</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary charts row -->
+        <div class="row mb-3">
+          <div class="col-xxl-8">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Pipeline by Stage</h6>
+                <small class="text-muted">Deal value distribution across pipeline stages</small>
+              </div>
+              <div class="card-body pb-0">
+                <div id="H01PipelineChart"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xxl-4">
+            <div class="card h-100">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Forecast Summary</h6>
+                <small class="text-muted">Category breakdown</small>
+              </div>
+              <div class="card-body">
+                <div id="H01ForecastChart"></div>
+                <div class="mt-3" id="h01-forecast-detail"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lead funnel chart -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Lead Funnel — Stage Conversion</h6>
+                <small class="text-muted">Lead volume by current stage from <code>LeadFunnelPerformanceRM</code></small>
+              </div>
+              <div class="card-body pb-0">
+                <div id="H01LeadFunnelChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rep performance table -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-0 pb-0">
+                <h6 class="card-title mb-0">Rep Performance</h6>
+                <small class="text-muted">Per-rep metrics from <code>EmployeePerformanceRM</code> (P-01–P-08)</small>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="text-center">Rep</th>
+                        <th class="text-center">Leads Owned</th>
+                        <th class="text-center">Opps Created</th>
+                        <th class="text-center">Deals Won</th>
+                        <th class="text-center">Win Rate</th>
+                        <th class="text-center">Activities</th>
+                        <th class="text-center">Overdue Tasks</th>
+                      </tr>
+                    </thead>
+                    <tbody id="h01-rep-table-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'sales-analytics';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/js/app/crm-sales-analytics.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

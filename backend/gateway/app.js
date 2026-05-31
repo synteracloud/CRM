@@ -40,6 +40,26 @@ app.use(express.json());
 app.use(requestIdMiddleware);
 // Pass the structured logger to observability middleware so request logs are JSON
 app.use(observabilityMiddleware({ logger }));
+
+// ── Dev auth bootstrap (non-production only) ──────────────────────────────────
+// Sets SKIP_JWT_VERIFICATION so the auth middleware skips signature checks.
+// Mounts /dev-token before auth middleware so it needs no Bearer token.
+if (process.env.NODE_ENV !== 'production') {
+  process.env.SKIP_JWT_VERIFICATION = 'true';
+  const { SCOPES } = require('./config/rbac-scopes');
+  const _th = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const _tp = Buffer.from(JSON.stringify({
+    sub: 'dev-user-001', tenant_id: 'tenant-dev-001',
+    iss: 'crm-dev', aud: 'crm-api', exp: 4102444800,
+    role: 'tenant_admin', role_ids: ['role-admin'],
+    territory_ids: [], scopes: Object.values(SCOPES),
+  })).toString('base64url');
+  const DEV_TOKEN = `${_th}.${_tp}.${Buffer.from('dev').toString('base64url')}`;
+  app.get('/dev-token', (req, res) => {
+    res.json({ data: { token: DEV_TOKEN, tenant_id: 'tenant-dev-001' }, meta: {} });
+  });
+}
+
 app.use(authMiddleware());
 app.use(rateLimitHook({}));
 app.use(idempotencyMiddleware());

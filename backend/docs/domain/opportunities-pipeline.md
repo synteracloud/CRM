@@ -16,6 +16,7 @@ Opportunity:
   opportunity_id: uuid (PK)
   tenant_id: uuid (required, tenant isolation)
   account_id: uuid (required)
+  account_name: string|null (denorm — stored on entity for frontend display; sourced from accounts service at creation)
   primary_contact_id: uuid|null
   owner_user_id: uuid (required)
   name: string (1..255)
@@ -25,6 +26,7 @@ Opportunity:
   forecast_category: enum[pipeline, best_case, commit, omitted, closed]
   is_closed: boolean
   is_won: boolean
+  attributed_partner_id: uuid|null  # FK → Partner; set by manager/admin; exclusive (one partner only); see partners.md for attribution rules and commission calculation
   created_at: timestamp
   updated_at: timestamp
 ```

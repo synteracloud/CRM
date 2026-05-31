@@ -1,17 +1,35 @@
 /* Pakistan CRM — New Lead Wizard (I-01) */
 
 (function () {
-  /* ── Dummy phone dedup table ─────────────────────────────────── */
-  var EXISTING_PHONES = {
-    '+923001234567': { name: 'Ahmed Raza',   href: 'app/leads-detail.html' },
-    '+923119876543': { name: 'Sara Khan',    href: 'app/leads-detail.html' },
-    '+923451122334': { name: 'Bilal Malik',  href: 'app/leads-detail.html' }
-  };
+  'use strict';
 
-  /* ── State ───────────────────────────────────────────────────── */
+  var cfg = window.CRM_CONFIG;
+  var _d  = window.CRM_DUMMY;
+
+  /* ── Populate owner dropdown ──────────────────────────────────────── */
+  function populateOwners(users) {
+    var sel = document.getElementById('lead-owner');
+    if (!sel) return;
+    users.forEach(function (u) {
+      var opt = document.createElement('option');
+      opt.value = u.id;
+      opt.textContent = u.display_name;
+      sel.appendChild(opt);
+    });
+  }
+
+  if (cfg && !cfg.DUMMY_MODE) {
+    window.CRM_API.users.list()
+      .then(function (res) { populateOwners(res.data || []); })
+      .catch(function () { populateOwners((_d && _d.users && _d.users.data) || []); });
+  } else {
+    populateOwners((_d && _d.users && _d.users.data) || []);
+  }
+
+  /* ── State ───────────────────────────────────────────────────────── */
   var step = 1;
 
-  /* ── Elements ────────────────────────────────────────────────── */
+  /* ── Elements ────────────────────────────────────────────────────── */
   var $step1    = document.getElementById('wizard-step-1');
   var $step2    = document.getElementById('wizard-step-2');
   var $success  = document.getElementById('wizard-success');
@@ -36,12 +54,12 @@
   var $namePreview  = document.getElementById('s2-name-preview');
   var $phonePreview = document.getElementById('s2-phone-preview');
 
-  /* ── flatpickr ───────────────────────────────────────────────── */
+  /* ── flatpickr ───────────────────────────────────────────────────── */
   if (document.getElementById('lead-followup-due')) {
     flatpickr('#lead-followup-due', { minDate: 'today', dateFormat: 'Y-m-d' });
   }
 
-  /* ── Helpers ─────────────────────────────────────────────────── */
+  /* ── Helpers ─────────────────────────────────────────────────────── */
   function isValidE164(val) {
     return /^\+[1-9]\d{6,14}$/.test(val.trim());
   }
@@ -63,24 +81,44 @@
     el.classList.add('is-valid');
   }
 
-  /* ── Phone dedup check ───────────────────────────────────────── */
+  /* ── Phone dedup check ───────────────────────────────────────────── */
   $phone.addEventListener('blur', function () {
     var val = $phone.value.trim();
-    if (!val) return;
-    var match = EXISTING_PHONES[val];
-    if (match) {
-      $dedupTxt.textContent = 'A lead with this number already exists: ' + match.name + '.';
-      $dedupLnk.href = match.href;
-      $dedup.classList.remove('d-none');
+    if (!val || !isValidE164(val)) return;
+
+    if (cfg && !cfg.DUMMY_MODE) {
+      window.CRM_API.leads.list({ contact_phone_e164: val, limit: 1 })
+        .then(function (res) {
+          if (res.data && res.data.length > 0) {
+            var match = res.data[0];
+            $dedupTxt.textContent = 'A lead with this number already exists: ' + (match.contact_name || match.lead_id) + '.';
+            $dedupLnk.href = 'app/leads-detail.html?id=' + match.lead_id;
+            $dedup.classList.remove('d-none');
+          } else {
+            $dedup.classList.add('d-none');
+          }
+        })
+        .catch(function () { $dedup.classList.add('d-none'); });
     } else {
-      $dedup.classList.add('d-none');
+      /* Dummy dedup table */
+      var EXISTING_PHONES = {
+        '+923001234567': { name: 'Ahmed Raza',  href: 'app/leads-detail.html' },
+        '+923119876543': { name: 'Sara Khan',   href: 'app/leads-detail.html' },
+        '+923451122334': { name: 'Bilal Malik', href: 'app/leads-detail.html' }
+      };
+      var match = EXISTING_PHONES[val];
+      if (match) {
+        $dedupTxt.textContent = 'A lead with this number already exists: ' + match.name + '.';
+        $dedupLnk.href = match.href;
+        $dedup.classList.remove('d-none');
+      } else {
+        $dedup.classList.add('d-none');
+      }
     }
   });
 
   $phone.addEventListener('input', function () {
-    if ($dedup && !$dedup.classList.contains('d-none')) {
-      $dedup.classList.add('d-none');
-    }
+    if ($dedup && !$dedup.classList.contains('d-none')) $dedup.classList.add('d-none');
     clearInvalid($phone);
   });
 
@@ -88,7 +126,7 @@
     el.addEventListener('input', function () { clearInvalid(el); });
   });
 
-  /* ── Validate step 1 ─────────────────────────────────────────── */
+  /* ── Validate step 1 ─────────────────────────────────────────────── */
   function validateStep1() {
     var ok = true;
     var phoneVal = $phone.value.trim();
@@ -121,7 +159,7 @@
     return ok;
   }
 
-  /* ── Validate step 2 ─────────────────────────────────────────── */
+  /* ── Validate step 2 ─────────────────────────────────────────────── */
   function validateStep2() {
     var ok = true;
     [$stage, $owner, $source].forEach(function (el) {
@@ -136,11 +174,10 @@
     return ok;
   }
 
-  /* ── Step tracker update ─────────────────────────────────────── */
+  /* ── Step tracker update ─────────────────────────────────────────── */
   function activateStep(n) {
     step = n;
     if (n === 1) {
-      /* step 1 active */
       $dot1.style.background = 'var(--bs-primary)';
       $dot1.style.color = '#fff';
       $dot1.style.border = 'none';
@@ -155,7 +192,6 @@
       $step1.classList.remove('d-none');
       $step2.classList.add('d-none');
     } else {
-      /* step 2 active — mark step 1 completed */
       $dot1.style.background = 'var(--bs-success)';
       $dot1.style.color = '#fff';
       $dot1.style.border = 'none';
@@ -168,7 +204,6 @@
       $lbl2.className = 'fw-semibold text-primary small';
       $conn.style.opacity = '1';
 
-      /* populate summary banner */
       $namePreview.textContent = $fname.value.trim() + ' ' + $lname.value.trim();
       $phonePreview.textContent = $phone.value.trim();
 
@@ -177,7 +212,7 @@
     }
   }
 
-  /* ── Navigation handlers ─────────────────────────────────────── */
+  /* ── Navigation handlers ─────────────────────────────────────────── */
   document.getElementById('btn-next').addEventListener('click', function () {
     if (validateStep1()) activateStep(2);
   });
@@ -201,7 +236,7 @@
     discardModal.show();
   });
 
-  /* ── Submit ──────────────────────────────────────────────────── */
+  /* ── Submit ──────────────────────────────────────────────────────── */
   document.getElementById('btn-submit').addEventListener('click', function () {
     if (!validateStep2()) return;
 
@@ -209,22 +244,48 @@
     $btn.disabled = true;
     $btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving…';
 
-    /* DUMMY_MODE: simulate API call */
-    setTimeout(function () {
-      var fullName = $fname.value.trim() + ' ' + $lname.value.trim();
-      document.getElementById('success-name').textContent = fullName;
+    var notes    = document.getElementById('lead-notes');
+    var followup = document.getElementById('lead-followup-due');
 
+    var payload = {
+      contact_name:      $fname.value.trim() + ' ' + $lname.value.trim(),
+      contact_phone_e164: $phone.value.trim(),
+      stage:             $stage.value,
+      owner_id:          $owner.value,
+      source:            $source.value,
+      notes:             notes ? notes.value.trim() : '',
+      estimated_value:   0,
+      currency:          'PKR'
+    };
+
+    function onSuccess(leadId) {
+      var fullName = payload.contact_name;
+      document.getElementById('success-name').textContent = fullName;
       $step2.classList.add('d-none');
       $success.classList.remove('d-none');
-
-      /* hide step tracker */
       document.getElementById('wizard-step-tracker').closest('.card-body').classList.add('d-none');
-    }, 600);
+      $btn.disabled = false;
+      $btn.textContent = 'Save Lead';
+    }
+
+    function onError(err) {
+      $btn.disabled = false;
+      $btn.textContent = 'Save Lead';
+      var msg = (err && err.error && err.error.message) ? err.error.message : 'Failed to save lead. Please try again.';
+      alert(msg);
+    }
+
+    if (cfg && !cfg.DUMMY_MODE) {
+      window.CRM_API.leads.create(payload)
+        .then(function (res) { onSuccess(res.data && res.data.lead_id); })
+        .catch(onError);
+    } else {
+      setTimeout(function () { onSuccess('l-new-dummy'); }, 600);
+    }
   });
 
-  /* ── Add another ─────────────────────────────────────────────── */
+  /* ── Add another ─────────────────────────────────────────────────── */
   document.getElementById('btn-add-another').addEventListener('click', function () {
-    /* reset form */
     [$phone, $fname, $lname].forEach(function (el) {
       el.value = '';
       el.classList.remove('is-valid', 'is-invalid');
@@ -237,7 +298,6 @@
     $dedup.classList.add('d-none');
     $dot1.innerHTML = '1';
 
-    /* restore step tracker */
     document.getElementById('wizard-step-tracker').closest('.card-body').classList.remove('d-none');
 
     $success.classList.add('d-none');

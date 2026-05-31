@@ -40,12 +40,13 @@ STEP 6 — Read seed JS file(s) from Step 4 (only if new IDs found in Step 5)
 STEP 7 — Set CRM_PAGE key
   └─ Look up the correct key in FRAMEWORK.md §18
 
-STEP 8 — Confirm footer is in page template
-  └─ Every page must include <footer class="footer-wrapper bg-body"> after </main>
-  └─ See §2 template — footer is part of the skeleton, not optional
+STEP 8 — Confirm NO hardcoded footer exists in the page
+  └─ crm-shell.js injects the footer at runtime via insertAdjacentHTML('afterend', FOOTER_HTML)
+  └─ Do NOT add <footer> to any page file — the shell owns it
+  └─ If a seed has a footer block, delete it before saving
 
 STEP 9 — NOW write the files
-  └─ app/[page].html — verbatim <main> from seed + footer + correct script block
+  └─ app/[page].html — verbatim <main> from seed (no footer) + correct script block
   └─ crm-[page].js  — all configs verbatim from §24 or seed JS
   └─ crm-shell.js   — add sidebar link if page is new to the sidebar
 
@@ -134,22 +135,7 @@ Every page in `src/app/` follows this exact skeleton. Copy it verbatim. Do not d
       </div>
     </main>
 
-    <footer class="footer-wrapper bg-body">
-      <div class="container-fluid">
-        <div class="row g-2">
-          <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
-          </div>
-          <div class="col-lg-6 col-md-5">
-            <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
-              <li><a class="text-body" href="app/dashboard.html">Home</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Faq's</a></li>
-              <li><a class="text-body" href="javascript:void(0);">Support</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
+    <!-- footer injected by crm-shell.js — do NOT add one here -->
   </div>
 
   <!-- ── Script block — FRAMEWORK.md §3 load order ──────────────────── -->
@@ -572,14 +558,44 @@ Before marking any page complete:
 - [ ] `window.CRM_PAGE` set to correct key before `crm-shell.js`
 - [ ] Script load order matches FRAMEWORK.md §3
 - [ ] Only required lib scripts included
+- [ ] **No `<footer>` block in page HTML** — crm-shell.js injects the footer at runtime. If seed has one, delete it.
 - [ ] Page driver written — every chart/table/interactive element initialised
 - [ ] Element guards on all chart/table inits (`if (el)` / `if ($('#id').length)`)
 - [ ] DataTable search relocation pattern applied where DataTable exists
+- [ ] **Every DataTable column has alignment in THREE places** — (1) `class="dt-head-left/center/right"` on every `<th>`; (2) `className: 'dt-body-left/center/right'` on every JS column definition; (3) explicit CSS rules in `crm-custom.css` with `!important` for every data-driven table (e.g. `#dt_Name.dataTable tbody > tr > td { text-align: center !important; }`). DataTables' own stylesheet overrides `className` at runtime regardless of specificity — without the `!important` rule in place 3, body cells misalign.
+- [ ] **`style="height:auto"` on cards — THREE patterns (all required):**
+  NexLink `.card` sets `height: calc(100% - var(--bs-gutter-x))`. Add `style="height:auto"` in all three cases:
+  - **Pattern A** — Sole card in a `col-12` standalone row (identity strip, summary banner)
+  - **Pattern B** — Any card in a column containing 2+ stacked cards (each would otherwise fill 100% of column height, clipping content and displacing footer)
+  - **Pattern C** — Context panel sidebar cards (col-lg-4 on detail pages)
+  When in doubt, add `height:auto` — the only safe omission is a single card filling an entire column beside another equal-height card.
+- [ ] **Settings / two-pane pages — three mandatory rules (nav-pills collision fix, 2026-05-29):**
+  Using `.nav-pills` in the page body conflicts with crm-shell.js sidebar which owns `.nav-pills` globally. This constrained row height, clipped right-column content, and pushed the footer to mid-page on all 5 affected G-series pages.
+  - Left nav: `list-group list-group-flush` + `list-group-item list-group-item-action` — never `nav flex-column nav-pills`
+  - Container: `<div class="container-fluid pb-4">`
+  - All right-column cards: `style="height:auto"` (Pattern B above)
+- [ ] **Filter chip strips use `nav-pills-custom` pattern** — NOT `btn-group btn-group-sm`. See §31 below.
 - [ ] Breadcrumb `href` corrected for `app/` subdirectory depth
 - [ ] Page opens in browser with no console errors
 - [ ] All charts render with correct chart type matching seed
 - [ ] DataTable paginates, search works
 - [ ] Interactive elements (tabs, todo list, modals) function correctly
+
+---
+
+## 31. Filter Chip Pattern (nav-pills-custom)
+
+All tab-style filter strips must use the NexLink pill pattern. `btn-group btn-group-sm` + `btn-outline-secondary` produces Bootstrap's generic gray segmented buttons and must not be used for filters.
+
+**Correct pattern:**
+```html
+<ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5" id="FILTER_ID" role="tablist">
+  <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-filter="">All</button></li>
+  <li class="nav-item"><button type="button" class="nav-link rounded-5" data-filter="X">X</button></li>
+</ul>
+```
+
+The JS selector `$('#FILTER_ID button')` and `active` class toggling work identically — no JS changes needed when using this pattern. Standalone toggle buttons (e.g. "Overdue Only", "Has Open Case") are not filter strips and may remain as `btn btn-sm btn-outline-danger/warning`.
 
 ---
 
@@ -703,7 +719,7 @@ Every `app/` page must be seeded from one of these source files. This is the aut
 | `'customers'` | `app/customers.html` |
 | `'followups'` | `app/followups.html` |
 | `'deals'` | `app/deals.html` |
-| `'activities'` | `app/activities.html` |
+| `'activities'` | `app/activity.html` (B-06 Activity Feed — custom CRM page) |
 | `'calendar'` | `app/calendar.html` |
 | `'chat'` | `app/chat.html` |
 | `'inbox'` | `app/inbox-email.html` |
@@ -712,14 +728,80 @@ Every `app/` page must be seeded from one of these source files. This is the aut
 | `'finance'` | `app/finance.html` |
 | `'sales'` | `app/sales.html` |
 | `'team'` | `app/team-management.html` |
-| `'tasks'` | `app/task-management.html` |
+| `'tasks'` | `app/tasks.html` (B-07 Task Queue — custom CRM page) |
 | `'review'` | `app/review.html` |
 | `'marketing'` | `app/marketing.html` |
 | `'employees'` | `app/employees.html` |
-| `'user-management'` | `app/user-management.html` |
+| `'user-management'` | `app/users.html` (B-10 User Directory — custom CRM page) |
+| `'leads-detail'` | `app/leads-detail.html` (C-01 Lead Detail — detail page, no sidebar highlight) |
+| `'opportunities-detail'` | `app/opportunities-detail.html` (C-04 Opportunity Detail — detail page) |
+| `'contacts-detail'` | `app/contacts-detail.html` (C-02 Customer 360 — detail page) |
+| `'quotes-detail'` | `app/quotes-detail.html` (C-06 Quote Detail — detail page) |
+| `'leads-dashboard'` | `app/leads-dashboard.html` (A-02 Lead Funnel Dashboard) |
+| `'contacts-health'` | `app/contacts-health.html` (A-03 Customer Health Dashboard) |
+| `'quotes-dashboard'` | `app/quotes-dashboard.html` (A-05 Quote Approval Dashboard) |
+| `'identity-dashboard'` | `app/identity-dashboard.html` (A-12 Identity & Access Posture Dashboard) |
+| `'audit-dashboard'` | `app/audit-dashboard.html` (A-13 Platform Audit & Reliability Dashboard) |
+| `'sales-analytics'` | `app/sales-analytics.html` (H-01 Sales Analytics) |
+| `'finance-analytics'` | `app/finance-analytics.html` (H-04 Finance Analytics) |
+| `'audit-report'` | `app/audit-report.html` (H-06 Audit Report) |
+| `'opportunity-new'` | `app/opportunity-new.html` (I-03 New Opportunity Form) |
+| `'quote-builder'` | `app/quote-builder.html` (I-05 CPQ Quote Builder) |
+| `'sales-dashboard'` | `app/sales-dashboard.html` (A-04 Opportunity Pipeline Dashboard) |
+| `'sales-cockpit'` | `app/sales-cockpit.html` (D-01 Sales Cockpit) |
+| `'audit-log'` | `app/audit-log.html` (J-01 Audit Log) |
+| `'compliance-report'` | `app/compliance-report.html` (J-02 Compliance Report) |
+| `'rbac-audit'` | `app/rbac-audit.html` (J-04 RBAC Audit) |
 | `'chat'` | `app/chat.html` |
 | `'compose'` | `app/email-compose.html` |
 | `'read-email'` | `app/email-read.html` |
+| `'user-management-crm'` | `app/user-management-crm.html` (G-02 User Management Admin) |
+| `'invoices'` | `app/invoices.html` (B-09 Invoice Queue) |
+| `'subscriptions-detail'` | `app/subscriptions-detail.html` (C-09 Subscription Detail) |
+| `'subscriptions-dashboard'` | `app/subscriptions-dashboard.html` (A-06 Subscription Revenue Dashboard) |
+| `'tenants-dashboard'` | `app/tenants-dashboard.html` (A-11 Tenant & Entitlement Dashboard) |
+| `'accounts'` | `app/accounts.html` (B-04 Account List) |
+| `'accounts-detail'` | `app/accounts-detail.html` (C-03 Account Profile) |
+| `'orders-detail'` | `app/orders-detail.html` (C-07 Order Detail) |
+| `'invoices-detail'` | `app/invoices-detail.html` (C-08 Invoice Detail) |
+| `'contact-new'` | `app/contact-new.html` (I-02 New Contact Form) |
+| `'org-settings'` | `app/org-settings.html` (G-01 Organization Settings) |
+| `'roles'` | `app/roles.html` (G-03 Role & Permission Editor) |
+| `'billing-settings'` | `app/billing-settings.html` (G-04 Billing & Subscription Settings) |
+| `'integrations'` | `app/integrations.html` (G-05 Integration Settings) |
+| `'notifications'` | `app/notifications.html` (G-06 Notification Settings) |
+| `'feature-flags'` | `app/feature-flags.html` (G-07 Feature Flags) |
+| `'compliance-settings'` | `app/compliance.html` (G-08 Compliance Settings) |
+| `'data-governance'` | `app/data-governance.html` (J-03 Data Governance Console) |
+| `'privacy'` | `app/privacy.html` (J-05 Consent & Privacy Manager) |
+| `'support-dashboard'` | `app/support-dashboard.html` (A-07 Support Operations Dashboard) |
+| `'engagement-dashboard'` | `app/engagement-dashboard.html` (A-08 Engagement & Comms Dashboard) |
+| `'knowledge-dashboard'` | `app/knowledge-dashboard.html` (A-09 Knowledge Base Dashboard) |
+| `'workflows-dashboard'` | `app/workflows-dashboard.html` (A-10 Workflow Automation Dashboard) |
+| `'cases'` | `app/cases.html` (B-05 Case List) |
+| `'partners'` | `app/partners.html` (B-11 Partner List) |
+| `'cases-detail'` | `app/cases-detail.html` (C-05 Case Detail) |
+| `'workflow-run-detail'` | `app/workflow-run-detail.html` (C-10 Workflow Run Detail) |
+| `'partners-detail'` | `app/partners-detail.html` (C-11 Partner Profile) |
+| `'knowledge-article'` | `app/knowledge-article.html` (C-12 Knowledge Article Detail) |
+| `'support-console'` | `app/support-console.html` (E-01 Support Console) |
+| `'marketing-workspace'` | `app/marketing-workspace.html` (F-01 Marketing Workspace) |
+| `'territories'` | `app/territories.html` (G-09 Territory Management) |
+| `'marketing-analytics'` | `app/marketing-analytics.html` (H-02 Marketing Analytics) |
+| `'support-analytics'` | `app/support-analytics.html` (H-03 Support Analytics) |
+| `'workflow-analytics'` | `app/workflow-analytics.html` (H-05 Workflow Analytics) |
+| `'report-builder'` | `app/report-builder.html` (H-07 Report Builder) |
+| `'case-new'` | `app/case-new.html` (I-04 New Case Form) |
+| `'campaign-new'` | `app/campaign-new.html` (I-06 New Campaign Wizard) |
+| `'workflow-builder'` | `app/workflow-builder.html` (K-01 Workflow Builder) |
+| `'object-builder'` | `app/object-builder.html` (K-02 Object Builder) |
+| `'rule-builder'` | `app/rule-builder.html` (K-03 Rule Builder) |
+| `'approval-lanes'` | `app/approval-lanes.html` (K-04 Approval Lanes Kanban) |
+| `'inbox'` | `app/inbox.html` (L-01 Shared Inbox) |
+| `'inbox-thread'` | `app/inbox-thread.html` (L-02 Inbox Thread View) |
+| `'routing-config'` | `app/routing-config.html` (L-03 Routing Configuration) |
+| `'ai-copilot'` | `app/ai-copilot.html` (M-01 AI Copilot) |
+| `'ai-insights'` | `app/ai-insights.html` (M-02 AI Insights Dashboard) |
 
 Auth pages do not set `CRM_PAGE` — they do not load `crm-shell.js`.
 
@@ -838,6 +920,9 @@ All configs are guarded with `if (element)` so they only run when the element ex
 | `#dt_NewCustomers` | 6 | targets:[0] orderable:false | `#dt_NewCustomers_Search` | select:false, standard search relocation pattern |
 | `#dt_CustomerList` | 12 | targets:[0] orderable:false | `#dt_CustomerList_Search` | select:false, standard search relocation pattern |
 | `#dt_ScrollVertical` | **NOT INITIALISED** | — | `#dt_ScrollVertical_Search` (empty) | Plain HTML table — no DataTable init in dashboard.js. Renders all rows in source order with no pagination. Do NOT wrap in DataTable. |
+| `#dt_Tasks` | 10 | col[1] orderable:false, col[5] orderable:false | `#dt_Tasks_Search` | Custom B-07 Task Queue. Data-driven from `CRM_DUMMY.tasks.data`. Pre-sorted overdue-first. Custom search ext: `_overdueOnly`, `_entityFilter`, `_ownerFilter`. createdRow sets data-overdue/data-entity-type/data-owner. |
+| `#dt_Activities` | 10 | col[3] orderable:false, col[5] orderable:false | `#dt_Activities_Search` | Custom B-06 Activity Feed. Data-driven from `CRM_DUMMY.activities.data`. Pre-sorted occurred_at DESC. Custom search ext: `_typeFilter`, `_actorFilter`. createdRow sets data-type/data-actor. Read-only (no edit/delete). |
+| `#dt_Users` | 10 | col[3] orderable:false, col[4] orderable:false, col[5] orderable:false | `#dt_Users_Search` | Custom B-10 User Directory. Data-driven from `CRM_DUMMY.users.data`. Sorted display_name ASC. Custom search ext: `_roleFilter`, `_statusFilter`. Status/last_login stubbed (not in dummy data). createdRow sets data-role/data-status. |
 
 ---
 
@@ -2766,6 +2851,8 @@ This resolves all asset paths (`assets/css/`, `assets/libs/`, `assets/images/`) 
 <!-- e.g. <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css"> -->
 <!-- Main stylesheet — MUST carry id="main-stylesheet" for RTL switcher -->
 <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+<!-- CRM custom overrides — MANDATORY on every app page, always last -->
+<link rel="stylesheet" href="assets/css/crm-custom.css">
 ```
 
 ### 3.4 Script Block (exact order, always at end of `<body>`)

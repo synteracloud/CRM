@@ -67,10 +67,14 @@ router.get('/invoices', requestValidationMiddleware(), requireScopes([SCOPES.COL
     }
   }
 
+  const todayStr = new Date().toISOString().slice(0, 10);
   let rows = _memInvoices.filter((i) => i.tenant_id === tenantId);
   if (status)          rows = rows.filter((i) => i.status          === status);
   if (subscription_id) rows = rows.filter((i) => i.subscription_id === subscription_id);
-  const page = rows.slice(offset, offset + limit);
+  const page = rows.slice(offset, offset + limit).map((i) => ({
+    ...i,
+    is_overdue: !['paid', 'void', 'uncollectible'].includes(i.status) && i.due_date < todayStr,
+  }));
   return respondSuccess(res, page, { count: page.length, total: rows.length, limit, offset });
 });
 
@@ -81,7 +85,7 @@ router.post(
   requestValidationMiddleware(['amount_due', 'currency', 'due_date', 'invoice_number']),
   requireScopes([SCOPES.COLLECTIONS_INVOICE]),
   async (req, res) => {
-    const { subscription_id, invoice_number, amount_due, currency, due_date, issued_at, external_invoice_ref } = req.body;
+    const { subscription_id, invoice_number, amount_due, currency, due_date, issued_at, external_invoice_ref, account_name, account_tier } = req.body;
     const tenantId = req.auth.tenant_id;
 
     if (typeof amount_due !== 'number' || amount_due <= 0)
@@ -113,16 +117,20 @@ router.post(
     // In-memory fallback (no subscription_id required)
     const ts = nowIso();
     const invoice = {
-      invoice_summary_id:   `inv_${Math.random().toString(36).slice(2, 14)}`,
+      invoice_id:           `inv_${Math.random().toString(36).slice(2, 14)}`,
       tenant_id:            tenantId,
       subscription_id:      subscription_id || null,
       invoice_number,
+      account_name:         account_name     || null,
+      account_tier:         account_tier     || null,
       amount_due,
       amount_paid:          0,
       currency,
       due_date,
       status:               'open',
+      is_overdue:           false,
       issued_at:            issued_at || ts,
+      last_reminder_at:     null,
       created_at:           ts,
       updated_at:           ts,
     };
@@ -335,7 +343,7 @@ router.post(
     let matched = 0;
     let unmatched = 0;
     for (const inv of tenantInvoices) {
-      const invPayments = tenantPayments.filter((p) => p.invoice_id === inv.invoice_summary_id);
+      const invPayments = tenantPayments.filter((p) => p.invoice_id === inv.invoice_id);
       const totalPaid   = invPayments.reduce((sum, p) => sum + p.amount, 0);
       if (Math.abs(totalPaid - inv.amount_paid) < 0.001) matched++;
       else unmatched++;
@@ -423,6 +431,43 @@ router.patch(
     payment.updated_at = nowIso();
 
     return respondSuccess(res, payment);
+  },
+);
+
+// ── POST /collections/invoices/:invoice_id/reminders ──────────────────────────
+router.post(
+  '/invoices/:invoice_id/reminders',
+  requestValidationMiddleware(),
+  requireScopes([SCOPES.COLLECTIONS_INVOICE]),
+  async (req, res) => {
+    const tenantId = req.auth.tenant_id;
+    const { invoice_id } = req.params;
+    const { channel, message, scheduled_for } = req.body;
+
+    if (repo) {
+      try {
+        const invoice = await repo.findInvoiceById(tenantId, invoice_id);
+        if (!invoice) return respondError(res, 404, 'NOT_FOUND', 'Invoice not found.');
+      } catch (err) {
+        return respondError(res, 500, 'DB_ERROR', err.message);
+      }
+    } else {
+      const inv = _memInvoices.find((i) => i.invoice_id === invoice_id && i.tenant_id === tenantId);
+      if (!inv) return respondError(res, 404, 'NOT_FOUND', 'Invoice not found.');
+      inv.last_reminder_at = nowIso();
+    }
+
+    const reminder = {
+      reminder_id:   `rem_${Math.random().toString(36).slice(2, 14)}`,
+      invoice_id,
+      tenant_id:     tenantId,
+      channel:       channel       || 'whatsapp',
+      message:       message       || null,
+      scheduled_for: scheduled_for || nowIso(),
+      status:        'scheduled',
+      created_at:    nowIso(),
+    };
+    return res.status(201).json({ data: reminder, meta: { request_id: req.request_id } });
   },
 );
 

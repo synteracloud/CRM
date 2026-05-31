@@ -276,8 +276,118 @@ No duplicate widgets — owner dashboard is a filtered projection, not a separat
 - **Role-gating defined for all panels:** ✅
 - **No duplicate metrics across panels:** ✅ — each read model appears exactly once.
 - **Owner dashboard cross-referenced, not duplicated:** ✅
+- **API routes section added (§5) for A-03/A-11/A-13:** ✅ — aspirational `/reporting/*` paths replaced with actual gateway endpoints; client-side computation approach documented (2026-05-30)
 
 Score: **10/10**
+
+## 5) API Routes for Structurally Blocked Dashboard Pages
+
+**Note on `read-models.md` paths:** `read-models.md` references aspirational `/api/v1/reporting/*` endpoints that do not exist in the gateway. The three pages below use **existing and new inline gateway endpoints** instead, computing read model aggregations client-side from raw entity arrays — the same pattern used for all Wave 1–3 wired dashboards.
+
+---
+
+### A-03 — Customer Master Health Dashboard
+
+**Primary API call:** `CRM_API.contacts.list({ limit: 500 })`
+
+| Endpoint | Method | Status | Use |
+|---|---|---|---|
+| `/contacts` | GET | **EXISTS** (inline fallback in `v1-contacts.routes.js`) | Load all contacts; compute completeness + duplicate metrics client-side |
+
+**Client-side computation (no `/reporting` endpoint needed):**
+- `contact_count` — `contacts.length`
+- `avg_completeness_score` — `mean(contacts.map(c => c.completeness_score))`
+- `merge_candidate_count` — count contacts with identical `phone_e164` (exact dedup signal)
+- `duplicate_count` — same as `merge_candidate_count`
+- `hierarchy_rollup_health` — count contacts with non-null `account_id` / total
+
+**`crm-api.js` call:** `CRM_API.contacts.list({ limit: 500 })`
+
+---
+
+### A-11 — Tenant & Entitlement Dashboard
+
+**Primary API calls:** `CRM_API.users.list()` + new `GET /api/v1/tenants/current`
+
+| Endpoint | Method | Status | Use |
+|---|---|---|---|
+| `/users` | GET | **EXISTS** | `active_user_count` = users.length |
+| `/feature-flags` | GET | **CREATE** `v1-feature-flags-mgmt.routes.js` | `enabled_feature_count` = flags where enabled=true |
+| `/tenants/current` | GET | **CREATE** `v1-tenants.routes.js` (inline, 1 route) | Tenant plan, seat limit, entitlement caps |
+
+**`/tenants/current` response shape (inline stub):**
+```json
+{
+  "tenant_id": "string",
+  "tenant_name": "string",
+  "plan": "growth",
+  "seat_limit": 25,
+  "seat_used": 5,
+  "entitlements": {
+    "leads": { "limit": -1, "used": 0 },
+    "contacts": { "limit": -1, "used": 0 },
+    "campaigns": { "limit": 5, "used": 2 }
+  },
+  "entitlement_overage_count": 0,
+  "entitlements_at_limit": 0
+}
+```
+
+**crm-api.js additions needed:** `tenants.current()` → `GET /tenants/current`
+
+---
+
+### A-08 — Communication Engagement Dashboard
+
+**Primary API calls:** `CRM_API.communications.engagement()` + `CRM_API.campaigns.list()`
+**Read model:** `CommunicationEngagementRM` (source: `MessageThread`, `Message`, `Notification`)
+
+| Endpoint | Method | Status | Use |
+|---|---|---|---|
+| `/communications/engagement` | GET | **CREATE** `v1-communications.routes.js` | Returns `CommunicationEngagementRM` shape with inline-seeded engagement KPIs |
+| `/campaigns` | GET | **EXISTS** `v1-campaigns.routes.js` | Active campaigns list for execution queue |
+
+**`/communications/engagement` response shape (aligns to `CommunicationEngagementRM` fields):**
+```json
+{
+  "delivery_rate": 91,
+  "open_rate": 57,
+  "reply_rate": 18,
+  "failed_delivery_count": 34,
+  "low_delivery_channel_count": 0,
+  "whatsapp_opted_in": 843,
+  "whatsapp_opt_out_rate": 2.1,
+  "delivery_open_click_reply_rate": [
+    { "channel": "whatsapp_broadcast", "delivery": 91, "open": 62, "reply": 22 },
+    { "channel": "email",              "delivery": 88, "open": 42, "reply": 8  },
+    { "channel": "sms",                "delivery": 95, "open": 0,  "reply": 12 }
+  ]
+}
+```
+
+**`crm-api.js` namespace needed:** `communications.engagement()` → `GET /communications/engagement`
+
+---
+
+### A-13 — Platform Audit & Reliability Dashboard
+
+**Primary API call:** `CRM_API.audits.list({ limit: 500 })`
+
+| Endpoint | Method | Status | Use |
+|---|---|---|---|
+| `/audits/events` | GET | **EXISTS** (`v1-audit.routes.js`) | Load audit log; compute metrics client-side |
+
+**Client-side computation:**
+- `audit_entry_count` — `log.length`
+- `policy_result_distribution.deny_rate` — `log.filter(e=>e.result==='deny').length / log.length * 100`
+- `sensitive_action_volume` — `log.filter(e=>['delete','export','admin_override'].includes(e.action_type)).length`
+- `anomaly_bucket_count` — `log.filter(e=>e.result==='deny').length`
+- `unreviewed_anomaly_count` — same as `anomaly_bucket_count` (no review state in current audit schema)
+- `actor_resource_heatmap` — group by `actor_name`, count events per actor
+
+**`crm-api.js` call:** `CRM_API.audits.list({ limit: 500 })` — **already exists**
+
+---
 
 ## Error States (Dashboard Widgets)
 

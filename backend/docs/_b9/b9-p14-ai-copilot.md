@@ -3,7 +3,11 @@
 ## Scope
 
 Defines the **AI / Copilot / Conversational Surface** archetype — 2 named AI surfaces.
-Anchored to `docs/adapters/whatsapp-execution-model.md` §10 (intent detection), `services/conversation/intent.py`, `src/ai_scoring/`.
+Anchored to `docs/adapters/whatsapp-execution-model.md` §10 (intent detection), `services/conversation/intent.py`.
+
+**Backend domain spec:** `backend/docs/domain/ai-predictive-models.md` — canonical entity schemas (LeadScore, ChurnPrediction, CLVEstimate, CopilotSuggestion, ScoringModel), model formula definitions (lead_score_v1, churn_predict_v1, clv_estimate_v1), advisory-only constraint, evidence_anchor requirement, API endpoints, and scanner jobs. Read that doc before implementing any M-series page.
+
+**Read model:** `PredictiveInsightRM` — see `backend/docs/ui/read-models.md` for field schema and API route.
 
 ---
 

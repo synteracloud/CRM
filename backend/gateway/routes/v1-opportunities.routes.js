@@ -81,7 +81,7 @@ router.post(
   requestValidationMiddleware(['owner_id', 'name']),
   requireScopes([SCOPES.OPPORTUNITIES_CREATE]),
   async (req, res) => {
-    const { owner_id, name, account_id, contact_id, amount, currency, close_date, stage, forecast_category } = req.body;
+    const { owner_id, name, account_id, account_name, contact_id, amount, currency, close_date, stage, forecast_category } = req.body;
     const tenantId = req.auth.tenant_id;
 
     if (stage && !VALID_STAGES.includes(stage))
@@ -96,6 +96,7 @@ router.post(
           owner_id,
           name,
           account_id:        account_id        || null,
+          account_name:      account_name      || null,
           contact_id:        contact_id        || null,
           amount:            amount            ?? null,
           currency:          currency          || 'PKR',
@@ -116,6 +117,7 @@ router.post(
       owner_id,
       name,
       account_id:        account_id        || null,
+      account_name:      account_name      || null,
       contact_id:        contact_id        || null,
       amount:            amount            ?? null,
       currency:          currency          || 'PKR',

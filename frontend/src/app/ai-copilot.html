@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Copilot — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+  <style>
+    .score-ring { width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700; }
+    .driver-bar { height:6px; border-radius:3px; background:#e5e7eb; overflow:hidden; }
+    .driver-fill { height:100%; border-radius:3px; background:#5955D1; }
+    .chat-msg { max-width:75%; }
+    .chat-in  { background:#f3f4f6; border-radius:0 12px 12px 12px; }
+    .chat-out { background:#ede9fe; border-radius:12px 0 12px 12px; }
+    .advisory-badge { font-size:.65rem; letter-spacing:.02em; }
+  </style>
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">AI Copilot</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <span class="badge bg-purple-subtle text-purple border border-purple-subtle" style="background:#ede9fe;color:#5955D1;border-color:#c4b5fd!important">Advisory-Only Mode</span>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- AI Advisory Notice -->
+      <div class="alert d-flex align-items-center gap-2 mb-3" style="background:#ede9fe;border-color:#c4b5fd;color:#5955D1">
+        <i class="fi fi-rr-sparkles fs-5"></i>
+        <span>AI suggestions are <strong>advisory only</strong>. No action is taken without your explicit confirmation. All suggestions reference observed CRM data only.</span>
+      </div>
+
+      <div class="row g-3">
+
+        <!-- Left: AI Insight Strip -->
+        <div class="col-lg-4">
+
+          <!-- Score Card -->
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h6 class="mb-0">Lead Score</h6>
+              <span class="small text-muted">Imran Butt — l-005</span>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="score-ring" style="background:#ede9fe;color:#5955D1">82</div>
+                <div>
+                  <div class="fw-semibold">High Priority</div>
+                  <div class="small text-success"><i class="fi fi-rr-trending-up me-1"></i>+5 vs last week</div>
+                </div>
+              </div>
+              <div class="small text-muted mb-2 fw-semibold">Top Score Drivers</div>
+              <div class="mb-2">
+                <div class="d-flex justify-content-between small mb-1"><span>Deal stage: Negotiation</span><span class="fw-semibold">+28</span></div>
+                <div class="driver-bar"><div class="driver-fill" style="width:70%"></div></div>
+              </div>
+              <div class="mb-2">
+                <div class="d-flex justify-content-between small mb-1"><span>Multiple follow-up attempts</span><span class="fw-semibold">+18</span></div>
+                <div class="driver-bar"><div class="driver-fill" style="width:45%"></div></div>
+              </div>
+              <div class="mb-2">
+                <div class="d-flex justify-content-between small mb-1"><span>High estimated value PKR 5L</span><span class="fw-semibold">+14</span></div>
+                <div class="driver-bar"><div class="driver-fill" style="width:35%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next-Action Suggestion -->
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h6 class="mb-0">Suggested Next Action</h6>
+              <span class="badge bg-danger advisory-badge">Urgent</span>
+            </div>
+            <div class="card-body">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="fi fi-rr-phone-call text-primary fs-5"></i>
+                <div>
+                  <div class="fw-semibold">Call Imran Butt</div>
+                  <div class="small text-muted">Due in 2 hours · Rule: negotiation_check</div>
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <a href="app/leads-detail.html" class="btn btn-sm btn-primary">Take Action</a>
+                <button class="btn btn-sm btn-outline-secondary" id="btn-dismiss-action">Dismiss</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Flags -->
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Risk Flags</h6></div>
+            <div class="card-body p-0" id="risk-flags"></div>
+          </div>
+
+        </div>
+
+        <!-- Right: Conversational CRM -->
+        <div class="col-lg-8">
+          <div class="card d-flex flex-column" style="height:auto;min-height:580px">
+            <div class="card-header d-flex align-items-center gap-2">
+              <i class="fi fi-rr-sparkles" style="color:#5955D1"></i>
+              <h6 class="mb-0">Conversational CRM</h6>
+              <span class="badge advisory-badge ms-auto" style="background:#ede9fe;color:#5955D1">Session history (last 20 exchanges)</span>
+            </div>
+
+            <div class="flex-grow-1 p-3 overflow-auto" id="chat-history" style="min-height:380px;background:#fafafa"></div>
+
+            <div class="card-footer p-2">
+              <div class="d-flex gap-2 align-items-end">
+                <div class="flex-grow-1">
+                  <input type="text" class="form-control form-control-sm" id="chat-input" placeholder="Ask me about leads, payments, follow-ups… (Urdu bhi chalega)">
+                </div>
+                <button class="btn btn-sm btn-primary" id="btn-chat-send"><i class="fi fi-rr-paper-plane"></i></button>
+              </div>
+              <div class="small text-muted mt-1">All actions require your confirmation · No auto-execution</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'ai-copilot';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-ai-copilot.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

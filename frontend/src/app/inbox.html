@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Omnichannel Inbox — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+  <style>
+    .thread-item { cursor:pointer; border-left:3px solid transparent; }
+    .thread-item:hover, .thread-item.active { background:#f5f3ff; border-left-color:#5955D1; }
+    .thread-item.has-unread { border-left-color:#ef4444; }
+    .ch-icon-wa  { color:#25D366; }
+    .ch-icon-em  { color:#3f83f8; }
+    .ch-icon-sms { color:#6b7280; }
+    .intent-badge { font-size:.65rem; }
+    .msg-bubble { max-width:70%; }
+    .msg-bubble-in  { background:#f3f4f6; border-radius:0 12px 12px 12px; }
+    .msg-bubble-out { background:#ede9fe; border-radius:12px 0 12px 12px; }
+  </style>
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item active">Inbox</li>
+          </ol>
+        </nav>
+        <div class="d-flex gap-2">
+          <a href="app/routing-config.html" class="btn btn-sm btn-outline-secondary"><i class="fi fi-rr-settings me-1"></i>Routing Config</a>
+          <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+        </div>
+      </div>
+
+      <!-- Channel Selector -->
+      <div class="mb-3">
+        <ul class="nav nav-pills nav-pills-custom p-1 bg-light rounded-5 d-inline-flex" id="channel-filter" role="tablist">
+          <li class="nav-item"><button type="button" class="nav-link rounded-5 active" data-ch="">All Channels</button></li>
+          <li class="nav-item"><button type="button" class="nav-link rounded-5" data-ch="whatsapp"><i class="fi fi-brands-whatsapp me-1"></i>WhatsApp</button></li>
+          <li class="nav-item"><button type="button" class="nav-link rounded-5" data-ch="email"><i class="fi fi-rr-envelope me-1"></i>Email</button></li>
+          <li class="nav-item"><button type="button" class="nav-link rounded-5" data-ch="sms"><i class="fi fi-rr-comment me-1"></i>SMS</button></li>
+        </ul>
+      </div>
+
+      <!-- Two-Pane Layout -->
+      <div class="row g-0 border rounded overflow-hidden" style="min-height:600px">
+
+        <!-- Thread List -->
+        <div class="col-lg-4 border-end">
+          <div class="p-2 border-bottom bg-light d-flex align-items-center gap-2">
+            <input type="text" class="form-control form-control-sm" id="thread-search" placeholder="Search conversations…">
+          </div>
+          <div id="thread-list" style="overflow-y:auto;max-height:560px"></div>
+        </div>
+
+        <!-- Thread View -->
+        <div class="col-lg-8 d-flex flex-column">
+          <!-- Customer context strip -->
+          <div class="p-3 border-bottom bg-light d-flex align-items-center gap-3" id="thread-header-strip">
+            <div class="text-center text-muted py-4 w-100">
+              <i class="fi fi-rr-comment-alt fs-2 d-block mb-2"></i>
+              Select a conversation to view the thread.
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div class="flex-grow-1 p-3 overflow-auto" id="message-area" style="max-height:420px">
+          </div>
+
+          <!-- Compose Bar (hidden until thread selected) -->
+          <div class="p-2 border-top" id="compose-bar" style="display:none">
+            <div class="d-flex gap-2 align-items-end">
+              <textarea class="form-control form-control-sm flex-grow-1" rows="2" placeholder="Type your message…"></textarea>
+              <div class="d-flex flex-column gap-1">
+                <button class="btn btn-sm btn-primary"><i class="fi fi-rr-paper-plane"></i></button>
+                <button class="btn btn-sm btn-outline-secondary" title="Template"><i class="fi fi-rr-text-box"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'inbox';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-inbox.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

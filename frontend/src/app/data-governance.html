@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pakistan CRM — Data Governance Console</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+  <div class="page-layout">
+    <main class="app-wrapper">
+      <div class="container-fluid">
+        <div class="app-page-head d-flex align-items-center justify-content-between">
+          <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item">Admin</li>
+            <li class="breadcrumb-item active">Data Governance</li>
+          </ol></nav>
+          <a href="app/compliance.html" class="btn btn-sm btn-white waves-effect btn-shadow"><i class="fi fi-rr-arrow-left me-1"></i> Compliance Settings</a>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header border-bottom-0">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-classification" type="button">Data Classification</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-retention" type="button">Retention Policies</button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-sar" type="button">Subject Access Requests <span class="badge bg-warning-subtle text-warning ms-1" id="sar-badge">0</span></button></li>
+                  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-consent" type="button">Consent Management</button></li>
+                </ul>
+              </div>
+              <div class="tab-content card-body">
+
+                <!-- Data Classification -->
+                <div class="tab-pane fade show active" id="tab-classification">
+                  <p class="text-muted small mb-3">Entity fields tagged by sensitivity. View-only map — classification rules in <code>data-governance-layer.md</code>.</p>
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead class="table-light"><tr>
+                        <th class="text-center">Entity</th>
+                        <th class="text-center">Field</th>
+                        <th class="text-center">Classification</th>
+                        <th class="text-center">Legal Basis</th>
+                      </tr></thead>
+                      <tbody id="classification-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Retention Policies -->
+                <div class="tab-pane fade" id="tab-retention">
+                  <table class="table table-sm">
+                    <thead class="table-light"><tr>
+                      <th class="text-center">Entity Class</th>
+                      <th class="text-center">Retention Period</th>
+                      <th class="text-center">Legal Basis</th>
+                      <th class="text-center">Deletion Schedule</th>
+                    </tr></thead>
+                    <tbody id="retention-body"></tbody>
+                  </table>
+                </div>
+
+                <!-- Subject Access Requests -->
+                <div class="tab-pane fade" id="tab-sar">
+                  <div id="sar-list"><p class="text-muted small text-center py-3">No pending subject access requests</p></div>
+                </div>
+
+                <!-- Consent Management -->
+                <div class="tab-pane fade" id="tab-consent">
+                  <p class="text-muted small mb-3">Per-contact consent records. See also <a href="app/privacy.html">Consent & Privacy Manager</a> for full management.</p>
+                  <div id="consent-summary"></div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <script src="assets/libs/global/global.min.js"></script>
+  <script src="assets/js/app/crm-dummy.js"></script>
+  <script src="assets/js/app/crm-api.js"></script>
+  <script>window.CRM_PAGE = 'data-governance';</script>
+  <script src="assets/js/app/crm-shell.js"></script>
+  <script src="assets/js/app/crm-components.js"></script>
+  <script src="assets/js/appSettings.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/app/crm-data-governance.js"></script>
+  <script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#5955D1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partner Detail — NexLink CRM</title>
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/libs/flaticon/css/all/all.css">
+  <link rel="stylesheet" href="assets/libs/lucide/lucide.css">
+  <link rel="stylesheet" href="assets/libs/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="assets/libs/simplebar/simplebar.css">
+  <link rel="stylesheet" href="assets/libs/node-waves/waves.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-select/css/bootstrap-select.min.css">
+  <link id="main-stylesheet" rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/crm-custom.css">
+</head>
+<body>
+<div class="page-layout">
+  <main class="app-wrapper">
+    <div class="container-fluid">
+
+      <div class="app-page-head d-flex align-items-center justify-content-between mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="app/dashboard.html"><i class="fi fi-rr-home"></i> Home</a></li>
+            <li class="breadcrumb-item"><a href="app/partners.html">Partners</a></li>
+            <li class="breadcrumb-item active" id="bc-partner-name">NovaTech Solutions</li>
+          </ol>
+        </nav>
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Cat 2 — Dummy Mode</span>
+      </div>
+
+      <!-- Identity Strip -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="card mb-0" style="height:auto">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <h5 class="mb-0 fw-bold" id="partner-name">NovaTech Solutions</h5>
+                    <span id="tier-badge"></span>
+                    <span id="status-badge"></span>
+                  </div>
+                  <div class="d-flex gap-3 small text-muted">
+                    <span><i class="fi fi-rr-map-marker me-1"></i><span id="partner-region">—</span></span>
+                    <span><i class="fi fi-rr-user me-1"></i><span id="partner-contact">—</span></span>
+                    <span><i class="fi fi-rr-envelope me-1"></i><span id="partner-email">—</span></span>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" disabled title="Dummy mode">New Deal Registration</button>
+                  <button class="btn btn-sm btn-outline-success" disabled title="Dummy mode">Pay Commission</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Pane -->
+      <div class="row g-3">
+        <div class="col-lg-8">
+          <div class="card" style="height:auto">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item"><a class="nav-link active" href="#tab-details" data-bs-toggle="tab">Details</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab-opps" data-bs-toggle="tab">Opportunities</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab-commission" data-bs-toggle="tab">Commission Ledger</a></li>
+                <li class="nav-item"><a class="nav-link" href="#tab-history" data-bs-toggle="tab">Relationship History</a></li>
+              </ul>
+            </div>
+            <div class="card-body tab-content">
+              <div class="tab-pane fade show active" id="tab-details">
+                <div class="row g-3" id="partner-fields"></div>
+              </div>
+              <div class="tab-pane fade" id="tab-opps">
+                <div id="partner-opps-list"></div>
+              </div>
+              <div class="tab-pane fade" id="tab-commission">
+                <div id="commission-list"></div>
+              </div>
+              <div class="tab-pane fade" id="tab-history">
+                <div class="text-muted small py-3 text-center">Relationship history will appear here when backend is wired.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card mb-3" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Attribution Summary</h6></div>
+            <div class="card-body" id="context-attribution"></div>
+          </div>
+          <div class="card" style="height:auto">
+            <div class="card-header"><h6 class="mb-0">Commission Due</h6></div>
+            <div class="card-body" id="context-commission"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/libs/global/global.min.js"></script>
+<script src="assets/js/app/crm-dummy.js"></script>
+<script src="assets/js/app/crm-api.js"></script>
+<script>window.CRM_PAGE = 'partners-detail';</script>
+<script src="assets/js/app/crm-shell.js"></script>
+<script src="assets/js/app/crm-components.js"></script>
+<script src="assets/js/appSettings.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/app/crm-partners-detail.js"></script>
+<script src="assets/js/app/crm-locale.js"></script>
+</body>
+</html>
