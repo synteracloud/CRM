@@ -2,7 +2,7 @@
 
 **Created:** 2026-05-31
 **Authority:** This file is the active anchor document for all work from 2026-05-31 onwards. `REBUILD-PLAN.md` is closed — do not resume work from it.
-**Status:** C0 ← CURRENT
+**Status:** C1 ← CURRENT (C0 complete 2026-05-31)
 **Task tracker:** `PENDING.md` (root) — add commercialisation tasks here as `[ ]` items under a new `## Commercialisation` section
 **Session log:** `PROGRESS.md` — one-line summary added every session
 **Predecessor:** `REBUILD-PLAN.md` — build phases 1–6 complete, all 75 pages built + wired + browser-approved
@@ -11,14 +11,14 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current phase:** C0 — Environment Seal
+**Current phase:** C1 — DB Wiring (local)
 **First file to open every session:** `SYSTEM-SNAPSHOT.md` → this file → `PENDING.md` Commercialisation section
 **Rule in force:** C0 seal must be verified before running any tool. PAGE-BUILD-PROTOCOL.md governs every page fix found during testing. No new page builds without explicit approval.
 
 | Phase | Name | Status |
 |---|---|---|
-| C0 | Environment Seal | ← CURRENT |
-| C1 | DB Wiring (local) | ⬜ pending |
+| C0 | Environment Seal | ✓ COMPLETE 2026-05-31 |
+| C1 | DB Wiring (local) | ← CURRENT |
 | C2 | Automated Test Suite (local) | ⬜ pending |
 | C3 | Code Hardening (local) | ⬜ pending |
 | C4 | Infrastructure Deployment (Render.com) | ⬜ pending |

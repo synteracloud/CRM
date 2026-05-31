@@ -7,3 +7,7 @@ dist/
 *.log
 .env
 *.env
+.env.local
+c-seal/
+.playwright-browsers/
+.selenium-cache/

@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
-**Anchor:** `REBUILD-PLAN.md`
-**Last updated:** 2026-05-31 — **Phase 6 wiring extension COMPLETE. All 75 of 75 custom pages wired and browser-approved.** 5 previously externally blocked pages (G-04, G-05, J-03, H-07, A-08) wired with inline gateway route stubs. External services pluggable when credentials/providers available. Prior: MR-004 + MR-005 + 12-page extension + Wiring Sprint (Component 2) + Component 1 all COMPLETE. Commercialization phase is next (DB wiring → automated testing → hardening → Render.com deployment).
+**Anchor:** `COMMERCIALISATION-PLAN.md` (REBUILD-PLAN.md closed)
+**Last updated:** 2026-05-31 — **C0 Environment Seal COMPLETE.** .env.local created, npm cache → D:\npm-cache, pip cache → D:\pip-cache, Playwright Chromium → D:\CRM\.playwright-browsers\chromium-1223, seal.ps1 created, c-seal baseline recorded. All tool writes confirmed on D:. C1 DB Wiring is next.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -588,12 +588,25 @@ mapping file. Prerequisite for Phase 5 close task "wire 28 pages to live endpoin
 - [x] **Phase 6 extension (2026-05-31) — 5 inline stub routes + 5 JS drivers (G-04/G-05/J-03/H-07/A-08). All 75 of 75 pages wired. All browser-approved.**
 
 ### Final Hardening
-- [ ] Load tests (locust): follow-up queue + collections + cases + inbox happy paths
-- [ ] Full E2E test: lead capture → follow-up → close → invoice → payment
-- [ ] Coverage gate: CI blocks merge if coverage < 80%
-- [ ] CI/CD: containers in pipeline, staging deploy configured
+- [x] Absorbed into COMMERCIALISATION-PLAN.md C2/C3 — do not execute from here
 
 ### Phase 6 close
-- [ ] Final grade audit across all 8 areas (REBUILD-PLAN.md Current State vs Target table)
-- [ ] Verify: all 96 library pages still HTTP 200
-- [ ] GitHub push — Phase 6 complete
+- [x] All tasks absorbed into COMMERCIALISATION-PLAN.md — REBUILD-PLAN.md closed 2026-05-31
+
+---
+
+## Commercialisation (COMMERCIALISATION-PLAN.md)
+
+| Phase | Status |
+|---|---|
+| C0 — Environment Seal | [x] COMPLETE 2026-05-31 |
+| C1 — DB Wiring (local) | [ ] pending |
+| C2a — Backend Coverage (80%) | [ ] pending |
+| C2b — API Contract Tests | [ ] pending |
+| C2c — Playwright E2E (75 pages) | [ ] pending |
+| C2d — Load Tests (Locust) | [ ] pending |
+| C2e — Security Scanning | [ ] pending |
+| C3 — Code Hardening | [ ] pending |
+| C4 — Infrastructure Deployment | [ ] pending |
+| C5 — Post-Deploy Smoke | [ ] pending |
+| C6 — Commercial Launch | [ ] pending |

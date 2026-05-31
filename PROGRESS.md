@@ -1,6 +1,6 @@
 # Pakistan CRM — Screen Progress
 
-**Last updated:** 2026-05-31 — **Phase 6 wiring extension COMPLETE. All 75 of 75 custom pages wired + browser-approved.** 5 previously blocked pages (G-04, G-05, J-03, H-07, A-08) wired with inline gateway route stubs + JS drivers. External services (billing provider, integration APIs, governance service) are pluggable later — internal homework complete. Final Hardening (Component 3) is next. ✓ = full process complete + locked.
+**Last updated:** 2026-05-31 — **C0 Environment Seal COMPLETE.** .env.local + seal.ps1 created; npm/pip/Playwright all confirmed writing to D:; Chromium installed at D:\CRM\.playwright-browsers\chromium-1223; c-seal baseline recorded. C1 DB Wiring is next. 5 previously blocked pages (G-04, G-05, J-03, H-07, A-08) wired with inline gateway route stubs + JS drivers. External services (billing provider, integration APIs, governance service) are pluggable later — internal homework complete. Final Hardening (Component 3) is next. ✓ = full process complete + locked.
 **Protocol:** FRAMEWORK.md (seed-first normalisation)
 **Ground truth for app/ directory:** `frontend/src/app/`
 **Dev server:** `npm run serve` from `D:\CRM\frontend` — port 3001 (must run from this directory)
