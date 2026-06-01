@@ -10,9 +10,6 @@ import uuid
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
 
 from services.app import app
 from services.auth.jwt_deps import TokenClaims, get_current_user
@@ -20,12 +17,7 @@ from services.db import get_db
 from services.db.base import Base
 import services.db.models  # noqa: F401
 
-_test_engine = create_engine(
-    "sqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_test_engine)
+from tests.ai._shared_db import shared_engine as _test_engine, SharedSession as TestSessionLocal
 
 
 @pytest.fixture(autouse=True)

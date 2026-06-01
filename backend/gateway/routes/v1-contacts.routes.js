@@ -130,7 +130,9 @@ router.patch('/:contact_id', requestValidationMiddleware(), requireScopes(['cont
   if (PROXY_ENABLED) return forwardRequest(req, res);
   const idx = _memContacts.findIndex((x) => x.contact_id === req.params.contact_id);
   if (idx === -1) return respondError(res, 404, 'NOT_FOUND', 'Contact not found.');
-  _memContacts[idx] = { ..._memContacts[idx], ...req.body, updated_at: new Date().toISOString() };
+  const PATCH_ALLOWED = ['display_name', 'phone_e164', 'email', 'account_id', 'tags', 'source'];
+  const patch = Object.fromEntries(PATCH_ALLOWED.filter((k) => k in req.body).map((k) => [k, req.body[k]]));
+  _memContacts[idx] = { ..._memContacts[idx], ...patch, updated_at: new Date().toISOString() };
   return respondSuccess(res, _memContacts[idx]);
 });
 

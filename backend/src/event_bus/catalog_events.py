@@ -60,9 +60,33 @@ EVENT_NAMES: tuple[str, ...] = (
     "partner.created.v1",
     "partner.relationship.activated.v1",
     "partner.deal.registered.v1",
+    "partner.deal.approved.v1",
+    "partner.deal.rejected.v1",
     "partner.attribution.locked.v1",
     "partner.commission.calculated.v1",
     "partner.commission.approved.v1",
+    "partner.commission.paid.v1",
+    "partner.tier_changed.v1",
+    "partner.status_changed.v1",
+    # Campaign send tracking events
+    "campaign.paused.v1",
+    "campaign.cancelled.v1",
+    "campaign.send.queued.v1",
+    "campaign.send.delivered.v1",
+    "campaign.send.read.v1",
+    "campaign.send.replied.v1",
+    "campaign.send.failed.v1",
+    "campaign.conversion.attributed.v1",
+    # Contact opt-out
+    "contact.opted_out.v1",
+    # AI scoring & copilot events
+    "ai.lead_scored.v1",
+    "ai.churn_predicted.v1",
+    "ai.clv_estimated.v1",
+    "ai.suggestion_generated.v1",
+    "ai.suggestion_dismissed.v1",
+    "ai.suggestion_actioned.v1",
+    "ai.query_answered.v1",
 )
 
 EVENT_NAME_SET: frozenset[str] = frozenset(EVENT_NAMES)

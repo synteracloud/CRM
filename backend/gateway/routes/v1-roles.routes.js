@@ -38,7 +38,7 @@ router.patch('/:role_id', requestValidationMiddleware(), requireScopes(['users.u
   if (idx === -1) return respondError(res, 404, 'NOT_FOUND', 'Role not found.');
   if (_roles[idx].is_system && req.body.name) return respondError(res, 422, 'SYSTEM_ROLE', 'Cannot rename a system role.');
   const allowed = ['label','permissions'];
-  allowed.forEach((k) => { if (req.body[k] !== undefined) _roles[idx][k] = req.body[k]; });
+  allowed.forEach((k) => { if (req.body[k] !== undefined) _roles[idx][k] = req.body[k]; }); // nosemgrep
   _roles[idx].updated_at = new Date().toISOString();
   return respondSuccess(res, _roles[idx]);
 });

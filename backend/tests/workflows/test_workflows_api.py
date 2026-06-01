@@ -20,12 +20,7 @@ from services.db import get_db
 from services.db.base import Base
 import services.db.models  # noqa: F401
 
-_test_engine = create_engine(
-    "sqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_test_engine)
+from tests.workflows._shared_db import shared_engine as _test_engine, SharedSession as TestSessionLocal
 
 
 @pytest.fixture(autouse=True)

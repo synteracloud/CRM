@@ -44,11 +44,11 @@ SLA_DEFAULTS: dict[SLATier, dict[str, int]] = {
 # Spec §3.1 — valid transitions per source status
 ALLOWED_TRANSITIONS: dict[str, list[str]] = {
     "OPEN":                ["ASSIGNED", "CLOSED"],
-    "ASSIGNED":            ["IN_PROGRESS", "OPEN", "ESCALATED"],
-    "IN_PROGRESS":         ["WAITING_ON_CUSTOMER", "RESOLVED", "ESCALATED"],
+    "ASSIGNED":            ["IN_PROGRESS", "OPEN", "ESCALATED", "CLOSED"],
+    "IN_PROGRESS":         ["WAITING_ON_CUSTOMER", "RESOLVED", "ESCALATED", "CLOSED"],
     "WAITING_ON_CUSTOMER": ["IN_PROGRESS", "RESOLVED", "CLOSED"],
     "RESOLVED":            ["CLOSED", "IN_PROGRESS"],
-    "ESCALATED":           ["ASSIGNED", "IN_PROGRESS"],
+    "ESCALATED":           ["ASSIGNED", "IN_PROGRESS", "CLOSED"],
     "CLOSED":              ["OPEN"],
 }
 

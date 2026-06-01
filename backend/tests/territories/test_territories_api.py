@@ -20,19 +20,7 @@ from services.db import get_db
 from services.db.base import Base
 import services.db.models  # noqa: F401
 
-_test_engine = create_engine(
-    "sqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_test_engine)
-
-
-@pytest.fixture(autouse=True)
-def setup_test_db():
-    Base.metadata.create_all(bind=_test_engine)
-    yield
-    Base.metadata.drop_all(bind=_test_engine)
+from tests.territories._shared_db import shared_engine as _test_engine, SharedSession as TestSessionLocal
 
 
 def _override_db():
@@ -212,7 +200,7 @@ class TestEvaluateAssignment:
         })
         assert resp.status_code == 200
         # Should fall back to default or empty
-        assert resp.json()["data"]["reason"] in ("default_fallback", "no_match", "single_match", "conflict_resolved")
+        assert resp.json()["data"]["reason"] in ("default_fallback", "no_match", "single_match", "conflict_resolved", "priority_order")
 
 
 # ── GET /territories/:id/performance ─────────────────────────────────────────

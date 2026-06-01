@@ -359,10 +359,13 @@ def validate_suggestion_body(body: dict) -> list[str]:
 # ── Staleness check ───────────────────────────────────────────────────────────
 
 def is_stale(computed_at: datetime, recompute_interval_hours: int) -> bool:
-    now = datetime.now(timezone.utc)
     if computed_at.tzinfo is None:
-        computed_at = computed_at.replace(tzinfo=timezone.utc)
-    age_hours = (now - computed_at).total_seconds() / 3600
+        # Treat naive datetimes as local time — compare against local now
+        now = datetime.now()
+        age_hours = (now - computed_at).total_seconds() / 3600
+    else:
+        now = datetime.now(timezone.utc)
+        age_hours = (now - computed_at).total_seconds() / 3600
     return age_hours > recompute_interval_hours
 
 
@@ -370,8 +373,8 @@ def is_stale(computed_at: datetime, recompute_interval_hours: int) -> bool:
 
 _INTENT_PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"lead|prospect|contact|customer", re.I),      QueryIntent.lead.value),
+    (re.compile(r"follow[\- ]?up|pending task", re.I),         QueryIntent.followup.value),
     (re.compile(r"payment|invoice|collection|paid|bill|overdue", re.I), QueryIntent.payment.value),
-    (re.compile(r"follow[\- ]?up|overdue|pending task|task", re.I), QueryIntent.followup.value),
     (re.compile(r"case|ticket|support|issue|complaint", re.I), QueryIntent.case.value),
 ]
 

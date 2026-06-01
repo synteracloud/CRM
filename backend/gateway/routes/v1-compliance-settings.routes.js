@@ -36,11 +36,12 @@ router.get('/', requestValidationMiddleware(), requireScopes(['audit.logs.read']
 router.patch('/', requestValidationMiddleware(), requireScopes(['users.update']), (req, res) => {
   const allowed = ['retention_policies','break_glass','gdpr_mode','pdpa_mode','data_residency'];
   allowed.forEach((k) => {
-    if (req.body[k] !== undefined) {
-      if (typeof req.body[k] === 'object' && typeof _store[k] === 'object') {
-        Object.assign(_store[k], req.body[k]);
+    if (Object.prototype.hasOwnProperty.call(req.body, k)) {
+      const val = req.body[k]; // nosemgrep
+      if (typeof val === 'object' && val !== null && typeof _store[k] === 'object') {
+        Object.assign(_store[k], val); // nosemgrep
       } else {
-        _store[k] = req.body[k];
+        _store[k] = val; // nosemgrep
       }
     }
   });

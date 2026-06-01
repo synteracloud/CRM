@@ -5,6 +5,26 @@ Spec: backend/docs/domain/territory-management.md §3, §4, §5
 from __future__ import annotations
 
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+from services.db.base import Base
+import services.db.models  # noqa: F401
+
+_svc_engine = create_engine(
+    "sqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+_SvcSession = sessionmaker(bind=_svc_engine)
+
+
+@pytest.fixture(autouse=True)
+def setup_test_db():
+    Base.metadata.create_all(bind=_svc_engine)
+    yield
+    Base.metadata.drop_all(bind=_svc_engine)
+
 
 from services.territories.entities import (
     evaluate_rule,
@@ -26,7 +46,7 @@ def _territory(tid="t-001", priority=1, is_default=False, reps=None) -> dict:
         "is_active":      True,
         "routing_priority": priority,
         "is_default":     is_default,
-        "assigned_reps":  reps or ["u-001"],
+        "assigned_reps":  ["u-001"] if reps is None else reps,
         "primary_manager":"u-mgr",
     }
 

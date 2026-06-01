@@ -106,6 +106,13 @@ from services.collections.http.public import router as collections_public_router
 from services.activity.http.public import router as activity_public_router
 from services.activation.http.public import router as activation_public_router
 from services.core.execution.http.public import router as dlq_public_router
+from services.territories.http.public import router as territories_public_router
+from services.workflows.http.public import router as workflows_public_router
+from services.partners.http.public import router as partners_public_router
+from services.ai.http.public import router as ai_public_router
+from services.campaigns.http.public import router as campaigns_public_router
+from services.cases.http.public import router as cases_public_router
+from services.inbox.http.public import router as inbox_public_router
 
 # Public router singleton injectors (P3-B: share instances with internal routers)
 from services.activity.http.public import set_engine as set_activity_public_engine
@@ -295,6 +302,13 @@ app.include_router(collections_public_router)   # /api/v1/invoices + /api/v1/pay
 app.include_router(activity_public_router)      # /api/v1/activities
 app.include_router(activation_public_router)    # /api/v1/activation
 app.include_router(dlq_public_router)           # /api/v1/admin/dead-letters
+app.include_router(territories_public_router)   # /api/v1/territories
+app.include_router(workflows_public_router)     # /api/v1/workflows
+app.include_router(partners_public_router)      # /api/v1/partners + /api/v1/deal-registrations
+app.include_router(ai_public_router)            # /api/v1/ai/*
+app.include_router(campaigns_public_router)     # /api/v1/campaigns + /api/v1/segments + /api/v1/templates
+app.include_router(cases_public_router)         # /api/v1/cases
+app.include_router(inbox_public_router)         # /api/v1/inbox/*
 
 
 # ── Global exception handlers ─────────────────────────────────────────────────

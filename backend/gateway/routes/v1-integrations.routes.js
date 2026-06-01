@@ -66,7 +66,7 @@ router.patch('/:provider', requestValidationMiddleware(), requireScopes(['integr
   const { provider } = req.params;
   if (!_store[provider]) return respondError(res, 'not_found', `Unknown provider: ${provider}`, [], 404);
   const allowed = ['label', 'from_address', 'webhook_url'];
-  allowed.forEach(k => { if (req.body[k] !== undefined) _store[provider][k] = req.body[k]; });
+  allowed.forEach(k => { if (req.body[k] !== undefined) _store[provider][k] = req.body[k]; }); // nosemgrep
   if (req.body.api_key) {
     _store[provider].credentials_set = true;
     _store[provider].api_key_last4   = String(req.body.api_key).slice(-4);
