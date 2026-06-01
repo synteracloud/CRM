@@ -11,6 +11,7 @@ Create Date: 2026-06-01
 from __future__ import annotations
 from pathlib import Path
 from alembic import op
+import sqlalchemy as sa
 
 revision = "0011"
 down_revision = "0010"
@@ -30,22 +31,25 @@ SCHEMAS = [
     "feature_flag_db",
 ]
 
+
 def upgrade() -> None:
+    conn = op.get_bind()
     for schema in SCHEMAS:
         sql_path = DB_SCHEMA_ROOT / schema / "schema.sql"
-        if sql_path.exists():
-            sql = sql_path.read_text(encoding="utf-8")
-            # Execute each statement separately, skipping search_path
-            for stmt in sql.split(";"):
-                stmt = stmt.strip()
-                if not stmt:
-                    continue
-                if stmt.upper().startswith("SET SEARCH_PATH"):
-                    continue
-                if stmt.startswith("--"):
-                    continue
-                op.execute(stmt)
+        if not sql_path.exists():
+            continue
+        sql = sql_path.read_text(encoding="utf-8")
+        # Remove SET search_path lines — breaks when schema doesn't exist yet
+        cleaned_lines = [
+            line for line in sql.splitlines()
+            if not line.strip().upper().startswith("SET SEARCH_PATH")
+        ]
+        cleaned = "\n".join(cleaned_lines)
+        # Execute as a single block — psycopg2 handles multi-statement SQL
+        conn.execute(sa.text(cleaned))
+
 
 def downgrade() -> None:
+    conn = op.get_bind()
     for schema in reversed(SCHEMAS):
-        op.execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE")
+        conn.execute(sa.text(f"DROP SCHEMA IF EXISTS {schema} CASCADE"))
