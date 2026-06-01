@@ -60,7 +60,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-tenant-id', 'x-request-id', 'x-idempotency-key'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-tenant-id', 'x-request-id', 'x-idempotency-key', 'idempotency-key', 'Idempotency-Key'],
   exposedHeaders: ['x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset'],
 }));
 

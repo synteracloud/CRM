@@ -146,7 +146,11 @@ def seed(auth_credentials):
 
     def _post(path: str, body: dict) -> dict:
         try:
-            r = httpx.post(f"{gw}/api/v1{path}", json=body, headers=hdrs, timeout=30)
+            ikey = str(uuid.uuid4())
+            r = httpx.post(
+                f"{gw}/api/v1{path}", json=body,
+                headers={**hdrs, "Idempotency-Key": ikey}, timeout=30,
+            )
             return r.json().get("data", {}) if r.status_code < 300 else {}
         except Exception:
             return {}

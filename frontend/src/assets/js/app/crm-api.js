@@ -23,6 +23,13 @@ window.CRM_API = (function () {
   const cfg = window.CRM_CONFIG;
   const d   = () => window.CRM_DUMMY;
 
+  function _ikey() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8); return v.toString(16);
+    });
+  }
+
   async function get(path, params) {
     const qs  = params ? '?' + new URLSearchParams(params).toString() : '';
     const res = await fetch(`${cfg.BASE_URL}${path}${qs}`, {
@@ -35,7 +42,7 @@ window.CRM_API = (function () {
   async function post(path, body) {
     const res = await fetch(`${cfg.BASE_URL}${path}`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json', 'x-tenant-id': cfg.tenantId },
+      headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json', 'x-tenant-id': cfg.tenantId, 'Idempotency-Key': _ikey() },
       body: JSON.stringify(body)
     });
     if (!res.ok) throw await res.json();
@@ -45,7 +52,7 @@ window.CRM_API = (function () {
   async function patch(path, body) {
     const res = await fetch(`${cfg.BASE_URL}${path}`, {
       method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json', 'x-tenant-id': cfg.tenantId },
+      headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json', 'x-tenant-id': cfg.tenantId, 'Idempotency-Key': _ikey() },
       body: JSON.stringify(body)
     });
     if (!res.ok) throw await res.json();
