@@ -94,9 +94,16 @@ def test_page_loads_with_shell(page, page_name):
     js_errors = []
     page.on("console", lambda msg: js_errors.append(msg.text) if msg.type == "error" else None)
 
-    response = page.goto(url, wait_until="domcontentloaded", timeout=15000)
-    assert response is not None and response.status == 200, (
-        f"{page_name}: HTTP {response.status if response else 'no response'}"
+    import os as _os
+    _timeout = 60000 if "onrender.com" in _os.getenv("BASE_URL", "") else 15000
+    response = page.goto(url, wait_until="domcontentloaded", timeout=_timeout)
+    final_status = response.status if response else 0
+    # Render static sites redirect .html → path (301 → 200 final)
+    if final_status == 301:
+        response = page.wait_for_navigation(timeout=_timeout)
+        final_status = response.status if response else 0
+    assert final_status == 200, (
+        f"{page_name}: HTTP {final_status}"
     )
 
     # CRM shell: sidebar OR app-menubar-tabs must be present

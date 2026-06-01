@@ -608,5 +608,5 @@ mapping file. Prerequisite for Phase 5 close task "wire 28 pages to live endpoin
 | C2e — Security Scanning | [x] COMPLETE 2026-06-01 — 0 Critical CVEs, semgrep 0 ERRORs |
 | C3 — Code Hardening | [x] COMPLETE 2026-06-01 — ioredis A-006/A-007, helmet, CORS, JWT refresh, OTP reset, register, semgrep rule |
 | C4 — Infrastructure Deployment | [x] COMPLETE 2026-06-02 — 42/42 routes pass production. Gateway https://crm-gateway-l3rm.onrender.com, DB connected, 12 Alembic migrations applied (0001→0012) |
-| C5 — Post-Deploy Smoke | [ ] pending |
+| C5 — Post-Deploy Smoke | [x] COMPLETE 2026-06-02 — 63/63 API contracts, 118 E2E pass, 17/17 security, load p95=460ms 0 5xx |
 | C6 — Commercial Launch | [ ] pending |

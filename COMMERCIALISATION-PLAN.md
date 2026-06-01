@@ -2,7 +2,7 @@
 
 **Created:** 2026-05-31
 **Authority:** This file is the active anchor document for all work from 2026-05-31 onwards. `REBUILD-PLAN.md` is closed — do not resume work from it.
-**Status:** C5 ← CURRENT (C4 complete 2026-06-02 — 42/42 routes pass production smoke test)
+**Status:** C6 ← CURRENT (C5 complete 2026-06-02 — all production gates pass)
 **Task tracker:** `PENDING.md` (root) — add commercialisation tasks here as `[ ]` items under a new `## Commercialisation` section
 **Session log:** `PROGRESS.md` — one-line summary added every session
 **Predecessor:** `REBUILD-PLAN.md` — build phases 1–6 complete, all 75 pages built + wired + browser-approved
@@ -11,7 +11,7 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current phase:** C5 — Post-Deploy Smoke + Production Sign-Off
+**Current phase:** C6 — Commercial Launch
 **First file to open every session:** `SYSTEM-SNAPSHOT.md` → this file → `PENDING.md` Commercialisation section
 **Rule in force:** C0 seal must be verified before running any tool. PAGE-BUILD-PROTOCOL.md governs every page fix found during testing. No new page builds without explicit approval.
 

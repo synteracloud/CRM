@@ -17,31 +17,59 @@ import time
 from locust import HttpUser, task, between, events
 from locust.runners import MasterRunner
 
-TENANT = "00000000-0000-0000-0000-000000000001"
 _token_cache: dict = {}
 
-# Pre-fetch token at startup using a plain requests call
 import requests as _req
-def _get_token_once() -> str:
+import uuid as _uuid
+
+def _get_token_once(host: str = "http://localhost:3000") -> str:
     if "token" not in _token_cache:
+        # Try /dev-token first (local dev); fall back to /auth/register (production)
         try:
-            resp = _req.get("http://localhost:3000/dev-token", timeout=10)
-            _token_cache["token"] = resp.json()["data"]["token"]
+            resp = _req.get(f"{host}/dev-token", timeout=10)
+            data = resp.json().get("data", {})
+            if data.get("token"):
+                _token_cache["token"] = data["token"]
+                _token_cache["tenant"] = data.get("tenant_id", "00000000-0000-0000-0000-000000000001")
+                return _token_cache["token"]
+        except Exception:
+            pass
+        # Production: register a test user
+        try:
+            uid = _uuid.uuid4().hex[:8]
+            resp = _req.post(
+                f"{host}/api/v1/auth/register",
+                json={"name": f"Locust-{uid}", "email": f"locust-{uid}@load.test", "password": "LocustLoad2026!"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                timeout=60,
+            )
+            data = resp.json().get("data", {})
+            _token_cache["token"] = data.get("access_token", "")
+            _token_cache["tenant"] = data.get("tenant_id", "")
         except Exception as e:
-            print(f"[WARN] Could not get dev token: {e}")
+            print(f"[WARN] Could not get token: {e}")
             _token_cache["token"] = ""
+            _token_cache["tenant"] = ""
     return _token_cache["token"]
 
 
+def _get_tenant(host: str = "http://localhost:3000") -> str:
+    if "tenant" not in _token_cache:
+        _get_token_once(host)
+    return _token_cache.get("tenant", "00000000-0000-0000-0000-000000000001")
+
+
 def _get_token(client=None) -> str:
-    return _get_token_once()
+    host = os.getenv("LOCUST_HOST", "http://localhost:3000")
+    return _get_token_once(host)
 
 
-def _auth_headers(token: str) -> dict:
+def _auth_headers(token: str, tenant: str = None) -> dict:
+    _host = os.getenv("LOCUST_HOST", "http://localhost:3000")
     return {
         "Accept": "application/json",
         "Authorization": f"Bearer {token}",
-        "x-tenant-id": TENANT,
+        "x-tenant-id": tenant or _get_tenant(_host),
     }
 
 
