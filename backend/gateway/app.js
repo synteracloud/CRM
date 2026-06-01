@@ -17,7 +17,9 @@ const logger = require('./middleware/logger');
 
 // ── B-004: Production fail-fast ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {
-  const required = ['JWT_ISSUER', 'JWT_AUDIENCE', 'JWT_PUBLIC_KEY_URL', 'DATABASE_URL'];
+  // JWT_PUBLIC_KEY_URL is only required for RS256; HS256 uses JWT_SECRET instead.
+  // DATABASE_URL is required; REDIS_URL degrades gracefully to ioredis-mock if absent.
+  const required = ['JWT_ISSUER', 'JWT_AUDIENCE', 'DATABASE_URL'];
   const missing = required.filter((k) => !process.env[k]);
   if (missing.length > 0) {
     console.error(`[FATAL] Missing required env vars: ${missing.join(', ')}. Refusing to start.`);
