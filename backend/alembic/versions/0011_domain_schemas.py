@@ -33,20 +33,28 @@ SCHEMAS = [
 
 
 def upgrade() -> None:
+    # Use raw psycopg2 cursor to execute multi-statement SQL (handles $$ blocks)
     conn = op.get_bind()
-    for schema in SCHEMAS:
-        sql_path = DB_SCHEMA_ROOT / schema / "schema.sql"
-        if not sql_path.exists():
-            continue
-        sql = sql_path.read_text(encoding="utf-8")
-        # Remove SET search_path lines — breaks when schema doesn't exist yet
-        cleaned_lines = [
-            line for line in sql.splitlines()
-            if not line.strip().upper().startswith("SET SEARCH_PATH")
-        ]
-        cleaned = "\n".join(cleaned_lines)
-        # Execute as a single block — psycopg2 handles multi-statement SQL
-        conn.execute(sa.text(cleaned))
+    raw_conn = conn.connection.dbapi_connection
+    cursor = raw_conn.cursor()
+    try:
+        for schema in SCHEMAS:
+            sql_path = DB_SCHEMA_ROOT / schema / "schema.sql"
+            if not sql_path.exists():
+                continue
+            sql = sql_path.read_text(encoding="utf-8")
+            # Remove SET search_path lines
+            cleaned = "\n".join(
+                line for line in sql.splitlines()
+                if not line.strip().upper().startswith("SET SEARCH_PATH")
+            )
+            cursor.execute(cleaned)
+        raw_conn.commit()
+    except Exception:
+        raw_conn.rollback()
+        raise
+    finally:
+        cursor.close()
 
 
 def downgrade() -> None:
