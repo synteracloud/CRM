@@ -127,6 +127,10 @@ before update on invoice_summary
 for each row
 execute function transaction_db.set_updated_at();
 
+-- Required for FK references in payment_event and payment (tenant_id, invoice_summary_id)
+create unique index if not exists uq_invoice_summary_tenant_invoice
+  on invoice_summary (tenant_id, invoice_summary_id);
+
 -- PaymentEvent
 create table if not exists payment_event (
   payment_event_id uuid primary key default gen_random_uuid(),
@@ -170,9 +174,6 @@ create table if not exists payment_event (
     check (subscription_id is not null or invoice_summary_id is not null),
   constraint uq_payment_event_external_ref unique (tenant_id, external_payment_ref)
 );
-
-create unique index if not exists uq_invoice_summary_tenant_invoice
-  on invoice_summary (tenant_id, invoice_summary_id);
 
 create index if not exists idx_payment_event_tenant_event_time
   on payment_event (tenant_id, event_time desc);
