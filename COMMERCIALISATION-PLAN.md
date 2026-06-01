@@ -2,7 +2,7 @@
 
 **Created:** 2026-05-31
 **Authority:** This file is the active anchor document for all work from 2026-05-31 onwards. `REBUILD-PLAN.md` is closed — do not resume work from it.
-**Status:** C4 infra ready — pending Render account + Blueprint click-deploy (C3 complete 2026-06-01)
+**Status:** C5 ← CURRENT (C4 complete 2026-06-01 — all 5 Render services LIVE)
 **Task tracker:** `PENDING.md` (root) — add commercialisation tasks here as `[ ]` items under a new `## Commercialisation` section
 **Session log:** `PROGRESS.md` — one-line summary added every session
 **Predecessor:** `REBUILD-PLAN.md` — build phases 1–6 complete, all 75 pages built + wired + browser-approved
@@ -11,7 +11,7 @@
 
 ## RESUME POINT — Read Before Every Session
 
-**Current phase:** C4 — Infrastructure Deployment (Render.com) — render.yaml + CI/CD ready; one-step: connect GitHub to Render Blueprint
+**Current phase:** C5 — Post-Deploy Smoke + Production Sign-Off
 **First file to open every session:** `SYSTEM-SNAPSHOT.md` → this file → `PENDING.md` Commercialisation section
 **Rule in force:** C0 seal must be verified before running any tool. PAGE-BUILD-PROTOCOL.md governs every page fix found during testing. No new page builds without explicit approval.
 
@@ -21,7 +21,7 @@
 | C1 | DB Wiring (local) | ✓ COMPLETE 2026-05-31 |
 | C2 | Automated Test Suite (local) | ✓ COMPLETE 2026-06-01 |
 | C3 | Code Hardening (local) | ✓ COMPLETE 2026-06-01 |
-| C4 | Infrastructure Deployment (Render.com) | ✓ COMPLETE 2026-06-01 — render.yaml + Dockerfiles + CI/CD ready; one-click deploy via Blueprint |
+| C4 | Infrastructure Deployment (Render.com) | ✓ COMPLETE 2026-06-01 — all 5 services LIVE on free tier; gateway + services + frontend + postgres + redis |
 | C5 | Post-Deploy Smoke + Production Sign-Off | ⬜ pending |
 | C6 | Commercial Launch | ⬜ pending |
 
