@@ -47,9 +47,12 @@ try {
 
 function buildConfig() {
   if (process.env.DATABASE_URL) {
+    // In production (Render), DATABASE_URL always requires SSL.
+    // DB_SSL=true forces SSL in dev; NODE_ENV=production auto-enables it.
+    const sslEnabled = process.env.DB_SSL === 'true' || process.env.NODE_ENV === 'production';
     return {
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      ssl: sslEnabled ? { rejectUnauthorized: false } : false,
       max: parseInt(process.env.DB_POOL_MAX || '10', 10),
       idleTimeoutMillis: parseInt(process.env.DB_POOL_IDLE_MS || '10000', 10),
       connectionTimeoutMillis: parseInt(process.env.DB_POOL_CONN_TIMEOUT || '5000', 10),
