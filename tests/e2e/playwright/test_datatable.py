@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-BASE_URL = "http://localhost:3001"
+import os; BASE_URL = os.getenv("BASE_URL", "http://localhost:3001")
 
 LIST_PAGES = [
     "leads.html",

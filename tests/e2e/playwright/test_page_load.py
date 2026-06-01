@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-BASE_URL = "http://localhost:3001"
+import os; BASE_URL = os.getenv("BASE_URL", "http://localhost:3001")
 
 # All 75 custom CRM pages from DESIGN-SPEC.md
 CRM_PAGES = [

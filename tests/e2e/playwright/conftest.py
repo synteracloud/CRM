@@ -8,6 +8,7 @@ import pytest
 from playwright.sync_api import sync_playwright, Browser, Page
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:3001")
+# For production: BASE_URL=https://crm-frontend-0gde.onrender.com
 SCREENSHOTS_DIR = Path(__file__).parent / "screenshots"
 SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 

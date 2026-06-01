@@ -1,10 +1,19 @@
 /* Pakistan CRM — API Wrapper */
 /* Flip DUMMY_MODE to false when backend is live */
 
+/* Auto-detect production gateway URL based on hostname */
+(function() {
+  var host = window.location.hostname;
+  var isLocal = host === 'localhost' || host === '127.0.0.1';
+  window.__CRM_GATEWAY_URL = isLocal
+    ? 'http://localhost:3000/api/v1'
+    : 'https://crm-gateway-l3rm.onrender.com/api/v1';
+})();
+
 window.CRM_CONFIG = {
   DUMMY_MODE: false,
-  BASE_URL: 'http://localhost:3000/api/v1',
-  tenantId: localStorage.getItem('crm_tenant_id') || 'tenant-dev-001',
+  BASE_URL: window.__CRM_GATEWAY_URL,
+  tenantId: localStorage.getItem('crm_tenant_id') || '00000000-0000-0000-0000-000000000001',
   get token() { return localStorage.getItem('crm_token'); }
 };
 
