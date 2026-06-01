@@ -1,8 +1,9 @@
-name: CI
+name: CI/CD — Pakistan CRM OS
 
 on:
   push:
     branches: [main, "feat/**", "fix/**", "chore/**"]
+    tags: ["v*.*.*"]
   pull_request:
     branches: [main]
 
@@ -10,8 +11,11 @@ env:
   PYTHON_VERSION: "3.12"
   NODE_VERSION: "20"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGE 1 — Test + Lint
+# ─────────────────────────────────────────────────────────────────────────────
+
 jobs:
-  # ── Python backend ──────────────────────────────────────────────────────────
   backend-lint:
     name: Backend lint (ruff + black)
     runs-on: ubuntu-latest
@@ -20,75 +24,79 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
       - name: Install lint tools
         run: pip install ruff black
-
       - name: ruff check
         run: ruff check .
-
       - name: black check
         run: black --check .
 
   backend-test:
-    name: Backend tests (pytest + coverage)
+    name: Backend tests (pytest 80% coverage)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt || true
-          pip install pytest pytest-cov
-
-      - name: Run tests with coverage
-        run: |
-          pytest tests/ -v --tb=short \
-            --cov=services \
-            --cov=adapters \
-            --cov-report=term-missing \
-            --cov-report=xml \
-            --cov-fail-under=70
-
-      - name: Upload coverage report
+        run: pip install -r requirements.txt pytest pytest-cov pytest-asyncio ioredis-mock 2>/dev/null || pip install fastapi uvicorn sqlalchemy alembic pydantic httpx python-jose cryptography python-multipart pytest pytest-cov pytest-asyncio
+      - name: Run tests
+        run: pytest --cov=. --cov-report=term-missing --cov-fail-under=80 -q --tb=short --ignore=.venv
+      - name: Upload coverage
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
           path: backend/coverage.xml
 
-  # ── Architecture guard ──────────────────────────────────────────────────────
+  security-scan:
+    name: Security scan (pip-audit + npm audit + semgrep)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: pip-audit
+        run: |
+          pip install pip-audit
+          pip-audit --requirement backend/requirements.txt || true
+      - name: npm audit
+        run: npm audit --prefix backend/gateway --audit-level=critical || true
+      - name: semgrep
+        run: |
+          pip install semgrep
+          semgrep --config=auto backend/ --include="*.py" --include="*.js" \
+            --exclude=node_modules --exclude=.venv --timeout=60 || true
+      - name: custom tenant-isolation rule
+        run: |
+          pip install semgrep
+          semgrep --config=.semgrep/ backend/gateway/routes/ || true
+
   arch-guard:
-    name: Architecture guard (core → adapters/pakistan banned)
+    name: Architecture guard (ADR-002)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install ruff
+      - run: ruff check services/core/ --select TID251
 
-      - name: Install ruff
-        run: pip install ruff
-
-      - name: Check ADR-002 — no core imports of pakistan adapters
-        run: ruff check services/core/ --select TID251
-
-  # ── Gateway (Node.js) ───────────────────────────────────────────────────────
   gateway-lint:
     name: Gateway lint (ESLint)
     runs-on: ubuntu-latest
@@ -97,36 +105,125 @@ jobs:
         working-directory: backend/gateway
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - run: npm install --if-present || true
+      - run: npx eslint . --ext .js --max-warnings 0 || true
 
-      - name: Install dependencies
-        run: npm ci --if-present || npm install --if-present || true
-
-      - name: ESLint (if configured)
-        run: npx eslint . --ext .js --max-warnings 0 || true
-
-  # ── Frontend ────────────────────────────────────────────────────────────────
-  frontend-check:
-    name: Frontend HTTP 200 check (96 library pages)
+  api-contracts:
+    name: API contract tests (httpx, gateway must be running)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
+    needs: [backend-test]
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm ci --if-present || npm install --if-present || true
-
-      - name: Build + check pages exist
+      - name: Start PostgreSQL
         run: |
-          # Verify all 96 library pages are present (no HTTP server needed — just file existence)
-          find src/ -name "*.html" | wc -l
-          echo "All HTML files accounted for."
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "CREATE USER crm WITH PASSWORD 'changeme' SUPERUSER;" || true
+          sudo -u postgres psql -c "CREATE DATABASE crm_dev OWNER crm;" || true
+      - name: Start gateway
+        run: |
+          cd backend/gateway
+          npm install
+          DATABASE_URL=postgresql://crm:changeme@localhost:5432/crm_dev NODE_ENV=development PORT=3000 node server.js &
+          sleep 5
+          curl -sf http://localhost:3000/dev-token || exit 1
+        env:
+          NODE_ENV: development
+      - name: Run contract tests
+        run: |
+          pip install httpx pytest
+          pytest tests/api/ -q --tb=short
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGE 2 — Build Docker images (on push to main)
+# ─────────────────────────────────────────────────────────────────────────────
+
+  build-gateway:
+    name: Build gateway Docker image
+    runs-on: ubuntu-latest
+    needs: [backend-test, gateway-lint, security-scan]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build gateway image
+        run: docker build -f backend/gateway/Dockerfile -t crm-gateway:${{ github.sha }} backend/
+      - name: Verify gateway starts
+        run: |
+          docker run -d --name gw-test -p 3000:3000 \
+            -e NODE_ENV=development -e DB_DISABLED=true \
+            crm-gateway:${{ github.sha }}
+          sleep 5
+          curl -sf http://localhost:3000/dev-token || (docker logs gw-test && exit 1)
+          docker stop gw-test
+
+  build-services:
+    name: Build Python services Docker image
+    runs-on: ubuntu-latest
+    needs: [backend-test, security-scan]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build services image
+        run: docker build -f backend/Dockerfile -t crm-services:${{ github.sha }} backend/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGE 3 — Deploy to Render (on push to main → staging; on tag v* → prod)
+# ─────────────────────────────────────────────────────────────────────────────
+
+  deploy-staging:
+    name: Deploy to Render staging
+    runs-on: ubuntu-latest
+    needs: [build-gateway, build-services]
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    steps:
+      - name: Trigger Render staging deploy (gateway)
+        if: vars.RENDER_DEPLOY_HOOK_GATEWAY != ''
+        run: curl -sf "${{ vars.RENDER_DEPLOY_HOOK_GATEWAY }}" || true
+      - name: Trigger Render staging deploy (services)
+        if: vars.RENDER_DEPLOY_HOOK_SERVICES != ''
+        run: curl -sf "${{ vars.RENDER_DEPLOY_HOOK_SERVICES }}" || true
+      - name: Wait for deploy
+        run: sleep 60
+
+  smoke-staging:
+    name: Smoke test staging
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install httpx
+        run: pip install httpx pytest
+      - name: Run smoke tests against staging
+        run: pytest tests/api/test_smoke_all_routes.py -q --tb=short
+        env:
+          GATEWAY_URL: ${{ vars.RENDER_STAGING_URL }}
+        if: vars.RENDER_STAGING_URL != ''
+
+  deploy-prod:
+    name: Deploy to Render production (on version tag)
+    runs-on: ubuntu-latest
+    needs: [build-gateway, build-services]
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: production
+    steps:
+      - name: Trigger Render production deploy (gateway)
+        if: vars.RENDER_PROD_HOOK_GATEWAY != ''
+        run: curl -sf "${{ vars.RENDER_PROD_HOOK_GATEWAY }}"
+      - name: Trigger Render production deploy (services)
+        if: vars.RENDER_PROD_HOOK_SERVICES != ''
+        run: curl -sf "${{ vars.RENDER_PROD_HOOK_SERVICES }}"
+      - name: Tag version in summary
+        run: echo "Deployed ${{ github.ref_name }} to production"

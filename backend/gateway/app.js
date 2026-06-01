@@ -93,21 +93,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// ── Public auth routes (no JWT required) ─────────────────────────────────────
-// register, forgot-password, reset-password, refresh are public by design.
-// login (/sessions) is also public. Only logout (/sessions/current) requires auth.
-const authPublicRouter = require('./routes/v1-auth.routes');
-app.use('/api/v1/auth', (req, res, next) => {
-  const PUBLIC_PATHS = ['/register', '/forgot-password', '/reset-password', '/refresh'];
-  if (PUBLIC_PATHS.includes(req.path)) return authPublicRouter(req, res, next);
-  return next();
-});
-
-app.use(authMiddleware());
-app.use(rateLimitHook({}));
-app.use(idempotencyMiddleware());
-app.use(auditMiddleware({ strict: true }));
-
+// ── Public probes — BEFORE auth middleware (Render health checker sends no auth) ─
 app.get('/health', (req, res) => {
   res.status(200).json({
     status:  'ok',
@@ -126,12 +112,26 @@ app.get('/ready', async (req, res) => {
   } catch {
     dbOk = false;
   }
-  const status = dbOk ? 200 : 503;
-  res.status(status).json({
+  res.status(dbOk ? 200 : 503).json({
     status: dbOk ? 'ready' : 'not_ready',
     checks: { database: dbOk ? 'ok' : 'unreachable' },
   });
 });
+
+// ── Public auth routes (no JWT required) ─────────────────────────────────────
+// register, forgot-password, reset-password, refresh are public by design.
+// login (/sessions) is also public. Only logout (/sessions/current) requires auth.
+const authPublicRouter = require('./routes/v1-auth.routes');
+app.use('/api/v1/auth', (req, res, next) => {
+  const PUBLIC_PATHS = ['/register', '/forgot-password', '/reset-password', '/refresh'];
+  if (PUBLIC_PATHS.includes(req.path)) return authPublicRouter(req, res, next);
+  return next();
+});
+
+app.use(authMiddleware());
+app.use(rateLimitHook({}));
+app.use(idempotencyMiddleware());
+app.use(auditMiddleware({ strict: true }));
 
 app.use('/api/v1', routes);
 
