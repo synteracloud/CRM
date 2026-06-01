@@ -606,7 +606,7 @@ mapping file. Prerequisite for Phase 5 close task "wire 28 pages to live endpoin
 | C2c — Playwright E2E (75 pages) | [x] COMPLETE 2026-06-01 — all 75 pages pass |
 | C2d — Load Tests (Locust) | [x] COMPLETE 2026-06-01 — p95=28ms, 0 5xx responses |
 | C2e — Security Scanning | [x] COMPLETE 2026-06-01 — 0 Critical CVEs, semgrep 0 ERRORs |
-| C3 — Code Hardening | [ ] NEXT — Redis rate-limit (A-006), FeatureFlag Redis (A-007), JWT refresh, helmet/CORS |
+| C3 — Code Hardening | [x] COMPLETE 2026-06-01 — ioredis A-006/A-007, helmet, CORS, JWT refresh, OTP reset, register, semgrep rule |
 | C4 — Infrastructure Deployment | [ ] pending |
 | C5 — Post-Deploy Smoke | [ ] pending |
 | C6 — Commercial Launch | [ ] pending |

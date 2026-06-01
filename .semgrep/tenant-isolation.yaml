@@ -1,0 +1,40 @@
+rules:
+  - id: gateway-sql-missing-tenant-id
+    patterns:
+      - pattern: |
+          $POOL.query($QUERY, [$...PARAMS])
+      - pattern-not: |
+          $POOL.query($QUERY, [$...PARAMS, ..., $TENANT, ...])
+      - metavariable-regex:
+          metavariable: $QUERY
+          regex: '(?i)(SELECT|INSERT|UPDATE|DELETE)'
+    message: >
+      SQL query in gateway route may be missing tenant_id bind parameter.
+      Every data query MUST include tenant_id to prevent cross-tenant data leaks.
+      Add tenant_id as a bound parameter and filter rows by it.
+    languages: [javascript]
+    severity: WARNING
+    paths:
+      include:
+        - "backend/gateway/routes/*.js"
+        - "backend/gateway/db/repositories/*.js"
+
+  - id: gateway-repo-no-tenant-scope
+    pattern: |
+      async $FUNC($TENANT_ID, ...) {
+        const { rows } = await $QUERY(`SELECT ... FROM $TABLE WHERE ...`, [$...PARAMS]);
+        ...
+      }
+    pattern-not: |
+      async $FUNC($TENANT_ID, ...) {
+        const { rows } = await $QUERY(`SELECT ... FROM $TABLE WHERE $TENANT_ID = $1 ...`, [$TENANT_ID, ...]);
+        ...
+      }
+    message: >
+      Repository method appears to query without a tenant_id filter bound as $1.
+      Every repository SELECT must scope to the calling tenant.
+    languages: [javascript]
+    severity: WARNING
+    paths:
+      include:
+        - "backend/gateway/db/repositories/*.js"

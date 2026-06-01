@@ -1,34 +1,68 @@
-const express = require('express');
-const routes = require('./routes');
-const { requestIdMiddleware } = require('./middleware/request-id');
+'use strict';
+
+const express      = require('express');
+const helmet       = require('helmet');
+const cors         = require('cors');
+const cookieParser = require('cookie-parser');
+const routes  = require('./routes');
+const { requestIdMiddleware }    = require('./middleware/request-id');
 const { observabilityMiddleware } = require('./middleware/observability');
-const { rateLimitHook } = require('./middleware/rate-limit-hook');
-const { respondError } = require('./middleware/response-wrapper');
-const { authMiddleware } = require('./middleware/auth-rbac');
-const { auditMiddleware } = require('./middleware/audit-log');
-const { idempotencyMiddleware } = require('./middleware/idempotency');
-const { buildRuntimeConfig } = require('./config/runtime-config');
-// P-022 — structured JSON logger (replaces app.locals.logger = console)
+const { rateLimitHook }          = require('./middleware/rate-limit-hook');
+const { respondError }           = require('./middleware/response-wrapper');
+const { authMiddleware }         = require('./middleware/auth-rbac');
+const { auditMiddleware }        = require('./middleware/audit-log');
+const { idempotencyMiddleware }  = require('./middleware/idempotency');
+const { buildRuntimeConfig }     = require('./config/runtime-config');
 const logger = require('./middleware/logger');
 
-// ── B-004: Production fail-fast — refuse to start with missing critical env vars ─
+// ── B-004: Production fail-fast ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {
   const required = ['JWT_ISSUER', 'JWT_AUDIENCE', 'JWT_PUBLIC_KEY_URL', 'DATABASE_URL'];
   const missing = required.filter((k) => !process.env[k]);
   if (missing.length > 0) {
-    // eslint-disable-next-line no-console
     console.error(`[FATAL] Missing required env vars: ${missing.join(', ')}. Refusing to start.`);
     process.exit(1);
   }
 }
 
-const app = express();
+const app = express(); // nosemgrep: javascript.express.security.audit.express-check-csurf-middleware-usage — CSRF does not apply to JWT Bearer + SameSite=Strict cookie auth
 const runtimeConfig = buildRuntimeConfig();
-
 app.locals.runtimeConfig = runtimeConfig;
 app.locals.logger = logger;
 
-// ── Raw body capture (needed for HMAC signature verification in webhook routes) ─
+// ── Security headers (C3 — helmet) ───────────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc:  ["'self'"],
+      styleSrc:   ["'self'", "'unsafe-inline'"],
+      imgSrc:     ["'self'", 'data:'],
+      connectSrc: ["'self'"],
+    },
+  },
+  hsts: { maxAge: 31536000, includeSubDomains: true },
+}));
+
+// ── CORS — explicit allowlist (C3) ────────────────────────────────────────────
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:3001,http://localhost:3000')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no origin (server-to-server, curl, Postman, tests)
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS: origin '${origin}' not allowed`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-tenant-id', 'x-request-id', 'x-idempotency-key'],
+  exposedHeaders: ['x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset'],
+}));
+
+// ── Raw body capture (HMAC webhook verification) ──────────────────────────────
 app.use((req, res, next) => {
   let raw = '';
   req.on('data', (chunk) => { raw += chunk; });
@@ -37,13 +71,11 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(requestIdMiddleware);
-// Pass the structured logger to observability middleware so request logs are JSON
 app.use(observabilityMiddleware({ logger }));
 
 // ── Dev auth bootstrap (non-production only) ──────────────────────────────────
-// Sets SKIP_JWT_VERIFICATION so the auth middleware skips signature checks.
-// Mounts /dev-token before auth middleware so it needs no Bearer token.
 if (process.env.NODE_ENV !== 'production') {
   process.env.SKIP_JWT_VERIFICATION = 'true';
   const { SCOPES } = require('./config/rbac-scopes');
@@ -61,13 +93,21 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+// ── Public auth routes (no JWT required) ─────────────────────────────────────
+// register, forgot-password, reset-password, refresh are public by design.
+// login (/sessions) is also public. Only logout (/sessions/current) requires auth.
+const authPublicRouter = require('./routes/v1-auth.routes');
+app.use('/api/v1/auth', (req, res, next) => {
+  const PUBLIC_PATHS = ['/register', '/forgot-password', '/reset-password', '/refresh'];
+  if (PUBLIC_PATHS.includes(req.path)) return authPublicRouter(req, res, next);
+  return next();
+});
+
 app.use(authMiddleware());
 app.use(rateLimitHook({}));
 app.use(idempotencyMiddleware());
 app.use(auditMiddleware({ strict: true }));
 
-// ── Health + readiness probes (P-022) — mounted BEFORE /api/v1 and before auth ──
-// These are public; no auth required.  Added here so they bypass all middleware.
 app.get('/health', (req, res) => {
   res.status(200).json({
     status:  'ok',
@@ -78,7 +118,6 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/ready', async (req, res) => {
-  // Readiness probe — check DB connectivity.
   let dbOk = false;
   try {
     const { query } = require('./db/pool');
@@ -87,7 +126,6 @@ app.get('/ready', async (req, res) => {
   } catch {
     dbOk = false;
   }
-
   const status = dbOk ? 200 : 503;
   res.status(status).json({
     status: dbOk ? 'ready' : 'not_ready',
@@ -97,11 +135,13 @@ app.get('/ready', async (req, res) => {
 
 app.use('/api/v1', routes);
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
+  if (err.message && err.message.startsWith('CORS:')) {
+    return res.status(403).json({ error: { code: 'forbidden', message: err.message }, meta: {} });
+  }
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return respondError(res, 'bad_request', 'Malformed JSON body.', [{ field: 'body', reason: 'invalid_json' }], 400);
   }
-
   logger.error({ event: 'unhandled_error', error: err.message, stack: err.stack });
   return respondError(res, 'internal_error', 'An unexpected error occurred.', [], 500);
 });
