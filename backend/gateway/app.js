@@ -133,7 +133,7 @@ app.use('/api/v1/auth', (req, res, next) => {
 app.use(authMiddleware());
 app.use(rateLimitHook({}));
 app.use(idempotencyMiddleware());
-app.use(auditMiddleware({ strict: true }));
+app.use(auditMiddleware({ strict: false }));
 
 app.use('/api/v1', routes);
 
