@@ -2,7 +2,7 @@
 
 **Created:** 2026-05-31
 **Authority:** This file is the active anchor document for all work from 2026-05-31 onwards. `REBUILD-PLAN.md` is closed — do not resume work from it.
-**Status:** C5 ← CURRENT (C4 complete 2026-06-01 — all 5 Render services LIVE)
+**Status:** C5 ← CURRENT (C4 complete 2026-06-02 — 42/42 routes pass production smoke test)
 **Task tracker:** `PENDING.md` (root) — add commercialisation tasks here as `[ ]` items under a new `## Commercialisation` section
 **Session log:** `PROGRESS.md` — one-line summary added every session
 **Predecessor:** `REBUILD-PLAN.md` — build phases 1–6 complete, all 75 pages built + wired + browser-approved

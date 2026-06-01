@@ -607,6 +607,6 @@ mapping file. Prerequisite for Phase 5 close task "wire 28 pages to live endpoin
 | C2d — Load Tests (Locust) | [x] COMPLETE 2026-06-01 — p95=28ms, 0 5xx responses |
 | C2e — Security Scanning | [x] COMPLETE 2026-06-01 — 0 Critical CVEs, semgrep 0 ERRORs |
 | C3 — Code Hardening | [x] COMPLETE 2026-06-01 — ioredis A-006/A-007, helmet, CORS, JWT refresh, OTP reset, register, semgrep rule |
-| C4 — Infrastructure Deployment | [x] COMPLETE 2026-06-01 — all 5 services LIVE (gateway, services, frontend, postgres, redis on free tier). One pending: link DATABASE_URL via Render dashboard → alembic upgrade head |
+| C4 — Infrastructure Deployment | [x] COMPLETE 2026-06-02 — 42/42 routes pass production. Gateway https://crm-gateway-l3rm.onrender.com, DB connected, 12 Alembic migrations applied (0001→0012) |
 | C5 — Post-Deploy Smoke | [ ] pending |
 | C6 — Commercial Launch | [ ] pending |
