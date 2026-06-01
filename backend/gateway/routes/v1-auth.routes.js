@@ -31,18 +31,28 @@ const OTP_TTL_S            = 15 * 60;                // 15 min
 
 function nowIso() { return new Date().toISOString(); }
 
-function _buildDevToken(sub, tenantId, scopes, ttlMs) {
+function _buildToken(sub, tenantId, scopes, ttlMs) {
   const { SCOPES } = require('../config/rbac-scopes');
   const allScopes = scopes || Object.values(SCOPES);
-  const header  = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-  const payload = Buffer.from(JSON.stringify({
-    sub, tenant_id: tenantId, iss: 'crm-local', aud: 'crm-api',
+  const payload = {
+    sub, tenant_id: tenantId,
+    iss: process.env.JWT_ISSUER || 'crm-local',
+    aud: process.env.JWT_AUDIENCE || 'crm-api',
     exp: Math.floor((Date.now() + (ttlMs || ACCESS_TOKEN_TTL_MS)) / 1000),
     jti: crypto.randomUUID(), role: 'tenant_admin', role_ids: ['role-admin'],
     territory_ids: [], scopes: allScopes,
-  })).toString('base64url');
-  const sig = Buffer.from('signed').toString('base64url');
-  return `${header}.${payload}.${sig}`;
+  };
+
+  const JWT_SECRET = process.env.JWT_SECRET;
+  if (JWT_SECRET) {
+    // Production: sign with HS256 using JWT_SECRET
+    const jwt = require('jsonwebtoken');
+    return jwt.sign(payload, JWT_SECRET, { algorithm: 'HS256' });
+  }
+  // Dev fallback: unsigned token (only valid when SKIP_JWT_VERIFICATION=true)
+  const header  = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  return `${header}.${encoded}.${Buffer.from('dev').toString('base64url')}`;
 }
 
 /**
@@ -125,7 +135,7 @@ router.post('/refresh', async (req, res) => {
   }
 
   // Issue new access token
-  const newAccessToken = _buildDevToken(stored.sub, stored.tenant_id, stored.scopes, ACCESS_TOKEN_TTL_MS);
+  const newAccessToken = _buildToken(stored.sub, stored.tenant_id, stored.scopes, ACCESS_TOKEN_TTL_MS);
 
   // Rotate refresh token (one-time use)
   await redis.del(`rt:${refreshToken}`);
@@ -269,7 +279,7 @@ router.post('/register', async (req, res) => {
 
   // 4. Issue access + refresh tokens
   const { SCOPES } = require('../config/rbac-scopes');
-  const accessToken  = _buildDevToken(userId, tenantId, Object.values(SCOPES), ACCESS_TOKEN_TTL_MS);
+  const accessToken  = _buildToken(userId, tenantId, Object.values(SCOPES), ACCESS_TOKEN_TTL_MS);
   const refreshToken = crypto.randomBytes(32).toString('hex');
   const redis = getRedisClient();
   await redis.setex(`rt:${refreshToken}`, REFRESH_TOKEN_TTL_S, JSON.stringify({
