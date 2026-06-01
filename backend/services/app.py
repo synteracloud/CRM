@@ -288,6 +288,29 @@ def health() -> dict:
     return {"status": "ok", "service": "crm-python-services"}
 
 
+@app.post("/internal/migrate")
+def run_migrations(secret: str = "") -> dict:
+    """One-shot Alembic migration endpoint — only runs when MIGRATE_SECRET matches."""
+    import os, subprocess, sys
+    expected = os.getenv("MIGRATE_SECRET", "")
+    if not expected or secret != expected:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="Invalid or missing migration secret")
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "alembic", "upgrade", "head"],
+            capture_output=True, text=True, timeout=120,
+            env={**os.environ},
+        )
+        return {
+            "returncode": result.returncode,
+            "stdout": result.stdout[-2000:] if result.stdout else "",
+            "stderr": result.stderr[-1000:] if result.stderr else "",
+        }
+    except Exception as e:
+        return {"returncode": -1, "error": str(e)}
+
+
 # ── Mount internal routers ────────────────────────────────────────────────────
 # All routes are under /internal to signal they are not public-facing.
 
