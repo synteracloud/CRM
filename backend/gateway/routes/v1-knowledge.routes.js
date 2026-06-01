@@ -36,7 +36,7 @@ const router = express.Router();
 // POST /knowledge/articles — create draft
 router.post(
   '/articles',
-  requestValidationMiddleware(['title']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.KNOWLEDGE_MANAGE]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;

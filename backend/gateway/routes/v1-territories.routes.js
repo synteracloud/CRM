@@ -152,7 +152,7 @@ router.get(
 // POST /territories — create
 router.post(
   '/',
-  requestValidationMiddleware(['name', 'criteria_type']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.TERRITORIES_ADMIN]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;

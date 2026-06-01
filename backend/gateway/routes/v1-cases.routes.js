@@ -89,7 +89,7 @@ const casesRouter = express.Router();
 // POST /cases — create
 casesRouter.post(
   '/',
-  requestValidationMiddleware(['subject']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.CASES_CREATE]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;

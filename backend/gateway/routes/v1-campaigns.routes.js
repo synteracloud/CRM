@@ -82,7 +82,7 @@ router.get(
 // POST /campaigns — create draft
 router.post(
   '/',
-  requestValidationMiddleware(['name', 'type']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.CAMPAIGNS_MANAGE]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;

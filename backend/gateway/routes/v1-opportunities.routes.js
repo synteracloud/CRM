@@ -78,7 +78,7 @@ router.get('/', requestValidationMiddleware(), requireScopes([SCOPES.OPPORTUNITI
 // ── POST /opportunities ───────────────────────────────────────────────────────
 router.post(
   '/',
-  requestValidationMiddleware(['owner_id', 'name']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.OPPORTUNITIES_CREATE]),
   async (req, res) => {
     const { owner_id, name, account_id, account_name, contact_id, amount, currency, close_date, stage, forecast_category } = req.body;

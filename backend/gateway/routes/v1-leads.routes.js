@@ -127,7 +127,7 @@ router.get('/', requestValidationMiddleware(), requireScopes([SCOPES.LEADS_READ]
 // ── POST /leads ───────────────────────────────────────────────────────────────
 router.post(
   '/',
-  requestValidationMiddleware(['owner_id']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.LEADS_CREATE]),
   async (req, res) => {
     const {

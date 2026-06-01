@@ -96,7 +96,7 @@ partnersRouter.get(
 // POST /partners
 partnersRouter.post(
   '/',
-  requestValidationMiddleware(['name', 'partner_tier']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.PARTNERS_MANAGE]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;

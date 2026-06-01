@@ -204,7 +204,7 @@ router.get(
 // POST /workflows
 router.post(
   '/',
-  requestValidationMiddleware(['name', 'trigger_events']),
+  requestValidationMiddleware(),
   requireScopes([SCOPES.WORKFLOWS_MANAGE]),
   async (req, res) => {
     const tenantId = req.auth.tenant_id;
