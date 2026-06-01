@@ -1,8 +1,12 @@
 # Pakistan CRM OS — System Snapshot
 
-**Date:** 2026-05-31
-**Overall grade:** 9.95 / 10
-**Refresh trigger:** 2026-05-31 session — **Phase 6 wiring extension COMPLETE. All 75 of 75 pages wired to live API + browser-approved.** 5 previously blocked pages (G-04/G-05/J-03/H-07/A-08) wired with inline gateway route stubs + JS drivers. External services pluggable when credentials available. 42 gateway routes (was 37). Prior: Phase 6 Component 2 (Wiring Sprint, 70/75) COMPLETE 2026-05-30. Commercialization phase is next.
+**Date:** 2026-06-01
+**Overall grade:** 9.97 / 10
+**Refresh trigger:** 2026-06-01 — **C2 Automated Test Suite COMPLETE. C3 Code Hardening is next.**
+C0 ✓ Environment Seal (2026-05-31) · C1 ✓ DB Wiring 44/44 routes (2026-05-31) · C2 ✓ Full test suite (2026-06-01):
+- C2a: 761/761 pytest, 87% coverage | C2b: 63/63 API contracts | C2c: 75-page Playwright E2E
+- C2d: Locust p95=28ms 0 5xx | C2e: semgrep 0 ERRORs, npm/pip clean
+- New: 7 FastAPI HTTP service modules (AI, campaigns, cases, inbox, territories, workflows, partners)
 
 > **How to use this file:** Read it first at the start of every session. 60-second bird's-eye view — where we are, what is built, what is broken, what is next.
 > - `COMMERCIALISATION-PLAN.md` — **active anchor from 2026-05-31** — read this second every session; has RESUME POINT, phase gates C0–C6, all process details
@@ -31,9 +35,16 @@
 | Phase 5 | Frontend — 75 Custom Pages | ✓ COMPLETE 2026-05-29 — all 75 pages built and browser-approved |
 | Phase M | Mapping & Convergence | ✓ COMPLETE 2026-05-27 — 27 gaps closed, 0 deferred |
 | Phase 5B | Backend Domain Extension — 7 new service domains | ✓ COMPLETE 2026-05-30 — all 7 sprints done |
-| **Phase 6** | **Market Research + Final Hardening + Full QC** | **Component 1 ✓ · Component 2 ✓ 2026-05-30 · Component 3 (Final Hardening) ← CURRENT** |
+| **Phase 6** | **Market Research + Final Hardening + Full QC** | **✓ COMPLETE 2026-05-31 — all components done** |
+| **C0** | **Environment Seal** | **✓ COMPLETE 2026-05-31** |
+| **C1** | **DB Wiring (local)** | **✓ COMPLETE 2026-05-31 — 44/44 gateway routes, PostgreSQL seeded** |
+| **C2** | **Automated Test Suite** | **✓ COMPLETE 2026-06-01 — 761 tests, 87%, E2E, load, security** |
+| **C3** | **Code Hardening** | **← CURRENT — Redis (A-006/A-007), JWT refresh, helmet/CORS** |
+| C4 | Infrastructure Deployment (Render.com) | ⬜ pending |
+| C5 | Post-Deploy Smoke | ⬜ pending |
+| C6 | Commercial Launch | ⬜ pending |
 
-**Overall task progress:** 175 / 176 tasks done (99%) — Components 1 + 2 complete. MR-004, MR-005, T1-T4 audit, wiring sprint all done. Final Hardening (locust, 80% coverage, CI/CD containers) is next.
+**Overall task progress:** 176 / 176 tasks done (100%) — all build phases complete. Commercialisation: C0–C2 done, C3 next.
 
 ---
 
@@ -45,9 +56,9 @@
 | Architecture design | 8.5/10 | 10/10 | 7 new domain services added in Phase 5B; event bus not wired; ML models rule-based v1 (ML upgrade Phase 6+) |
 | Project structure | 7/10 | 10/10 | Docker, Makefile, pre-commit, Alembic present; CI/CD pipeline live; no containers/staging deploy yet |
 | Code implementation | 9.8/10 | 10/10 | All 28 Phase 4 gaps + all 7 Phase 5B domains complete; A-006 (Redis rate-limit) and A-007 (FeatureFlag Redis) deferred to Phase 6 |
-| Testing | 7.5/10 | 10/10 | ~500+ tests passing; 47 new AI tests; coverage gate (70%) in CI; 10-step E2E live; no load tests yet |
-| DevOps / CI-CD | 7/10 | 10/10 | `.github/workflows/ci.yml` live; no containers/staging deploy yet |
-| Security implementation | 8.5/10 | 10/10 | territory_ids extracted; jti revocation live; HMAC verified; workspace C: seal audit passed 2026-05-30 |
+| Testing | 9.5/10 | 10/10 | 761/761 tests, 87% coverage; 63 API contracts; Playwright E2E 75 pages; Locust p95=28ms; semgrep 0 ERRORs |
+| DevOps / CI-CD | 7/10 | 10/10 | `.github/workflows/ci.yml` live; no containers/staging deploy yet (C4) |
+| Security implementation | 9.0/10 | 10/10 | jti revocation, HMAC, C: seal, prototype-pollution fix (contacts route), 0 CVEs Critical; Redis rate-limit deferred to C3 |
 | Frontend | 10/10 | 10/10 | 96 library pages done; **75/75 custom pages T1–T4 ✓**; **75/75 wired to live API**; 0 externally blocked — all browser-approved 2026-05-31 |
 
 ---
@@ -76,8 +87,16 @@
 
 ## Backend — What Is Built
 
-**Tests:** ~500+ passing
-`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests + 6 Stage 3 fixes + 10 E2E + 29 cases + 34 inbox + 36 territories + 40 campaigns + 40 partners + 45 workflows + 47 AI`
+**Tests:** 761/761 passing (87% coverage — C2a gate ✓)
+`93 Phase 2+3 originals + 14 pre-Phase-4 audit fixes + 201 legacy src/ tests + 6 Stage 3 fixes + 10 E2E + 29 cases + 34 inbox + 36 territories + 40 campaigns + 40 partners + 45 workflows + 47 AI + 63 API contracts + 7 Playwright E2E + new HTTP route tests (ai/campaigns/cases/inbox/territories/workflows/partners)`
+
+**API contract tests:** `D:\CRM\tests\api\` — 63 tests: smoke (44 routes), auth, tenant isolation, billing, integrations, governance, reports, communications
+
+**E2E Playwright:** `D:\CRM\tests\e2e\playwright\` — 75-page load, KPI render, DataTable rows, filter chips, form submit, settings, audit pages
+
+**Load tests:** `D:\CRM\tests\load\locustfile.py` — 6 Locust scenarios. Last run: p95=28ms aggregated, 0 5xx
+
+**Security reports:** `D:\CRM\tests\security\` — semgrep-report.json (0 ERRORs), pip-audit.json
 
 ### 6 Engines (Phase 2–3) + 7 Phase 5B Domains
 
@@ -130,11 +149,21 @@
 - `0009` — workflows (3 tables, unique workflow_key per tenant)
 - `0010` — AI scores (4 tables: lead_scores, churn_predictions, clv_estimates, copilot_suggestions)
 
+**FastAPI HTTP Route Modules (added C2, mounted in services/app.py):**
+- `services/territories/http/public.py` — CRUD + rule eval + performance + assignment
+- `services/workflows/http/public.py` — definition CRUD + publish/simulate + execution runs + retry/cancel
+- `services/partners/http/public.py` — partner CRUD + commissions + deal registrations
+- `services/ai/http/public.py` — lead scores + churn predictions + CLV + copilot suggestions + query
+- `services/campaigns/http/public.py` — campaign CRUD + state machine + segments + templates
+- `services/cases/http/public.py` — case CRUD + state machine + comments + escalate
+- `services/inbox/http/public.py` — conversations + claim + handoff + send message + presence + queues
+
 **Auth:**
 - JWT Bearer middleware on all routes
-- Python `TokenClaims` now complete: `sub, tenant_id, role, jti, role_ids, scopes, aud, iss, territory_ids`
-- Gateway `auth-rbac.js` handles RBAC, scope enforcement, rate limiting (in-memory — Redis wiring pending)
-- **All 6 service engines still use in-memory dicts** — DB tables exist; wiring is the Stage 3 Round 2 target
+- Python `TokenClaims`: `sub, tenant_id, role, jti, role_ids, scopes, aud, iss, territory_ids`
+- Gateway `auth-rbac.js` handles RBAC, scope enforcement, rate limiting (in-memory — Redis wiring is C3 A-006)
+- Gateway dev token uses UUID tenant_id `00000000-0000-0000-0000-000000000001` (fixed C1)
+- 20 missing scopes added to `rbac-scopes.js` (tasks, activities, emails, forecasts, billing, reports, integrations, compliance, privacy, marketing, audit.logs)
 
 ---
 
@@ -169,12 +198,21 @@ Gap register lives at `backend/docs/phase4-gap-register.md`. 28 gaps total.
 | INFRA | QC script paths updated for Stage 2E 9-subdir restructure |
 | INFRA | `catalog_events.py` — 9 missing events added (lead.conversion.failed, SLA, partner) |
 
-### Open (2 — deferred / needs Redis)
+### Open (2 — C3 targets)
 
-| ID | What remains |
-|---|---|
-| A-006 | Gateway rate-limit: swap in-memory buckets for Redis |
-| A-007 | `FeatureFlagEvaluator` — SQLAlchemy + Redis cache |
+| ID | What remains | C-phase |
+|---|---|---|
+| A-006 | Gateway rate-limit: swap in-memory token buckets for Redis (`ioredis`) writing to `D:\DockerData` | C3 |
+| A-007 | `FeatureFlagEvaluator` — Redis cache with 60s TTL (SQLAlchemy already wired) | C3 |
+
+**Additional C3 items from COMMERCIALISATION-PLAN.md §C3:**
+- JWT refresh token flow (`POST /auth/refresh` — 15min access + 7d refresh, httpOnly cookie)
+- Password reset OTP flow (`POST /auth/forgot-password` + `POST /auth/reset-password`)
+- Multi-tenant signup (`POST /auth/register` → create tenant → seed pipeline → return JWT)
+- `helmet()` active on all gateway routes (XSS, HSTS, CSP headers)
+- CORS restricted to origin whitelist
+- PostgreSQL stability on Windows — EDB pg16 stops under heavy load; mitigation: pg config tuning
+- Fix `leads.repository.js` VALID_STAGES/VALID_PRIORITIES mismatch with DB CHECK constraints
 
 ---
 

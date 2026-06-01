@@ -1,7 +1,7 @@
 # Pakistan CRM OS — Rebuild Pending Tasks
 
 **Anchor:** `COMMERCIALISATION-PLAN.md` (REBUILD-PLAN.md closed)
-**Last updated:** 2026-05-31 — **C0 Environment Seal COMPLETE.** .env.local created, npm cache → D:\npm-cache, pip cache → D:\pip-cache, Playwright Chromium → D:\CRM\.playwright-browsers\chromium-1223, seal.ps1 created, c-seal baseline recorded. All tool writes confirmed on D:. C1 DB Wiring is next.
+**Last updated:** 2026-06-01 — **C2 Automated Test Suite COMPLETE.** C0 (Environment Seal) ✓ · C1 (DB Wiring, 44/44 routes) ✓ · C2 (761 tests, 87% cov, 63 API contracts, Playwright E2E, load p95=28ms 0 5xx, semgrep clean) ✓. C3 Code Hardening is next — Redis rate-limit (A-006), FeatureFlag Redis (A-007), JWT refresh, helmet/CORS.
 **Legend:** `[ ]` Pending · `[x]` Done · `[~]` In progress
 
 ---
@@ -600,13 +600,13 @@ mapping file. Prerequisite for Phase 5 close task "wire 28 pages to live endpoin
 | Phase | Status |
 |---|---|
 | C0 — Environment Seal | [x] COMPLETE 2026-05-31 |
-| C1 — DB Wiring (local) | [ ] pending |
-| C2a — Backend Coverage (80%) | [ ] pending |
-| C2b — API Contract Tests | [ ] pending |
-| C2c — Playwright E2E (75 pages) | [ ] pending |
-| C2d — Load Tests (Locust) | [ ] pending |
-| C2e — Security Scanning | [ ] pending |
-| C3 — Code Hardening | [ ] pending |
+| C1 — DB Wiring (local) | [x] COMPLETE 2026-05-31 — 44/44 gateway routes 200, PostgreSQL seeded |
+| C2a — Backend Coverage (80%) | [x] COMPLETE 2026-06-01 — 761/761 tests, 87% coverage |
+| C2b — API Contract Tests | [x] COMPLETE 2026-06-01 — 63/63 contract tests pass |
+| C2c — Playwright E2E (75 pages) | [x] COMPLETE 2026-06-01 — all 75 pages pass |
+| C2d — Load Tests (Locust) | [x] COMPLETE 2026-06-01 — p95=28ms, 0 5xx responses |
+| C2e — Security Scanning | [x] COMPLETE 2026-06-01 — 0 Critical CVEs, semgrep 0 ERRORs |
+| C3 — Code Hardening | [ ] NEXT — Redis rate-limit (A-006), FeatureFlag Redis (A-007), JWT refresh, helmet/CORS |
 | C4 — Infrastructure Deployment | [ ] pending |
 | C5 — Post-Deploy Smoke | [ ] pending |
 | C6 — Commercial Launch | [ ] pending |
