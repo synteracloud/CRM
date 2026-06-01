@@ -60,7 +60,8 @@ function validateRequiredValues(resolvedEnv, nodeEnv, errors) {
   ];
 
   if (nodeEnv === 'production') {
-    required.push('JWT_ISSUER', 'JWT_AUDIENCE', 'JWT_PUBLIC_KEY_URL');
+    // JWT_PUBLIC_KEY_URL is only required for RS256; this gateway uses HS256 with JWT_SECRET
+    required.push('JWT_ISSUER', 'JWT_AUDIENCE');
   }
 
   required.forEach((key) => {
