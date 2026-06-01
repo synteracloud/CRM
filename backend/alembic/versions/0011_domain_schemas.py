@@ -43,12 +43,11 @@ def upgrade() -> None:
             if not sql_path.exists():
                 continue
             sql = sql_path.read_text(encoding="utf-8")
-            # Remove SET search_path lines
-            cleaned = "\n".join(
-                line for line in sql.splitlines()
-                if not line.strip().upper().startswith("SET SEARCH_PATH")
-            )
-            cursor.execute(cleaned)
+            # Keep SET search_path lines — they ensure FK references resolve to the
+            # correct domain schema, not public. Also creates schema if missing.
+            # Just ensure schema is created first.
+            cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+            cursor.execute(sql)
         raw_conn.commit()
     except Exception:
         raw_conn.rollback()
