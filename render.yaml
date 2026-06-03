@@ -45,7 +45,7 @@ services:
       - key: SKIP_JWT_VERIFICATION
         value: "false"
       - key: ALLOWED_ORIGINS
-        value: https://crm-frontend.onrender.com,https://yourcrm.pk
+        value: https://crm-frontend-0gde.onrender.com,https://crm-frontend.onrender.com,https://yourcrm.pk
       - key: JAZZCASH_STUB_MODE
         value: "true"
       - key: EASYPAISA_STUB_MODE
@@ -87,10 +87,6 @@ services:
       - path: /*
         name: Cache-Control
         value: no-cache, no-store, must-revalidate
-    routes:
-      - type: rewrite
-        source: /app/*
-        destination: /app/dashboard.html
 
 databases:
   # ── 4. PostgreSQL ─────────────────────────────────────────────────────────
