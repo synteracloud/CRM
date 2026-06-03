@@ -356,19 +356,25 @@ window.CRM_API = (function () {
   };
 })();
 
-// Auto-seed dev JWT when not in dummy mode and no token stored.
-// First page load may show empty data; one refresh is enough after the token is cached.
+// Auto-seed dev JWT on localhost only. In production fall back to DUMMY_MODE so
+// the UI renders with dummy data instead of 401-failing all API calls.
 (function () {
   if (window.CRM_CONFIG && !window.CRM_CONFIG.DUMMY_MODE && !localStorage.getItem('crm_token')) {
-    fetch('http://localhost:3000/dev-token')
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (r) {
-        if (r && r.data && r.data.token) {
-          localStorage.setItem('crm_token', r.data.token);
-          localStorage.setItem('crm_tenant_id', r.data.tenant_id);
-          window.CRM_CONFIG.tenantId = r.data.tenant_id;
-        }
-      })
-      .catch(function () {});
+    var host = window.location.hostname;
+    var isLocal = host === 'localhost' || host === '127.0.0.1';
+    if (isLocal) {
+      fetch('http://localhost:3000/dev-token')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (r) {
+          if (r && r.data && r.data.token) {
+            localStorage.setItem('crm_token', r.data.token);
+            localStorage.setItem('crm_tenant_id', r.data.tenant_id);
+            window.CRM_CONFIG.tenantId = r.data.tenant_id;
+          }
+        })
+        .catch(function () {});
+    } else {
+      window.CRM_CONFIG.DUMMY_MODE = true;
+    }
   }
 }());

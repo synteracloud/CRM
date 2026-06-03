@@ -1,5 +1,12 @@
 /* Pakistan CRM — custom overrides */
 
+/* Force sidebar expanded on standard desktop (NexLink collapses to 80px at ≤1480px,
+   pushing .app-tab-content to left:-160px and hiding all nav links off-screen). */
+@media (min-width: 1280px) {
+  :root { --app-menubar-tabs: 320px !important; }
+  .app-menubar-tabs .app-tab-content { left: 80px !important; }
+}
+
 /* ApexCharts: prevent chart SVG from overflowing Bootstrap flex columns.
    Root cause: flex items have min-width:auto by default; ApexCharts measures
    the container before flex layout settles and may receive a large width.
