@@ -92,17 +92,89 @@ async function sendEmail(to, subject, body) {
   });
 }
 
-// ── POST /auth/sessions — login ───────────────────────────────────────────────
+// ── POST /auth/login — email + password login ─────────────────────────────────
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || typeof email !== 'string') {
+    return respondError(res, 'validation_error', 'email is required.', [{ field: 'email', reason: 'required' }], 422);
+  }
+  if (!password || typeof password !== 'string') {
+    return respondError(res, 'validation_error', 'password is required.', [{ field: 'password', reason: 'required' }], 422);
+  }
+
+  let user;
+  try {
+    const result = await query(
+      `SELECT user_id, tenant_id, password_hash, full_name, status
+       FROM identity_auth_db.users
+       WHERE email = $1
+       ORDER BY created_at ASC LIMIT 1`,
+      [email.toLowerCase()],
+    );
+    user = result.rows[0];
+  } catch (err) {
+    console.error('[login] DB error:', err.message);
+    return respondError(res, 'internal_error', 'Login failed.', [], 500);
+  }
+
+  if (!user) {
+    return respondError(res, 'unauthorized', 'Invalid email or password.', [], 401);
+  }
+  if (user.status !== 'active') {
+    return respondError(res, 'unauthorized', 'Account is not active.', [], 401);
+  }
+
+  // Verify password — format: sha256:salt:hash
+  const parts = (user.password_hash || '').split(':');
+  let valid = false;
+  if (parts.length === 3 && parts[0] === 'sha256') {
+    const [, salt, storedHash] = parts;
+    const candidate = crypto.createHash('sha256').update(`${salt}:${password}`).digest('hex');
+    valid = candidate === storedHash;
+  }
+
+  if (!valid) {
+    return respondError(res, 'unauthorized', 'Invalid email or password.', [], 401);
+  }
+
+  const { SCOPES } = require('../config/rbac-scopes');
+  const accessToken  = _buildToken(user.user_id, user.tenant_id, Object.values(SCOPES), ACCESS_TOKEN_TTL_MS);
+  const refreshToken = crypto.randomBytes(32).toString('hex');
+
+  let redis;
+  try {
+    redis = getRedisClient();
+    await redis.setex(`rt:${refreshToken}`, REFRESH_TOKEN_TTL_S, JSON.stringify({
+      sub: user.user_id, tenant_id: user.tenant_id, scopes: Object.values(SCOPES),
+    }));
+  } catch (_e) { /* Redis may be down in dev */ }
+
+  if (redis) {
+    res.cookie('crm_refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: REFRESH_TOKEN_TTL_S * 1000,
+      path: '/api/v1/auth',
+    });
+  }
+
+  return res.status(200).json({
+    data: {
+      tenant_id:    user.tenant_id,
+      user_id:      user.user_id,
+      access_token: accessToken,
+      token_type:   'Bearer',
+      expires_in:   ACCESS_TOKEN_TTL_MS / 1000,
+    },
+    meta: { request_id: req.request_id },
+  });
+});
+
+// ── POST /auth/sessions — legacy IdP token exchange (not yet configured) ─────
 router.post('/sessions', (req, res) => {
-  const { tenant_id, idp_token } = req.body || {};
-  if (!tenant_id || typeof tenant_id !== 'string') {
-    return respondError(res, 'validation_error', 'tenant_id is required.', [{ field: 'tenant_id', reason: 'required' }], 422);
-  }
-  if (!idp_token || typeof idp_token !== 'string') {
-    return respondError(res, 'validation_error', 'idp_token is required.', [{ field: 'idp_token', reason: 'required' }], 422);
-  }
   return res.status(501).json({
-    error: { code: 'not_implemented', message: 'IdP token exchange not yet configured. Set JWT_PUBLIC_KEY_URL and restart.' },
+    error: { code: 'not_implemented', message: 'IdP token exchange not yet configured. Use POST /auth/login instead.' },
     meta: { request_id: req.request_id },
   });
 });

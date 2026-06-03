@@ -374,7 +374,13 @@ window.CRM_API = (function () {
         })
         .catch(function () {});
     } else {
-      window.CRM_CONFIG.DUMMY_MODE = true;
+      // Production with no token — redirect to login so user can authenticate.
+      // Only redirect if not already on an auth page.
+      var path = window.location.pathname;
+      var isAuthPage = /\/(login|register|forgot-password|new-password)/.test(path);
+      if (!isAuthPage) {
+        window.location.href = 'app/login-basic.html';
+      }
     }
   }
 }());
