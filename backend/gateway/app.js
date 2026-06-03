@@ -125,7 +125,7 @@ app.get('/ready', async (req, res) => {
 // login (/sessions) is also public. Only logout (/sessions/current) requires auth.
 const authPublicRouter = require('./routes/v1-auth.routes');
 app.use('/api/v1/auth', (req, res, next) => {
-  const PUBLIC_PATHS = ['/register', '/forgot-password', '/reset-password', '/refresh'];
+  const PUBLIC_PATHS = ['/login', '/register', '/forgot-password', '/reset-password', '/refresh', '/sessions'];
   if (PUBLIC_PATHS.includes(req.path)) return authPublicRouter(req, res, next);
   return next();
 });
