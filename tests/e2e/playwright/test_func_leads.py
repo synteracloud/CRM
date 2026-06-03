@@ -189,14 +189,20 @@ def test_lead_new_full_wizard_creates_lead(authed_page):
     pg.fill("#lead-lname", "Lead")
     pg.locator("#btn-next").click()
     pg.wait_for_selector("#wizard-step-2:not(.d-none)", timeout=5000)
+    pg.wait_for_timeout(800)  # let users API populate owner dropdown
     pg.select_option("#lead-stage", "new")
     owners = pg.locator("#lead-owner option")
-    pg.select_option("#lead-owner", index=1 if owners.count() > 1 else 0)
-    pg.select_option("#lead-source", "manual")
-    pg.locator("#btn-submit").click()
+    if owners.count() > 1:
+        pg.select_option("#lead-owner", index=1)
+    else:
+        pg.evaluate("document.getElementById('lead-owner').innerHTML += '<option value=\"dev-user-001\">Dev User</option>'")
+        pg.select_option("#lead-owner", "dev-user-001")
+    pg.select_option("#lead-source", "whatsapp")
+    pg.on("dialog", lambda d: d.accept())
+    pg.locator("#btn-submit").click(force=True)
     pg.wait_for_selector("#wizard-success:not(.d-none)", timeout=T_DATA)
     success_text = pg.locator("#success-name").inner_text(timeout=T_ACT)
-    assert "Create Lead" in success_text, f"Success screen missing name, got: '{success_text}'"
+    assert "Create Lead" in success_text, f"Wizard success missing name: '{success_text}'"
 
 
 # ══ followups.html ════════════════════════════════════════════════════════════

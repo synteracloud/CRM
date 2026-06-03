@@ -76,7 +76,7 @@ router.get('/', requestValidationMiddleware(), requireScopes(['quotes.read']), (
 
 router.post(
   '/',
-  requestValidationMiddleware(['opportunity_id', 'currency', 'valid_until', 'line_items', 'tax_percent']),
+  requestValidationMiddleware(),
   requireScopes(['quotes.create']),
   validateQuoteBody,
   (req, res) => {

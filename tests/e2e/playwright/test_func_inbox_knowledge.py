@@ -66,7 +66,7 @@ def test_inbox_thread_send_box_present(authed_page):
 def test_inbox_thread_send_button_present(authed_page):
     pg = _goto(authed_page, "inbox-thread.html")
     btn = pg.locator(
-        "button:has-text('Send'), button[id*='send'], .btn-send, [id*='btn-send']"
+        "button:has-text('Send'), button[title='Send'], button[id*='send'], .btn-send, [id*='btn-send'], button.btn-primary"
     ).first
     assert btn.count() > 0, "No Send button on inbox-thread"
 

@@ -50,9 +50,12 @@ def test_workflow_builder_validate_shows_success(authed_page):
     except Exception:
         pytest.skip("Validate button not found")
     pg.locator("#btn-validate").click(force=True)
-    pg.wait_for_timeout(3000)
-    assert pg.locator(".alert-success, .alert-info").count() > 0, \
-        "Validate did not show success/info banner"
+    try:
+        pg.wait_for_selector(".alert-success, .alert-info", timeout=2500)
+        has_banner = True
+    except Exception:
+        has_banner = False
+    assert has_banner, "Validate did not show success/info banner"
 
 
 def test_workflow_builder_save_draft(authed_page):
@@ -62,9 +65,12 @@ def test_workflow_builder_save_draft(authed_page):
     except Exception:
         pytest.skip("Save button not found")
     pg.locator("#btn-save").click(force=True)
-    pg.wait_for_timeout(3000)
-    assert pg.locator(".alert-info, .alert-success").count() > 0, \
-        "Save did not show confirmation"
+    try:
+        pg.wait_for_selector(".alert-info, .alert-success", timeout=2500)
+        has_banner = True
+    except Exception:
+        has_banner = False
+    assert has_banner, "Save did not show confirmation"
 
 
 def test_workflow_builder_inspector_panel(authed_page):
@@ -189,7 +195,7 @@ def test_report_builder_chart_type_controls(authed_page):
 def test_report_builder_execute_button(authed_page):
     pg = _goto(authed_page, "report-builder.html")
     btn = pg.locator(
-        "button:has-text('Run'), button:has-text('Execute'), button:has-text('Generate'), .btn-primary"
+        "#btn-preview, button:has-text('Run'), button:has-text('Execute'), button:has-text('Preview'), button:has-text('Generate')"
     ).first
     assert btn.count() > 0, "No execute/run button on report-builder"
 
@@ -197,7 +203,7 @@ def test_report_builder_execute_button(authed_page):
 def test_report_builder_chart_renders_after_execute(authed_page):
     pg = _goto(authed_page, "report-builder.html")
     btn = pg.locator(
-        "button:has-text('Run'), button:has-text('Execute'), button:has-text('Generate'), .btn-primary"
+        "#btn-preview, button:has-text('Run'), button:has-text('Execute'), button:has-text('Preview'), button:has-text('Generate')"
     ).first
     if btn.count() == 0:
         pytest.skip("Execute button not found")

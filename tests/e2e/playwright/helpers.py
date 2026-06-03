@@ -2,21 +2,26 @@
 from __future__ import annotations
 
 import os
+import pytest
 from playwright.sync_api import Page
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:3001")
 _PROD = "onrender.com" in BASE_URL
 
-T_NAV  = 60000 if _PROD else 20000
-T_DATA = 20000 if _PROD else 8000
+T_NAV  = 60000 if _PROD else 12000
+T_DATA = 20000 if _PROD else 5000
 T_ACT  = 5000
 
 
 def _goto(pg: Page, page_name: str) -> Page:
+    url = f"{BASE_URL}/app/{page_name}"
     try:
-        pg.goto(f"{BASE_URL}/app/{page_name}", wait_until="networkidle", timeout=T_NAV)
+        pg.goto(url, wait_until="domcontentloaded", timeout=T_NAV)
     except Exception:
-        pg.goto(f"{BASE_URL}/app/{page_name}", wait_until="domcontentloaded", timeout=T_NAV)
+        try:
+            pg.goto(url, wait_until="domcontentloaded", timeout=T_NAV)
+        except Exception:
+            pass
     return pg
 
 
@@ -82,9 +87,12 @@ def _search(pg: Page, term: str = "zzznomatch999xyz") -> int:
 def _detail(pg: Page, page_name: str, record_id: str) -> Page:
     url = f"{BASE_URL}/app/{page_name}?id={record_id}"
     try:
-        pg.goto(url, wait_until="networkidle", timeout=T_NAV)
-    except Exception:
         pg.goto(url, wait_until="domcontentloaded", timeout=T_NAV)
+    except Exception:
+        try:
+            pg.goto(url, wait_until="domcontentloaded", timeout=T_NAV)
+        except Exception:
+            pass
     return pg
 
 

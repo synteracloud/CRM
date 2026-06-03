@@ -92,7 +92,7 @@
         priority:    document.getElementById('case-priority').value,
         queue:       queue ? queue.value : 'General Support',
         description: description,
-        source:      'crm'
+        source:      'web_form'
       };
 
       function onSuccess() {

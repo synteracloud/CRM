@@ -65,10 +65,7 @@ def test_campaign_new_form_fields_present(authed_page):
 
 def test_campaign_new_empty_validation(authed_page):
     pg = _goto(authed_page, "campaign-new.html")
-    submit = pg.locator(
-        "button[type='submit'], button:has-text('Save'), button:has-text('Create'), "
-        "button:has-text('Next'), .btn-primary"
-    ).first
+    submit = pg.locator("#btn-next-1, #btn-submit, button:has-text('Next'), button:has-text('Create Campaign')").first
     if submit.count() == 0:
         pytest.skip("Submit/Next button not found on campaign-new")
     submit.click()

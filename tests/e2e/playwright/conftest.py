@@ -4,6 +4,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
 import time
 import uuid
 from pathlib import Path
@@ -17,8 +18,8 @@ SCREENSHOTS_DIR = Path(__file__).parent / "screenshots"
 SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 _IS_PROD = "onrender.com" in BASE_URL
-PAGE_LOAD_TIMEOUT = 60000 if _IS_PROD else 20000
-DATA_TIMEOUT = 20000 if _IS_PROD else 8000
+PAGE_LOAD_TIMEOUT = 60000 if _IS_PROD else 12000
+DATA_TIMEOUT = 20000 if _IS_PROD else 5000
 
 GATEWAY_URL = (
     "https://crm-gateway-l3rm.onrender.com"
@@ -57,7 +58,17 @@ def browser():
     _browser_instance = _pw_instance.chromium.launch(
         headless=True,
         executable_path=_chromium_exe(browsers_path),
-        args=["--no-sandbox", "--disable-dev-shm-usage"],
+        args=[
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--no-first-run",
+            "--disable-extensions",
+            "--disable-hang-monitor",
+            "--disable-background-networking",
+            "--disable-default-apps",
+            "--mute-audio",
+        ],
     )
     yield _browser_instance
     try:
@@ -114,7 +125,11 @@ def _acquire_token() -> tuple[str, str]:
             "tenant_id", "00000000-0000-0000-0000-000000000001"
         )
 
-    _AUTH_CACHE["user_id"] = _decode_jwt_sub(_AUTH_CACHE["token"])
+    raw_sub = _decode_jwt_sub(_AUTH_CACHE["token"])
+    _UUID_RE = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I)
+    _AUTH_CACHE["user_id"] = (
+        raw_sub if _UUID_RE.match(raw_sub) else _AUTH_CACHE["tenant_id"]
+    )
     return _AUTH_CACHE["token"], _AUTH_CACHE["tenant_id"]
 
 
@@ -166,13 +181,21 @@ def seed(auth_credentials):
     lead = _post("/leads", {
         "contact_name": f"E2E Lead {ts}",
         "contact_phone_e164": f"+9230088{ts}",
-        "stage": "qualifying", "source": "manual",
+        "stage": "new", "source": "web",
         "owner_id": user_id, "estimated_value": 150000, "currency": "PKR",
     })
     _SEED["lead_id"] = lead.get("lead_id") or _get_first("/leads?limit=1").get("lead_id", "")
 
+    followup = _post("/followups", {
+        "lead_id": _SEED["lead_id"],
+        "owner_id": user_id,
+        "due_at": "2026-12-31T23:59:59Z",
+    })
+    _SEED["followup_id"] = followup.get("task_id", "")
+
     contact = _post("/contacts", {
         "first_name": "E2E", "last_name": f"Contact{ts}",
+        "display_name": f"E2E Contact{ts}",
         "email": f"e2e-{ts}@test.com", "phone_e164": f"+9230188{ts}",
     })
     _SEED["contact_id"] = contact.get("contact_id") or _get_first("/contacts?limit=1").get("contact_id", "")
@@ -180,14 +203,13 @@ def seed(auth_credentials):
     opp = _post("/opportunities", {
         "name": f"E2E Opp {ts}", "stage": "qualification",
         "amount": 500000, "currency": "PKR",
-        "close_date": "2026-12-31", "owner_id": user_id,
+        "close_date": "2026-12-31T23:59:59Z", "owner_id": user_id,
     })
     _SEED["opportunity_id"] = opp.get("opportunity_id") or _get_first("/opportunities?limit=1").get("opportunity_id", "")
 
     case = _post("/cases", {
         "subject": f"E2E Case {ts}", "priority": "medium",
-        "channel": "email", "description": "Seeded by E2E test suite.",
-        "source": "crm", "queue": "General Support",
+        "source": "web_form", "description": "Seeded by E2E test suite.",
     })
     _SEED["case_id"] = case.get("case_id", "")
     _SEED["case_number"] = case.get("case_number", _SEED["case_id"])
@@ -228,16 +250,27 @@ def seed(auth_credentials):
     })
     _SEED["article_id"] = article.get("article_id") or _get_first("/knowledge/articles?limit=1").get("article_id", "")
 
-    account = _get_first("/accounts?limit=1")
-    _SEED["account_id"] = account.get("account_id", "")
+    account = _post("/accounts", {
+        "name": f"E2E Account {ts}", "tier": "SMB",
+        "industry": "Technology", "country": "Pakistan",
+    })
+    _SEED["account_id"] = account.get("account_id") or _get_first("/accounts?limit=1").get("account_id", "")
 
     invoice = _get_first("/invoice-summaries?limit=1")
     _SEED["invoice_id"] = invoice.get("invoice_id") or invoice.get("invoice_summary_id", "")
 
+    _post("/collections/invoices", {
+        "invoice_number": f"INV-E2E-{ts}",
+        "amount_due": 50000,
+        "currency": "PKR",
+        "due_date": "2026-12-31T23:59:59Z",
+    })
+
     quote = _post("/quotes", {
-        "name": f"E2E Quote {ts}",
-        "opportunity_id": _SEED.get("opportunity_id", ""),
-        "valid_until": "2026-12-31",
+        "opportunity_id": _SEED.get("opportunity_id", "seed-opp"),
+        "currency": "PKR",
+        "valid_until": "2026-12-31T23:59:59Z",
+        "line_items": [{"product_id": "prod-seed", "quantity": 1, "list_price": 10000}],
     })
     _SEED["quote_id"] = quote.get("quote_id") or _get_first("/quotes?limit=1").get("quote_id", "")
 
@@ -296,22 +329,24 @@ def authed_page(browser: Browser, auth_credentials, request):
         pytest.skip("No auth token — check gateway connectivity")
     ctx = pg = None
     try:
-        ctx = browser.new_context(ignore_https_errors=True, java_script_enabled=True)
+        ctx = browser.new_context(
+            ignore_https_errors=True,
+            java_script_enabled=True,
+            storage_state={
+                "origins": [{
+                    "origin": BASE_URL,
+                    "localStorage": [
+                        {"name": "crm_token",     "value": token},
+                        {"name": "crm_tenant_id", "value": tenant_id},
+                    ],
+                }],
+                "cookies": [],
+            },
+        )
         pg = ctx.new_page()
         pg.set_default_timeout(PAGE_LOAD_TIMEOUT)
         pg.set_default_navigation_timeout(PAGE_LOAD_TIMEOUT)
-        try:
-            pg.goto(
-                f"{BASE_URL}/app/dashboard.html",
-                wait_until="domcontentloaded",
-                timeout=PAGE_LOAD_TIMEOUT,
-            )
-        except Exception:
-            pass
-        pg.evaluate(
-            "([t, tid]) => { localStorage.setItem('crm_token', t); localStorage.setItem('crm_tenant_id', tid); }",
-            [token, tenant_id],
-        )
+        pg.on("dialog", lambda d: d.accept())  # auto-dismiss all dialogs
         yield pg
     except Exception as e:
         if pg is None:
