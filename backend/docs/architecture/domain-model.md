@@ -1,7 +1,8 @@
 <!-- OWNERSHIP
 PRIMARY FOR: All canonical entity schemas, field lists, and enumeration values — the master reference every other doc must defer to for entity shape.
-DEFERS TO: (nothing — root reference)
+DEFERS TO: docs/00_authority/DOMAIN_MODEL.md (governance-layer entity authority — that document is the curated canonical source for the full project; this file is the backend-level domain model narrative)
 DO NOT RE-DEFINE: Entity field lists anywhere outside this file; add a pointer to the relevant §Entity Definition instead.
+CROSS-REFERENCE (DUP-001, 2026-06-21): The authoritative entity model for the full project is docs/00_authority/DOMAIN_MODEL.md. This file is a Supporting Reference for backend-level domain narrative. When entity definitions conflict, DOMAIN_MODEL.md governs.
 -->
 
 # CRM Domain Model

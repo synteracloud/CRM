@@ -2763,7 +2763,7 @@ Before any page is marked LOCKED:
 4. **No inline `style="..."` on elements** — use Bootstrap utility classes or SCSS.
 5. **No left/right in CSS** — use Bootstrap `start`/`end` logical property utilities only (RTL compliance).
 6. **Every page must render without errors** in both LTR and RTL mode before review.
-7. **`PROGRESS.md` updated immediately** after each page is locked — never batch updates.
+7. **`docs/reports/session/PROGRESS.md` updated immediately** after each page is locked — never batch updates.
 8. **No page is built outside the `src/app/` directory** — original template files are read-only references.
 
 ---
@@ -3059,7 +3059,7 @@ A page is **not locked** until all of the following pass:
 | G-07 | Blocked surfaces hidden | P-016 items must show "Coming soon" badge, no real pay buttons |
 | G-08 | Navigation active state set | Correct sidebar item highlighted |
 | G-09 | Breadcrumb correct | Correct page title in breadcrumb |
-| G-10 | `PROGRESS.md` entry written | Check file after locking |
+| G-10 | `docs/reports/session/PROGRESS.md` entry written | Check file after locking |
 
 ---
 
@@ -3067,7 +3067,7 @@ A page is **not locked** until all of the following pass:
 
 A page is **locked** when:
 1. All 10 review gates pass
-2. `PROGRESS.md` has an entry with: page name, route, status (LOCKED), date, and any deviations noted
+2. `docs/reports/session/PROGRESS.md` has an entry with: page name, route, status (LOCKED), date, and any deviations noted
 3. The mapping file (`FRONTEND-BACKEND-MAPPING.md`) status column for that page updated from `DIRECT/EXTEND/BUILD` to `LOCKED`
 
 ---
@@ -3083,7 +3083,7 @@ Only after phase lock does build begin on the next phase.
 
 If a page requires a deviation from this protocol (e.g., a vendor lib conflict, a template layout incompatibility):
 1. Document the deviation in the page's `<!-- DEV-NOTE: ... -->` HTML comment at top of body
-2. Record the deviation in `PROGRESS.md` under the page entry
+2. Record the deviation in `docs/reports/session/PROGRESS.md` under the page entry
 3. Do not silently diverge — every deviation is visible and traceable
 
 ---

@@ -109,10 +109,10 @@ D:\CRM\
 │   ├── db/                 # PostgreSQL schemas + migrations
 │   ├── docs/               # 47 domain specs + ADRs
 │   └── docker-compose.yml  # Full-stack local dev
-├── REBUILD-PLAN.md         # 10/10 roadmap (6 phases, ~21 weeks)
-├── PENDING.md              # Task checklist — 229 tasks
+├── docs/archive/REBUILD-PLAN.md   # 10/10 roadmap — SUPERSEDED by COMMERCIALISATION-PLAN.md
+├── docs/reports/session/PENDING.md  # Task checklist
 ├── DESIGN-SPEC.md          # 75 custom pages, 13 archetypes
-└── DOC-CATALOGUE.md        # Full document index
+└── docs/reports/u-series/DOC_CATALOGUE.md  # Full document index (130+ docs)
 ```
 
 ---
@@ -122,13 +122,13 @@ D:\CRM\
 | Document | Purpose |
 |---|---|
 | [`DESIGN-SPEC.md`](DESIGN-SPEC.md) | 75 custom pages, archetypes A–M, build phases |
-| [`REBUILD-PLAN.md`](REBUILD-PLAN.md) | 10/10 roadmap — phases, grades, deliverables |
+| [`docs/archive/REBUILD-PLAN.md`](docs/archive/REBUILD-PLAN.md) | 10/10 roadmap — phases, grades, deliverables (SUPERSEDED by COMMERCIALISATION-PLAN.md) |
 | [`backend/README.md`](backend/README.md) | Backend system identity and module map |
 | [`backend/docs/architecture-overview.md`](backend/docs/architecture-overview.md) | Layer model, engine registry, service architecture |
 | [`backend/docs/domain-model.md`](backend/docs/domain-model.md) | 79 canonical domain entities (incl. all Phase 5B supporting entities) |
 | [`backend/CONSTRAINTS.md`](backend/CONSTRAINTS.md) | 17 non-negotiable build constraints |
 | [`backend/PENDING.md`](backend/PENDING.md) | Blocked items (P-016 credentials, P-017 Urdu) |
-| [`DOC-CATALOGUE.md`](DOC-CATALOGUE.md) | Index of all 90+ project documents |
+| [`docs/reports/u-series/DOC_CATALOGUE.md`](docs/reports/u-series/DOC_CATALOGUE.md) | Index of all 130+ project documents |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to contribute — branch naming, commits, PRs |
 
 ---

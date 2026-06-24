@@ -11,3 +11,54 @@ dist/
 c-seal/
 .playwright-browsers/
 .selenium-cache/
+
+# PostgreSQL binaries and data
+bin/
+data/
+
+# Logs (explicit)
+logs/
+gw.log
+gateway_startup.log
+gateway_err.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.egg-info/
+
+# Playwright test artifacts
+tests/e2e/screenshots/
+tests/e2e/playwright/screenshots/
+tests/e2e/playwright/*.txt
+tests/e2e/playwright/__pycache__/
+test-results/
+playwright-report/
+
+# Node
+frontend/node_modules/
+.npm/
+
+# Environment
+.env.*.local
+
+# Build outputs
+build/
+*.min.js.map
+
+# Temp / workspace cache
+.workspace/
+*.tmp
+*.temp
+
+# OS artefacts
+.DS_Store
+Thumbs.db

@@ -8,298 +8,256 @@
   /* Active class helper */
   function a(pages) { return pages.includes(PAGE) ? ' active' : ''; }
 
-  /* ── Sidebar — exact replica of seed src/index.html ─────────── */
+  /* ── Sidebar — Pakistan CRM navigation ──────────────────────── */
   const SIDEBAR_HTML = `
 <aside class="app-menubar-tabs" id="appMenubar">
   <div class="app-navbar-brand">
     <a class="navbar-brand-logo" href="app/dashboard.html">
-      <img src="../assets/images/logo.svg" alt="NexLink Admin Dashboard Logo">
+      <img src="../assets/images/logo.svg" alt="Pakistan CRM">
     </a>
   </div>
   <div class="app-navbar-tabs" data-simplebar>
     <ul class="nav" id="appMenubarTabs" role="tablist" aria-orientation="vertical">
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboard">
-        <a class="menu-link active" href="#dashboardTab" role="tab" aria-controls="dashboardTab" aria-selected="true" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.5" d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M12 15V18" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-          </svg>
+      <!-- Dashboard -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboards">
+        <a class="menu-link${a(['dashboard','leads-dashboard','sales-dashboard','quotes-dashboard','subscriptions-dashboard','support-dashboard','engagement-dashboard','knowledge-dashboard','workflows-dashboard','tenants-dashboard','identity-dashboard','audit-dashboard','contacts-health']) ? ' active' : ''}" href="#crmDashboardTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path opacity="0.5" d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path d="M12 15V18" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
       </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Apps">
-        <a class="menu-link" href="#appsTab" role="tab" aria-controls="appsTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21.609 13.5616L21.8382 11.1263C22.0182 9.2137 22.1082 8.25739 21.781 7.86207C21.604 7.64823 21.3633 7.5172 21.106 7.4946C20.6303 7.45282 20.0329 8.1329 18.8381 9.49307C18.2202 10.1965 17.9113 10.5482 17.5666 10.6027C17.3757 10.6328 17.1811 10.6018 17.0047 10.5131C16.6865 10.3529 16.4743 9.91812 16.0499 9.04851L13.8131 4.46485C13.0112 2.82162 12.6102 2 12 2C11.3898 2 10.9888 2.82162 10.1869 4.46486L7.95007 9.04852C7.5257 9.91812 7.31351 10.3529 6.99526 10.5131C6.81892 10.6018 6.62434 10.6328 6.43337 10.6027C6.08872 10.5482 5.77977 10.1965 5.16187 9.49307C3.96708 8.1329 3.36968 7.45282 2.89399 7.4946C2.63666 7.5172 2.39598 7.64823 2.21899 7.86207C1.8918 8.25739 1.9818 9.2137 2.16181 11.1263L2.391 13.5616C2.76865 17.5742 2.95748 19.5805 4.14009 20.7902C5.32271 22 7.09517 22 10.6401 22H13.3599C16.9048 22 18.6773 22 19.8599 20.7902C21.0425 19.5805 21.2313 17.5742 21.609 13.5616Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path opacity="0.5" d="M9 18H15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-          </svg>
+      <!-- Sales -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Sales">
+        <a class="menu-link${a(['leads','followups','contacts','accounts','sales-cockpit','collections','invoices','tasks','activity','activities','sales-analytics','lead-new','contact-new','opportunity-new','quote-builder','leads-detail','contacts-detail','accounts-detail','opportunities-detail','quotes-detail','orders-detail','invoices-detail']) ? ' active' : ''}" href="#crmSalesTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.707 15.293C4.077 15.923 4.523 17 5.414 17H17M17 17C15.895 17 15 17.895 15 19C15 20.105 15.895 21 17 21C18.105 21 19 20.105 19 19C19 17.895 18.105 17 17 17ZM9 19C9 20.105 8.105 21 7 21C5.895 21 5 20.105 5 19C5 17.895 5.895 17 7 17C8.105 17 9 17.895 9 19Z" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Pages">
-        <a class="menu-link" href="#pagesTab" role="tab" aria-controls="pagesTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4.97883 9.68508C2.99294 8.89073 2 8.49355 2 8C2 7.50645 2.99294 7.10927 4.97883 6.31492L7.7873 5.19153C9.77318 4.39718 10.7661 4 12 4C13.2339 4 14.2268 4.39718 16.2127 5.19153L19.0212 6.31492C21.0071 7.10927 22 7.50645 22 8C22 8.49355 21.0071 8.89073 19.0212 9.68508L16.2127 10.8085C14.2268 11.6028 13.2339 12 12 12C10.7661 12 9.77318 11.6028 7.7873 10.8085L4.97883 9.68508Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path opacity="0.5" d="M22 12C22 12 21.0071 12.8907 19.0212 13.6851L16.2127 14.8085C14.2268 15.6028 13.2339 16 12 16C10.7661 16 9.77318 15.6028 7.7873 14.8085L4.97883 13.6851C2.99294 12.8907 2 12 2 12" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M22 16C22 16 21.0071 16.8907 19.0212 17.6851L16.2127 18.8085C14.2268 19.6028 13.2339 20 12 20C10.7661 20 9.77318 19.6028 7.7873 18.8085L4.97883 17.6851C2.99294 16.8907 2 16 2 16" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-          </svg>
+      <!-- Support -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Support">
+        <a class="menu-link${a(['cases','support-console','inbox','inbox-thread','knowledge-article','support-analytics','case-new']) ? ' active' : ''}" href="#crmSupportTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path opacity="0.5" d="M12 17V11" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path d="M12 8.00977V7" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
       </li>
-      <li class="nav-item-hr"></li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Authentication">
-        <a class="menu-link" href="#authenticationTab" role="tab" aria-controls="authenticationTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 8C18 11.3137 15.3137 14 12 14C8.68629 14 6 11.3137 6 8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M6.5 10.189C3.91216 10.855 2 13.2042 2 15.9999C2 19.3136 4.68629 21.9999 8 21.9999C11.3137 21.9999 14 19.3136 14 15.9999C14 15.2452 13.8607 14.5231 13.6063 13.8578" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path opacity="0.5" d="M12 20.4722C13.0615 21.4222 14.4633 21.9999 16 21.9999C19.3137 21.9999 22 19.3136 22 15.9999C22 13.2042 20.0878 10.855 17.5 10.189" stroke="var(--bs-heading-color)" stroke-width="2" />
-          </svg>
+      <!-- Finance -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Finance">
+        <a class="menu-link${a(['finance-analytics','collections','invoices','subscriptions-dashboard','subscriptions-detail','billing-settings']) ? ' active' : ''}" href="#crmFinanceTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 10.417C3 8.27614 3 7.20571 3.41935 6.38448C3.78417 5.6658 4.36644 5.08353 5.08512 4.71871C5.90635 4.29936 6.97678 4.29936 9.11765 4.29936H14.8824C17.0232 4.29936 18.0937 4.29936 18.9149 4.71871C19.6336 5.08353 20.2158 5.6658 20.5807 6.38448C21 7.20571 21 8.27614 21 10.417V13.5824C21 15.7233 21 16.7937 20.5807 17.6149C20.2158 18.3336 19.6336 18.9159 18.9149 19.2807C18.0937 19.7 17.0232 19.7 14.8824 19.7H9.11765C6.97678 19.7 5.90635 19.7 5.08512 19.2807C4.36644 18.9159 3.78417 18.3336 3.41935 17.6149C3 16.7937 3 15.7233 3 13.5824V10.417Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path opacity="0.5" d="M3 9H21" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path d="M7 15H9" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path opacity="0.5" d="M11 15H13" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
       </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Components">
-        <a class="menu-link" href="#componentsTab" role="tab" aria-controls="componentsTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.5 15.5C5.5 14.5572 5.5 14.0858 5.79289 13.7929C6.08579 13.5 6.55719 13.5 7.5 13.5H8.5C9.44281 13.5 9.91421 13.5 10.2071 13.7929C10.5 14.0858 10.5 14.5572 10.5 15.5V16.5C10.5 17.4428 10.5 17.9142 10.2071 18.2071C9.91421 18.5 9.44281 18.5 8.5 18.5C7.08579 18.5 6.37868 18.5 5.93934 18.0607C5.5 17.6213 5.5 16.9142 5.5 15.5Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M5.5 8.5C5.5 7.08579 5.5 6.37868 5.93934 5.93934C6.37868 5.5 7.08579 5.5 8.5 5.5C9.44281 5.5 9.91421 5.5 10.2071 5.79289C10.5 6.08579 10.5 6.55719 10.5 7.5V8.5C10.5 9.44281 10.5 9.91421 10.2071 10.2071C9.91421 10.5 9.44281 10.5 8.5 10.5H7.5C6.55719 10.5 6.08579 10.5 5.79289 10.2071C5.5 9.91421 5.5 9.44281 5.5 8.5Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M13.5 15.5C13.5 14.5572 13.5 14.0858 13.7929 13.7929C14.0858 13.5 14.5572 13.5 15.5 13.5H16.5C17.4428 13.5 17.9142 13.5 18.2071 13.7929C18.5 14.0858 18.5 14.5572 18.5 15.5C18.5 16.9142 18.5 17.6213 18.0607 18.0607C17.6213 18.5 16.9142 18.5 15.5 18.5C14.5572 18.5 14.0858 18.5 13.7929 18.2071C13.5 17.9142 13.5 17.4428 13.5 16.5V15.5Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M13.5 7.5C13.5 6.55719 13.5 6.08579 13.7929 5.79289C14.0858 5.5 14.5572 5.5 15.5 5.5C16.9142 5.5 17.6213 5.5 18.0607 5.93934C18.5 6.37868 18.5 7.08579 18.5 8.5C18.5 9.44281 18.5 9.91421 18.2071 10.2071C17.9142 10.5 17.4428 10.5 16.5 10.5H15.5C14.5572 10.5 14.0858 10.5 13.7929 10.2071C13.5 9.91421 13.5 9.44281 13.5 8.5V7.5Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path opacity="0.5" d="M22 14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M10 22C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M10 2C6.22876 2 4.34315 2 3.17157 3.17157C2 4.34315 2 6.22876 2 10" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M14 2C17.7712 2 19.6569 2 20.8284 3.17157C22 4.34315 22 6.22876 22 10" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-          </svg>
+      <!-- Marketing -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Marketing">
+        <a class="menu-link${a(['marketing-workspace','marketing-analytics','campaign-new','partners','partners-detail']) ? ' active' : ''}" href="#crmMarketingTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18.364 5.636A9 9 0 1 1 5.636 18.364 9 9 0 0 1 18.364 5.636" stroke="var(--bs-heading-color)" stroke-width="2"/><path opacity="0.5" d="M12 8V12L15 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </li>
+      <!-- Workflows -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Automation">
+        <a class="menu-link${a(['workflows-dashboard','workflow-builder','workflow-run-detail','workflow-analytics','approval-lanes','rule-builder']) ? ' active' : ''}" href="#crmAutomationTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path opacity="0.5" d="M16 3.46609C16.3463 3.46609 16.6848 3.54545 17 3.67964V3.64645C17 3.64645 19 5 20.5 7C22 9 21.9999 12 21.9999 12" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path d="M12 8L12 12L15 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </li>
       <li class="nav-item-hr"></li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Extended UI">
-        <a class="menu-link" href="#extendedTab" role="tab" aria-controls="extendedTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.5 9L15.6716 9.17157C17.0049 10.5049 17.6716 11.1716 17.6716 12C17.6716 12.8284 17.0049 13.4951 15.6716 14.8284L15.5 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path d="M13.2943 7.17041L12.0002 12L10.7061 16.8297" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path d="M8.49969 9L8.32812 9.17157C6.99479 10.5049 6.32812 11.1716 6.32812 12C6.32812 12.8284 6.99479 13.4951 8.32812 14.8284L8.49969 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-          </svg>
+      <!-- Reports -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Reports">
+        <a class="menu-link${a(['sales-analytics','marketing-analytics','support-analytics','finance-analytics','workflow-analytics','audit-report','report-builder']) ? ' active' : ''}" href="#crmReportsTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path opacity="0.5" d="M3 22H21" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path d="M3 11C3 10.0572 3 9.58579 3.29289 9.29289C3.58579 9 4.05719 9 5 9H7C7.94281 9 8.41421 9 8.70711 9.29289C9 9.58579 9 10.0572 9 11V17H3V11Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path opacity="0.5" d="M10 7C10 6.05719 10 5.58579 10.2929 5.29289C10.5858 5 11.0572 5 12 5H12C12.9428 5 13.4142 5 13.7071 5.29289C14 5.58579 14 6.05719 14 7V17H10V7Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path d="M15 13C15 12.0572 15 11.5858 15.2929 11.2929C15.5858 11 16.0572 11 17 11H19C19.9428 11 20.4142 11 20.7071 11.2929C21 11.5858 21 12.0572 21 13V17H15V13Z" stroke="var(--bs-heading-color)" stroke-width="2"/></svg>
         </a>
       </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Forms &amp; Tables">
-        <a class="menu-link" href="#formElementsTab" role="tab" aria-controls="formElementsTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.5" d="M16 4.00195C18.175 4.01406 19.3529 4.11051 20.1213 4.87889C21 5.75757 21 7.17179 21 10.0002V16.0002C21 18.8286 21 20.2429 20.1213 21.1215C19.2426 22.0002 17.8284 22.0002 15 22.0002H9C6.17157 22.0002 4.75736 22.0002 3.87868 21.1215C3 20.2429 3 18.8286 3 16.0002V10.0002C3 7.17179 3 5.75757 3.87868 4.87889C4.64706 4.11051 5.82497 4.01406 8 4.00195" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M7 14.5H15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path opacity="0.5" d="M7 18H12.5" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-          </svg>
+      <!-- Admin -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Admin">
+        <a class="menu-link${a(['org-settings','user-management-crm','roles','territories','feature-flags','integrations','notifications','compliance','data-governance','rbac-audit','audit-log','compliance-report','privacy','object-builder','routing-config','users']) ? ' active' : ''}" href="#crmAdminTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="var(--bs-heading-color)" stroke-width="2"/><path opacity="0.5" d="M12 6V3M12 21V18M6 12H3M21 12H18M7.75736 7.75736L5.63604 5.63604M18.364 18.364L16.2426 16.2426M16.2426 7.75736L18.364 5.63604M5.63604 18.364L7.75736 16.2426" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
       </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Charts &amp; Maps">
-        <a class="menu-link" href="#chartsTab" role="tab" aria-controls="chartsTab" aria-selected="false" data-bs-toggle="tab">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.5" d="M3 22H21" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M3 11C3 10.0572 3 9.58579 3.29289 9.29289C3.58579 9 4.05719 9 5 9C5.94281 9 6.41421 9 6.70711 9.29289C7 9.58579 7 10.0572 7 11V17C7 17.9428 7 18.4142 6.70711 18.7071C6.41421 19 5.94281 19 5 19C4.05719 19 3.58579 19 3.29289 18.7071C3 18.4142 3 17.9428 3 17V11Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M10 7C10 6.05719 10 5.58579 10.2929 5.29289C10.5858 5 11.0572 5 12 5C12.9428 5 13.4142 5 13.7071 5.29289C14 5.58579 14 6.05719 14 7V17C14 17.9428 14 18.4142 13.7071 18.7071C13.4142 19 12.9428 19 12 19C11.0572 19 10.5858 19 10.2929 18.7071C10 18.4142 10 17.9428 10 17V7Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-            <path d="M17 4C17 3.05719 17 2.58579 17.2929 2.29289C17.5858 2 18.0572 2 19 2C19.9428 2 20.4142 2 20.7071 2.29289C21 2.58579 21 3.05719 21 4V17C21 17.9428 21 18.4142 20.7071 18.7071C20.4142 19 19.9428 19 19 19C18.0572 19 17.5858 19 17.2929 18.7071C17 18.4142 17 17.9428 17 17V4Z" stroke="var(--bs-heading-color)" stroke-width="2" />
-          </svg>
-        </a>
-      </li>
-      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Ai ChatBot">
-        <a class="menu-link position-relative" href="app/new-chat.html">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
-            <path d="m21,23c0,.553-.448,1-1,1s-1-.447-1-1c0-2.206-1.794-4-4-4h-6c-2.206,0-4,1.794-4,4,0,.553-.448,1-1,1s-1-.447-1-1c0-3.309,2.691-6,6-6h6c3.309,0,6,2.691,6,6Zm1-15.5v2c0,.827-.673,1.5-1.5,1.5h-.5c0,2.206-1.794,4-4,4h-8c-2.206,0-4-1.794-4-4h-.5c-.827,0-1.5-.673-1.5-1.5v-2c0-.827.673-1.5,1.5-1.5h.5c0-2.206,1.794-4,4-4h3v-1c0-.553.448-1,1-1s1,.447,1,1v1h3c2.206,0,4,1.794,4,4h.5c.827,0,1.5.673,1.5,1.5Zm-4-1.5c0-1.103-.897-2-2-2h-8c-1.103,0-2,.897-2,2v5c0,1.103.897,2,2,2h8c1.103,0,2-.897,2-2v-5Zm-8.5,1c-.828,0-1.5.672-1.5,1.5s.672,1.5,1.5,1.5,1.5-.672,1.5-1.5-.672-1.5-1.5-1.5Zm5,0c-.828,0-1.5.672-1.5,1.5s.672,1.5,1.5,1.5,1.5-.672,1.5-1.5-.672-1.5-1.5-1.5Z" fill="var(--bs-heading-color)" />
-          </svg>
-          <span class="position-absolute top-0 end-0 p-1 mt-1 me-1 bg-primary border border-3 border-light rounded-circle">
-            <span class="visually-hidden">New alerts</span>
-          </span>
+      <!-- AI -->
+      <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="AI">
+        <a class="menu-link${a(['ai-copilot','ai-insights']) ? ' active' : ''}" href="#crmAiTab" role="tab" data-bs-toggle="tab">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path opacity="0.5" d="M2 17L12 22L22 17" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path opacity="0.5" d="M2 12L12 17L22 12" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </li>
       <li class="nav-item-hr"></li>
-      <li class="nav-item mb-auto" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Add Customer">
-        <a href="javascript:void(0);" class="btn btn-icon btn-lg btn-white waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" stroke="var(--bs-primary)" stroke-width="2" />
-            <path d="M15 12H12M12 12H9M12 12V9M12 12V15" stroke="var(--bs-primary)" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </a>
-      </li>
-      <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Login">
-        <a class="menu-link" href="app/login-frame.html">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path opacity="0.5" d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-            <path d="M15 12H2M2 12L5.5 9M2 12L5.5 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+      <li class="nav-item mt-auto" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Log Out">
+        <a href="javascript:void(0);" class="menu-link" id="crm-logout-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path opacity="0.5" d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"/><path d="M15 12H2M2 12L5.5 9M2 12L5.5 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
       </li>
     </ul>
   </div>
   <div class="app-tab-content">
     <div class="app-side-brands">
-      <a class="navbar-brand-text" href="app/dashboard.html">NexLink</a>
+      <a class="navbar-brand-text" href="app/dashboard.html">Pakistan CRM</a>
     </div>
     <div class="app-content-inner">
       <div class="tab-content" id="appMenubarTabsContent">
-        <div class="tab-pane fade show active" id="dashboardTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Dashboards ── -->
+        <div class="tab-pane fade show active" id="crmDashboardTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Dashboard</span></li>
-              <li class="menu-item"><a class="menu-link${a(['dashboard'])}" href="app/dashboard.html" role="button"><i class="fi fi-rr-house-blank"></i><span class="menu-label">Default Dashboard</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['leads'])}" href="app/leads.html" role="button"><i class="fi fi-rr-funnel"></i><span class="menu-label">Leads</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['sales'])}" href="app/sales.html" role="button"><i class="fi fi-rr-percent-100"></i><span class="menu-label">Sales Dashboard</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['finance'])}" href="app/finance.html" role="button"><i class="fi fi-rr-growth-chart-invest"></i><span class="menu-label">Finance Dashboard</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['team'])}" href="app/team-management.html" role="button"><i class="fi fi-rr-circle-user"></i><span class="menu-label">Team Management</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['employees'])}" href="app/employee.html" role="button"><i class="fi fi-rr-employee-man"></i><span class="menu-label">Employees</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['customers'])}" href="app/customers.html" role="button"><i class="fi fi-rr-review"></i><span class="menu-label">Customers</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['review'])}" href="app/review.html" role="button"><i class="fi fi-rr-star"></i><span class="menu-label">Review</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['tasks'])}" href="app/tasks.html" role="button"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="6" fill="var(--bs-danger)" /></svg><span class="menu-label">Tasks &amp; Projects</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['user-management'])}" href="app/users.html" role="button"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="6" fill="var(--bs-info)" /></svg><span class="menu-label">User Management</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['activities'])}" href="app/activity.html" role="button"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="6" fill="var(--bs-warning)" /></svg><span class="menu-label">Activities</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['deals'])}" href="app/deals.html" role="button"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="6" fill="var(--bs-primary)" /></svg><span class="menu-label">Deals</span><span class="badge badge-sm text-bg-success">+12%</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Dashboards</span></li>
+              <li class="menu-item"><a class="menu-link${a(['dashboard'])}" href="app/dashboard.html"><i class="fi fi-rr-house-blank"></i><span class="menu-label">Main Dashboard</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['leads-dashboard'])}" href="app/leads-dashboard.html"><i class="fi fi-rr-funnel"></i><span class="menu-label">Lead Funnel</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['sales-dashboard'])}" href="app/sales-dashboard.html"><i class="fi fi-rr-chart-line-up"></i><span class="menu-label">Opportunity Pipeline</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['quotes-dashboard'])}" href="app/quotes-dashboard.html"><i class="fi fi-rr-file-invoice"></i><span class="menu-label">Quote Approval</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['subscriptions-dashboard'])}" href="app/subscriptions-dashboard.html"><i class="fi fi-rr-refresh"></i><span class="menu-label">Subscription Revenue</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['support-dashboard'])}" href="app/support-dashboard.html"><i class="fi fi-rr-headset"></i><span class="menu-label">Case SLA Ops</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['engagement-dashboard'])}" href="app/engagement-dashboard.html"><i class="fi fi-rr-signal-alt"></i><span class="menu-label">Engagement</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['knowledge-dashboard'])}" href="app/knowledge-dashboard.html"><i class="fi fi-rr-book-alt"></i><span class="menu-label">Knowledge</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['workflows-dashboard'])}" href="app/workflows-dashboard.html"><i class="fi fi-rr-workflow"></i><span class="menu-label">Workflows</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['audit-dashboard'])}" href="app/audit-dashboard.html"><i class="fi fi-rr-shield-check"></i><span class="menu-label">Audit &amp; Reliability</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['identity-dashboard'])}" href="app/identity-dashboard.html"><i class="fi fi-rr-id-badge"></i><span class="menu-label">Identity &amp; Access</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['tenants-dashboard'])}" href="app/tenants-dashboard.html"><i class="fi fi-rr-building"></i><span class="menu-label">Tenants</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['contacts-health'])}" href="app/contacts-health.html"><i class="fi fi-rr-heart-rate"></i><span class="menu-label">Customer Health</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="appsTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Sales ── -->
+        <div class="tab-pane fade" id="crmSalesTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Apps</span></li>
-              <li class="menu-item"><a class="menu-link${a(['chat'])}" href="app/chat.html"><i class="fi fi-rr-comment"></i><span class="menu-label">Chat</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['calendar'])}" href="app/calendar.html"><i class="fi fi-rr-calendar"></i><span class="menu-label">Calendar</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Pipeline</span></li>
+              <li class="menu-item"><a class="menu-link${a(['sales-cockpit'])}" href="app/sales-cockpit.html"><i class="fi fi-rr-rocket-lunch"></i><span class="menu-label">Sales Cockpit</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['leads'])}" href="app/leads.html"><i class="fi fi-rr-funnel"></i><span class="menu-label">Leads</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['followups'])}" href="app/followups.html"><i class="fi fi-rr-alarm-clock"></i><span class="menu-label">Follow-ups</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['contacts'])}" href="app/contacts.html"><i class="fi fi-rr-address-book"></i><span class="menu-label">Contacts</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['accounts'])}" href="app/accounts.html"><i class="fi fi-rr-building"></i><span class="menu-label">Accounts</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Email</span></li>
-              <li class="menu-item"><a class="menu-link${a(['inbox'])}" href="app/inbox-email.html"><i class="fi fi-rr-inbox-in"></i><span class="menu-label">Inbox</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['compose'])}" href="app/email-compose.html"><i class="fi fi-rr-pen-field"></i><span class="menu-label">Compose</span></a></li>
-              <li class="menu-item"><a class="menu-link${a(['read-email'])}" href="app/email-read.html"><i class="fi fi-rr-envelope"></i><span class="menu-label">Read email</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Transactions</span></li>
+              <li class="menu-item"><a class="menu-link${a(['collections'])}" href="app/collections.html"><i class="fi fi-rr-sack-dollar"></i><span class="menu-label">Collections</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['invoices'])}" href="app/invoices.html"><i class="fi fi-rr-file-invoice-dollar"></i><span class="menu-label">Invoices</span></a></li>
+              <li><div class="menu-divider"></div></li>
+              <li class="menu-heading"><span class="menu-label">Activity</span></li>
+              <li class="menu-item"><a class="menu-link${a(['activity'])}" href="app/activity.html"><i class="fi fi-rr-pulse"></i><span class="menu-label">Activity Feed</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['tasks'])}" href="app/tasks.html"><i class="fi fi-rr-checkbox"></i><span class="menu-label">Tasks</span></a></li>
+              <li><div class="menu-divider"></div></li>
+              <li class="menu-heading"><span class="menu-label">Create New</span></li>
+              <li class="menu-item"><a class="menu-link${a(['lead-new'])}" href="app/lead-new.html"><i class="fi fi-rr-user-add"></i><span class="menu-label">New Lead</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['contact-new'])}" href="app/contact-new.html"><i class="fi fi-rr-add-user"></i><span class="menu-label">New Contact</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['opportunity-new'])}" href="app/opportunity-new.html"><i class="fi fi-rr-badge-dollar"></i><span class="menu-label">New Opportunity</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['quote-builder'])}" href="app/quote-builder.html"><i class="fi fi-rr-calculator"></i><span class="menu-label">New Quote (CPQ)</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="pagesTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Support ── -->
+        <div class="tab-pane fade" id="crmSupportTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Pages</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/pricing.html"><i class="fi fi-rs-usd-circle"></i><span class="menu-label">Pricing</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Support</span></li>
+              <li class="menu-item"><a class="menu-link${a(['support-console'])}" href="app/support-console.html"><i class="fi fi-rr-headset"></i><span class="menu-label">Support Console</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['cases'])}" href="app/cases.html"><i class="fi fi-rr-ticket"></i><span class="menu-label">Cases</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['case-new'])}" href="app/case-new.html"><i class="fi fi-rr-add"></i><span class="menu-label">New Case</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Blog</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/blog.html"><i class="fi fi-rr-blog-text"></i><span class="menu-label">Blog Grid</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/blog-list.html"><i class="fi fi-rr-blog-text"></i><span class="menu-label">Blog List</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/blog-details.html"><i class="fi fi-rr-blog-text"></i><span class="menu-label">Blog Details</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Inbox</span></li>
+              <li class="menu-item"><a class="menu-link${a(['inbox'])}" href="app/inbox.html"><i class="fi fi-rr-inbox-in"></i><span class="menu-label">Omnichannel Inbox</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['inbox-thread'])}" href="app/inbox-thread.html"><i class="fi fi-rr-comment-alt"></i><span class="menu-label">Conversation Thread</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Error</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/error-404.html"><i class="fi fi-rs-404"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/error-404-cover.html"><i class="fi fi-rs-404"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/error-404-full.html"><i class="fi fi-rs-404"></i><span class="menu-label">Full</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Knowledge</span></li>
+              <li class="menu-item"><a class="menu-link${a(['knowledge-dashboard'])}" href="app/knowledge-dashboard.html"><i class="fi fi-rr-book-alt"></i><span class="menu-label">Knowledge Base</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['knowledge-article'])}" href="app/knowledge-article.html"><i class="fi fi-rr-document"></i><span class="menu-label">Article Detail</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Under Construction</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/under-construction.html"><i class="fi fi-rr-under-construction"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/under-construction-cover.html"><i class="fi fi-rr-under-construction"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/under-construction-full.html"><i class="fi fi-rr-under-construction"></i><span class="menu-label">Full</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['support-analytics'])}" href="app/support-analytics.html"><i class="fi fi-rr-chart-pie-alt"></i><span class="menu-label">Support Analytics</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="authenticationTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Finance ── -->
+        <div class="tab-pane fade" id="crmFinanceTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Login</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/login-basic.html"><i class="fi fi-rr-unlock"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/login-cover.html"><i class="fi fi-rr-unlock"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/login-frame.html"><i class="fi fi-rr-unlock"></i><span class="menu-label">Login</span></a></li>
-              <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Register</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/register-basic.html"><i class="fi fi-rr-enter"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/register-cover.html"><i class="fi fi-rr-enter"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/register-frame.html"><i class="fi fi-rr-enter"></i><span class="menu-label">Register</span></a></li>
-              <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Forgot Password</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/forgot-password-basic.html"><i class="fi fi-rs-otp"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/forgot-password-cover.html"><i class="fi fi-rs-otp"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/forgot-password.html"><i class="fi fi-rs-otp"></i><span class="menu-label">Forgot Password</span></a></li>
-              <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">New Password</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/new-password-basic.html"><i class="fi fi-rr-password-alt"></i><span class="menu-label">Basic</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/new-password-cover.html"><i class="fi fi-rr-password-alt"></i><span class="menu-label">Cover</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/reset-password.html"><i class="fi fi-rr-password-alt"></i><span class="menu-label">Reset Password</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Finance</span></li>
+              <li class="menu-item"><a class="menu-link${a(['finance-analytics'])}" href="app/finance-analytics.html"><i class="fi fi-rr-chart-line-up"></i><span class="menu-label">Finance Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['collections'])}" href="app/collections.html"><i class="fi fi-rr-sack-dollar"></i><span class="menu-label">Collections Queue</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['invoices'])}" href="app/invoices.html"><i class="fi fi-rr-file-invoice-dollar"></i><span class="menu-label">Invoice Queue</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['subscriptions-dashboard'])}" href="app/subscriptions-dashboard.html"><i class="fi fi-rr-refresh"></i><span class="menu-label">Subscriptions</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['billing-settings'])}" href="app/billing-settings.html"><i class="fi fi-rr-credit-card"></i><span class="menu-label">Billing Settings</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="componentsTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Marketing ── -->
+        <div class="tab-pane fade" id="crmMarketingTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">UI Components</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/accordion.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Accordion</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/alerts.html"><i class="fi fi-rs-bell"></i><span class="menu-label">Alerts</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/badge.html"><i class="fi fi-rr-tags"></i><span class="menu-label">Badge</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/breadcrumb.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Breadcrumb</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/buttons.html"><i class="fi fi-rr-toggle-on"></i><span class="menu-label">Buttons</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/typography.html"><i class="fi fi-rr-text"></i><span class="menu-label">Typography</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/button-group.html"><i class="fi fi-rr-toggle-on"></i><span class="menu-label">Button Group</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/card.html"><i class="fi fi-rr-credit-card"></i><span class="menu-label">Card</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/collapse.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Collapse</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/carousel.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Carousel</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/dropdowns.html"><i class="fi fi-rs-settings-sliders"></i><span class="menu-label">Dropdowns</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/modal.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Modal</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/navbar.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Navbar</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/list-group.html"><i class="fi fi-rr-list"></i><span class="menu-label">List Group</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/tabs.html"><i class="fi fi-rr-tab-folder"></i><span class="menu-label">Tabs</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/offcanvas.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Offcanvas</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/pagination.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Pagination</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/popovers.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Popovers</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/progress.html"><i class="fi fi-sr-bars-progress"></i><span class="menu-label">Progress</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/scrollspy.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Scrollspy</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/spinners.html"><i class="fi fi-br-loading"></i><span class="menu-label">Spinners</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/toasts.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Toasts</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/tooltips.html"><i class="fi fi-rr-flux-capacitor"></i><span class="menu-label">Tooltips</span></a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="tab-pane fade" id="extendedTab" role="tabpanel" tabindex="0">
-          <nav class="app-navbar" data-simplebar>
-            <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Extended UI</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/avatar.html"><i class="fi fi-rr-circle-user"></i><span class="menu-label">Avatar</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/card-action.html"><i class="fi fi-rr-credit-card"></i><span class="menu-label">Card action</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/drag-and-drop.html"><i class="fi fi-rr-arrows"></i><span class="menu-label">Drag &amp; drop</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/simplebar.html"><i class="fi fi-rr-star"></i><span class="menu-label">Simplebar</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/swiper.html"><i class="fi fi-rr-sliders-h-square"></i><span class="menu-label">Swiper</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Marketing</span></li>
+              <li class="menu-item"><a class="menu-link${a(['marketing-workspace'])}" href="app/marketing-workspace.html"><i class="fi fi-rr-megaphone"></i><span class="menu-label">Marketing Workspace</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['marketing-analytics'])}" href="app/marketing-analytics.html"><i class="fi fi-rr-chart-pie-alt"></i><span class="menu-label">Marketing Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['campaign-new'])}" href="app/campaign-new.html"><i class="fi fi-rr-add"></i><span class="menu-label">New Campaign</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Icons</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/flaticon.html"><i class="fi fi-rr-star"></i><span class="menu-label">Flaticon</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/lucide.html"><i class="fi fi-rr-star"></i><span class="menu-label">Lucide</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/fontawesome.html"><i class="fi fi-rr-star"></i><span class="menu-label">Font Awesome</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Partners</span></li>
+              <li class="menu-item"><a class="menu-link${a(['partners'])}" href="app/partners.html"><i class="fi fi-rr-handshake"></i><span class="menu-label">Partners</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="formElementsTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Automation ── -->
+        <div class="tab-pane fade" id="crmAutomationTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Forms</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/form-elements.html"><i class="fi fi-rr-form"></i><span class="menu-label">Form Elements</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/form-floating.html"><i class="fi fi-rr-form"></i><span class="menu-label">Form Floating</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/form-input-group.html"><i class="fi fi-rr-form"></i><span class="menu-label">Form Input Group</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/form-layout.html"><i class="fi fi-rr-form"></i><span class="menu-label">Form Layout</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/form-validation.html"><i class="fi fi-rr-form"></i><span class="menu-label">Form Validation</span></a></li>
-              <li class="menu-heading"><span class="menu-label">Forms Plugins</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/flatpickr.html"><i class="fi fi-rr-calendar-lines"></i><span class="menu-label">Flatpickr</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/tagify.html"><i class="fi fi-rr-tags"></i><span class="menu-label">Tagify</span></a></li>
-              <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Table</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/tables-basic.html"><i class="fi fi-rr-table-list"></i><span class="menu-label">Table</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/tables-datatable.html"><i class="fi fi-rr-table"></i><span class="menu-label">Datatable</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Automation</span></li>
+              <li class="menu-item"><a class="menu-link${a(['workflows-dashboard'])}" href="app/workflows-dashboard.html"><i class="fi fi-rr-workflow"></i><span class="menu-label">Workflows Dashboard</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['workflow-builder'])}" href="app/workflow-builder.html"><i class="fi fi-rr-diagram-project"></i><span class="menu-label">Workflow Builder</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['approval-lanes'])}" href="app/approval-lanes.html"><i class="fi fi-rr-columns-3"></i><span class="menu-label">Approval Lanes</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['rule-builder'])}" href="app/rule-builder.html"><i class="fi fi-rr-settings-sliders"></i><span class="menu-label">Rule Builder</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['workflow-analytics'])}" href="app/workflow-analytics.html"><i class="fi fi-rr-chart-line-up"></i><span class="menu-label">Workflow Analytics</span></a></li>
             </ul>
           </nav>
         </div>
-        <div class="tab-pane fade" id="chartsTab" role="tabpanel" tabindex="0">
+
+        <!-- ── Reports ── -->
+        <div class="tab-pane fade" id="crmReportsTab" role="tabpanel" tabindex="0">
           <nav class="app-navbar" data-simplebar>
             <ul class="side-menubar">
-              <li class="menu-heading"><span class="menu-label">Charts</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/apexchart.html"><i class="fi fi-br-chart-histogram"></i><span class="menu-label">Apex Chart</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/chartjs.html"><i class="fi fi-rr-chart-pie-alt"></i><span class="menu-label">Chart JS</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Analytics</span></li>
+              <li class="menu-item"><a class="menu-link${a(['sales-analytics'])}" href="app/sales-analytics.html"><i class="fi fi-rr-chart-line-up"></i><span class="menu-label">Sales Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['marketing-analytics'])}" href="app/marketing-analytics.html"><i class="fi fi-rr-megaphone"></i><span class="menu-label">Marketing Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['support-analytics'])}" href="app/support-analytics.html"><i class="fi fi-rr-headset"></i><span class="menu-label">Support Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['finance-analytics'])}" href="app/finance-analytics.html"><i class="fi fi-rr-sack-dollar"></i><span class="menu-label">Finance Analytics</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['workflow-analytics'])}" href="app/workflow-analytics.html"><i class="fi fi-rr-workflow"></i><span class="menu-label">Workflow Analytics</span></a></li>
               <li><div class="menu-divider"></div></li>
-              <li class="menu-heading"><span class="menu-label">Maps</span></li>
-              <li class="menu-item"><a class="menu-link" href="app/jsvectormap.html"><i class="fi fi-rr-marker"></i><span class="menu-label">JS Vector Map</span></a></li>
-              <li class="menu-item"><a class="menu-link" href="app/leaflet.html"><i class="fi fi-rr-map-marker"></i><span class="menu-label">Leaflet</span></a></li>
+              <li class="menu-heading"><span class="menu-label">Audit &amp; Compliance</span></li>
+              <li class="menu-item"><a class="menu-link${a(['audit-report'])}" href="app/audit-report.html"><i class="fi fi-rr-shield-check"></i><span class="menu-label">Audit Report</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['report-builder'])}" href="app/report-builder.html"><i class="fi fi-rr-chart-histogram"></i><span class="menu-label">Custom Report Builder</span></a></li>
             </ul>
           </nav>
         </div>
-      </div>
-      <div class="card card-gradient mx-3 d-none d-xl-block">
-        <div class="card-body">
-          <h5>Upgrade to Pro</h5>
-          <p class="text-1xs">Get unlimited leads, advanced analytics, and 24/7 priority support.</p>
-          <a target="_blank" href="https://themeforest.net/item/nexlink-crm-admin-dashboard-bootstrap-template/60903033" class="btn btn-primary waves-effect">Upgrade Now</a>
+
+        <!-- ── Admin ── -->
+        <div class="tab-pane fade" id="crmAdminTab" role="tabpanel" tabindex="0">
+          <nav class="app-navbar" data-simplebar>
+            <ul class="side-menubar">
+              <li class="menu-heading"><span class="menu-label">Settings</span></li>
+              <li class="menu-item"><a class="menu-link${a(['org-settings'])}" href="app/org-settings.html"><i class="fi fi-rr-building"></i><span class="menu-label">Organisation</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['user-management-crm'])}" href="app/user-management-crm.html"><i class="fi fi-rr-users"></i><span class="menu-label">User Management</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['roles'])}" href="app/roles.html"><i class="fi fi-rr-lock"></i><span class="menu-label">Roles &amp; Permissions</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['territories'])}" href="app/territories.html"><i class="fi fi-rr-map-marker"></i><span class="menu-label">Territories</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['integrations'])}" href="app/integrations.html"><i class="fi fi-rr-plug"></i><span class="menu-label">Integrations</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['notifications'])}" href="app/notifications.html"><i class="fi fi-rr-bell"></i><span class="menu-label">Notifications</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['feature-flags'])}" href="app/feature-flags.html"><i class="fi fi-rr-flag"></i><span class="menu-label">Feature Flags</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['routing-config'])}" href="app/routing-config.html"><i class="fi fi-rr-route"></i><span class="menu-label">Routing Config</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['object-builder'])}" href="app/object-builder.html"><i class="fi fi-rr-cube"></i><span class="menu-label">Object Builder</span></a></li>
+              <li><div class="menu-divider"></div></li>
+              <li class="menu-heading"><span class="menu-label">Compliance</span></li>
+              <li class="menu-item"><a class="menu-link${a(['audit-log'])}" href="app/audit-log.html"><i class="fi fi-rr-list-check"></i><span class="menu-label">Audit Log</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['compliance'])}" href="app/compliance.html"><i class="fi fi-rr-shield-check"></i><span class="menu-label">Compliance Settings</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['compliance-report'])}" href="app/compliance-report.html"><i class="fi fi-rr-document"></i><span class="menu-label">Compliance Report</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['data-governance'])}" href="app/data-governance.html"><i class="fi fi-rr-database"></i><span class="menu-label">Data Governance</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['rbac-audit'])}" href="app/rbac-audit.html"><i class="fi fi-rr-user-lock"></i><span class="menu-label">RBAC Audit</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['privacy'])}" href="app/privacy.html"><i class="fi fi-rr-privacy-policy"></i><span class="menu-label">Privacy &amp; Consent</span></a></li>
+            </ul>
+          </nav>
         </div>
+
+        <!-- ── AI ── -->
+        <div class="tab-pane fade" id="crmAiTab" role="tabpanel" tabindex="0">
+          <nav class="app-navbar" data-simplebar>
+            <ul class="side-menubar">
+              <li class="menu-heading"><span class="menu-label">AI Tools</span></li>
+              <li class="menu-item"><a class="menu-link${a(['ai-copilot'])}" href="app/ai-copilot.html"><i class="fi fi-rr-robot"></i><span class="menu-label">AI Copilot</span></a></li>
+              <li class="menu-item"><a class="menu-link${a(['ai-insights'])}" href="app/ai-insights.html"><i class="fi fi-rr-brain"></i><span class="menu-label">AI Insights</span></a></li>
+            </ul>
+          </nav>
+        </div>
+
       </div>
     </div>
   </div>

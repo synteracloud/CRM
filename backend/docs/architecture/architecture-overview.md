@@ -1,7 +1,8 @@
 <!-- OWNERSHIP
 PRIMARY FOR: System overview narrative, capability boundaries, high-level non-functional requirements.
-DEFERS TO: data-architecture.md (CQRS-lite detail); pakistan-adapter-architecture.md (L1/L2/L3 layer model).
-DO NOT RE-DEFINE: CQRS-lite mechanics → data-architecture.md §2.1; L1/L2/L3 adapter layers → pakistan-adapter-architecture.md §1.
+DEFERS TO: data-architecture.md (CQRS-lite detail); pakistan-adapter-architecture.md (L1/L2/L3 layer model); docs/06_decisions/ADR-001_PROJECT_FOUNDATION.md (architecture decisions — that is the governance authority for architectural decisions).
+DO NOT RE-DEFINE: CQRS-lite mechanics → data-architecture.md §2.1; L1/L2/L3 adapter layers → pakistan-adapter-architecture.md §1; architectural decisions → ADR-001_PROJECT_FOUNDATION.md.
+CROSS-REFERENCE (DUP-006, 2026-06-21): docs/06_decisions/ADR-001_PROJECT_FOUNDATION.md is the designated authority for architecture decisions (3-tier architecture, tech stack, deployment model). This file is the narrative Supporting Reference. When architecture changes occur, update ADR-001_PROJECT_FOUNDATION.md first.
 -->
 
 # Architecture Overview

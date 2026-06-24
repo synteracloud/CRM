@@ -59,7 +59,7 @@ and only rewrite internal folder paths (e.g. ai/ → app/, forms/ → app/).**
 **Phase gate:** `D:\CRM\DESIGN-SPEC.md` — 75 custom pages, 13 archetypes (A–M), 8 build phases.
 - App pages live in: `D:\CRM\frontend\src\app\`
 - Dev server: `npm run serve` from `D:\CRM\frontend`, port 3001
-- Screen artefacts (QC records): `D:\CRM\SCREEN-ARTEFACTS.md`
+- Screen artefacts (QC records): `D:\CRM\docs\reports\session\SCREEN-ARTEFACTS.md`
 
 ## Path translation rule
 All internal seed links must be rewritten:
